@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/sample', function () {
     return view('sample-content');
 });
+
+Route::get('/register', function () {
+    return view('auth/auth-cover-signup');
+});

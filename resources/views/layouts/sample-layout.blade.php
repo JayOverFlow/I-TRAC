@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>I-TRAC | @yield('title')</title>
-    @yield('css') {{-- To inject the css content based on the string --}}
+    @stack('css') {{-- To inject the css content based on the string --}}
 </head>
 <body>
     <div class="main-content">
@@ -14,6 +14,6 @@
 
     @include('partials.sample-partial')
 
-    @yield('js') {{-- To inject the js based on the string --}}
+    @stack('js') {{-- To inject the js based on the string --}}
 </body>
 </html>
