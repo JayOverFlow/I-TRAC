@@ -5,6 +5,7 @@ window.addEventListener("load", function(){
     document.body.removeChild(load_screen);
 
     var layoutName = 'Horizontal Light Menu';
+    var ifStarterKit; // Added declaration for ifStarterKit
 
     var settingsObject = {
         admin: 'Equation Admin Template',
@@ -15,26 +16,25 @@ window.addEventListener("load", function(){
                 darkMode: false,
                 boxed: true,
                 logo: {
-                    darkLogo: '../src/assets/img/logo.svg',
-                    lightLogo: '../src/assets/img/logo2.svg'
+                    darkLogo: '/img/logo.svg',
+                    lightLogo: '/img/logo2.svg'
                 }
             }
         },
         reset: false
     }
 
-
     if (settingsObject.reset) {
         localStorage.clear()
     }
 
     if (localStorage.length === 0) {
-        equationThemeObject = settingsObject;
+        var equationThemeObject = settingsObject; // Added 'var' declaration
     } else {
 
-        getequationThemeObject = localStorage.getItem("theme");
-        getParseObject = JSON.parse(getequationThemeObject)
-        ParsedObject = getParseObject;
+        var getequationThemeObject = localStorage.getItem("theme"); // Added 'var' declaration
+        var getParseObject = JSON.parse(getequationThemeObject)
+        var ParsedObject = getParseObject;
 
         if (getequationThemeObject !== null) {
                
@@ -58,6 +58,22 @@ window.addEventListener("load", function(){
         }
     }
 
+    // Migrate old logo paths to new paths
+    if (equationThemeObject.settings && equationThemeObject.settings.layout && equationThemeObject.settings.layout.logo) {
+        if (equationThemeObject.settings.layout.logo.darkLogo && 
+            (equationThemeObject.settings.layout.logo.darkLogo.includes('../src/assets/img/') || 
+             equationThemeObject.settings.layout.logo.darkLogo.includes('../../src/assets/img/'))) {
+            equationThemeObject.settings.layout.logo.darkLogo = '/img/logo.svg';
+        }
+        if (equationThemeObject.settings.layout.logo.lightLogo && 
+            (equationThemeObject.settings.layout.logo.lightLogo.includes('../src/assets/img/') || 
+             equationThemeObject.settings.layout.logo.lightLogo.includes('../../src/assets/img/'))) {
+            equationThemeObject.settings.layout.logo.lightLogo = '/img/logo2.svg';
+        }
+        // Save updated paths back to localStorage
+        localStorage.setItem("theme", JSON.stringify(equationThemeObject));
+    }
+
     // Get Dark Mode Information i.e darkMode: true or false
     
     if (equationThemeObject.settings.layout.darkMode) {
@@ -70,11 +86,16 @@ window.addEventListener("load", function(){
             document.body.classList.add('dark');
             if (ifStarterKit) {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo.svg')
+                    document.querySelector('.navbar-logo').setAttribute('src', '/img/logo.svg')
                 }
             } else {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', getParseObject.settings.layout.logo.darkLogo)
+                    var darkLogoPath = getParseObject.settings.layout.logo.darkLogo;
+                    // Normalize old paths to new paths
+                    if (darkLogoPath && (darkLogoPath.includes('../src/assets/img/') || darkLogoPath.includes('../../src/assets/img/'))) {
+                        darkLogoPath = '/img/logo.svg';
+                    }
+                    document.querySelector('.navbar-logo').setAttribute('src', darkLogoPath)
                 }
             }
         }
@@ -88,11 +109,16 @@ window.addEventListener("load", function(){
             document.body.classList.remove('dark');
             if (ifStarterKit) {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo2.svg')
+                    document.querySelector('.navbar-logo').setAttribute('src', '/img/logo2.svg')
                 }
             } else {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', getParseObject.settings.layout.logo.lightLogo)
+                    var lightLogoPath = getParseObject.settings.layout.logo.lightLogo;
+                    // Normalize old paths to new paths
+                    if (lightLogoPath && (lightLogoPath.includes('../src/assets/img/') || lightLogoPath.includes('../../src/assets/img/'))) {
+                        lightLogoPath = '/img/logo2.svg';
+                    }
+                    document.querySelector('.navbar-logo').setAttribute('src', lightLogoPath)
                 }
             }
             
