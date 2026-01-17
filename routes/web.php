@@ -10,10 +10,6 @@ Route::get('/sample', function () {
     return view('sample-content');
 });
 
-Route::get('/register', function () {
-    return view('auth/auth-cover-signup');
-});
-
-Route::get('/main', function () {
-    return view('layouts/main-layout');
+Route::get('/head/dashboard', function () {
+    return view('head/pages/dashboard');
 });

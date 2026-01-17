@@ -1,6 +1,4 @@
 @import './bootstrap/bootstrap.min.css';
 @import './app/loader.css';
 @import './app/plugins.css';
-
-@import './app/auth/auth-cover.css';
 @import './app/custom.css';

@@ -175,81 +175,6 @@ var App = function() {
             }
 
         },
-        themeToggle: function (layoutName) {
-
-            var togglethemeEl = document.querySelector('.theme-toggle');
-            var getBodyEl = document.body;
-            
-            togglethemeEl.addEventListener('click', function() {
-                
-                var getLocalStorage = localStorage.getItem("theme");
-                var parseObj = JSON.parse(getLocalStorage);
-
-                if (parseObj.settings.layout.darkMode) {
-
-                    var getObjectSettings = parseObj.settings.layout;
-
-                    var newParseObject = {...getObjectSettings, darkMode: false};
-
-                    var newObject = { ...parseObj, settings: { layout: newParseObject }}
-
-                    localStorage.setItem("theme", JSON.stringify(newObject))
-                    
-                    var getUpdatedLocalObject = localStorage.getItem("theme");
-                    var getUpdatedParseObject = JSON.parse(getUpdatedLocalObject);
-
-                    if (!getUpdatedParseObject.settings.layout.darkMode) {
-                        document.body.classList.remove('dark')
-                        ifStarterKit = document.body.getAttribute('page') === 'starter-pack' ? true : false;
-                        if (ifStarterKit) {
-                            document.querySelector('.navbar-logo').setAttribute('src', '/img/logo2.svg')
-                        } else {
-                            var lightLogoPath = getUpdatedParseObject.settings.layout.logo.lightLogo;
-                            // Normalize old paths to new paths
-                            if (lightLogoPath && (lightLogoPath.includes('../src/assets/img/') || lightLogoPath.includes('../../src/assets/img/'))) {
-                                lightLogoPath = '/img/logo2.svg';
-                            }
-                            document.querySelector('.navbar-logo').setAttribute('src', lightLogoPath)
-                        }
-                    }
-                    
-                } else {
-
-                    var getObjectSettings = parseObj.settings.layout;
-
-                    var newParseObject = {...getObjectSettings, darkMode: true};
-
-                    var newObject = { ...parseObj, settings: { layout: newParseObject }}
-
-                    localStorage.setItem("theme", JSON.stringify(newObject))
-                    
-                    var getUpdatedLocalObject = localStorage.getItem("theme");
-                    var getUpdatedParseObject = JSON.parse(getUpdatedLocalObject);
-
-                    if (getUpdatedParseObject.settings.layout.darkMode) {
-                        document.body.classList.add('dark')
-
-                        ifStarterKit = document.body.getAttribute('page') === 'starter-pack' ? true : false;
-
-                        if (ifStarterKit) {
-                            document.querySelector('.navbar-logo').setAttribute('src', '/img/logo.svg')
-                        } else {
-                            var darkLogoPath = getUpdatedParseObject.settings.layout.logo.darkLogo;
-                            // Normalize old paths to new paths
-                            if (darkLogoPath && (darkLogoPath.includes('../src/assets/img/') || darkLogoPath.includes('../../src/assets/img/'))) {
-                                darkLogoPath = '/img/logo.svg';
-                            }
-                            document.querySelector('.navbar-logo').setAttribute('src', darkLogoPath)
-                        }
-                        
-                    }
-                    
-                }
-                
-                // localStorage.clear()
-            })
-            
-        }
     }
 
     var inBuiltfunctionality = {
@@ -486,147 +411,6 @@ MaterialRippleEffect: function() {
             });
             
         },
-        ChangeToCollapsible: function() {
-            
-            // Main Menu
-
-            let GET_SIDEBAR_MENU_ITEMS = document.querySelectorAll('.menu');
-
-            GET_SIDEBAR_MENU_ITEMS.forEach(menuItems => {
-
-                // menuItems.addEventListener('mouseover', function() {
-
-                    // console.log('kisiks')
-
-                    let GET_CURRENT_SIDEBAR_ANCHORS = menuItems.querySelector('.dropdown-toggle');
-                    // console.log(GET_CURRENT_SIDEBAR_ANCHORS)
-                    if (GET_CURRENT_SIDEBAR_ANCHORS != null) {
-
-                        
-                        // GET_CURRENT_SIDEBAR_ANCHORS.
-                        // console.log('k989899')
-                        // console.log(GET_CURRENT_SIDEBAR_ANCHORS)
-                        
-                        if (GET_CURRENT_SIDEBAR_ANCHORS.hasAttribute('data-bs-toggle')) {
-                            let GET_NEXT_EL = GET_CURRENT_SIDEBAR_ANCHORS.nextElementSibling;
-                            // GET_CURRENT_SIDEBAR_ANCHORS.
-                            // var myDropdown = new bootstrap.dispose(GET_CURRENT_SIDEBAR_ANCHORS);
-                            // myDropdown.dispose();
-                            GET_CURRENT_SIDEBAR_ANCHORS.setAttribute('data-bs-toggle', 'collapse');
-                            
-                            // console.log('5299*')
-                            // console.log(GET_NEXT_EL)
-
-                            GET_NEXT_EL.classList.remove('dropdown-menu');
-                            GET_NEXT_EL.classList.add('collapse');
-                            GET_NEXT_EL.removeAttribute('style');
-
-                        }
-
-                    }
-                    
-
-                // })
-
-
-                // menuItems.addEventListener('mouseleave', function() {
-
-                //     console.log('kisiks')
-
-                //     let GET_CURRENT_SIDEBAR_ANCHORS = this.querySelector('.dropdown-toggle');
-                //     // console.log(GET_CURRENT_SIDEBAR_ANCHORS)
-                //     if (GET_CURRENT_SIDEBAR_ANCHORS != null) {
-
-                //         // let getNextEl = GET_CURRENT_SIDEBAR_ANCHORS.nextElementSibling;
-                        
-                //         // GET_CURRENT_SIDEBAR_ANCHORS.forEach(sidebarAnchors => {
-                //             let myDropdown = new bootstrap.Dropdown(GET_CURRENT_SIDEBAR_ANCHORS)
-                //             // console.log(sidebarAnchors)
-
-                //             // if (_core_Menu_ === 'horizontal') {
-                //                 myDropdown.hide();
-                //             // }
-                            
-                //         // });
-
-                //     }
-                    
-
-                // })
-                
-
-            });
-
-
-            // Sub Menu
-
-            let GET_SIDEBAR_SUBMENU_ITEMS = document.querySelectorAll('.sub-submenu');
-
-            GET_SIDEBAR_SUBMENU_ITEMS.forEach(subMenuItems => {
-
-                // subMenuItems.addEventListener('mouseover', function() {
-
-                    // console.log('kisiks')
-
-                    let GET_CURRENT_SIDEBAR_ANCHORS = subMenuItems.querySelector('.dropdown-toggle');
-                    // console.log(GET_CURRENT_SIDEBAR_ANCHORS)
-                    if (GET_CURRENT_SIDEBAR_ANCHORS != null) {
-
-                        
-                        // GET_CURRENT_SIDEBAR_ANCHORS.
-                        // console.log('k989899')
-                        // console.log(GET_CURRENT_SIDEBAR_ANCHORS)
-                        
-                        if (GET_CURRENT_SIDEBAR_ANCHORS.hasAttribute('data-bs-toggle')) {
-                            let GET_NEXT_EL = GET_CURRENT_SIDEBAR_ANCHORS.nextElementSibling;
-                            // GET_CURRENT_SIDEBAR_ANCHORS.
-                            // var myDropdown = new bootstrap.dispose(GET_CURRENT_SIDEBAR_ANCHORS);
-                            // myDropdown.dispose();
-                            GET_CURRENT_SIDEBAR_ANCHORS.setAttribute('data-bs-toggle', 'collapse');
-                            
-                            // console.log('5299*')
-                            // console.log(GET_NEXT_EL)
-
-                            GET_NEXT_EL.classList.remove('dropdown-menu');
-                            GET_NEXT_EL.classList.add('collapse');
-                            GET_NEXT_EL.removeAttribute('style');
-
-                        }
-
-                    }
-                    
-
-                // })
-
-
-                // menuItems.addEventListener('mouseleave', function() {
-
-                //     console.log('kisiks')
-
-                //     let GET_CURRENT_SIDEBAR_ANCHORS = this.querySelector('.dropdown-toggle');
-                //     // console.log(GET_CURRENT_SIDEBAR_ANCHORS)
-                //     if (GET_CURRENT_SIDEBAR_ANCHORS != null) {
-
-                //         // let getNextEl = GET_CURRENT_SIDEBAR_ANCHORS.nextElementSibling;
-                        
-                //         // GET_CURRENT_SIDEBAR_ANCHORS.forEach(sidebarAnchors => {
-                //             let myDropdown = new bootstrap.Dropdown(GET_CURRENT_SIDEBAR_ANCHORS)
-                //             // console.log(sidebarAnchors)
-
-                //             // if (_core_Menu_ === 'horizontal') {
-                //                 myDropdown.hide();
-                //             // }
-                            
-                //         // });
-
-                //     }
-                    
-
-                // })
-                
-
-            });
-        },
         ChangeToDropdown: function() {
 
             // Main Menu
@@ -741,7 +525,6 @@ MaterialRippleEffect: function() {
             if ( windowWidth <= MediaSize.md ) {
                 // categoryScroll.scrollCat();
                 toggleFunction.sidebar();
-                inBuiltfunctionality.ChangeToCollapsible();
             }
         },
 
@@ -751,7 +534,6 @@ MaterialRippleEffect: function() {
                 var windowWidth = window.innerWidth;
                 if ( windowWidth <= MediaSize.md ) {
                     toggleFunction.offToggleSidebarSubmenu();
-                    inBuiltfunctionality.ChangeToCollapsible();
                 }
             });
         }
@@ -842,7 +624,6 @@ MaterialRippleEffect: function() {
         init: function(Layout) {
             toggleFunction.overlay();
             toggleFunction.search();
-            toggleFunction.themeToggle(Layout);
             
             /*
                 Desktop Resoltion fn
