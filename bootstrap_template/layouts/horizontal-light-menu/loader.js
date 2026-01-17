@@ -16,7 +16,7 @@ window.addEventListener("load", function(){
                 boxed: true,
                 logo: {
                     darkLogo: '../src/assets/img/logo.svg',
-                    lightLogo: '../src/assets/img/logo2.svg'
+                    lightLogo: '../src/assets/img/itrac-header-logo.png'
                 }
             }
         },
@@ -88,7 +88,7 @@ window.addEventListener("load", function(){
             document.body.classList.remove('dark');
             if (ifStarterKit) {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo2.svg')
+                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/itrac-header-logo.png')
                 }
             } else {
                 if (document.querySelector('.navbar-logo')) {

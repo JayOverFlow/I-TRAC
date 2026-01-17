@@ -1,22 +1,19 @@
-/* use "!important" to override the style */
-/* EXAMPLE */
-/* .nav-link {
-    color: blue !important;
-} */
-
-/* Define variables */
 :root {
-    --test-var: pink;
+    --red-header: #630418;
+    --role-color: #A7A4A4;
+    --read-nav-bar: #8C0404;
 }
 
-/* NOTE: Use !important Rule to override style*/
-/* Example */
-/* .nav-link {
-    color: var(--test-var) !important;
-} */
+.header-container {
+    background-color: var(--red-header) !important;
+}
 
-#sign-up {
-    color: var(--test-var);
+#role {
+    color: var(--role-color);
+}
+
+#nav-bar {
+    background-color: var(--read-nav-bar);
 }
 
 

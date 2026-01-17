@@ -17,7 +17,7 @@ window.addEventListener("load", function(){
                 boxed: true,
                 logo: {
                     darkLogo: '/img/logo.svg',
-                    lightLogo: '/img/logo2.svg'
+                    lightLogo: '/img/itrac-header-logo.png.svg'
                 }
             }
         },
@@ -68,7 +68,7 @@ window.addEventListener("load", function(){
         if (equationThemeObject.settings.layout.logo.lightLogo && 
             (equationThemeObject.settings.layout.logo.lightLogo.includes('../src/assets/img/') || 
              equationThemeObject.settings.layout.logo.lightLogo.includes('../../src/assets/img/'))) {
-            equationThemeObject.settings.layout.logo.lightLogo = '/img/logo2.svg';
+            equationThemeObject.settings.layout.logo.lightLogo = '/img/itrac-header-logo.png';
         }
         // Save updated paths back to localStorage
         localStorage.setItem("theme", JSON.stringify(equationThemeObject));
@@ -109,14 +109,14 @@ window.addEventListener("load", function(){
             document.body.classList.remove('dark');
             if (ifStarterKit) {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '/img/logo2.svg')
+                    document.querySelector('.navbar-logo').setAttribute('src', '/img/itrac-header-logo.png')
                 }
             } else {
                 if (document.querySelector('.navbar-logo')) {
                     var lightLogoPath = getParseObject.settings.layout.logo.lightLogo;
                     // Normalize old paths to new paths
                     if (lightLogoPath && (lightLogoPath.includes('../src/assets/img/') || lightLogoPath.includes('../../src/assets/img/'))) {
-                        lightLogoPath = '/img/logo2.svg';
+                        lightLogoPath = '/img/itrac-header-logo.png';
                     }
                     document.querySelector('.navbar-logo').setAttribute('src', lightLogoPath)
                 }
