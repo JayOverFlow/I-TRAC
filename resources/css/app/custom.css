@@ -1,11 +1,17 @@
 :root {
-    --red-header: #630418;
+    --red-1: #630418;
+    --red-2: #8C0404;
+    --main-bg-color: #FAF0E7;
     --role-color: #A7A4A4;
-    --read-nav-bar: #8C0404;
+    
+}
+
+body {
+    background-color: var(--main-bg-color);
 }
 
 .header-container {
-    background-color: var(--red-header) !important;
+    background-color: var(--red-1) !important;
 }
 
 #role {
@@ -13,7 +19,7 @@
 }
 
 #nav-bar {
-    background-color: var(--read-nav-bar);
+    background-color: var(--red-2);
 }
 
 
