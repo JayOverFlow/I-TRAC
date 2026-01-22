@@ -277,7 +277,9 @@ MaterialRippleEffect: function() {
             }
         },
         EnableNavBarPopper: function() {
-            window.bootstrap.Dropdown.prototype._detectNavbar = function(){ return false; };
+            if (window.bootstrap && window.bootstrap.Dropdown) {
+                window.bootstrap.Dropdown.prototype._detectNavbar = function(){ return false; };
+            }
         },
         EnableMenuDropdownOnHover: function() {
 

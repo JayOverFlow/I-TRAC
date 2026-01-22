@@ -1,0 +1,7 @@
+.card {
+    border-color: var(--red-1) !important;
+}
+
+.card-title {
+    color: var(--red-1) !important;
+}
