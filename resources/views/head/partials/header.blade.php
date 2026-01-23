@@ -13,7 +13,7 @@
         <li class="nav-item dropdown notification-dropdown">
             <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <button type="button" class="btn p-0 border-0 bg-transparent" aria-label="Notifications">
-                    <img src="{{ asset('img/notification.png') }}" alt="Logout">
+                    <img src="{{ asset('img/notification.png') }}" alt="Notification">
                 </button>
             </a>
 
@@ -174,15 +174,18 @@
 
         <li class="ms-3">
             <div>
-                <p class="fs-6 text-white mb-0">John Rex B. Duran</p>
+                <p class="fs-6 text-white mb-0">{{ auth()->user()->name }}</p>
                 <p id="role" class="text-decoration-underline mb-0">Head - Full Stack Developer</p>
             </div>
         </li>
 
         <li class="ms-3 d-flex justify-content-center align-items-center">
-            <button type="button" class="btn p-0 border-0 bg-transparent" aria-label="Logout">
-                <img src="{{ asset('img/logout.png') }}" width="26" height="26" alt="Logout">
-            </button>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn p-0 border-0 bg-transparent" aria-label="Logout">
+                    <img src="{{ asset('img/logout.png') }}" width="26" height="26" alt="Logout">
+                </button>
+            </form>
         </li>
     </ul>
 </header>
