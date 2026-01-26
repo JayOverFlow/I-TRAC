@@ -1,0 +1,31 @@
+#cover {
+    background-color: var(--red-2);
+}
+
+.bs-stepper-circle {
+  background-color: var(--red-2) !important;
+}
+
+.bs-stepper .step.crossed + .line {
+  background-color: var(--red-2) !important;
+}
+
+.bs-stepper .step-trigger.disabled .bs-stepper-circle, .bs-stepper .step-trigger:disabled .bs-stepper-circle {
+  color: var(--white-text) !important;
+  font-weight: 700;
+}
+
+#form-check-radio-red:checked {
+    /* Changes the background color of the circle */
+    background-color: var(--red-btn); 
+    /* Changes the border color */
+    border-color: var(--red-btn);
+}
+
+#form-check-radio-red:focus {
+    /* Changes the glow/outline when clicked or tabbed to */
+    border-color: var(--red-btn);
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+

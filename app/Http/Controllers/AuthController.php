@@ -29,6 +29,21 @@ class AuthController extends Controller
         ]);
     }
 
+    public function showRegister() {
+        return view('auth/register');
+    }
+
+    public function register(Request $request) {
+        // Validate user credentials
+        
+
+        // Authenticate credentials
+        
+
+        // Handle failed authentication
+        
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

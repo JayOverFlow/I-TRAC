@@ -1,13 +1,18 @@
 :root {
     --red-1: #630418;
     --red-2: #8C0404;
-    --main-bg-color: #FAF0E7;
+    --white-1: #FAF0E7;
+    --white-2: #FFFFFF;
+    --white-3: #F8F9FA;
+    --red-btn: #C62742;
     --role-color: #A7A4A4;
-    
+    --black-text: #020202;
+    --white-text: #FFFFFF;
+    --red-text: #C62742;
 }
 
 body {
-    background-color: var(--main-bg-color);
+    background-color: var(--white-2);
     font-family: "Nunito", sans-serif;
     font-optical-sizing: auto;
     font-weight: 500;
@@ -24,6 +29,23 @@ body {
 
 #nav-bar {
     background-color: var(--red-2);
+}
+
+.black-text {
+    color: var(--black-text);
+}
+
+.white-text {
+    color: var(--white-text);
+}
+
+.btn-red {
+  background-color: var(--red-btn) !important;
+  color: var(--white-text) !important;
+}
+
+.red-text {
+    color: var(--red-text);
 }
 
 
