@@ -19,7 +19,7 @@ Route::get('/head/dashboard', function () {
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('show.login');
     Route::post('/login', 'login')->name('login');
-    // Route::get('/register', 'showRegister')->name('show.register');
-    // Route::post('/register', 'register')->name('register');
+    Route::get('/register', 'showRegister')->name('show.register');
+    Route::post('/register', 'register')->name('register');
     Route::post('/logout', 'logout')->name('logout');
 });

@@ -2,7 +2,9 @@ window.addEventListener("load", function(){
 
     // Remove Loader
     var load_screen = document.getElementById("load_screen");
-    document.body.removeChild(load_screen);
+    if (load_screen && load_screen.parentNode) {
+        document.body.removeChild(load_screen);
+    }
 
     var layoutName = 'Horizontal Light Menu';
     var ifStarterKit; // Added declaration for ifStarterKit
