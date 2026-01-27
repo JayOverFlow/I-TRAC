@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth/register/page-specific/bsStepper.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth/register/page-specific/scrollspyNav.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth/register/page-specific/custom-bsStepper.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth/register/page-specific/modal.css') }}">
 
 </head>
 <body class="layout-boxed">
@@ -284,7 +285,7 @@
 
                                 <div class="button-action mt-5 d-flex justify-content-center">
                                     <button class="btn btn-red btn-back me-3">Back</button>
-                                    <button class="btn btn-red btn-nxt">Next</button>
+                                    <button class="btn btn-red btn-nxt" id="step3-next-btn" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Next</button>
                                 </div>
                             </div>
                             <div id="validationStep-four" class="content" role="tabpanel" >
@@ -343,6 +344,32 @@
 
                         </form>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal --}}
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title black-text" id="exampleModalCenterTitle">Email Verification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="modal-heading mb-4 mt-2 black-text">Send Verification Code</h4>
+                    <p class="modal-text">A 6-digit verification code will be sent to your TUP email address. Please confirm you want to proceed.</p>
+                    <div class="alert alert-info black-text">
+                        <i class="fas fa-info-circle me-2"></i>
+                        The code will be sent to: <strong id="modal-email-display"></strong>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light-dark black-text" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-red" id="send-code-btn">Send Code</button>
                 </div>
             </div>
         </div>
