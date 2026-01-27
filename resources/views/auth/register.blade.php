@@ -14,6 +14,9 @@
     <!-- Vite for GLOBAL MANDATORY css and js-->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Font Awesome for icons --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     {{-- NOTE: FIX THIS AND SET THIS TO A GLOBAL IN VITE --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
@@ -239,7 +242,12 @@
                                         </div>
 
                                         <div>
-                                            <h6 class="mb-0">Password</h6>
+                                            <h6 class="mb-0">
+                                                Password
+                                                <button type="button" class="btn btn-link p-0 text-decoration-none ms-2 bg-transparent border-0" id="toggle-password-review">
+                                                    <i class="fas fa-eye" id="password-toggle-icon"></i>
+                                                </button>
+                                            </h6>
                                             <h5 class="black-text" id="review-password"></h5>
                                         </div>
                                     </div>
