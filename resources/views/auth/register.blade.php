@@ -79,44 +79,69 @@
                                 <div id="test-form-1" class="needs-validation">
                                     <div class="form-group mb-2">
                                         {{-- First Name --}}
-                                        <div class="d-flex align-items-center">
-                                            <label for="validationStepform-first-name">First Name</label>
-                                            <div class="invalid-feedback ms-2">Please enter your first name</div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="first-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                First Name
+                                            </label>
+                                            
+                                            <div class="invalid-feedback ms-2 mt-0">
+                                                Please enter your first name
+                                            </div>
                                         </div>
-                                        <input type="text" class="form-control mb-2" id="validationStepform-first-name" placeholder="" value="test">
+                                        <input type="text" class="form-control mb-2" id="first-name" placeholder="">
 
                                         {{-- Middle Name --}}
-                                        <div class="d-flex align-items-center">
-                                            <label for="validationStepform-middle-name">Middle Name</label>
-                                            <div class="invalid-feedback">Please enter your middle name</div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="middle-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                Middle Name
+                                            </label>
+                                            
+                                            <div class="invalid-feedback ms-2 mt-0">
+                                                Please enter your middle name
+                                            </div>
                                         </div>
-                                        <input type="text" class="form-control mb-2" id="validationStepform-middle-name" placeholder="">
+                                        <input type="text" class="form-control mb-2" id="middle-name" placeholder="">
                                         
 
                                         {{-- Last Name --}}
-                                        <div class="d-flex align-items-center">
-                                            <label for="validationStepform-last-name">Last Name</label>
-                                            <div class="invalid-feedback">Please enter your last name</div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                Last Name
+                                            </label>
+                                            
+                                            <div class="invalid-feedback ms-2 mt-0">
+                                                Please enter your last name
+                                            </div>
                                         </div>
-                                        <input type="text" class="form-control mb-2" id="validationStepform-last-name" placeholder="">
+                                        <input type="text" class="form-control mb-2" id="last-name" placeholder="">
                                         
                                         <div class="row">
                                             <div class="col-6">
                                                 {{-- Suffix --}}
-                                                <div class="d-flex align-items-center">
-                                                    <label for="validationStepform-suffix">Suffix</label>
-                                                    <div class="invalid-feedback">Please enter your suffix</div>
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                        Suffix
+                                                    </label>
+                                                    
+                                                    <div class="invalid-feedback ms-2 mt-0">
+                                                        Please enter your suffix
+                                                    </div>
                                                 </div>
-                                                <input type="text" class="form-control" id="validationStepform-suffix" placeholder="">
+                                                <input type="text" class="form-control" id="suffix" placeholder="">
                                             </div>
 
                                             <div class="col-6">
                                                 {{-- TUPT-ID --}}
-                                                <div class="d-flex align-items-center">
-                                                    <label for="validationStepform-tupt-id">TUPT-ID</label>
-                                                    <div class="invalid-feedback">Please enter your TUPT-ID</div>
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                        TUPT ID
+                                                    </label>
+                                                    
+                                                    <div class="invalid-feedback ms-2 mt-0">
+                                                        Please enter your TUPT ID
+                                                    </div>
                                                 </div>
-                                                <input type="text" class="form-control" id="validationStepform-tupt-id" placeholder="">
+                                                <input type="text" class="form-control" id="tupt-id" placeholder="">
                                             </div>
                                         </div>
                                     </div>
@@ -131,53 +156,59 @@
                                 <div class="needs-validation">
                                     <div class="form-group mb-2">
                                         {{-- TUPT Email --}}
-                                        <div class="d-flex align-items-center">
-                                            <label for="validationStepEmailAddress">TUPT Email</label>
-                                            <div class="invalid-feedback ms-2">Please fill the TUPT email field</div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="email" class="form-label mb-0 flex-shrink-0 text-nowrap">Email</label>
+                                            <div class="invalid-feedback ms-2 mt-0">Please fill the email field</div>
                                         </div>
-                                        <input type="email" class="form-control mb-2" id="validationStepEmailAddress" placeholder="" value="test">
+                                        <input type="email" class="form-control mb-2" id="email" placeholder="" value="test">
 
                                         {{-- Password --}}
-                                            <label for="validationStepEmailAddress">Password</label>
-                                        <input type="email" class="form-control mb-2" id="validationStepEmailAddress" placeholder="">
-                                        <div class="invalid-feedback">Please fill the password field</div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="password" class="form-label mb-0 flex-shrink-0 text-nowrap">Password</label>
+                                            <div class="invalid-feedback ms-2 mt-0">Please fill the password field</div>
+                                        </div>
+                                        <input type="password" class="form-control mb-2" id="password" placeholder="">
 
                                         {{-- Confirm Password --}}
-                                        <label for="validationStepEmailAddress">Confirm Password</label>
-                                        <input type="email" class="form-control mb-2" id="validationStepEmailAddress" placeholder="">
-                                        <div class="invalid-feedback">Please fill the confirm password field</div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="confirm-password" class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm Password</label>
+                                            <div class="invalid-feedback ms-2 mt-0">Please fill the confirm password field</div>
+                                        </div>
+                                        <input type="password" class="form-control mb-2" id="confirm-password" placeholder="">
 
                                         <div class="row">
                                             <div class="col-6">
                                                 {{-- User Type --}}
-                                                <div class="mb-3">
-                                                    <label for="">User Type</label>
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <label for="user-type" class="form-label mb-0 flex-shrink-0 text-nowrap">User Type</label>
+                                                    <div class="invalid-feedback ms-2 mt-0">Please choose your user type</div>
                                                 </div>
                                                 
-                                                <div>
-                                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="form-check-radio-red">
+                                                <div class="mt-4">
+                                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="user-type">
                                                 <label class="form-check-label me-4" for="form-check-radio-danger">
                                                     Faculty
                                                 </label>
                                                 
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="form-check-radio-red">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="user-type">
                                                 <label class="form-check-label" for="form-check-radio-danger">
                                                     Staff
                                                 </label>
                                                 </div>
-                                                <div class="invalid-feedback">Please choose your user type</div>
                                             </div>
 
                                             <div class="col-6">
                                                 {{-- Department/Office --}}
-                                                <label for="validationStepform-name">Department/Office</label>
-                                                <select class="form-select" aria-label="Default select example">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <label for="department" class="form-label mb-0 flex-shrink-0 text-nowrap">Department/Office</label>
+                                                    <div class="invalid-feedback ms-2 mt-0">Select Department/Office</div>
+                                                </div>
+                                                <select class="form-select" aria-label="Default select example" id="department">
                                                     <option selected>Open this select menu</option>
                                                     <option value="1">One</option>
                                                     <option value="2">Two</option>
                                                     <option value="3">Three</option>
                                                 </select>
-                                                <div class="invalid-feedback">Please enter your Department/Office</div>
                                             </div>
                                         </div>
                                     </div>
