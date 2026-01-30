@@ -126,7 +126,7 @@
                                             <div class="col-6">
                                                 {{-- Suffix --}}
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                    <label for="suffix" class="form-label mb-0 flex-shrink-0 text-nowrap">
                                                         Suffix
                                                     </label>
                                                     
@@ -140,7 +140,7 @@
                                             <div class="col-6">
                                                 {{-- TUP-ID --}}
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                    <label for="tup-id" class="form-label mb-0 flex-shrink-0 text-nowrap">
                                                         TUP ID
                                                     </label>
                                                     
@@ -187,18 +187,18 @@
                                             <div class="col-6">
                                                 {{-- User Type --}}
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <label for="user-type" class="form-label mb-0 flex-shrink-0 text-nowrap">User Type</label>
+                                                    <label class="form-label mb-0 flex-shrink-0 text-nowrap">User Type</label>
                                                     <div class="invalid-feedback ms-2 mt-0">Please choose your user type</div>
                                                 </div>
                                                 
                                                 <div class="mt-4">
-                                                    <input class="form-check-input" type="radio" name="user-type" id="user-type">
-                                                <label class="form-check-label me-4" for="form-check-radio-danger">
+                                                    <input class="form-check-input" type="radio" name="user-type" id="user-type-faculty">
+                                                <label class="form-check-label me-4" for="user-type-faculty">
                                                     Faculty
                                                 </label>
                                                 
-                                                <input class="form-check-input" type="radio" name="user-type" id="user-type" checked>
-                                                <label class="form-check-label" for="form-check-radio-danger">
+                                                <input class="form-check-input" type="radio" name="user-type" id="user-type-staff" checked>
+                                                <label class="form-check-label" for="user-type-staff">
                                                     Staff
                                                 </label>
                                                 </div>
@@ -382,6 +382,5 @@
     <script src="{{ asset('js/auth/register/page-specific/bsStepper.min.js') }}" ></script>
     <script src="{{ asset('js/auth/register/page-specific/custom-bsStepper.min.js') }}" ></script>
     <script src="{{ asset('js/auth/register/page-specific/2-Step-Verification.js') }}" ></script>
-
 </body>
 </html>
