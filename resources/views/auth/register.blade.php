@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {{-- Used for Email Verification for security --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
 
     {{-- Google Fonts --}}
@@ -78,6 +80,7 @@
                     </div>
                     <div class="bs-stepper-content">
                         <form class="needs-validation" onsubmit="return false" novalidate>
+                        @csrf
 
                             <div id="validationStep-one" class="content" role="tabpanel">
                                 <div id="test-form-1" class="needs-validation">
