@@ -12,8 +12,7 @@ class EmailVerification extends Model
     protected $table = 'email_verifications'; // The table name
     protected $primaryKey = 'email_id'; // The PR of the table
     public $incrementing = true; // Optional cause Laravel automatically set it
-    // NOTE: Use 'int' if causes an error
-    protected $keyType = 'bigint'; // Tell the Laravel the datatype of the PK
+    protected $keyType = 'int'; // Tell the Laravel the datatype of the PK
 
     // Mass assignment fields
     protected $fillable = [
