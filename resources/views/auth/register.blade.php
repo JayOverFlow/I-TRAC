@@ -95,7 +95,7 @@
                                                 Please enter your first name
                                             </div>
                                         </div>
-                                        <input type="text" class="form-control mb-2" id="first-name" value="test">
+                                        <input type="text" class="form-control mb-2" id="first-name" name="first_name" value="test">
 
                                         {{-- Middle Name --}}
                                         <div class="d-flex align-items-center mb-2">
@@ -107,7 +107,7 @@
                                                 Please enter your middle name
                                             </div>
                                         </div>
-                                        <input type="text" class="form-control mb-2" id="middle-name" value="test">
+                                        <input type="text" class="form-control mb-2" id="middle-name" name="middle_name" value="test">
                                         
 
                                         {{-- Last Name --}}
@@ -120,7 +120,7 @@
                                                 Please enter your last name
                                             </div>
                                         </div>
-                                        <input type="text" class="form-control mb-2" id="last-name" value="test">
+                                        <input type="text" class="form-control mb-2" id="last-name" name="last_name" value="test">
                                         
                                         <div class="row">
                                             <div class="col-6">
@@ -134,7 +134,7 @@
                                                         Please enter your suffix
                                                     </div>
                                                 </div>
-                                                <input type="text" class="form-control" id="suffix" placeholder="Optional">
+                                                <input type="text" class="form-control" id="suffix" name="suffix" placeholder="Optional">
                                             </div>
 
                                             <div class="col-6">
@@ -148,7 +148,7 @@
                                                         Please enter your TUP ID
                                                     </div>
                                                 </div>
-                                                <input type="text" class="form-control" id="tup-id" placeholder="6 digits" value="123456">
+                                                <input type="text" class="form-control" id="tup-id" name="tup_id" placeholder="6 digits" value="123456">
                                             </div>
                                         </div>
                                     </div>
@@ -167,21 +167,21 @@
                                             <label for="email" class="form-label mb-0 flex-shrink-0 text-nowrap">Email</label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the email field</div>
                                         </div>
-                                        <input type="email" class="form-control mb-2" id="email" placeholder="example@tup.edu.ph" value="test@tup.edu.ph">
+                                        <input type="email" class="form-control mb-2" id="email" name="email" placeholder="example@tup.edu.ph" value="test@tup.edu.ph">
 
                                         {{-- Password --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="password" class="form-label mb-0 flex-shrink-0 text-nowrap">Password</label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the password field</div>
                                         </div>
-                                        <input type="password" class="form-control mb-2" id="password" placeholder="At least 8 characters with one letter and one number." value="password123">
+                                        <input type="password" class="form-control mb-2" id="password" id="password" placeholder="At least 8 characters with one letter and one number." value="password123">
 
                                         {{-- Confirm Password --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="confirm-password" class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm Password</label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the confirm password field</div>
                                         </div>
-                                        <input type="password" class="form-control mb-2" id="confirm-password" value="password123">
+                                        <input type="password" class="form-control mb-2" id="confirm-password" name="confirm_password" value="password123">
 
                                         <div class="row">
                                             <div class="col-6">
@@ -192,15 +192,17 @@
                                                 </div>
                                                 
                                                 <div class="mt-4">
-                                                    <input class="form-check-input" type="radio" name="user-type" id="user-type-faculty">
+                                                    <input class="form-check-input" type="radio" name="user_type" id="user-type-faculty" value="Faculty">
                                                 <label class="form-check-label me-4" for="user-type-faculty">
                                                     Faculty
                                                 </label>
                                                 
-                                                <input class="form-check-input" type="radio" name="user-type" id="user-type-staff" checked>
+                                                <input class="form-check-input" type="radio" name="user_type" id="user-type-staff" value="Staff">
                                                 <label class="form-check-label" for="user-type-staff">
                                                     Staff
                                                 </label>
+                                                
+                                                <div class="invalid-feedback mt-2">Please select a user type.</div>
                                                 </div>
                                             </div>
 
@@ -211,11 +213,11 @@
                                                     <div class="invalid-feedback ms-2 mt-0">Select Department/Office</div>
                                                 </div>
                                                 <select class="form-select" aria-label="Default select example" id="department">
-                                                    <option selected>Select</option>
+                                                    <option value="">Select</option>
                                                     <option value="1">One</option>
                                                     <option value="2">Two</option>
                                                     <option value="3">Three</option>
-                                                    <option value="67" selected>Six Seven</option>
+                                                    <option value="4">Six Seven</option>
                                                 </select>
                                             </div>
                                         </div>
