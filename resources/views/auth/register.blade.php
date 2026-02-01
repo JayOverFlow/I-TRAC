@@ -213,11 +213,10 @@
                                                     <div class="invalid-feedback ms-2 mt-0">Select Department/Office</div>
                                                 </div>
                                                 <select class="form-select" aria-label="Default select example" id="department">
-                                                    <option value="">Select</option>
-                                                    <option value="1">One</option>
-                                                    <option value="2">Two</option>
-                                                    <option value="3">Three</option>
-                                                    <option value="4">Six Seven</option>
+                                                    <option value="" selected disabled>Select</option>
+                                                    @foreach ($departments as $deps)
+                                                        <option value="{{ $deps->dep_id }}">{{ $deps->dep_name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>

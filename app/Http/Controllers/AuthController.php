@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use App\Models\Department;
+
 class AuthController extends Controller
 {
     public function showLogin() {
@@ -31,7 +33,10 @@ class AuthController extends Controller
     }
 
     public function showRegister() {
-        return view('auth/register');
+        // Get the departments in the db for dropdown
+        $departments = Department::orderBy('dep_name', 'asc')->get();
+
+        return view('auth/register', compact('departments'));
     }
 
     public function register(Request $request) {
