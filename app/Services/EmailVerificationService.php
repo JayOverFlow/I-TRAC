@@ -14,6 +14,11 @@ class EmailVerificationService
         // Delete exiting code for this email
         $this->deleteActiveCodes($email);
 
+        // Also clean up any expired codes for this email
+        EmailVerification::getExpiredCodes()
+            ->where('email', $email)
+            ->delete();
+
         // Generate a new 6 digit code
         $code = $this->generateCode();
 
@@ -29,8 +34,12 @@ class EmailVerificationService
 
     // Valdiate the code
     public function validateCode($email, $userCode) {
+        // Clean up expired codes for this email
+        EmailVerification::getExpiredCodes()
+            ->where('email', $email)
+            ->delete();
 
-        // Get the active code that correponds to email
+        // Get the active code that corresponds to email
         $verification = EmailVerification::getActiveCodes()
             ->where('email', $email)
             ->where('verification_code', $userCode)
@@ -62,7 +71,7 @@ class EmailVerificationService
         // Get the recent code sent to the email
         $recentCode = EmailVerification::getActiveCodes()
             ->where('email' , $email)
-            ->where('created_at', '>', now()->subMinutes(5))
+            ->where('created_at', '>', now()->subMinutes(1))
             ->first();
 
         return !$recentCode; 

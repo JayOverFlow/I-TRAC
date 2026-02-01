@@ -339,7 +339,7 @@
                                     
                                     <div class="col-12">
                                         <div class="text-center">
-                                            <p class="mb-0 black-text">Didn't receive the code? <a href="javascript:void(0);" class="red-text">Resend</a></p>
+                                            <p class="mb-0 black-text">Didn't receive the code? <a href="javascript:void(0);" class="red-text" id="resend-code-btn" disabled>Resend</a> <span id="resend-timer" class="text-muted"></span></p>
                                         </div>
                                     </div>
                                         
