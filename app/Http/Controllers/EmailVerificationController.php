@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerificationCodeMail;
 use App\Services\EmailVerificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class EmailVerificationController extends Controller
 {
@@ -19,19 +21,14 @@ class EmailVerificationController extends Controller
             // Get the user email
             $email = $request->email;
 
-            // Check rate limitng to avoid spam
-            if (!$this->emailVerificationService->canRequestNewCode($email)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please wait 5 minutes before requesting another code'
-                    ],429 // This code means Too Many Requests
-                );
-            }
-
             // If passed the guard block
-            // Create and send code
+            // Create code
             $code = $this->emailVerificationService->createVerificationCode($email);
-            // TODO: Send actual email later
+
+            // Send code
+            Mail::to($email)->send(new VerificationCodeMail($code));
+
+            // Feedback
             return response()->json([
                 'success' => true,
                 'message' => '6-digit verification code sent successfully',
