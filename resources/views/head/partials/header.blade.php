@@ -174,7 +174,7 @@
 
         <li class="ms-3">
             <div>
-                <p class="fs-6 text-white mb-0">User's Name</p>
+                <p class="fs-6 text-white mb-0">Name</p>
                 <p id="role" class="text-decoration-underline mb-0">Head - Full Stack Developer</p>
             </div>
         </li>
