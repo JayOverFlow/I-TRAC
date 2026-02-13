@@ -131,7 +131,7 @@
             <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
                     <div class="avatar avatar-sm avatar-indicators avatar-online">
-                        <img alt="avatar" src="{{ asset('img/profile-30.png') }}" class="rounded-circle head-avatar">
+                        <img alt="avatar" src="{{ asset('img/profile-30.png') }}" class="rounded-circle faculty-avatar">
                     </div>
                 </div>
             </a>
@@ -175,7 +175,7 @@
         <li class="ms-3">
             <div>
                 <p class="fs-6 text-white mb-0">User's Name</p>
-                <p id="role" class="text-decoration-underline mb-0">Head - Full Stack Developer</p>
+                <p id="role" class="text-decoration-underline mb-0">Faculty Office</p>
             </div>
         </li>
 
