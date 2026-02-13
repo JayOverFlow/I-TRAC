@@ -35,7 +35,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'password',
+        'user_password',
         'remember_token',
     ];
 
@@ -48,7 +48,31 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'user_password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the email field for authentication.
+     */
+    public function getEmailForPasswordReset()
+    {
+        return $this->user_email;
+    }
+
+    /**
+     * Get the password field for authentication.
+     */
+    public function getAuthPassword()
+    {
+        return $this->user_password;
+    }
+
+    /**
+     * Get the email field name.
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'user_email';
     }
 }
