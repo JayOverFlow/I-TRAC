@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\EmailVerificationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -29,4 +30,15 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(EmailVerificationController::class)->group(function () {
     Route::post('/email/send-code', 'sendVerificationCode')->name('email.send-code');
     Route::post('/email/verify-code', 'verifyCode')->name('email.verify-code');
+});
+
+
+
+// Master Admin
+Route::controller(AdminAuthController::class)->group(function () {
+    Route::get('/admin-register', 'adminShowRegister')->name('admin.show.register');
+    Route::post('/admin-register', 'adminRegister')->name('admin.register'); // Handle the submission of the admin registration form
+    Route::get('/admin-login', 'adminShowLogin')->name('admin.show.login');
+    Route::post('/admin-login', 'adminLogin')->name('admin.login'); // Handle the submission of the admin login form
+    Route::get('/admin-welcome', 'adminWelcome')->name('admin.welcome'); // Admin welcome page
 });
