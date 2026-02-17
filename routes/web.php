@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
@@ -47,4 +48,13 @@ Route::controller(EmailVerificationController::class)->group(function () {
 // Tasks
 Route::controller(TaskController::class)->group(function () {
     Route::get('/tasks', 'showTasks')->name('show.tasks');
+
+
+// Master Admin
+Route::controller(AdminAuthController::class)->group(function () {
+    Route::get('/admin-register', 'adminShowRegister')->name('admin.show.register');
+    Route::post('/admin-register', 'adminRegister')->name('admin.register'); // Handle the submission of the admin registration form
+    Route::get('/admin-login', 'adminShowLogin')->name('admin.show.login');
+    Route::post('/admin-login', 'adminLogin')->name('admin.login'); // Handle the submission of the admin login form
+    Route::get('/admin-welcome', 'adminWelcome')->name('admin.welcome'); // Admin welcome page
 });
