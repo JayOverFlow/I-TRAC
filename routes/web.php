@@ -18,6 +18,18 @@ Route::get('/head/dashboard', function () {
     return view('head/pages/dashboard');
 });
 
+Route::get('/supply/dashboard', function () {
+    return view('supply/pages/dashboard');
+});
+
+Route::get('/procurement/tasks', function () {
+    return view('procurement/pages/tasks');
+});
+
+Route::get('/faculty/mr', function () {
+    return view('faculty/pages/mr');
+});
+
 // Authentication
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('show.login');

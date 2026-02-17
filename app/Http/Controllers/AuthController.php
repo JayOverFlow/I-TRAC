@@ -14,22 +14,34 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
-        // Validate user credentials
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => ['required'],
+        // Valdations
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|exists:users,user_email',
+            'password' => 'required|string'
         ]);
 
-        // Authenticate credentials
-        if(Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // Prevent session fixation for security
-            return redirect()->intended('head/dashboard'); // Redirect to logged in page using ROUTE NAME
+        if ($validator->fails()) {
+            // Authentication failed
+            return back()
+                ->withErrors(['all_fields' => 'All fields are required.'])
+                ->withInput($request->only('email'));
         }
 
-        // Handle failed authentication
+        // Get validated credentials
+        $credentials = $validator->validated();
+
+        // Authenticate login
+        if (Auth::attempt(['user_email' => $credentials['email'], 'password' => $credentials['password']])) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('head/dashboard');
+        }
+
+        // Authentication failed
         return back()->withErrors([
-            'msg' => 'The provided credentials do not match our records.',
-        ]);
+            'auth_failed' => 'Email or password is invalid.'
+        ])->withInput($request->only('email'));
+        
     }
 
     public function showRegister() {
