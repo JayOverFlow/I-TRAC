@@ -32,7 +32,7 @@
         </li>
 
         <li class="menu">
-            <a href="#dashboard" class="dropdown-toggle d-flex align-items-center gap-2">
+            <a href="{{ route('show.tasks') }}" class="dropdown-toggle d-flex align-items-center gap-2">
                 <img src="{{ asset('img/tasks.png') }}" width="24" height="24" alt=""> 
                 <span>Tasks</span>
             </a>
