@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -41,4 +42,9 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(EmailVerificationController::class)->group(function () {
     Route::post('/email/send-code', 'sendVerificationCode')->name('email.send-code');
     Route::post('/email/verify-code', 'verifyCode')->name('email.verify-code');
+});
+
+// Tasks
+Route::controller(TaskController::class)->group(function () {
+    Route::get('/tasks', 'showTasks')->name('show.tasks');
 });
