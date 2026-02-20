@@ -3,6 +3,9 @@
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/dt-global_style.css') }}">
 
+    <!-- FilePond CSS -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/custom-tasks.css') }}">
 @endpush
@@ -89,6 +92,11 @@
 @push('js')
     <!-- Page SPECIFIC js -->
     <script src="{{ asset('js/general-pages/tasks/page-specific/datatables.js') }}"></script>
+
+    <!-- FilePond JavaScript -->
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+
     <script>
         $('#zero-config').DataTable({
             "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'>>>" +
@@ -107,10 +115,12 @@
             "pageLength": 5,
             "initComplete": function() {
                 $('.dt--top-section .col-12.d-flex.justify-content-sm-end').html(
-                    '<button class="btn btn-red" id="import-app">Import</button>');
+                    '<button class="btn btn-red" id="import-app-btn" data-url="{{ route('show.import.app') }}">Import</button>'
+                );
             }
         });
     </script>
 
     <!-- CUSTOM js -->
+    <script src="{{ asset('js/head/tasks/head-tasks.js') }}"></script>
 @endpush

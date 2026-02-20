@@ -1,0 +1,557 @@
+-- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
+--
+-- Host: localhost    Database: itrac_db
+-- ------------------------------------------------------
+-- Server version	8.0.44
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `admins_tbl`
+--
+
+DROP TABLE IF EXISTS `admins_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `admins_tbl` (
+  `admin_id` bigint NOT NULL AUTO_INCREMENT,
+  `admin_username` varchar(100) DEFAULT NULL,
+  `admin_password` varchar(100) DEFAULT NULL,
+  `admin_key` bigint DEFAULT NULL,
+  PRIMARY KEY (`admin_id`),
+  KEY `admin_key` (`admin_key`),
+  CONSTRAINT `admins_tbl_ibfk_1` FOREIGN KEY (`admin_key`) REFERENCES `master_keys_tbl` (`master_key_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `admins_tbl`
+--
+
+LOCK TABLES `admins_tbl` WRITE;
+/*!40000 ALTER TABLE `admins_tbl` DISABLE KEYS */;
+/*!40000 ALTER TABLE `admins_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_items_tbl`
+--
+
+DROP TABLE IF EXISTS `app_items_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `app_items_tbl` (
+  `app_item_id` bigint NOT NULL AUTO_INCREMENT,
+  `app_id_fk` bigint DEFAULT NULL,
+  `app_item_name` varchar(100) DEFAULT NULL,
+  `app_item_pmo` varchar(150) DEFAULT NULL,
+  `app_item_mode` varchar(100) DEFAULT NULL,
+  `app_item_estimated_total` decimal(10,2) DEFAULT NULL,
+  `app_item_estimated_mooe` decimal(10,2) DEFAULT NULL,
+  `app_item_estimated_co` decimal(10,2) DEFAULT NULL,
+  `app_item_remarks` varchar(150) DEFAULT NULL,
+  `app_item_adspost` date DEFAULT NULL,
+  `app_item_subopen` date DEFAULT NULL,
+  `app_item_notice` date DEFAULT NULL,
+  `app_item_contract` date DEFAULT NULL,
+  `app_item_source_fund` varchar(100) DEFAULT NULL,
+  `app_item_code` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`app_item_id`),
+  KEY `fk_app_items_app` (`app_id_fk`),
+  CONSTRAINT `fk_app_items_app` FOREIGN KEY (`app_id_fk`) REFERENCES `app_tbl` (`app_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_items_tbl`
+--
+
+LOCK TABLES `app_items_tbl` WRITE;
+/*!40000 ALTER TABLE `app_items_tbl` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_items_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_tbl`
+--
+
+DROP TABLE IF EXISTS `app_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `app_tbl` (
+  `app_id` bigint NOT NULL AUTO_INCREMENT,
+  `app_ppmp_items_id_fk` bigint DEFAULT NULL,
+  `app_status` enum('Draft','Pending','Rejected','Approved') DEFAULT NULL,
+  `saved_by_user_id_fk` bigint unsigned DEFAULT NULL,
+  `app_prepared_by_name` bigint unsigned DEFAULT NULL,
+  `app_prepared_by_designation` varchar(100) DEFAULT NULL,
+  `app_recommending_by_name` bigint unsigned DEFAULT NULL,
+  `app_recommending_by_designation` varchar(100) DEFAULT NULL,
+  `app_approved_by_name` bigint unsigned DEFAULT NULL,
+  `app_approved_by_designation` varchar(100) DEFAULT NULL,
+  `app_dep_id_fk` bigint DEFAULT NULL,
+  PRIMARY KEY (`app_id`),
+  KEY `fk_app_saved_by` (`saved_by_user_id_fk`),
+  KEY `fk_app_prepared_by` (`app_prepared_by_name`),
+  KEY `fk_app_recommending_by` (`app_recommending_by_name`),
+  KEY `fk_app_approved_by` (`app_approved_by_name`),
+  KEY `fk_app_department` (`app_dep_id_fk`),
+  CONSTRAINT `fk_app_approved_by` FOREIGN KEY (`app_approved_by_name`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `fk_app_department` FOREIGN KEY (`app_dep_id_fk`) REFERENCES `departments_tbl` (`dep_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_app_prepared_by` FOREIGN KEY (`app_prepared_by_name`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `fk_app_recommending_by` FOREIGN KEY (`app_recommending_by_name`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `fk_app_saved_by` FOREIGN KEY (`saved_by_user_id_fk`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_tbl`
+--
+
+LOCK TABLES `app_tbl` WRITE;
+/*!40000 ALTER TABLE `app_tbl` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache`
+--
+
+DROP TABLE IF EXISTS `cache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cache` (
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache`
+--
+
+LOCK TABLES `cache` WRITE;
+/*!40000 ALTER TABLE `cache` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_locks`
+--
+
+DROP TABLE IF EXISTS `cache_locks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cache_locks` (
+  `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_locks`
+--
+
+LOCK TABLES `cache_locks` WRITE;
+/*!40000 ALTER TABLE `cache_locks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_locks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `departments_tbl`
+--
+
+DROP TABLE IF EXISTS `departments_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `departments_tbl` (
+  `dep_id` bigint NOT NULL AUTO_INCREMENT,
+  `dep_name` varchar(255) NOT NULL,
+  `dep_type` enum('academic','administrative') NOT NULL,
+  PRIMARY KEY (`dep_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `departments_tbl`
+--
+
+LOCK TABLES `departments_tbl` WRITE;
+/*!40000 ALTER TABLE `departments_tbl` DISABLE KEYS */;
+INSERT INTO `departments_tbl` VALUES (1,'Basic Arts and Sciences Department','academic'),(2,'Civil and Allied Department','academic'),(3,'Mechanical and Allied Department','academic'),(4,'Electrical and Allied Department','academic'),(5,'Office of Student Affairs','administrative'),(6,'Admission, Guidance and Counseling','administrative'),(7,'Research and Development Services','administrative'),(8,'Extension Services','administrative'),(9,'Innovation and Technology Support Office','administrative'),(10,'Technology Licensing Office Coordinator','administrative'),(11,'Quality Assurance','administrative'),(12,'University Information Technology Center','administrative'),(13,'Gender and Development','administrative'),(14,'Human Resource Management','administrative'),(15,'Property and Supply','administrative'),(16,'Procurement','administrative'),(17,'Infrastructure Development','administrative'),(18,'Building and Grounds Maintenance','administrative'),(19,'Accounting','administrative'),(20,'Budgeting','administrative'),(21,'Collecting and Disbursing','administrative'),(22,'Medical Services','administrative'),(23,'Dental Services','administrative'),(24,'Records Management','administrative'),(25,'BAC Secretariat','administrative'),(26,'Campus Business Manager','administrative'),(27,'Registration','administrative'),(28,'Learning Resource Center','administrative'),(29,'Sports and Cultural Development','administrative'),(30,'Planning Office','administrative'),(31,'National Service Training Program','administrative'),(35,'Director\'s Office','administrative'),(36,'Assistant Director for Academic Affairs Office','administrative'),(38,'Assistant Director for Research and Extension Office','administrative'),(39,'Project Management Committee','administrative'),(40,'Assistant Director for Administration and Finance Office','administrative');
+/*!40000 ALTER TABLE `departments_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `email_verifications`
+--
+
+DROP TABLE IF EXISTS `email_verifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `email_verifications` (
+  `email_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `verification_code` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expires_at` timestamp NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`email_id`),
+  KEY `email_verifications_email_index` (`email`),
+  KEY `email_verifications_expires_at_index` (`expires_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `email_verifications`
+--
+
+LOCK TABLES `email_verifications` WRITE;
+/*!40000 ALTER TABLE `email_verifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `email_verifications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `failed_jobs`
+--
+
+DROP TABLE IF EXISTS `failed_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `failed_jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `failed_jobs`
+--
+
+LOCK TABLES `failed_jobs` WRITE;
+/*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `job_batches`
+--
+
+DROP TABLE IF EXISTS `job_batches`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `job_batches` (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cancelled_at` int DEFAULT NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `job_batches`
+--
+
+LOCK TABLES `job_batches` WRITE;
+/*!40000 ALTER TABLE `job_batches` DISABLE KEYS */;
+/*!40000 ALTER TABLE `job_batches` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `jobs`
+--
+
+DROP TABLE IF EXISTS `jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint unsigned NOT NULL,
+  `reserved_at` int unsigned DEFAULT NULL,
+  `available_at` int unsigned NOT NULL,
+  `created_at` int unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `jobs`
+--
+
+LOCK TABLES `jobs` WRITE;
+/*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `master_keys_tbl`
+--
+
+DROP TABLE IF EXISTS `master_keys_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `master_keys_tbl` (
+  `master_key_id` bigint NOT NULL AUTO_INCREMENT,
+  `master_key` varchar(100) NOT NULL,
+  PRIMARY KEY (`master_key_id`),
+  UNIQUE KEY `master_key` (`master_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `master_keys_tbl`
+--
+
+LOCK TABLES `master_keys_tbl` WRITE;
+/*!40000 ALTER TABLE `master_keys_tbl` DISABLE KEYS */;
+/*!40000 ALTER TABLE `master_keys_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `migrations` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `migrations`
+--
+
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1);
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `password_reset_tokens`
+--
+
+DROP TABLE IF EXISTS `password_reset_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `password_reset_tokens`
+--
+
+LOCK TABLES `password_reset_tokens` WRITE;
+/*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roles_tbl`
+--
+
+DROP TABLE IF EXISTS `roles_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `roles_tbl` (
+  `role_id` bigint NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(255) NOT NULL,
+  `role_dep_id_fk` bigint NOT NULL,
+  `role_parent_id` bigint DEFAULT NULL,
+  `gen_role` enum('Head','Procurement','Supply','Unassigned') DEFAULT 'Unassigned',
+  PRIMARY KEY (`role_id`),
+  KEY `role_dep_id_fk` (`role_dep_id_fk`),
+  KEY `role_parent_id` (`role_parent_id`),
+  CONSTRAINT `roles_tbl_ibfk_1` FOREIGN KEY (`role_dep_id_fk`) REFERENCES `departments_tbl` (`dep_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `roles_tbl_ibfk_2` FOREIGN KEY (`role_parent_id`) REFERENCES `roles_tbl` (`role_id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles_tbl`
+--
+
+LOCK TABLES `roles_tbl` WRITE;
+/*!40000 ALTER TABLE `roles_tbl` DISABLE KEYS */;
+INSERT INTO `roles_tbl` VALUES (1,'Head - Basic Arts and Sciences Department',1,NULL,'Unassigned');
+/*!40000 ALTER TABLE `roles_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sessions` (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `ip_address` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sessions`
+--
+
+LOCK TABLES `sessions` WRITE;
+/*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
+INSERT INTO `sessions` VALUES ('Vf52eZgF4q6kwvvq5C1xublZSZDmjZCVhEn2pLTG',NULL,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0','YTozOntzOjY6Il90b2tlbiI7czo0MDoiVEpEdVFETnRFQ3pBclNPSmpDV3d0MUZ5TkdZVXEzN3M2TEFreE5VUCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC90YXNrcyI7czo1OiJyb3V0ZSI7czoxMDoic2hvdy50YXNrcyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=',1771329566);
+/*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `user_assignments`
+--
+
+DROP TABLE IF EXISTS `user_assignments`;
+/*!50001 DROP VIEW IF EXISTS `user_assignments`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `user_assignments` AS SELECT 
+ 1 AS `user_fullname`,
+ 1 AS `role_name`,
+ 1 AS `dep_name`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `user_roles_tbl`
+--
+
+DROP TABLE IF EXISTS `user_roles_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_roles_tbl` (
+  `user_role_id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id_fk` bigint unsigned NOT NULL,
+  `role_id_fk` bigint NOT NULL,
+  PRIMARY KEY (`user_role_id`),
+  KEY `user_id_fk` (`user_id_fk`),
+  KEY `role_id_fk` (`role_id_fk`),
+  CONSTRAINT `user_roles_tbl_ibfk_1` FOREIGN KEY (`user_id_fk`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_roles_tbl_ibfk_2` FOREIGN KEY (`role_id_fk`) REFERENCES `roles_tbl` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_roles_tbl`
+--
+
+LOCK TABLES `user_roles_tbl` WRITE;
+/*!40000 ALTER TABLE `user_roles_tbl` DISABLE KEYS */;
+INSERT INTO `user_roles_tbl` VALUES (1,2,1);
+/*!40000 ALTER TABLE `user_roles_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `user_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_firstname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `user_password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_middlename` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_lastname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_suffix` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_fullname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci GENERATED ALWAYS AS (concat(_utf8mb4'user_firstname',_utf8mb4' ',_utf8mb4'user_middlename',_utf8mb4' ',_utf8mb4'user_lastname',_utf8mb4' ',_utf8mb4'user_suffix',_utf8mb4' ')) VIRTUAL,
+  `user_type` enum('Faculty','Staff') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_tupid` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `users_email_unique` (`user_email`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` (`user_id`, `user_firstname`, `user_email`, `email_verified_at`, `user_password`, `remember_token`, `created_at`, `updated_at`, `user_middlename`, `user_lastname`, `user_suffix`, `user_type`, `user_tupid`) VALUES (1,'Jayyy','jay@example.com',NULL,'$2y$12$gfqnw/WR71DZfUyzMOJGR.rm4Zn.oMdQgotZhgWZlTOWuPH1fqiHu',NULL,'2026-01-22 18:43:31','2026-01-22 18:43:31',NULL,NULL,NULL,NULL,NULL),(2,'Heherson','heherson.ramos@tup.edu.ph',NULL,'ramos12345',NULL,NULL,NULL,'Pagulayan','Ramos',NULL,NULL,NULL),(4,'Patrick Justin','patrickjustin_ariado@tup.edu.ph','2026-02-06 20:00:40','$2y$12$2Ea6JAA//GptR2vSvGt60eL9m2mZcgdfLH5kd0pC.xC5OpsDe4M8q',NULL,'2026-02-06 20:00:40','2026-02-06 20:00:40','Laurente','Ariado',NULL,'Faculty','182020'),(5,'John Rex Duran','johnrex.duran@tup.edu.ph','2026-02-12 22:07:39','$2y$12$5obQFszAXXyeD6oOapnFReZlW0b9WbBI7ui9I7iLfE60fjzHB6962',NULL,'2026-02-12 22:07:40','2026-02-12 22:07:40','Bautista','Duran',NULL,'Staff','230265');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Final view structure for view `user_assignments`
+--
+
+/*!50001 DROP VIEW IF EXISTS `user_assignments`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `user_assignments` AS select concat(`u`.`user_firstname`,' ',`u`.`user_middlename`,' ',`u`.`user_lastname`) AS `user_fullname`,`r`.`role_name` AS `role_name`,`d`.`dep_name` AS `dep_name` from (((`user_roles_tbl` `ur` join `users` `u` on((`ur`.`user_id_fk` = `u`.`user_id`))) join `roles_tbl` `r` on((`ur`.`role_id_fk` = `r`.`role_id`))) join `departments_tbl` `d` on((`r`.`role_dep_id_fk` = `d`.`dep_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-02-17 20:30:43
