@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ImportAppController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -44,7 +46,10 @@ Route::controller(EmailVerificationController::class)->group(function () {
     Route::post('/email/verify-code', 'verifyCode')->name('email.verify-code');
 });
 
-
+// Tasks
+Route::controller(TaskController::class)->group(function () {
+    Route::get('/tasks', 'showTasks')->name('show.tasks');
+});
 
 // Master Admin
 Route::controller(AdminAuthController::class)->group(function () {
@@ -61,3 +66,9 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
     Route::get('/roles-offices', 'rolesOffices')->name('admin.roles-offices'); // Admin Roles and Offices - protected
     Route::get('/roles-assignment', 'rolesAssignment')->name('admin.roles-assignment'); // Admin Roles Assignment - protected
 }); 
+
+// Import APP
+Route::controller(ImportAppController::class)->group(function () {
+    Route::get('/import-app', 'showImportApp')->name('show.import.app');
+    Route::post('/import-app', 'importApp')->name('import.app');
+});

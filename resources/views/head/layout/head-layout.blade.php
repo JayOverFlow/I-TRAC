@@ -53,7 +53,7 @@
 
                 <div class="middle-content container-xxl p-0">
 
-                    <div class="row layout-top-spacing border">
+                    <div class="row layout-top-spacing">
                         @yield('content')
                     </div>
 
