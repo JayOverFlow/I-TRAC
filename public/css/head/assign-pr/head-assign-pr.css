@@ -1,0 +1,8 @@
+.allocated-budget-card {
+    background: linear-gradient(135deg, #C60202 0%, #930000 100%) !important;
+}
+
+
+td, th {
+    color: var(--black-text) !important;
+}
