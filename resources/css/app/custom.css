@@ -21,7 +21,15 @@ body {
 
 .header-container {
     background-color: var(--red-1) !important;
+    border: none !important;
+    box-shadow: none !important;
 }
+
+.header, .navbar {
+    border: none !important;
+    box-shadow: none !important;
+}
+
 
 #role {
     color: var(--role-color);

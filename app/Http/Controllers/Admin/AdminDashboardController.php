@@ -12,6 +12,20 @@ class AdminDashboardController extends Controller
     // Admin dashboard (Users)
     public function index()
     {
+        return view('admin.pages.dashboard', $this->_getDashboardData());
+    }
+
+    // Admin Roles Assignment page
+    public function rolesAssignment()
+    {
+        return view('admin.pages.roles-assignment', $this->_getDashboardData());
+    }
+
+    /**
+     * Get shared data for dashboard related pages
+     */
+    private function _getDashboardData()
+    {
         $departments = Department::all();
 
         // Card counts
@@ -36,27 +50,14 @@ class AdminDashboardController extends Controller
             )
             ->get();
 
-        return view('admin.pages.dashboard', compact(
-            'departments',
-            'officesCount',
-            'deptsCount',
-            'facultyCount',
-            'staffCount',
-            'users'
-        ));
-    }
-
-    // Admin Roles and Offices page
-    public function rolesOffices()
-    {
-        $departments = Department::all();
-        return view('admin.pages.roles-offices', compact('departments'));
-    }
-
-    // Admin Roles Assignment page
-    public function rolesAssignment()
-    {
-        $departments = Department::all();
-        return view('admin.pages.roles-assignment', compact('departments'));
+        return [
+            'departments' => $departments,
+            'officesCount' => $officesCount,
+            'deptsCount' => $deptsCount,
+            'facultyCount' => $facultyCount,
+            'staffCount' => $staffCount,
+            'users' => $users
+        ];
     }
 }
+

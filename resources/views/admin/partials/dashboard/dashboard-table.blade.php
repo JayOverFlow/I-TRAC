@@ -9,7 +9,7 @@
     </select>
 </div>
 
-<div class="row layout-top-spacing">
+<div style="margin-top: 20px;">
     <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
         <div class="widget-content widget-content-area br-8">
             <table id="zero-config" class="table dt-table-hover" style="width:100%">
