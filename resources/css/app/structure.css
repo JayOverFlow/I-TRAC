@@ -1075,7 +1075,8 @@ body[layout=full-width] .sidebar-wrapper {
   fill: rgba(37, 213, 228, 0.1019607843);
 }
 #sidebar ul.menu-categories li.menu.active > .dropdown-toggle span {
-  color: #25d5e4;
+  color: #ffffff;
+  font-weight: bolder;
 }
 #sidebar ul.menu-categories li.menu > .dropdown-toggle[aria-expanded=false] svg.feather-chevron-right {
   transform: rotate(0);

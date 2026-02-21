@@ -110,18 +110,22 @@ class AdminAuthController extends Controller
             'is_admin_logged_in' => true
         ]);
 
-        // Redirect to welcome page
-        return redirect()->route('admin.welcome');
+        // Redirect to dashboard page
+        return redirect()->route('admin.dashboard');
     }
 
-    // Admin welcome page
-    public function adminWelcome()
-    {
-        // Check if admin is logged in
-        if (!session('is_admin_logged_in')) {
-            return redirect()->route('admin.show.login');
-        }
+    // // Admin welcome page
+    // public function adminWelcome()
+    // {
+    //     return view('admin.welcome');
+    // }
 
-        return view('admin.welcome');
+    // Admin logout
+    public function adminLogout()
+    {
+        // Clear admin session
+        session()->forget(['admin_id', 'admin_username', 'is_admin_logged_in']);
+        
+        return redirect()->route('admin.show.login')->with('success', 'You have been logged out successfully.');
     }
 }

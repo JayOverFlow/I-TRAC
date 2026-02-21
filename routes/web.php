@@ -49,8 +49,15 @@ Route::controller(EmailVerificationController::class)->group(function () {
 // Master Admin
 Route::controller(AdminAuthController::class)->group(function () {
     Route::get('/admin-register', 'adminShowRegister')->name('admin.show.register');
-    Route::post('/admin-register', 'adminRegister')->name('admin.register'); // Handle the submission of the admin registration form
+    Route::post('/admin-register', 'adminRegister')->name('admin.register'); // Handle submission of admin registration form
     Route::get('/admin-login', 'adminShowLogin')->name('admin.show.login');
-    Route::post('/admin-login', 'adminLogin')->name('admin.login'); // Handle the submission of the admin login form
-    Route::get('/admin-welcome', 'adminWelcome')->name('admin.welcome'); // Admin welcome page
+    Route::post('/admin-login', 'adminLogin')->name('admin.login'); // Handle submission of admin login form
+    Route::post('/admin-logout', 'adminLogout')->name('admin.logout')->middleware('admin.auth'); // Admin logout - protected
 });
+
+// Admin Dashboard Pages
+Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->middleware('admin.auth')->prefix('admin')->group(function () {
+    Route::get('/dashboard', 'index')->name('admin.dashboard'); // Admin dashboard (Users) - protected
+    Route::get('/roles-offices', 'rolesOffices')->name('admin.roles-offices'); // Admin Roles and Offices - protected
+    Route::get('/roles-assignment', 'rolesAssignment')->name('admin.roles-assignment'); // Admin Roles Assignment - protected
+}); 
