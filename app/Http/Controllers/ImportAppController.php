@@ -28,6 +28,7 @@ class ImportAppController extends Controller
         fgetcsv($handle); // Row 2: sub-header (schedule columns)
 
         $userId = Auth::id();
+        // This should be handled by a model
         $depId = DB::table('user_roles_tbl')
             ->join('roles_tbl', 'user_roles_tbl.role_id_fk', '=', 'roles_tbl.role_id')
             ->where('user_roles_tbl.user_id_fk', $userId)
@@ -35,6 +36,7 @@ class ImportAppController extends Controller
 
         DB::beginTransaction();
         try {
+            // This should be handled by a model
             $appId = DB::table('app_tbl')->insertGetId([
                 'app_status'                => 'Draft',
                 'saved_by_user_id_fk'       => $userId,
@@ -75,6 +77,7 @@ class ImportAppController extends Controller
                 if ($shouldSkip) continue;
 
                 // Parse and insert the data row
+                // This should be handled by a model
                 DB::table('app_items_tbl')->insert([
                     'app_id_fk'                => $appId,
                     'app_item_code'            => self::trimOrNull($row[0]),

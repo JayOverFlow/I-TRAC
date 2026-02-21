@@ -9,6 +9,7 @@
     --black-text: #020202;
     --white-text: #FFFFFF;
     --red-text: #C62742;
+    --red-text-2: #8C0404;
 }
 
 body {
@@ -40,11 +41,11 @@ body {
 }
 
 .black-text {
-    color: var(--black-text);
+    color: var(--black-text) !important;
 }
 
 .white-text {
-    color: var(--white-text);
+    color: var(--white-text) !important;
 }
 
 .btn-red {
@@ -53,7 +54,11 @@ body {
 }
 
 .red-text {
-    color: var(--red-text);
+    color: var(--red-text) !important;
+}
+
+.red-text-2 {
+    color: var(--red-text-2) !important;
 }
 
 

@@ -5,8 +5,9 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ImportAppController;
+use App\Http\Controllers\AssignPrController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminRolesOfficesController; // Added this import
+use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -73,4 +74,9 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
 Route::controller(ImportAppController::class)->group(function () {
     Route::get('/import-app', 'showImportApp')->name('show.import.app');
     Route::post('/import-app', 'importApp')->name('import.app');
+});
+
+Route::controller(AssignPrController::class)->group(function () {
+    Route::get('/assign-pr/{app_id}', 'showAssignPR')->name('show.assign.pr');
+    Route::post('/assign-pr', 'assignPR')->name('assign.pr');
 });
