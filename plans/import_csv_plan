@@ -1,0 +1,118 @@
+# CSV Import Feature — Annual Procurement Plan (APP)
+
+The user uploads a CSV file via FilePond on the import page. The controller parses it and inserts records into `app_tbl` (parent) and `app_items_tbl` (children). The existing code has **incorrect column mapping** relative to the actual CSV structure and doesn't skip non-data rows. This plan fixes both problems and adds polished visual feedback.
+
+## CSV Structure Analysis
+
+The sample CSV has **13 columns** (A–M) with this layout:
+
+| Col Index | CSV Column | DB Column |
+|-----------|-----------|-----------|
+| 0 | Code (PAP) | `app_item_code` |
+| 1 | Procurement Program/Project | `app_item_name` |
+| 2 | PMO/End-User | `app_item_pmo` |
+| 3 | Mode of Procurement | `app_item_mode` |
+| 4 | Ads/Post of IB/REI | `app_item_adspost` |
+| 5 | Sub/Open of Bids | `app_item_subopen` |
+| 6 | Notice of Awards | `app_item_notice` |
+| 7 | Contract Signing | `app_item_contract` |
+| 8 | Source of Funds | `app_item_source_fund` |
+| 9 | Total | `app_item_estimated_total` |
+| 10 | MOOE | `app_item_estimated_mooe` |
+| 11 | CO | `app_item_estimated_co` |
+| 12 | Remarks | `app_item_remarks` |
+
+**Rows to skip:**
+- Rows 1–2: multi-line header
+- Row 3: department name row (e.g., "BASIC ARTS AND SCIENCES DEPARTMENT")
+- Empty rows (column 1 is empty and no monetary value in column 9)
+- TOTAL row (column 8 contains "TOTAL")
+- Signature block rows (rows containing "Prepared:", "[Name]", "[Designation]", etc.)
+
+## Proposed Changes
+
+### Backend — Controller
+
+#### [MODIFY] [ImportAppController.php](file:///c:/Users/emman/itrac/app/Http/Controllers/ImportAppController.php)
+
+**Key changes:**
+1. **Skip header rows** — skip the first 2 rows (multi-line CSV header)
+2. **Fix column mapping** — re-map CSV column indices to the correct DB columns per the table above
+3. **Filter non-data rows** — skip empty rows, department header, TOTAL row, and signature rows
+4. **Parse currency** — strip `₱`, commas, and spaces from monetary values before inserting
+5. **Parse dates** — convert `"March 03, 2025"` format to `Y-m-d` for DB date columns
+
+```diff
+- $header = fgetcsv($handle); // skip header row
++ fgetcsv($handle); // skip header row 1
++ fgetcsv($handle); // skip header row 2 (sub-header)
+```
+
+```diff
+- 'app_item_name'            => $row[0] ?? null,
+- 'app_item_pmo'             => $row[1] ?? null,
+- ...
++ 'app_item_code'            => trim($row[0]) ?: null,
++ 'app_item_name'            => trim($row[1]) ?: null,
++ 'app_item_pmo'             => trim($row[2]) ?: null,
++ 'app_item_mode'            => trim($row[3]) ?: null,
++ 'app_item_adspost'         => self::parseDate($row[4]),
++ ...
+```
+
+Add row-filtering logic before insert:
+```php
+// Skip: empty rows, department header, TOTAL, signature rows
+$name = trim($row[1] ?? '');
+if ($name === '' || str_contains(strtoupper($name), 'TOTAL') 
+    || str_contains($name, 'Prepared:') || $name === '[Name]' 
+    || $name === '[Designation]' ...) continue;
+```
+
+Add helper methods:
+```php
+private static function parseDate(?string $val): ?string
+private static function parseCurrency(?string $val): ?float
+```
+
+---
+
+### Frontend — JavaScript
+
+#### [MODIFY] [import-app.js](file:///c:/Users/emman/itrac/public/js/head/import-app/import-app.js)
+
+**Key changes:**
+1. Replace `alert()` calls with a styled **toast notification** for both success and error
+2. Add a helper function `showToast(message, type)` that creates a temporary DOM element
+
+---
+
+### Frontend — CSS
+
+#### [MODIFY] [import-app.css](file:///c:/Users/emman/itrac/public/css/head/import-app/import-app.css)
+
+Add toast notification styles (`.toast-notification`, success/error variants, slide-in animation).
+
+---
+
+### No Changes Needed
+
+- **Routes** ([web.php](file:///c:/Users/emman/itrac/routes/web.php)) — already correctly defined
+- **Blade template** ([head-import-app.blade.php](file:///c:/Users/emman/itrac/resources/views/head/pages/head-import-app.blade.php)) — already has FilePond setup, CSRF meta, and Import button
+- **Database schema** — no schema changes needed
+
+## Verification Plan
+
+### Manual Verification
+
+1. Start the Laravel dev server (`php artisan serve`)
+2. Navigate to `http://127.0.0.1:8000/import-app`
+3. Upload [procurement_documents/app_sample.csv](file:///c:/Users/emman/itrac/procurement_documents/app_sample.csv) using FilePond
+4. Click the **Import** button
+5. **Expected**: A green toast notification appears saying "APP imported successfully."
+6. Check the database:
+   - `app_tbl` should have 1 new row with status `Draft`
+   - `app_items_tbl` should have **3 data rows** (Physics Lab Equipment, Folder, 1 Steel Cabinet) linked to the new `app_id`
+   - Date columns should be in `YYYY-MM-DD` format
+   - Monetary values should be numeric (e.g., `50000.00`), not strings with `₱`
+7. Test error case: upload a non-CSV file → should see a red toast with an error message
