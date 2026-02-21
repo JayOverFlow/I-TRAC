@@ -6,6 +6,8 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ImportAppController;
 use App\Http\Controllers\AssignPrController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -64,7 +66,7 @@ Route::controller(AdminAuthController::class)->group(function () {
 // Admin Dashboard Pages
 Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/dashboard', 'index')->name('admin.dashboard'); // Admin dashboard (Users) - protected
-    Route::get('/roles-offices', 'rolesOffices')->name('admin.roles-offices'); // Admin Roles and Offices - protected
+    Route::get('/roles-offices', [AdminRolesOfficesController::class, 'index'])->name('admin.roles-offices'); // Admin Roles and Offices - protected
     Route::get('/roles-assignment', 'rolesAssignment')->name('admin.roles-assignment'); // Admin Roles Assignment - protected
 }); 
 
