@@ -898,8 +898,7 @@ body:not(.dark) .navbar .dark-mode {
 
 .sidebar-wrapper #sidebar {
   width: 100%;
-  border-radius: 8px;
-  background: #191e3a;
+  background: #8c0404;
   min-height: 51px;
 }
 
