@@ -21,7 +21,7 @@ Route::get('/sample', function () {
 
 Route::get('/head/dashboard', function () {
     return view('head/pages/dashboard');
-});
+})->middleware('auth');
 
 Route::get('/supply/dashboard', function () {
     return view('supply/pages/dashboard');
@@ -68,7 +68,7 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
     Route::get('/dashboard', 'index')->name('admin.dashboard'); // Admin dashboard (Users) - protected
     Route::get('/roles-offices', [AdminRolesOfficesController::class, 'index'])->name('admin.roles-offices'); // Admin Roles and Offices - protected
     Route::get('/roles-assignment', 'rolesAssignment')->name('admin.roles-assignment'); // Admin Roles Assignment - protected
-}); 
+});
 
 // Import APP
 Route::controller(ImportAppController::class)->group(function () {

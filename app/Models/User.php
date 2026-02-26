@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Laravel\Sanctum\HasApiTokens;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'user_firstname',
-        'user_middlename', 
+        'user_middlename',
         'user_lastname',
         'user_suffix',
         'user_tupid',
@@ -69,13 +70,5 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->user_password;
-    }
-
-    /**
-     * Get the email field name.
-     */
-    public function getAuthIdentifierName()
-    {
-        return 'user_email';
     }
 }
