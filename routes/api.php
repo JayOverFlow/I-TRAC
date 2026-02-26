@@ -1,22 +1,16 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController; // <-- Import the new controller
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DepartmentController;
 
 Route::group(['prefix' => 'user'], function () {
-    // Point to the new API controller
-    Route::post('login', [AuthController::class, 'login']);
-
-    // You will need to create 'register', 'verify', etc. methods in the 
-    // new Api controllers as well, following the JSON response pattern.
-    // For now, let's just fix login.
+    Route::post('login',        [AuthController::class, 'login']);
+    Route::post('register',     [AuthController::class, 'register']);
+    Route::post('verify',       [AuthController::class, 'verify']);
+    Route::post('check-tupid',  [AuthController::class, 'checkTupId']);
+    Route::post('check-email',  [AuthController::class, 'checkEmail']);
+    Route::post('resend-otp',   [AuthController::class, 'resendOtp']);
 });
 
-// ... other API routes
+Route::get('departments', [DepartmentController::class, 'index']);
