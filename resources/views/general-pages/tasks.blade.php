@@ -17,7 +17,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Document</th>
-                    <th>Data Received</th>
+                    <th>Date Received</th>
                 </tr>
             </thead>
             <tbody>
