@@ -131,96 +131,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    @forelse($app_data->appItems as $appItem)
+                        <tr>
                         <td>
                             <div class="form-check form-check-danger form-check-inline">
                                 <input class="form-check-input item-checkbox" type="checkbox" value=""
                                     id="form-check-danger">
                             </div>
                         </td>
-                        <td>1234</td>
-                        <td>Physics Laboratory Equipment Supplies and Materials</td>
-                        <td></td>
-                        <td>March 11, 2025</td>
-                        <td>March 12, 2025</td>
-                        <td>March 14, 2025</td>
-                        <td>Php 50,000.00</td>
+                        <td>{{ $appItem->app_item_id}}</td>
+                        <td>{{ $appItem->app_item_name}}</td>
+                        <td>{{ $appItem->app_item_adspost}}</td>
+                        <td>{{ $appItem->app_item_subopen}}</td>
+                        <td>{{ $appItem->app_item_notice}}</td>
+                        <td>{{ $appItem->app_item_contract}}</td>
+                        <td>{{ $appItem->app_item_estimated_total}}</td>
                     </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>5678</td>
-                        <td>Folder</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>1 Steel Cabinet</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>Microwave with birth certificate</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>Licensed Professional Electric Fan</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>Monitor with 67 years warranty</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
+                    @empty
+                        <p>No items available.</p>
+                    @endforelse
                 </tbody>
             </table>
             <div id="action-buttons" class="d-flex justify-content-start ms-3 mt-3 mt-sm-0">
