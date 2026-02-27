@@ -19,4 +19,9 @@ class Role extends Model
     public function user() {
         return $this->hasOne(UserRole::class, 'role_id_fk', 'role_id');
     }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'role_dep_id_fk', 'dep_id');
+    }
 }

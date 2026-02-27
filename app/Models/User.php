@@ -73,11 +73,18 @@ class User extends Authenticatable
     }
 
 
-    public function roles() {
-        // 1. Target Model (Role)
-        // 2. Pivot Table Name (user_roles_tbl)
-        // 3. Foreign key of the current model on the pivot table
-        // 4. Foreign key of the target model on the pivot table
+    public function roles()
+    {
         return $this->belongsToMany(Role::class, 'user_roles_tbl', 'user_id_fk', 'role_id_fk');
+    }
+
+    public function userDepartment()
+    {
+        return $this->hasMany(UserDepartment::class, 'user_roles_tbl', 'user_id_fk');
+    }
+
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class, 'user_departments_tbl', 'user_id_fk', 'department_id_fk');
     }
 }
