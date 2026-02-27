@@ -25,13 +25,12 @@ Route::get('/head/dashboard', function () {
 })->middleware('auth');
 
 Route::middleware(['auth', 'role:Head,Supply'])->group(function () {
-    
+
     // Grouping by Controller saves you from typing [ReportController::class, '...'] every time
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
         // Route::post('/reports/store', 'store')->name('reports.store');
     });
-
 });
 
 Route::get('/supply/dashboard', function () {

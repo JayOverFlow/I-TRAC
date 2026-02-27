@@ -47,54 +47,22 @@
                                 </tr>
                             </thead>
                             <tbody id="user-list">
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Patrick Justin Ariado</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-123456
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Pak Juna</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-827482
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Kemberlet Crissel</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-283798
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Jay Jay Bautista</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-127651
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Ron Eric Contis</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-928273
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Arthur Nery</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-928371
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">The Beatles</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-837463
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Freddie Mercury</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-938472
-                                    </td>
-                                </tr>
+                                @forelse($subordinates as $subordinate)
+                                    <tr class="user-list-item" style="cursor: pointer;"
+                                        data-user-id="{{ $subordinate->user_id }}">
+                                        <td class="align-middle user-name">
+                                            {{ $subordinate->user_firstname }} {{ $subordinate->user_lastname }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            TUPT-{{ $subordinate->user_tupid }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">No users found in your department.
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -133,20 +101,20 @@
                 <tbody>
                     @forelse($app_data->appItems as $appItem)
                         <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>{{ $appItem->app_item_id}}</td>
-                        <td>{{ $appItem->app_item_name}}</td>
-                        <td>{{ $appItem->app_item_adspost}}</td>
-                        <td>{{ $appItem->app_item_subopen}}</td>
-                        <td>{{ $appItem->app_item_notice}}</td>
-                        <td>{{ $appItem->app_item_contract}}</td>
-                        <td>{{ $appItem->app_item_estimated_total}}</td>
-                    </tr>
+                            <td>
+                                <div class="form-check form-check-danger form-check-inline">
+                                    <input class="form-check-input item-checkbox" type="checkbox" value=""
+                                        id="form-check-danger">
+                                </div>
+                            </td>
+                            <td>{{ $appItem->app_item_id }}</td>
+                            <td>{{ $appItem->app_item_name }}</td>
+                            <td>{{ $appItem->app_item_adspost }}</td>
+                            <td>{{ $appItem->app_item_subopen }}</td>
+                            <td>{{ $appItem->app_item_notice }}</td>
+                            <td>{{ $appItem->app_item_contract }}</td>
+                            <td>{{ $appItem->app_item_estimated_total }}</td>
+                        </tr>
                     @empty
                         <p>No items available.</p>
                     @endforelse
