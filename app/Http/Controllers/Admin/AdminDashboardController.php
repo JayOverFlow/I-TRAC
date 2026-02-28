@@ -15,18 +15,14 @@ class AdminDashboardController extends Controller
         return view('admin.pages.dashboard', $this->_getDashboardData());
     }
 
-    // Admin Roles Assignment page
-    public function rolesAssignment()
-    {
-        return view('admin.pages.roles-assignment', $this->_getDashboardData());
-    }
+
 
     /**
      * Get shared data for dashboard related pages
      */
     private function _getDashboardData()
     {
-        $departments = Department::all();
+        $departments = Department::orderBy('dep_name', 'asc')->get();
 
         // Card counts
         $officesCount = Department::where('dep_type', 'administrative')->count();
