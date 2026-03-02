@@ -4,7 +4,8 @@
     
     <ul class="navbar-item theme-brand flex-row  text-center">
         <li class="nav-item theme-logo">
-            <img src="{{ asset('img/itrac-header-logo.png') }}" alt="I-TRAC">
+            <img src="{{ asset('img/i-trac-logo.svg') }}" alt="I-TRAC" width="120" height="36" style="object-fit: contain;">
+            <!-- <img src="{{ asset('img/itrac-header-logo.png') }}" alt="I-TRAC"> -->
         </li>
     </ul>
 
