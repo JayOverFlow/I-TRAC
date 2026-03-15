@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login');
 });
 
 Route::get('/sample', function () {
@@ -25,7 +25,6 @@ Route::get('/head/dashboard', function () {
 })->middleware('auth');
 
 Route::middleware(['auth', 'role:Head,Supply'])->group(function () {
-
     // Grouping by Controller saves you from typing [ReportController::class, '...'] every time
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
