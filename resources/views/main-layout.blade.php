@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>@yield('title')</title>
     <link rel="icon" type="image/x-icon" href="img/favicon.ico"/>
-
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 
     <!-- Vite for GLOBAL MANDATORY css and js-->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/bootstrap/bootstrap.bundle.min.js'])
 
     {{-- NOTE: FIX THIS AND SET THIS TO A GLOBAL IN VITE --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
     <!-- Inject SPECIFIC and CUSTOM css-->
     @stack('css')
+
 </head>
 <body class="layout-boxed enable-secondaryNav">
     <!-- BEGIN LOADER -->
@@ -30,7 +30,7 @@
 
     <!--  BEGIN HEADER  -->
     <div class="header-container container-xxl">
-        @include('faculty.partials.header')
+        @include('main-header')
     </div>
     <!--  END HEADER  -->
 
@@ -42,7 +42,7 @@
 
         <!--  BEGIN NAVBAR  -->
         <div class="sidebar-wrapper sidebar-theme">
-            @include('faculty.partials.nav-bar')
+            @include('head.partials.nav-bar')
         </div>
         <!--  END NAVBAR  -->
 
@@ -52,7 +52,7 @@
 
                 <div class="middle-content container-xxl p-0">
 
-                    <div class="row layout-top-spacing border">
+                    <div class="row layout-top-spacing">
                         @yield('content')
                     </div>
 

@@ -1,5 +1,5 @@
 {{-- Extend the main layout that you want to use --}}
-@extends('head.layout.head-layout')
+@extends('main-layout')
 
 {{-- Define contents to show in the layout --}}
 @section('title', 'Dashboard | I-TRAC')
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-4">
                 <div class="card">
                     <div class="card-body row p-4">
@@ -45,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-4">
                 <div class="card">
                     <div class="card-body row p-4">
@@ -77,7 +77,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
                             </div>
@@ -92,7 +92,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy-2.png">
                             </div>
@@ -107,7 +107,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
                             </div>
@@ -122,7 +122,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-3.png">
                             </div>
@@ -137,7 +137,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-1.png">
                             </div>
@@ -152,7 +152,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-4.png">
                             </div>
@@ -167,7 +167,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy-2.png">
                             </div>
@@ -197,7 +197,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-1.png">
                             </div>
@@ -212,7 +212,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-4.png">
                             </div>
@@ -227,7 +227,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-1.png">
                             </div>
@@ -242,7 +242,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy-2.png">
                             </div>
@@ -257,11 +257,11 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
                             </div>
-                            <p class="align-self-center mb-0 admin-name"> Charde </p>                                                        
+                            <p class="align-self-center mb-0 admin-name"> Charde </p>
                         </div>
                     </td>
                     <td>Regional Director</td>
@@ -305,7 +305,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Michael </p>
                         </div>
                     </td>
@@ -320,7 +320,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Paul </p>
                         </div>
                     </td>
@@ -335,7 +335,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-2.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Gloria </p>
                         </div>
                     </td>
@@ -350,7 +350,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Bradley </p>
                         </div>
                     </td>
@@ -365,7 +365,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy-2.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Dai </p>
                         </div>
                     </td>
@@ -380,8 +380,8 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-1.png">
-                            </div>                                                        
-                            <p class="align-self-center mb-0 admin-name"> Jenette </p>                                                        
+                            </div>
+                            <p class="align-self-center mb-0 admin-name"> Jenette </p>
                         </div>
                     </td>
                     <td>Development Lead</td>
@@ -395,7 +395,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Yuri </p>
                         </div>
                     </td>
@@ -410,7 +410,7 @@
                         <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy-2.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Caesar </p>
                         </div>
                     </td>
@@ -422,10 +422,10 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/boy.png">
-                            </div>                                                        
+                            </div>
                             <p class="align-self-center mb-0 admin-name"> Doris </p>
                         </div>
                     </td>
@@ -437,11 +437,11 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="d-flex">                                                        
+                        <div class="d-flex">
                             <div class="usr-img-frame me-2 rounded-circle">
                                 <img alt="avatar" class="img-fluid rounded-circle" src="../src/assets/img/girl-4.png">
-                            </div>                                                        
-                            <p class="align-self-center mb-0 admin-name"> Angelica </p>                                                        
+                            </div>
+                            <p class="align-self-center mb-0 admin-name"> Angelica </p>
                         </div>
                     </td>
                     <td>Chief Executive Officer (CEO)</td>
@@ -484,10 +484,10 @@
             },
             "stripeClasses": [],
             "lengthMenu": [7, 10, 20, 50],
-            "pageLength": 10 
+            "pageLength": 10
         });
     </script>
 
     <!-- CUSTOM js -->
-    
+
 @endpush

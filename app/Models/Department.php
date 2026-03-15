@@ -18,4 +18,5 @@ class Department extends Model
     ];
 
     // METHODS
+
 }

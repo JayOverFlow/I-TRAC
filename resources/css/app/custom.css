@@ -21,7 +21,7 @@ body {
 }
 
 .header-container {
-    background-color: var(--red-1) !important;
+    background-color: var(--white-2) !important;
     border: none !important;
     box-shadow: none !important;
 }
