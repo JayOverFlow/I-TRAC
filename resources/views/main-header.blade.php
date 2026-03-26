@@ -11,7 +11,7 @@
 
     <ul class="navbar-item theme-brand flex-row  text-center">
         <li class="nav-item theme-logo">
-            <img src="{{ asset('img/itrac-header-logo-red.png') }}" alt="I-TRAC">
+            <img src="{{ asset('img/itrac-header-logo-red.svg') }}" alt="I-TRAC" width="170" height="36" style="object-fit: contain;">
         </li>
     </ul>
 
