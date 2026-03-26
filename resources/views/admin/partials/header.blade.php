@@ -4,7 +4,7 @@
     
     <ul class="navbar-item theme-brand flex-row  text-center">
         <li class="nav-item theme-logo">
-            <img src="{{ asset('img/i-trac-logo.svg') }}" alt="I-TRAC" width="120" height="36" style="object-fit: contain;">
+            <img src="{{ asset('img/itrac-header-logo-red.svg') }}" alt="I-TRAC" width="170" height="36" style="object-fit: contain;">
         </li>
     </ul>
 
@@ -14,7 +14,7 @@
             <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
                     <div class="avatar avatar-sm avatar-indicators avatar-online">
-                        <img alt="avatar" src="{{ asset('img/admin-icon.jpg') }}" class="rounded-circle">
+                        <img alt="avatar" src="{{ asset('img/admin-icon.svg') }}" class="rounded-circle">
                     </div>
                 </div>
             </a>
