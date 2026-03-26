@@ -11,8 +11,7 @@ class AppParent extends Model
     protected $primaryKey = 'app_id';
 
     protected $fillable = [
-        'app_ppmp_items_id_fk',
-        'app_status',
+        'saved_by_user_id_fk',
         'app_prepared_by_name',
         'app_prepared_by_designation',
         'app_recommending_by_name',
