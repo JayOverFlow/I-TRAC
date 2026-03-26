@@ -6,6 +6,7 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ImportAppController;
 use App\Http\Controllers\AssignPrController;
+use App\Http\Controllers\CreateAppController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
@@ -98,6 +99,10 @@ Route::controller(AssignPrController::class)->group(function () {
     Route::post('/assign-pr', 'assignPR')->name('assign.pr');
 });
 
-Route::get('/create-app', function () {
-    return view('head/pages/head-create-app');
+Route::middleware(['auth', 'role:Head'])->group(function () {
+
+    Route::controller(CreateAppController::class)->group(function () {
+        Route::get('/create-app', 'showCreateApp')->name('show.create-app');
+        Route::post('/create-app', 'createApp')->name('create.app');
+    });
 });

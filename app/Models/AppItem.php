@@ -12,18 +12,19 @@ class AppItem extends Model
 
     protected $fillable = [
         'app_id_fk',
-        'app_item_name',
-        'app_item_pmo',
-        'app_item_mode',
-        'app_item_estimated_total',
-        'app_item_estimated_mooe',
-        'app_item_estimated_co',
-        'app_item_adspost',
-        'app_item_subopen',
-        'app_item_notice',
-        'app_item_contract',
-        'app_item_source_fund',
-        'app_item_code',
+        'app_item_proj_title',
+        'app_items_end_user',
+        'app_items_gen_desc',
+        'app_items_mode',
+        'app_items_covered',
+        'app_items_criteria',
+        'app_items_start',
+        'app_items_end',
+        'app_items_source',
+        'app_items_esti_budget',
+        'app_items_tools',
+        'app_items_remarks',
+        'app_items_total',
     ];
 
     public function app()
