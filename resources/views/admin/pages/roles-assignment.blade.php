@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dash_1.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dt-global_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/src/sweetalerts2/sweetalerts2.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/css/light/sweetalerts2/custom-sweetalert.css') }}">
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/admin/custom-dashboard.css') }}">
@@ -27,6 +29,7 @@
     <script src="{{ asset('js/admin/dashboard/page-specific/apexcharts.min.js') }}" ></script>
     <script src="{{ asset('js/admin/dashboard/page-specific/dash_1.js') }}" ></script>
     <script src="{{ asset('js/admin/dashboard/page-specific/datatables.js') }}" ></script>
+    <script src="{{ asset('plugins/src/sweetalerts2/sweetalerts2.min.js') }}"></script>
     <script>
         $('#zero-config').DataTable({
             "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
@@ -103,43 +106,64 @@
 
                 // Save All Logic
                 $(document).on('click', '#btn-save-all', function() {
-                    if (!confirm("Are you sure you want to update these role assignments?")) {
-                        return;
-                    }
-
-                    var assignments = [];
-                    
-                    // Iterate over all rows in the DataTables API (even those not on current page)
-                    table.$('tr').each(function() {
-                        var roleId = $(this).data('role-id');
-                        var userId = $(this).find('.user-assignment-select').val();
-                        
-                        if (roleId) {
-                            assignments.push({
-                                role_id: roleId,
-                                user_id: userId || null
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, save changes!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var assignments = [];
+                            
+                            // Iterate over all rows in the DataTables API (even those not on current page)
+                            table.$('tr').each(function() {
+                                var roleId = $(this).data('role-id');
+                                var userId = $(this).find('.user-assignment-select').val();
+                                
+                                if (roleId) {
+                                    assignments.push({
+                                        role_id: roleId,
+                                        user_id: userId || null
+                                    });
+                                }
                             });
-                        }
-                    });
 
-                    // Fire AJAX to saving Route
-                    $.ajax({
-                        url: "{{ route('admin.roles-assignment.update') }}",
-                        method: 'POST',
-                        data: {
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            assignments: assignments
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                // Reload page on success to redraw table freshly
-                                window.location.reload();
-                            } else {
-                                alert("Something went wrong!");
-                            }
-                        },
-                        error: function() {
-                            alert("Failed to update assignments. Please try again.");
+                            // Fire AJAX to saving Route
+                            $.ajax({
+                                url: "{{ route('admin.roles-assignment.update') }}",
+                                method: 'POST',
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr('content'),
+                                    assignments: assignments
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Successfully Updated',
+                                            text: 'Role assignments have been saved.',
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: 'Something went wrong!',
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Failed',
+                                        text: 'Failed to update assignments. Please try again.',
+                                    });
+                                }
+                            });
                         }
                     });
                 });

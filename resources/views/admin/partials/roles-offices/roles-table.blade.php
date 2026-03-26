@@ -38,7 +38,7 @@
 <template id="new-role-row-template">
     <tr class="new-row-pending animate__animated animate__fadeInDown">
         <td>
-            <input type="text" class="form-control form-control-sm" placeholder="Enter Role Name">
+            <input type="text" class="form-control form-control-sm input-role-name" placeholder="Enter Role Name (Optional for New Dept)">
         </td>
         <td>
             <div class="dept-selection-wrapper">
@@ -66,9 +66,7 @@
                             </select>
                         </div>
                         <div class="d-flex gap-1">
-                            <button type="button" class="btn btn-sm btn-success btn-confirm-new-dept p-1 px-2" title="Create">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            </button>
+
                             <button type="button" class="btn btn-sm btn-secondary btn-cancel-new-dept p-1 px-2" title="Cancel">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-ccw"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                             </button>
@@ -91,31 +89,47 @@
                     <tr>
                         <th>Role Name</th>
                         <th>Department | Office</th>
+                        <th class="d-none">Hidden Dept Group</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($roles ?? [] as $role)
-                    <tr>
+                    <tr data-role-id="{{ $role->role_id }}" data-dep-id="{{ $role->dep_id }}" data-dep-type="{{ $role->dep_type }}">
                         <td>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="role-text-val fw-bold">{{ $role->role_name }}</span>
-                                <button class="btn btn-outline-danger btn-sm p-1 inline-delete-btn d-none" title="Delete Role">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                </button>
+                            <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                                @if($role->role_id)
+                                    <div class="role-text-val text-dark editable-role-text transition-all flex-grow-1 p-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
+                                @else
+                                    <div class="role-text-val text-muted fst-italic flex-grow-1 p-2 rounded">No Role Assigned</div>
+                                @endif
                             </div>
                         </td>
                         <td>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="dep-text-val">{{ $role->dep_name }}</span>
-                                <button class="btn btn-outline-danger btn-sm p-1 inline-delete-btn d-none" title="Delete Association">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                </button>
+                            <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                                <div class="dep-text-val editable-dept-text transition-all flex-grow-1 p-2 rounded" data-dep-id="{{ $role->dep_id }}">{{ $role->dep_name }}</div>
+                                
+                                <div class="px-2">
+                                    @if($role->role_id)
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-outline-danger btn-sm p-1 inline-delete-btn d-none" data-role-id="{{ $role->role_id }}" title="Delete Role / Department">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>
+                                        </div>
+                                    @else
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-outline-danger btn-sm p-1 inline-delete-dept-only-btn d-none" data-dep-id="{{ $role->dep_id }}" title="Delete Empty Department">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </td>
+                        <td class="d-none">{{ $role->dep_name }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="2" class="text-center">No roles found.</td>
+                        <td colspan="3" class="text-center">No roles found.</td>
                     </tr>
                     @endforelse
                 </tbody>
