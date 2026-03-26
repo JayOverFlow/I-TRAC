@@ -10,6 +10,7 @@ class Department extends Model
     protected $primaryKey = 'dep_id'; // The PR of the table
     public $incrementing = true; // Optional cause Laravel automatically set it
     protected $keyType = 'int'; // Tell the Laravel the datatype of the PK
+    public $timestamps = false;
 
     // Mass assignment fields
     protected $fillable = [
