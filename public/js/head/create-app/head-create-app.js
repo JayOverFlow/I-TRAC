@@ -28,6 +28,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Function to re-index item numbers
+    function reindexItems() {
+        const projectCards = projectItemsContainer.querySelectorAll(".project-item-card");
+        projectCards.forEach((card, index) => {
+            const itemNumberSpan = card.querySelector(".item-number-span");
+            if (itemNumberSpan) {
+                itemNumberSpan.textContent = `Item ${index + 1}`;
+            }
+        });
+    }
+
     // Listener for Add Project Button
     if (addProjectBtn && projectItemsContainer) {
         addProjectBtn.addEventListener("click", function () {
@@ -41,6 +52,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // Clone the first card (deep clone)
             const firstCard = projectCards[0];
             const newCard = firstCard.cloneNode(true);
+
+            // Show the Trash button on cloned cards
+            const trashBtn = newCard.querySelector(".remove-project-btn");
+            if (trashBtn) {
+                console.log("Showing trash button for new card:", newItemNumber);
+                trashBtn.classList.remove("d-none");
+                trashBtn.style.display = "block"; // Force visibility
+            } else {
+                console.error("Trash button not found in cloned card!");
+            }
 
             // Update Item number text
             const itemNumberSpan = newCard.querySelector(".item-number-span");
@@ -78,14 +99,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Append the new card to the container
             projectItemsContainer.appendChild(newCard);
+
+            // Re-initialize flatpickr on new inputs if flatpickr exists
+            if (typeof flatpickr !== "undefined") {
+                const newFlatpickrInputs = newCard.querySelectorAll(".flatpickr-date");
+                newFlatpickrInputs.forEach((input) => {
+                    input.id = ""; // Remove ID to avoid duplicates
+                    flatpickr(input);
+                });
+            }
         });
     }
 
-    // Listener for Total Amount (Event Delegation)
+    // Listener for Total Amount & Removal (Event Delegation)
     if (projectItemsContainer) {
         projectItemsContainer.addEventListener("input", function (e) {
             if (e.target.classList.contains("estimated-budget-input")) {
                 updateTotalAmount();
+            }
+        });
+
+        projectItemsContainer.addEventListener("click", function (e) {
+            // Check if either the button or the image inside it was clicked
+            const trashBtn = e.target.closest(".remove-project-btn");
+            if (trashBtn) {
+                const cardToRemove = trashBtn.closest(".project-item-card");
+                if (cardToRemove) {
+                    cardToRemove.remove();
+                    updateTotalAmount();
+                    reindexItems();
+                }
             }
         });
     }
