@@ -9,6 +9,7 @@ class AppItem extends Model
 {
     protected $table = 'app_items_tbl';
     protected $primaryKey = 'app_item_id';
+    public $timestamps = false;
 
     protected $fillable = [
         'app_id_fk',

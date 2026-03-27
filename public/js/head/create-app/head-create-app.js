@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         budgetInputs.forEach((input) => {
-            // Remove commas and parse as float
-            let valStr = input.value.replace(/,/g, "");
-            let val = parseFloat(valStr);
+            let val = parseFloat(input.value);
             if (!isNaN(val)) {
                 total += val;
             }
@@ -28,26 +26,36 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Function to re-index item numbers
+    // Function to re-index item numbers and name attributes
     function reindexItems() {
         const projectCards = projectItemsContainer.querySelectorAll(".project-item-card");
         projectCards.forEach((card, index) => {
+            // Update item number display
             const itemNumberSpan = card.querySelector(".item-number-span");
             if (itemNumberSpan) {
                 itemNumberSpan.textContent = `Item ${index + 1}`;
             }
+
+            // Update all input name attributes to use the correct index
+            const inputs = card.querySelectorAll("input[name]");
+            inputs.forEach((input) => {
+                const currentName = input.getAttribute("name");
+                // Replace items[X][field] with items[newIndex][field]
+                const newName = currentName.replace(/items\[\d+\]/, `items[${index}]`);
+                input.setAttribute("name", newName);
+            });
         });
     }
 
     // Listener for Add Project Button
     if (addProjectBtn && projectItemsContainer) {
         addProjectBtn.addEventListener("click", function () {
-            // Get all project cards to determine the new item number
             const projectCards =
                 projectItemsContainer.querySelectorAll(".project-item-card");
             const newItemNumber = projectCards.length + 1;
+            const newIndex = projectCards.length; // 0-based index for name attributes
 
-            if (projectCards.length === 0) return; // Should have at least one to clone
+            if (projectCards.length === 0) return;
 
             // Clone the first card (deep clone)
             const firstCard = projectCards[0];
@@ -56,11 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Show the Trash button on cloned cards
             const trashBtn = newCard.querySelector(".remove-project-btn");
             if (trashBtn) {
-                console.log("Showing trash button for new card:", newItemNumber);
                 trashBtn.classList.remove("d-none");
-                trashBtn.style.display = "block"; // Force visibility
-            } else {
-                console.error("Trash button not found in cloned card!");
             }
 
             // Update Item number text
@@ -69,13 +73,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 itemNumberSpan.textContent = `Item ${newItemNumber}`;
             }
 
-            // Clear all text inputs
-            const textInputs = newCard.querySelectorAll('input[type="text"]');
+            // Clear all text and number inputs
+            const textInputs = newCard.querySelectorAll('input[type="text"], input[type="number"]');
             textInputs.forEach((input) => {
                 input.value = "";
             });
 
-            // Uncheck all radio buttons and ensure they have unique IDs to label linking
+            // Uncheck all radio buttons and update name attributes with new index
             const radioInputs = newCard.querySelectorAll('input[type="radio"]');
             radioInputs.forEach((input) => {
                 input.checked = false;
@@ -85,16 +89,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     const newId = `${oldId}-${newItemNumber}`;
                     input.id = newId;
 
-                    // Find the label that points to this input and update its 'for' attribute
-                    const label = newCard.querySelector(
-                        `label[for="${oldId}"]`,
-                    );
+                    const label = newCard.querySelector(`label[for="${oldId}"]`);
                     if (label) {
                         label.setAttribute("for", newId);
                     }
                 }
+            });
 
-                input.name = `covered_early_procurement_${newItemNumber}`;
+            // Update all input name attributes to use the new index
+            const allInputs = newCard.querySelectorAll("input[name]");
+            allInputs.forEach((input) => {
+                const currentName = input.getAttribute("name");
+                const newName = currentName.replace(/items\[\d+\]/, `items[${newIndex}]`);
+                input.setAttribute("name", newName);
             });
 
             // Append the new card to the container
@@ -104,7 +111,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (typeof flatpickr !== "undefined") {
                 const newFlatpickrInputs = newCard.querySelectorAll(".flatpickr-date");
                 newFlatpickrInputs.forEach((input) => {
-                    input.id = ""; // Remove ID to avoid duplicates
+                    // Remove any existing flatpickr instance data
+                    if (input._flatpickr) {
+                        input._flatpickr.destroy();
+                    }
                     flatpickr(input);
                 });
             }
@@ -120,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         projectItemsContainer.addEventListener("click", function (e) {
-            // Check if either the button or the image inside it was clicked
             const trashBtn = e.target.closest(".remove-project-btn");
             if (trashBtn) {
                 const cardToRemove = trashBtn.closest(".project-item-card");
