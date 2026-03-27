@@ -9,6 +9,7 @@ class AppParent extends Model
 {
     protected $table = 'app_tbl';
     protected $primaryKey = 'app_id';
+    public $timestamps = false;
 
     protected $fillable = [
         'saved_by_user_id_fk',
