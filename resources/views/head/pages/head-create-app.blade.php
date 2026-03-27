@@ -6,7 +6,9 @@
 
 @push('css')
     {{-- Page SPECIFIC css --}}
-    <link rel="stylesheet" href="{{ asset('css/head/import-app/page-specific/filepond.min.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('plugins/src/flatpickr/flatpickr.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/css/light/flatpickr/custom-flatpickr.css') }}">
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/head/create-app/head-create-app.css') }}">
@@ -15,16 +17,37 @@
 @section('content')
     <div class="card allocated-budget-card mb-3">
         <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
-            <h5 class="card-title mb-0 white-text">ALLOCATED BUDGET</h5>
-            <h5 class="card-title mb-0 white-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
+            <h5 class="card-title mb-0 fw-bold red-text-2">ANNUAL PROCUREMENT PROJECT</h5>
+            <div>
+                <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
+
+                <div class="text-end">
+                    <button class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                        <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
+                        <span>Done</span>
+                    </button>
+
+                    <button class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                        <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
+                        <span class="fw-bold">Save as Draft</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="project-items-container">
         <div class="card project-item-card mb-3">
             <div class="card-body">
-                <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item 1</span> | Procurement Project
-                    Details</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item 1</span> | Procurement
+                        Project
+                        Details</h5>
+
+                    <button class="btn btn-dark-red remove-project-btn d-none">
+                        <img src="{{ asset('img/Trash.svg') }}" width="20" height="20">
+                    </button>
+                </div>
 
                 <div class="row mb-3">
                     <div class="form-group col-4">
@@ -79,109 +102,15 @@
 
                 <div class="row mb-3">
                     <div class="form-group col-3">
-                        <label for="">Start of Procurement Activity</label>
-                        <input type="text" class="form-control" id="">
+                        <label for="start_date">Start of Procurement Activity</label>
+                        <input type="text" class="form-control flatpickr-date" id="start_date"
+                            placeholder="Select Date..">
                     </div>
 
                     <div class="form-group col-3">
-                        <label for="">End of Procurement Activity</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-3">
-                        <label for="">Source of Fund</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-3">
-                        <label for="">Estimated Budget/Approved Budget</label>
-                        <input type="text" class="form-control estimated-budget-input" id=""
-                            placeholder="In Peso">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label for="">Procurement Strategy or Tools</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-6">
-                        <label for="">REMARKS</label>
-                        <input type="text" class="form-control" id=""
-                            placeholder="Other relevant descriptions of the procurement project, if applicable">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card project-item-card mb-3">
-            <div class="card-body">
-                <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item 2</span> | Procurement Project
-                    Details</h5>
-
-                <div class="row mb-3">
-                    <div class="form-group col-4">
-                        <label for="">Project Title</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-4">
-                        <label for="">End-User or Implementing Unit</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-4">
-                        <label for="">General Description</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="form-group col-4">
-                        <label for="">Mode of Procurement</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-4">
-                        <label for="">Criteria for Bid Evaluation</label>
-                        <input type="text" class="form-control" id=""
-                            placeholder="Including Sustainability and Domestic
-                        Preference">
-                    </div>
-
-                    <div class="form-group col-4">
-                        <label for="">To be covered by an Early Procurement Activity</label>
-                        <div class="mt-4 d-flex justify-content-center">
-                            <input class="form-check-input" type="radio" name="" id="covered-yes"
-                                value="Yes">
-                            <label class="form-check-label ms-2 me-4" for="covered-yes">
-                                Yes
-                            </label>
-
-                            <input class="form-check-input" type="radio" name="" id="covered-no"
-                                value="No">
-                            <label class="form-check-label ms-2" for="covered-no">
-                                No
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <h5 class="card-title fw-bold col-6">Projected Timeline</h5>
-                    <h5 class="card-title fw-bold col-6">Funding Details</h5>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="form-group col-3">
-                        <label for="">Start of Procurement Activity</label>
-                        <input type="text" class="form-control" id="">
-                    </div>
-
-                    <div class="form-group col-3">
-                        <label for="">End of Procurement Activity</label>
-                        <input type="text" class="form-control" id="">
+                        <label for="end_date">End of Procurement Activity</label>
+                        <input type="text" class="form-control flatpickr-date" id="end_date"
+                            placeholder="Select Date..">
                     </div>
 
                     <div class="form-group col-3">
@@ -212,8 +141,13 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-end mb-3">
-        <button type="button" class="btn btn-red" id="add-project-btn">Add Project</button>
+    <div class="d-flex justify-content-center mb-3">
+        <button
+            class="btn border border-light-subtle btn-white d-inline-flex align-items-center justify-content-center w-50 gap-1 py-2"
+            id="add-project-btn">
+            <img src="{{ asset('img/Add.svg') }}" width="14" height="14" alt="">
+            <span class="fw-bold">Add Project</span>
+        </button>
     </div>
 
     <div class="d-flex justify-content-end">
@@ -225,6 +159,15 @@
     {{-- Page SPECIFIC js --}}
     {{-- <script src="{{ asset('js/head/import-app/page-specific/filepond.min.js') }}"></script> --}}
 
+    <script src="{{ asset('plugins/src/flatpickr/flatpickr.js') }}"></script>
+
     <!-- CUSTOM js -->
     <script src="{{ asset('js/head/create-app/head-create-app.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof flatpickr !== "undefined") {
+                flatpickr('.flatpickr-date');
+            }
+        });
+    </script>
 @endpush
