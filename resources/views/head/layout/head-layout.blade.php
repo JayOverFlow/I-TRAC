@@ -31,7 +31,7 @@
 
     <!--  BEGIN HEADER  -->
     <div class="header-container container-xxl">
-        @include('head.partials.header')
+        @include('main-header')
     </div>
     <!--  END HEADER  -->
 
