@@ -47,7 +47,7 @@
                                 </tr>
                             </thead>
                             <tbody id="user-list">
-                                @forelse($subordinates as $subordinate)
+                                {{-- @forelse($subordinates as $subordinate)
                                     <tr class="user-list-item" style="cursor: pointer;"
                                         data-user-id="{{ $subordinate->user_id }}">
                                         <td class="align-middle user-name">
@@ -62,7 +62,16 @@
                                         <td colspan="2" class="text-center text-muted">No users found in your department.
                                         </td>
                                     </tr>
-                                @endforelse
+                                @endforelse --}}
+
+                                <tr class="user-list-item" style="cursor: pointer;">
+                                    <td class="align-middle user-name">
+                                        Kimberlet Porteria
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        TUPT-12345
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -89,13 +98,12 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th class="fw-bold">Code</th>
-                        <th class="fw-bold">Procurement Program / Project</th>
-                        <th class="fw-bold">Ads/Post of IB/REI</th>
-                        <th class="fw-bold">Sub/Open of Bids date</th>
-                        <th class="fw-bold">Notice of Award</th>
-                        <th class="fw-bold">Contract Signing</th>
-                        <th class="fw-bold">Total</th>
+                        <th class="fw-bold">Project Title</th>
+                        <th class="fw-bold">General Description</th>
+                        <th class="fw-bold">Mode of Procurement</th>
+                        <th class="fw-bold">Start of Procurement</th>
+                        <th class="fw-bold">End of procurement</th>
+                        <th class="fw-bold">Estimated Budget</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,16 +115,17 @@
                                         id="form-check-danger">
                                 </div>
                             </td>
-                            <td>{{ $appItem->app_item_id }}</td>
-                            <td>{{ $appItem->app_item_name }}</td>
-                            <td>{{ $appItem->app_item_adspost }}</td>
-                            <td>{{ $appItem->app_item_subopen }}</td>
-                            <td>{{ $appItem->app_item_notice }}</td>
-                            <td>{{ $appItem->app_item_contract }}</td>
-                            <td>{{ $appItem->app_item_estimated_total }}</td>
+                            <td>{{ $appItem->app_item_proj_title }}</td>
+                            <td>{{ $appItem->app_items_gen_desc }}</td>
+                            <td>{{ $appItem->app_items_mode }}</td>
+                            <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
+                            <td>{{ $appItem->app_items_esti_budget }}</td>
                         </tr>
                     @empty
-                        <p>No items available.</p>
+                        <tr>
+                            <td colspan="7" class="text-center">No items available.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -133,18 +142,24 @@
 @push('js')
     <!-- Page SPECIFIC js -->
     <script src="{{ asset('js/head/assign-pr/page-specific/datatables.js') }}"></script>
-    <script src="{{ asset('js/head/assign-pr/page-specific/scrollspyNav.js') }}"></script>
 
     <script>
         $('#zero-config').DataTable({
             "columnDefs": [{
-                    "targets": [0, 1, 3, 4, 5, 6, 7],
+                    "targets": [0, 3, 4, 5, 6],
                     "className": "text-center align-middle"
                 },
                 {
+                    "targets": [1, 2],
+                    "className": "text-start align-middle text-wrap"
+                },
+                {
+                    "targets": 1,
+                    "width": "35%"
+                },
+                {
                     "targets": 2,
-                    "className": "text-start align-middle text-wrap",
-                    "width": "25%"
+                    "width": "15%"
                 }
             ],
             "searching": false,
