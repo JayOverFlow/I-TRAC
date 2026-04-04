@@ -94,9 +94,13 @@ Route::controller(ImportAppController::class)->group(function () {
     Route::post('/import-app', 'importApp')->name('import.app');
 });
 
+// Route::controller(AssignPrController::class)->group(function () {
+//     Route::get('/assign-pr/{app_id}', 'showAssignPR')->name('show.assign.pr');
+//     Route::post('/assign-pr', 'assignPR')->name('assign.pr');
+// });
+
 Route::controller(AssignPrController::class)->group(function () {
-    Route::get('/assign-pr/{app_id}', 'showAssignPR')->name('show.assign.pr');
-    Route::post('/assign-pr', 'assignPR')->name('assign.pr');
+    Route::get('/assign-pr/{app_id}', 'showAssignPr')->name('show.assign.pr');
 });
 
 Route::middleware(['auth', 'role:Head'])->group(function () {
