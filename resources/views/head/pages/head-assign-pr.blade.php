@@ -47,7 +47,7 @@
                                 </tr>
                             </thead>
                             <tbody id="user-list">
-                                {{-- @forelse($subordinates as $subordinate)
+                                @forelse($subordinates as $subordinate)
                                     <tr class="user-list-item" style="cursor: pointer;"
                                         data-user-id="{{ $subordinate->user_id }}">
                                         <td class="align-middle user-name">
@@ -62,16 +62,7 @@
                                         <td colspan="2" class="text-center text-muted">No users found in your department.
                                         </td>
                                     </tr>
-                                @endforelse --}}
-
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">
-                                        Kimberlet Porteria
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        TUPT-12345
-                                    </td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
