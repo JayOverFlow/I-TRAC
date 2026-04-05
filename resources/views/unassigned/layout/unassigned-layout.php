@@ -31,7 +31,7 @@
 
     <!--  BEGIN HEADER  -->
     <div class="header-container container-xxl">
-        @include('faculty.partials.header')
+        @include('unassigned.partials.header')
     </div>
     <!--  END HEADER  -->
 
@@ -43,7 +43,7 @@
 
         <!--  BEGIN NAVBAR  -->
         <div class="sidebar-wrapper sidebar-theme">
-            @include('faculty.partials.nav-bar')
+            @include('unassigned.partials.nav-bar')
         </div>
         <!--  END NAVBAR  -->
 

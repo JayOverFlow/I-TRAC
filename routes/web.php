@@ -23,6 +23,10 @@ Route::get('/head/dashboard', function () {
     return view('head/pages/dashboard');
 });
 
+Route::get('/head/create-pr', function () {
+    return view('head/pages/head-create-pr');
+});
+
 Route::get('/supply/dashboard', function () {
     return view('supply/pages/dashboard');
 });
