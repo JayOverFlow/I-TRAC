@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="{{ asset('css/head/assign-pr/head-assign-pr.css') }}">
 @endpush
 
+{{-- Hidden meta tags for JS to consume the route URL and CSRF token --}}
+<meta name="assign-pr-url" content="{{ route('store.assign.pr') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @section('content')
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
@@ -47,54 +51,22 @@
                                 </tr>
                             </thead>
                             <tbody id="user-list">
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Patrick Justin Ariado</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-123456
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Pak Juna</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-827482
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Kemberlet Crissel</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-283798
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Jay Jay Bautista</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-127651
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Ron Eric Contis</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-928273
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Arthur Nery</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-928371
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">The Beatles</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-837463
-                                    </td>
-                                </tr>
-                                <tr class="user-list-item" style="cursor: pointer;">
-                                    <td class="align-middle user-name">Freddie Mercury</td>
-                                    <td class="text-center align-middle">
-                                        TUPT-938472
-                                    </td>
-                                </tr>
+                                @forelse($subordinates as $subordinate)
+                                    <tr class="user-list-item" style="cursor: pointer;"
+                                        data-user-id="{{ $subordinate->user_id }}">
+                                        <td class="align-middle user-name">
+                                            {{ $subordinate->user_firstname }} {{ $subordinate->user_lastname }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            TUPT-{{ $subordinate->user_tupid }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">No users found in your department.
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -121,106 +93,54 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th class="fw-bold">Code</th>
-                        <th class="fw-bold">Procurement Program / Project</th>
-                        <th class="fw-bold">Ads/Post of IB/REI</th>
-                        <th class="fw-bold">Sub/Open of Bids date</th>
-                        <th class="fw-bold">Notice of Award</th>
-                        <th class="fw-bold">Contract Signing</th>
-                        <th class="fw-bold">Total</th>
+                        <th class="fw-bold">Project Title</th>
+                        <th class="fw-bold">General Description</th>
+                        <th class="fw-bold">Mode of Procurement</th>
+                        <th class="fw-bold">Start of Procurement</th>
+                        <th class="fw-bold">End of procurement</th>
+                        <th class="fw-bold">Estimated Budget</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>1234</td>
-                        <td>Physics Laboratory Equipment Supplies and Materials</td>
-                        <td></td>
-                        <td>March 11, 2025</td>
-                        <td>March 12, 2025</td>
-                        <td>March 14, 2025</td>
-                        <td>Php 50,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>5678</td>
-                        <td>Folder</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>1 Steel Cabinet</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>Microwave with birth certificate</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>Licensed Professional Electric Fan</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-check form-check-danger form-check-inline">
-                                <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                    id="form-check-danger">
-                            </div>
-                        </td>
-                        <td>9101</td>
-                        <td>Monitor with 67 years warranty</td>
-                        <td>June 2, 2025</td>
-                        <td>June 10, 2025</td>
-                        <td>June 13, 2025</td>
-                        <td>June 14, 2025</td>
-                        <td>Php 20,000.00</td>
-                    </tr>
+                    @forelse($app_data->appItems as $appItem)
+                        @if ($appItem->app_items_is_assigned)
+                            {{-- Already assigned: show icon, no checkbox --}}
+                            <tr>
+                                <td class="text-center align-middle">
+                                    <img src="{{ asset('img/Assigned.svg') }}" width="24" height="24"
+                                        title="Item is already assigned">
+                                </td>
+                                <td>{{ $appItem->app_item_proj_title }}</td>
+                                <td>{{ $appItem->app_items_gen_desc }}</td>
+                                <td>{{ $appItem->app_items_mode }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ $appItem->app_items_esti_budget }}</td>
+                            </tr>
+                        @else
+                            {{-- Not assigned: show checkbox --}}
+                            <tr>
+                                <td>
+                                    <div class="form-check form-check-danger form-check-inline">
+                                        <input class="form-check-input item-checkbox" type="checkbox"
+                                            id="item-{{ $appItem->app_item_id }}"
+                                            data-item-id="{{ $appItem->app_item_id }}"
+                                            value="{{ $appItem->app_item_id }}">
+                                    </div>
+                                </td>
+                                <td>{{ $appItem->app_item_proj_title }}</td>
+                                <td>{{ $appItem->app_items_gen_desc }}</td>
+                                <td>{{ $appItem->app_items_mode }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ $appItem->app_items_esti_budget }}</td>
+                            </tr>
+                        @endif
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">No items available.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
             <div id="action-buttons" class="d-flex justify-content-start ms-3 mt-3 mt-sm-0">
@@ -236,18 +156,24 @@
 @push('js')
     <!-- Page SPECIFIC js -->
     <script src="{{ asset('js/head/assign-pr/page-specific/datatables.js') }}"></script>
-    <script src="{{ asset('js/head/assign-pr/page-specific/scrollspyNav.js') }}"></script>
 
     <script>
         $('#zero-config').DataTable({
             "columnDefs": [{
-                    "targets": [0, 1, 3, 4, 5, 6, 7],
+                    "targets": [0, 3, 4, 5, 6],
                     "className": "text-center align-middle"
                 },
                 {
+                    "targets": [1, 2],
+                    "className": "text-start align-middle text-wrap"
+                },
+                {
+                    "targets": 1,
+                    "width": "35%"
+                },
+                {
                     "targets": 2,
-                    "className": "text-start align-middle text-wrap",
-                    "width": "25%"
+                    "width": "15%"
                 }
             ],
             "searching": false,

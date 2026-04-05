@@ -20,7 +20,6 @@
 
     <!-- Inject SPECIFIC and CUSTOM css-->
     @stack('css')
-
 </head>
 <body class="layout-boxed enable-secondaryNav">
     <!-- BEGIN LOADER -->

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Laravel\Sanctum\HasApiTokens;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'user_firstname',
-        'user_middlename', 
+        'user_middlename',
         'user_lastname',
         'user_suffix',
         'user_tupid',
@@ -71,11 +72,24 @@ class User extends Authenticatable
         return $this->user_password;
     }
 
-    /**
-     * Get the email field name.
-     */
-    public function getAuthIdentifierName()
+
+    public function roles()
     {
-        return 'user_email';
+        return $this->belongsToMany(Role::class, 'user_roles_tbl', 'user_id_fk', 'role_id_fk');
+    }
+
+    public function userDepartment()
+    {
+        return $this->hasMany(UserDepartment::class, 'user_roles_tbl', 'user_id_fk');
+    }
+
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class, 'user_departments_tbl', 'user_id_fk', 'department_id_fk');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'tasks_tbl', 'assigned_to');
     }
 }

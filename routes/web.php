@@ -6,13 +6,16 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ImportAppController;
 use App\Http\Controllers\AssignPrController;
+use App\Http\Controllers\CreateAppController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
+use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login');
 });
 
 Route::get('/sample', function () {
@@ -21,6 +24,14 @@ Route::get('/sample', function () {
 
 Route::get('/head/dashboard', function () {
     return view('head/pages/dashboard');
+})->middleware('auth');
+
+Route::middleware(['auth', 'role:Head,Supply'])->group(function () {
+
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
+        // Route::post('/reports/store', 'store')->name('reports.store');
+    });
 });
 
 Route::get('/head/create-pr', function () {
@@ -71,8 +82,15 @@ Route::controller(AdminAuthController::class)->group(function () {
 Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/dashboard', 'index')->name('admin.dashboard'); // Admin dashboard (Users) - protected
     Route::get('/roles-offices', [AdminRolesOfficesController::class, 'index'])->name('admin.roles-offices'); // Admin Roles and Offices - protected
-    Route::get('/roles-assignment', 'rolesAssignment')->name('admin.roles-assignment'); // Admin Roles Assignment - protected
-}); 
+    Route::post('/roles-offices/save', [AdminRolesOfficesController::class, 'saveRoles'])->name('admin.roles-offices.save');
+    Route::put('/roles-offices/{id}', [AdminRolesOfficesController::class, 'updateRole'])->name('admin.roles-offices.update');
+    Route::delete('/roles-offices/{id}', [AdminRolesOfficesController::class, 'deleteRole'])->name('admin.roles-offices.delete');
+    Route::put('/departments/{id}', [AdminRolesOfficesController::class, 'updateDepartment'])->name('admin.departments.update');
+    Route::delete('/departments/{id}', [AdminRolesOfficesController::class, 'deleteDepartment'])->name('admin.departments.delete');
+
+    Route::get('/roles-assignment', [AdminRolesAssignmentController::class, 'index'])->name('admin.roles-assignment'); // Admin Roles Assignment - protected
+    Route::post('/roles-assignment/update', [AdminRolesAssignmentController::class, 'updateRoleAssignments'])->name('admin.roles-assignment.update');
+});
 
 // Import APP
 Route::controller(ImportAppController::class)->group(function () {
@@ -80,7 +98,20 @@ Route::controller(ImportAppController::class)->group(function () {
     Route::post('/import-app', 'importApp')->name('import.app');
 });
 
+// Route::controller(AssignPrController::class)->group(function () {
+//     Route::get('/assign-pr/{app_id}', 'showAssignPR')->name('show.assign.pr');
+//     Route::post('/assign-pr', 'assignPR')->name('assign.pr');
+// });
+
 Route::controller(AssignPrController::class)->group(function () {
-    Route::get('/assign-pr/{app_id}', 'showAssignPR')->name('show.assign.pr');
-    Route::post('/assign-pr', 'assignPR')->name('assign.pr');
+    Route::get('/assign-pr/{app_id}', 'showAssignPr')->name('show.assign.pr');
+    Route::post('/assign-pr', 'storeAssignPr')->name('store.assign.pr');
+});
+
+Route::middleware(['auth', 'role:Head'])->group(function () {
+
+    Route::controller(CreateAppController::class)->group(function () {
+        Route::get('/create-app', 'showCreateApp')->name('show.create-app');
+        Route::post('/create-app', 'createApp')->name('create.app');
+    });
 });

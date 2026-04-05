@@ -17,7 +17,7 @@
 }
 
 body {
-    background-color: var(--white-2);
+    background-color: var(--white-1);
     font-family: "Nunito", sans-serif;
     font-optical-sizing: auto;
     font-weight: 500;
@@ -25,7 +25,7 @@ body {
 }
 
 .header-container {
-    background-color: var(--red-1) !important;
+    background-color: var(--white-2) !important;
     border: none !important;
     box-shadow: none !important;
 }
@@ -55,6 +55,16 @@ body {
 .btn-red {
   background-color: var(--red-btn) !important;
   color: var(--white-text) !important;
+}
+
+.btn-dark-red {
+  background-color: var(--red-text-2) !important;
+  color: var(--white-text) !important;
+}
+
+.btn-white {
+  background-color: var(--white-2) !important;
+  color: var(--black-text) !important;
 }
 
 .red-text {

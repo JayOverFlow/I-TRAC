@@ -1,0 +1,17 @@
+/* .allocated-budget-card {
+    background: linear-gradient(135deg, #C60202 0%, #930000 100%) !important;
+} */
+
+
+#covered-yes:checked, #covered-no:checked {
+    /* Changes the background color of the circle */
+    background-color: var(--red-btn); 
+    /* Changes the border color */
+    border-color: var(--red-btn);
+}
+
+#covered-yes:focus, #covered-no:focus {
+    /* Changes the glow/outline when clicked or tabbed to */
+    border-color: var(--red-btn);
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
