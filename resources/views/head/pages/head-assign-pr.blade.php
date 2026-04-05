@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="{{ asset('css/head/assign-pr/head-assign-pr.css') }}">
 @endpush
 
+{{-- Hidden meta tags for JS to consume the route URL and CSRF token --}}
+<meta name="assign-pr-url" content="{{ route('store.assign.pr') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @section('content')
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
@@ -99,20 +103,39 @@
                 </thead>
                 <tbody>
                     @forelse($app_data->appItems as $appItem)
-                        <tr>
-                            <td>
-                                <div class="form-check form-check-danger form-check-inline">
-                                    <input class="form-check-input item-checkbox" type="checkbox" value=""
-                                        id="form-check-danger">
-                                </div>
-                            </td>
-                            <td>{{ $appItem->app_item_proj_title }}</td>
-                            <td>{{ $appItem->app_items_gen_desc }}</td>
-                            <td>{{ $appItem->app_items_mode }}</td>
-                            <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
-                            <td>{{ $appItem->app_items_esti_budget }}</td>
-                        </tr>
+                        @if ($appItem->app_items_is_assigned)
+                            {{-- Already assigned: show icon, no checkbox --}}
+                            <tr>
+                                <td class="text-center align-middle">
+                                    <img src="{{ asset('img/Assigned.svg') }}" width="24" height="24"
+                                        title="Item is already assigned">
+                                </td>
+                                <td>{{ $appItem->app_item_proj_title }}</td>
+                                <td>{{ $appItem->app_items_gen_desc }}</td>
+                                <td>{{ $appItem->app_items_mode }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ $appItem->app_items_esti_budget }}</td>
+                            </tr>
+                        @else
+                            {{-- Not assigned: show checkbox --}}
+                            <tr>
+                                <td>
+                                    <div class="form-check form-check-danger form-check-inline">
+                                        <input class="form-check-input item-checkbox" type="checkbox"
+                                            id="item-{{ $appItem->app_item_id }}"
+                                            data-item-id="{{ $appItem->app_item_id }}"
+                                            value="{{ $appItem->app_item_id }}">
+                                    </div>
+                                </td>
+                                <td>{{ $appItem->app_item_proj_title }}</td>
+                                <td>{{ $appItem->app_items_gen_desc }}</td>
+                                <td>{{ $appItem->app_items_mode }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
+                                <td>{{ $appItem->app_items_esti_budget }}</td>
+                            </tr>
+                        @endif
                     @empty
                         <tr>
                             <td colspan="7" class="text-center">No items available.</td>

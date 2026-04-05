@@ -83,7 +83,7 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
     Route::delete('/roles-offices/{id}', [AdminRolesOfficesController::class, 'deleteRole'])->name('admin.roles-offices.delete');
     Route::put('/departments/{id}', [AdminRolesOfficesController::class, 'updateDepartment'])->name('admin.departments.update');
     Route::delete('/departments/{id}', [AdminRolesOfficesController::class, 'deleteDepartment'])->name('admin.departments.delete');
-    
+
     Route::get('/roles-assignment', [AdminRolesAssignmentController::class, 'index'])->name('admin.roles-assignment'); // Admin Roles Assignment - protected
     Route::post('/roles-assignment/update', [AdminRolesAssignmentController::class, 'updateRoleAssignments'])->name('admin.roles-assignment.update');
 });
@@ -101,6 +101,7 @@ Route::controller(ImportAppController::class)->group(function () {
 
 Route::controller(AssignPrController::class)->group(function () {
     Route::get('/assign-pr/{app_id}', 'showAssignPr')->name('show.assign.pr');
+    Route::post('/assign-pr', 'storeAssignPr')->name('store.assign.pr');
 });
 
 Route::middleware(['auth', 'role:Head'])->group(function () {
