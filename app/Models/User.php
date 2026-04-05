@@ -87,4 +87,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Department::class, 'user_departments_tbl', 'user_id_fk', 'department_id_fk');
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'tasks_tbl', 'assigned_to');
+    }
 }
