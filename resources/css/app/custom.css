@@ -10,6 +10,10 @@
     --white-text: #FFFFFF;
     --red-text: #C62742;
     --red-text-2: #8C0404;
+    --gray-text: #585656;
+    --red-3: #B23F3F;
+    --red-4: #8C0404;
+
 }
 
 body {
@@ -71,5 +75,20 @@ body {
     color: var(--red-text-2) !important;
 }
 
+.red-3 {
+    background-color: var(--red-3) !important;
+}
+
+.red-4 {
+    background-color: var(--red-4) !important;
+}
+
+.gray-text{
+    color: var(--gray-text) !important;
+}
+
+.btn-bg-white {
+    background-color: var(--white-2) !important;
+}
 
 /*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJjdXN0b20uc2NzcyJdLCJzb3VyY2VzQ29udGVudCI6WyIiXSwiZmlsZSI6ImN1c3RvbS5jc3MifQ== */

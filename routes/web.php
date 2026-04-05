@@ -34,6 +34,10 @@ Route::middleware(['auth', 'role:Head,Supply'])->group(function () {
     });
 });
 
+Route::get('/head/create-pr', function () {
+    return view('head/pages/head-create-pr');
+});
+
 Route::get('/supply/dashboard', function () {
     return view('supply/pages/dashboard');
 });

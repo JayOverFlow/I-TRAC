@@ -1,5 +1,5 @@
 {{-- Extend the main layout that you want to use --}}
-@extends('faculty.layout.faculty-layout')
+@extends('unassigned.layout.unassigned-layout')
 
 {{-- Define contents to show in the layout --}}
 @section('title', 'Dashboard | I-TRAC')

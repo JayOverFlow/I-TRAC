@@ -1,0 +1,71 @@
+.card-budget{
+    /* background: linear-gradient(45deg, #C60202, #930000) !important; */
+    border: none;
+}
+
+.w-6  {
+    width: 6% !important; 
+    }
+.w-13 { 
+    width: 13% !important; 
+}
+.w-45 { 
+    width: 45% !important; 
+}
+.article-cell-wrapper{
+    width: 100%;
+}
+.description-box-container {
+    width: 100%;
+}
+.add-description-btn{
+    cursor: pointer;
+}
+
+.choose-btn, #btndefault{
+    width: 150px;
+    height:50px;
+    border: 1px solid #BFC9D4 !important;
+    border-radius: 6px !important;
+    background-color: #FFFFFF !important;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-btn{
+    width: 10px;
+    height:10px;
+   
+}
+
+.pr-description-row td {
+    border-top: none !important; /* Seamless look */
+    padding-top: 0 !important;
+}
+
+.card-pad,.card-body{
+    padding: 25px 30px !important;
+}
+
+.rounded-circle {
+    object-fit: cover;
+}
+
+.avatar-img, .avatar-add {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+}
+
+.ms-n2 {
+    margin-left: -10px !important; /* This creates the overlapping effect */
+}
+
+.avatar-add {
+    background-color: white;
+    color: #adb5bd;
+    border: 1px solid #dee2e6 !important;
+    cursor: pointer;
+}
