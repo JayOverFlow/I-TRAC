@@ -90,6 +90,20 @@ class User extends Authenticatable
 
     public function tasks()
     {
-        return $this->hasMany(Task::class, 'tasks_tbl', 'assigned_to');
+        return $this->hasMany(Task::class, 'assigned_to', 'user_id');
+    }
+
+    /**
+     * Override the broken MySQL virtual column with a proper PHP accessor.
+     * The DB expression uses literal strings instead of column references.
+     */
+    public function getUserFullnameAttribute(): string
+    {
+        return trim(implode(' ', array_filter([
+            $this->user_firstname,
+            $this->user_middlename,
+            $this->user_lastname,
+            $this->user_suffix,
+        ])));
     }
 }
