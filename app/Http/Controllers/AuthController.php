@@ -34,7 +34,20 @@ class AuthController extends Controller
         if (Auth::attempt(['user_email' => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
 
-            return redirect()->route('show.dashboard');
+            // Get user gen_role
+            $user = Auth::user();
+            $gen_role = $user->gen_role;
+
+            switch ($gen_role) {
+                case 'Head':
+                    return redirect()->route('show.dashboard');
+                    break;
+                case null: // No role or unassigned
+                    return redirect()->route('show.mr');
+                    break;
+                default:
+                    redirect()->route('show.login');
+                }
         }
 
         // Authentication failed

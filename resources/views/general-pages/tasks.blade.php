@@ -15,9 +15,9 @@
         <table id="zero-config" class="table table-striped dt-table-hover" style="width:100%">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Document</th>
-                    <th>Date Received</th>
+                    <th class="fw-bold">From</th>
+                    <th class="fw-bold">Document</th>
+                    <th class="fw-bold">Date Received</th>
                 </tr>
             </thead>
             <tbody>
