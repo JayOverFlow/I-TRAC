@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -36,25 +37,20 @@ class AuthController extends Controller
 
             // Get user gen_role
             $user = Auth::user();
-            $gen_role = $user->gen_role;
+            $gen_role = $user->roles->first()?->gen_role;
 
             switch ($gen_role) {
                 case 'Head':
                     return redirect()->route('show.dashboard');
-                    break;
-                case null: // No role or unassigned
-                    return redirect()->route('show.mr');
-                    break;
                 default:
-                    redirect()->route('show.login');
-                }
+                    return redirect()->route('show.mr');
+            }
         }
 
         // Authentication failed
         return back()->withErrors([
             'auth_failed' => 'Email or password is invalid.'
         ])->withInput($request->only('email'));
-        
     }
 
     public function showRegister() {
@@ -68,7 +64,7 @@ class AuthController extends Controller
         // Validate
         if ($request->has('validate_and_store')) {
             $step = $request->step;
- 
+
             if ($step == 1) { // Step 1 validation
                 $validator = Validator::make($request->all(), [
                     'first_name' => 'required|string|min:3|max:50',
@@ -76,7 +72,7 @@ class AuthController extends Controller
                     'last_name' => 'required|string|min:3|max:50',
                     'suffix' => 'nullable|string|max:10',
                     'tup_id' => 'required|string|max:6|unique:users,user_tupid|regex:/^\d{6}$/',
-                ],[
+                ], [
                     'tup_id.unique' => 'TUP ID already exists.',
                 ]);
             } elseif ($step == 2) { // Step 2 validation
@@ -113,8 +109,15 @@ class AuthController extends Controller
             // Store validated data in session
             $currentData = session('registration_data', []);
             $newData = $request->only([
-                'first_name', 'middle_name', 'last_name', 'suffix',
-                'tup_id', 'email', 'password', 'user_type', 'department'
+                'first_name',
+                'middle_name',
+                'last_name',
+                'suffix',
+                'tup_id',
+                'email',
+                'password',
+                'user_type',
+                'department'
             ]);
 
             session(['registration_data' => array_merge($currentData, $newData)]);
@@ -128,14 +131,14 @@ class AuthController extends Controller
         // Handle registration completion after email verification
         if ($request->has('complete_registration') && $request->complete_registration) {
             $registrationData = session('registration_data');
-            
+
             if (!$registrationData) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Registration data not found. Please start over.'
                 ], 400);
             }
-            
+
             try {
                 $user = \App\Models\User::create([
                     'user_firstname' => $registrationData['first_name'],
@@ -148,15 +151,14 @@ class AuthController extends Controller
                     'user_type' => $registrationData['user_type'],
                     'email_verified_at' => now(),
                 ]);
-                
+
                 session()->forget('registration_data');
-                
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Registration completed successfully! You can now log in.',
                     'user_id' => $user->user_id
                 ]);
-                
             } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
@@ -169,7 +171,6 @@ class AuthController extends Controller
             'success' => false,
             'message' => 'Invalid request'
         ], 400);
-        
     }
 
     public function logout(Request $request)
