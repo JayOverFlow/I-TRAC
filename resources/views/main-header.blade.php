@@ -11,7 +11,8 @@
 
     <ul class="navbar-item theme-brand flex-row  text-center">
         <li class="nav-item theme-logo">
-            <img src="{{ asset('img/itrac-header-logo-red.svg') }}" alt="I-TRAC" width="170" height="36" style="object-fit: contain;">
+            <img src="{{ asset('img/itrac-header-logo-red.svg') }}" alt="I-TRAC" width="170" height="36"
+                style="object-fit: contain;">
         </li>
     </ul>
 
@@ -193,7 +194,7 @@
 
         <li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
             <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown"
-               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
                     <div class="avatar avatar-sm avatar-indicators avatar-online">
                         <img alt="avatar" src="{{ asset('img/profile-30.png') }}"
@@ -232,30 +233,15 @@
                 <div class="dropdown-item">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <a type="submit">
-                            <img src="{{ asset('img/icons/logout.png') }}" width="26" height="26" alt="Logout">
+                        <a href="javascript:void(0);" onclick="this.closest('form').submit();">
+                            <img src="{{ asset('img/icons/logout.png') }}" width="26" height="26"
+                                alt="Logout">
                             <span>Log Out</span>
                         </a>
 
                     </form>
                 </div>
             </div>
-        </li>
-
-{{--        <li class="ms-3">--}}
-{{--            <div>--}}
-{{--                <p class="fs-6 text-white mb-0">{{ auth()->user()->user_firstname }}</p>--}}
-{{--                <p id="role" class="text-decoration-underline mb-0">Head - Full Stack Developer</p>--}}
-{{--            </div>--}}
-{{--        </li>--}}
-
-        <li class="ms-3 d-flex justify-content-center align-items-center">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn p-0 border-0 bg-transparent" aria-label="Logout">
-                    <img src="{{ asset('img/logout.png') }}" width="26" height="26" alt="Logout">
-                </button>
-            </form>
         </li>
     </ul>
 </header>

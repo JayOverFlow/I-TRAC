@@ -9,6 +9,7 @@ use App\Http\Controllers\AssignPrController;
 use App\Http\Controllers\CreateAppController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MrController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use Illuminate\Support\Facades\Route;
@@ -22,20 +23,12 @@ Route::get('/sample', function () {
     return view('sample-content');
 });
 
-Route::get('/head/dashboard', function () {
-    return view('head/pages/dashboard');
-})->middleware('auth');
-
 Route::middleware(['auth', 'role:Head,Supply'])->group(function () {
 
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
         // Route::post('/reports/store', 'store')->name('reports.store');
     });
-});
-
-Route::get('/head/create-pr', function () {
-    return view('head/pages/head-create-pr');
 });
 
 Route::get('/supply/dashboard', function () {
@@ -98,11 +91,6 @@ Route::controller(ImportAppController::class)->group(function () {
     Route::post('/import-app', 'importApp')->name('import.app');
 });
 
-// Route::controller(AssignPrController::class)->group(function () {
-//     Route::get('/assign-pr/{app_id}', 'showAssignPR')->name('show.assign.pr');
-//     Route::post('/assign-pr', 'assignPR')->name('assign.pr');
-// });
-
 Route::controller(AssignPrController::class)->group(function () {
     Route::get('/assign-pr/{app_id}', 'showAssignPr')->name('show.assign.pr');
     Route::post('/assign-pr', 'storeAssignPr')->name('store.assign.pr');
@@ -114,4 +102,9 @@ Route::middleware(['auth', 'role:Head'])->group(function () {
         Route::get('/create-app', 'showCreateApp')->name('show.create-app');
         Route::post('/create-app', 'createApp')->name('create.app');
     });
+});
+
+Route::controller(MrController::class)->group(function () {
+    Route::get('/mr', 'showMr')->name('show.mr');
+    // Route::post('/create-app', 'createApp')->name('create.app');
 });
