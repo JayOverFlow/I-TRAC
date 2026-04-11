@@ -23,7 +23,7 @@ Route::get('/sample', function () {
     return view('sample-content');
 });
 
-Route::middleware(['auth', 'role:Head,Supply'])->group(function () {
+Route::middleware(['auth', 'role:Head'])->group(function () {
 
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
@@ -99,4 +99,8 @@ Route::middleware(['auth', 'role:Head'])->group(function () {
 Route::controller(MrController::class)->group(function () {
     Route::get('/mr', 'showMr')->name('show.mr');
     // Route::post('/create-app', 'createApp')->name('create.app');
+});
+
+Route::get('/create-pr', function () {
+    return view('head/pages/head-create-pr');
 });

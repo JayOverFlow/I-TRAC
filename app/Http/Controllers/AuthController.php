@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Department;
+use App\Models\UserDepartment;
 
 class AuthController extends Controller
 {
@@ -140,6 +142,8 @@ class AuthController extends Controller
             }
 
             try {
+                DB::beginTransaction();
+
                 $user = \App\Models\User::create([
                     'user_firstname' => $registrationData['first_name'],
                     'user_middlename' => $registrationData['middle_name'],
@@ -152,6 +156,13 @@ class AuthController extends Controller
                     'email_verified_at' => now(),
                 ]);
 
+                UserDepartment::create([
+                    'user_id_fk' => $user->user_id,
+                    'department_id_fk' => $registrationData['department'],
+                ]);
+
+                DB::commit();
+
                 session()->forget('registration_data');
 
                 return response()->json([
@@ -160,6 +171,8 @@ class AuthController extends Controller
                     'user_id' => $user->user_id
                 ]);
             } catch (\Exception $e) {
+                DB::rollBack();
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Registration failed: ' . $e->getMessage()
