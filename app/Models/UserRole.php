@@ -8,6 +8,7 @@ class UserRole extends Model
 {
     protected $table = 'user_roles_tbl';
     protected $primaryKey = 'user_role_id';
+    public $timestamps = false;
 
     protected $fillable = [
         'user_id_fk',
@@ -15,9 +16,10 @@ class UserRole extends Model
     ];
 
     public function user() {
-        return $this->belongsTo(User::class, 'user_id_fk', 'id');
+        return $this->belongsTo(User::class, 'user_id_fk', 'user_id');
     }
-    public function userRole() {
-        return $this->belongsTo(UserRole::class, 'role_id_fk', 'id');
+
+    public function role() {
+        return $this->belongsTo(Role::class, 'role_id_fk', 'role_id');
     }
 }

@@ -80,7 +80,7 @@ class User extends Authenticatable
 
     public function userDepartment()
     {
-        return $this->hasMany(UserDepartment::class, 'user_roles_tbl', 'user_id_fk');
+        return $this->hasMany(UserDepartment::class, 'user_id_fk', 'user_id');
     }
 
     public function departments()
