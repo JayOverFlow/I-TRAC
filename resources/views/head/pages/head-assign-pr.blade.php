@@ -16,7 +16,7 @@
 @endpush
 
 {{-- Hidden meta tags for JS to consume the route URL and CSRF token --}}
-<meta name="assign-pr-url" content="{{ route('store.assign.pr') }}">
+<meta name="assign-pr-url" content="{{ route('assign.pr') }}">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 @section('content')
@@ -103,7 +103,7 @@
                 </thead>
                 <tbody>
                     @forelse($app_data->appItems as $appItem)
-                        @if ($appItem->app_items_is_assigned)
+                        @if ($appItem->app_items_assigned_to)
                             {{-- Already assigned: show icon, no checkbox --}}
                             <tr>
                                 <td class="text-center align-middle">

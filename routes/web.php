@@ -85,7 +85,7 @@ Route::controller(ImportAppController::class)->group(function () {
 
 Route::controller(AssignPrController::class)->group(function () {
     Route::get('/assign-pr/{app_id}', 'showAssignPr')->name('show.assign.pr');
-    Route::post('/assign-pr', 'storeAssignPr')->name('store.assign.pr');
+    Route::post('/assign-pr', 'assignPr')->name('assign.pr');
 });
 
 Route::middleware(['auth', 'role:Head'])->group(function () {
@@ -101,6 +101,5 @@ Route::controller(MrController::class)->group(function () {
     // Route::post('/create-app', 'createApp')->name('create.app');
 });
 
-Route::get('/create-pr', function () {
-    return view('head/pages/head-create-pr');
-});
+// Create a separate controller for showing PR form (CreatePRController)
+Route::get('/create-pr/{task_id}', [AssignPrController::class, 'showCreatePr'])->name('show.create.pr');
