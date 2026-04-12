@@ -101,5 +101,6 @@ Route::controller(MrController::class)->group(function () {
     // Route::post('/create-app', 'createApp')->name('create.app');
 });
 
-// Create a separate controller for showing PR form (CreatePRController)
-Route::get('/create-pr/{task_id}', [AssignPrController::class, 'showCreatePr'])->name('show.create.pr');
+Route::controller(AssignPrController::class)->group(function () {
+    Route::get('/create-pr/{task_id}', 'showCreatePr')->name('show.create.pr');
+});
