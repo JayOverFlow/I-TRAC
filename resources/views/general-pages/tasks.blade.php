@@ -57,7 +57,7 @@
 
                 <!-- Footer -->
                 <div class="modal-footer border-top-0 pt-0 justify-content-center">
-                    <button type="button" class="btn btn-red px-4">Create Purchase Request</button>
+                    <a href="#" id="modal-create-pr-btn" class="btn btn-red px-4">Create Purchase Request</a>
                 </div>
 
             </div>
@@ -76,7 +76,7 @@
             </thead>
             <tbody>
                 @forelse($tasks as $task)
-                    <tr class="task-row" style="cursor: pointer;"
+                    <tr class="task-row" style="cursor: pointer;" data-task-id="{{ $task->task_id }}"
                         data-fullname="{{ $task->assignedBy->user_fullname ?? 'N/A' }}"
                         data-email="{{ $task->assignedBy->user_email ?? '' }}"
                         data-date="{{ \Carbon\Carbon::parse($task->created_at)->format('m/d/Y') }}"

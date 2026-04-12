@@ -36,8 +36,7 @@ class AssignPrController extends Controller
         return view('head/pages/head-assign-pr', compact('app_data', 'subordinates'));
     }
 
-    public function storeAssignPr(Request $request)
-    {
+    public function assignPr(Request $request) {
         $request->validate([
             'assigned_to' => 'required|integer|exists:users,user_id',
             'item_ids'    => 'required|array|min:1',
@@ -48,19 +47,32 @@ class AssignPrController extends Controller
         $assignedTo  = $request->assigned_to;
         $itemIds     = $request->item_ids;
 
-        // Create one task record per selected item
-        foreach ($itemIds as $itemId) {
-            Task::create([
-                'assigned_by' => $headUserId,
-                'assigned_to' => $assignedTo,
-                'task_type'   => '',
-                'task_status' => 'Pending',
-            ]);
-        }
+        // Create ONE task for all selected items
+        $task = Task::create([
+            'assigned_by' => $headUserId,
+            'assigned_to' => $assignedTo,
+            'task_type'   => 'Purchase Request',
+            'task_status' => 'Pending',
+        ]);
 
-        // Mark each selected item as assigned
-        AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_is_assigned' => 1]);
+        // Link the items to the task via pivot
+        $task->appItems()->attach($itemIds);
+
+        // Mark each selected item as assigned to this user
+        AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_assigned_to' => $assignedTo]);
 
         return response()->json(['success' => true]);
+    }
+
+    public function showCreatePr($task_id)
+    {
+        $task = Task::with('appItems')->findOrFail($task_id);
+
+        // Optional: Ensure only the assigned user can view their PR task
+        if ($task->assigned_to !== auth()->user()->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('general-pages/create-pr', compact('task'));
     }
 }

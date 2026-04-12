@@ -1,0 +1,228 @@
+# PR Task Item Relationship — Implementation Plan (Revised)
+
+## Background & Clarification
+
+> **One PR task = one or more dedicated APP items.**
+> The `tasks_tbl` must produce **one row per assignment**, not one row per item.
+> A junction table (`task_items_tbl`) bridges the single task to its multiple `app_items`.
+
+---
+
+## MySQL Queries to Execute in MySQL Workbench
+
+Run **in order** before any PHP changes.
+
+```sql
+-- 1. Rename tracking column: NULL = unassigned, user_id value = assigned to that user
+ALTER TABLE app_items_tbl
+    CHANGE COLUMN app_items_is_assigned
+                  app_items_assigned_to BIGINT UNSIGNED NULL DEFAULT NULL;
+
+-- Migrate existing flag data: set item 2 to the user it was assigned to (replace 5 with real user_id)
+UPDATE app_items_tbl SET app_items_assigned_to = 5 WHERE app_item_id = 2;
+
+-- 2. Create the junction table: one task → many app items
+CREATE TABLE task_items_tbl (
+    task_item_id  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    task_id_fk    BIGINT UNSIGNED NOT NULL,
+    app_item_id_fk BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (task_item_id),
+    CONSTRAINT fk_task_items_task
+        FOREIGN KEY (task_id_fk) REFERENCES tasks_tbl (task_id) ON DELETE CASCADE,
+    CONSTRAINT fk_task_items_app_item
+        FOREIGN KEY (app_item_id_fk) REFERENCES app_items_tbl (app_item_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+> [!IMPORTANT]
+> Execute the SQL **before** deploying any PHP changes.
+
+---
+
+## Proposed Changes
+
+### Model Layer
+
+#### [NEW] `TaskItem.php`
+
+Simple pivot model for `task_items_tbl`.
+
+```php
+class TaskItem extends Model
+{
+    protected $table    = 'task_items_tbl';
+    protected $primaryKey = 'task_item_id';
+    public $timestamps  = false;
+
+    protected $fillable = ['task_id_fk', 'app_item_id_fk'];
+}
+```
+
+#### [MODIFY] [Task.php](file:///c:/Users/emman/itrac/app/Models/Task.php)
+
+Add a `belongsToMany` relationship to [AppItem](file:///c:/Users/emman/itrac/app/Models/AppItem.php#8-38) through `task_items_tbl`.
+
+```diff
++    // All APP items dedicated to this task
++    public function appItems()
++    {
++        return $this->belongsToMany(
++            AppItem::class,
++            'task_items_tbl',
++            'task_id_fk',
++            'app_item_id_fk'
++        );
++    }
+```
+
+#### [MODIFY] [AppItem.php](file:///c:/Users/emman/itrac/app/Models/AppItem.php)
+
+- Rename `app_items_is_assigned` → `app_items_assigned_to` in `$fillable`.
+
+```diff
+-        'app_items_is_assigned',
++        'app_items_assigned_to',
+```
+
+---
+
+### Controller Layer
+
+#### [MODIFY] [AssignPrController.php](file:///c:/Users/emman/itrac/app/Http/Controllers/AssignPrController.php)
+
+[assignPr()](file:///c:/Users/emman/itrac/app/Http/Controllers/AssignPrController.php#38-64) — create **one task**, then bulk-insert all item IDs into `task_items_tbl`.
+
+```diff
+-        foreach ($itemIds as $itemId) {
+-            Task::create([
+-                'assigned_by' => $headUserId,
+-                'assigned_to' => $assignedTo,
+-                'task_type'   => '',
+-                'task_status' => 'Pending',
+-            ]);
+-        }
+-        AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_is_assigned' => 1]);
++        // ONE task for the whole assignment
++        $task = Task::create([
++            'assigned_by' => $headUserId,
++            'assigned_to' => $assignedTo,
++            'task_type'   => 'Purchase Request',
++            'task_status' => 'Pending',
++        ]);
++
++        // Link every selected item to that single task
++        $task->appItems()->attach($itemIds);
++
++        // Mark items as assigned (store who they were assigned to)
++        AppItem::whereIn('app_item_id', $itemIds)
++               ->update(['app_items_assigned_to' => $assignedTo]);
+```
+
+Add `showCreatePr()` method (or move to a dedicated `CreatePrController` later):
+
+```php
+public function showCreatePr($task_id)
+{
+    $task = Task::with('appItems')->findOrFail($task_id);
+
+    // Only the assigned user may open this page
+    abort_if($task->assigned_to !== auth()->id(), 403);
+
+    return view('general-pages/create-pr', compact('task'));
+}
+```
+
+---
+
+### Route Layer
+
+#### [MODIFY] [web.php](file:///c:/Users/emman/itrac/routes/web.php)
+
+```diff
+-Route::get('/create-pr', function () {
+-    return view('general-pages/create-pr');
+-});
++use App\Http\Controllers\AssignPrController;
++Route::get('/create-pr/{task_id}', [AssignPrController::class, 'showCreatePr'])
++     ->name('show.create.pr');
+```
+
+---
+
+### View Layer
+
+#### [MODIFY] [head-assign-pr.blade.php](file:///c:/Users/emman/itrac/resources/views/head/pages/head-assign-pr.blade.php)
+
+```diff
+-        @if ($appItem->app_items_is_assigned)
++        @if ($appItem->app_items_assigned_to)
+```
+
+#### [MODIFY] [tasks.blade.php](file:///c:/Users/emman/itrac/resources/views/general-pages/tasks.blade.php)
+
+Add `data-task-id` to each row (for JS to build the redirect URL later):
+
+```diff
+-    <tr class="task-row" style="cursor: pointer;"
++    <tr class="task-row" style="cursor: pointer;"
++        data-task-id="{{ $task->task_id }}"
+```
+
+Change the modal button to a link:
+
+```diff
+-<button type="button" class="btn btn-red px-4">Create Purchase Request</button>
++<a href="#" id="modal-create-pr-btn" class="btn btn-red px-4">Create Purchase Request</a>
+```
+
+#### [MODIFY] [create-pr.blade.php](file:///c:/Users/emman/itrac/resources/views/general-pages/create-pr.blade.php)
+
+Add a read-only info strip at the top of `@section('content')` to confirm the dedicated items are loaded correctly (full rendering is out of scope for now):
+
+```blade
+@if(isset($task))
+    <div class="alert alert-info mb-3">
+        <strong>PR Task Items ({{ $task->appItems->count() }}):</strong>
+        <ul class="mb-0 mt-1">
+            @foreach($task->appItems as $item)
+                <li>{{ $item->app_item_proj_title }} — Est. Budget: ₱{{ number_format($item->app_items_esti_budget, 2) }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+```
+
+---
+
+## Data Flow Summary
+
+```
+HEAD assigns items → ONE task created in tasks_tbl
+                       ↓ task_items_tbl (junction)
+                     app_item_id_fk → app_items_tbl
+                                         ↓
+                                      app_id_fk → app_tbl
+
+app_items_tbl.app_items_assigned_to:
+  NULL    = not yet assigned
+  user_id = assigned to this user
+```
+
+---
+
+## Verification Plan
+
+1. **SQL check** — after running the queries:
+   - `DESCRIBE app_items_tbl;` → see `app_items_assigned_to`, no `app_items_is_assigned`.
+   - `DESCRIBE task_items_tbl;` → table exists with both FK columns.
+
+2. **Assign flow** — login as Head → `/assign-pr/{app_id}` → select 2+ items → Assign to subordinate.
+   - `SELECT * FROM tasks_tbl;` → **one new row** (not one per item).
+   - `SELECT * FROM task_items_tbl;` → **one row per item**, all pointing to the same `task_id_fk`.
+   - `SELECT app_items_assigned_to FROM app_items_tbl WHERE app_item_id IN (...);` → subordinate's `user_id`.
+
+3. **Tasks page** — login as subordinate → `/tasks` → **one task row** appears (not multiple).
+   - Click the row → modal opens → click **Create Purchase Request** → redirects to `/create-pr/{task_id}`.
+   - Page shows the info strip listing all dedicated items for that task.
+
+4. **Access control** — another user navigates to the same URL → expects HTTP **403**.

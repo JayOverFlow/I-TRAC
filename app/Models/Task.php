@@ -32,4 +32,17 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to', 'user_id');
     }
+
+    // All APP items dedicated to this task
+    public function appItems()
+    {
+        return $this->belongsToMany(
+            AppItem::class,
+            'task_items_tbl',
+            'task_id_fk',
+            'app_item_id_fk',
+            'task_id',
+            'app_item_id'
+        );
+    }
 }
