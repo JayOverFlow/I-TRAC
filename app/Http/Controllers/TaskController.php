@@ -7,8 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    public function showTasks()
-    {
+    public function showTasks() {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Get the user role
+        $userRole = $user->roles->first()?->gen_role;
+
         // Get all tasks assigned to the logged-in user, with the sender's user info
         $tasks = Auth::user()
             ->tasks()
@@ -17,6 +22,12 @@ class TaskController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('general-pages.tasks', compact('tasks'));
+        // Redirect user based on role
+        return match ($userRole) {
+            'Head'        => view('head/pages/head-tasks', compact('tasks')), // Fix this
+            null          => view('unassigned/pages/unassigned-tasks', compact('tasks')), // Unassinged (No role) users
+            // 'Supply'      => view('supply.dashboard'),
+            default       => view('errors.403'),
+        };
     }
 }

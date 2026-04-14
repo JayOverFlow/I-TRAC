@@ -10,6 +10,7 @@ use App\Http\Controllers\CreateAppController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
+use App\Http\Controllers\CreatePrController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use Illuminate\Support\Facades\Route;
@@ -101,6 +102,6 @@ Route::controller(MrController::class)->group(function () {
     // Route::post('/create-app', 'createApp')->name('create.app');
 });
 
-Route::controller(AssignPrController::class)->group(function () {
+Route::controller(CreatePrController::class)->group(function () {
     Route::get('/create-pr/{task_id}', 'showCreatePr')->name('show.create.pr');
 });

@@ -2,6 +2,6 @@
 @extends('layouts.unassigned-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'Tasks | I-TRAC')
+@section('title', 'Create Purchase Request | I-TRAC')
 
-@include('general-pages.tasks')
+@include('general-pages.create-pr')

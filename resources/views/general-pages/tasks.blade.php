@@ -1,9 +1,3 @@
-{{-- Extend the main layout that you want to use --}}
-@extends('main-layout')
-
-{{-- Define contents to show in the layout --}}
-@section('title', 'Tasks | I-TRAC')
-
 @push('css')
     <!-- Page SPECIFIC css -->
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/datatables.css') }}">
