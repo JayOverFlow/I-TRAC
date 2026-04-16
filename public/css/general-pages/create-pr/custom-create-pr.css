@@ -85,3 +85,50 @@
 thead.bg-transparent th {
     background-color: transparent !important;
 }
+
+/* Stable Table Layout */
+.pr-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Custom Description Toggle Styling */
+.custom-description-header {
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.custom-description-header:hover {
+    background-color: #f1f2f3 !important;
+}
+
+.description-arrow {
+    transition: transform 0.3s ease;
+    transform: rotate(180deg); /* Default open state */
+}
+
+.description-body {
+    display: block; /* Default open state */
+}
+
+.remove-description-btn {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.remove-description-btn:hover {
+    opacity: 1;
+}
+
+/* Remove button visibility control without shifting */
+.remove-row-btn {
+    padding: 2px !important;
+    line-height: 1 !important;
+}
+
+.remove-row-btn img {
+    width: 18px;
+    height: 18px;
+    display: block;
+    margin: 0 auto;
+}
