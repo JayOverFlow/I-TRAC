@@ -105,7 +105,3 @@ Route::controller(MrController::class)->group(function () {
 Route::controller(CreatePrController::class)->group(function () {
     Route::get('/create-pr/{task_id}', 'showCreatePr')->name('show.create.pr');
 });
-
-Route::get('/sample-create-pr', function () {
-    return view('sample_pages.sample-create-pr');
-});

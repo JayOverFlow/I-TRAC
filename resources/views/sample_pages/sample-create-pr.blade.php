@@ -13,6 +13,7 @@
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
 
     <!-- CUSTOM css -->
+    <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/page-specific/accordions.css') }}">
     <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/custom-create-pr.css') }}">
 @endpush
 
@@ -126,19 +127,19 @@
                             <tr>
                                 <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Unit</th>
-                                <th class="black-text fw-bold"style="width: 35%">Project Title</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 15%">Category</th>
+                                <th class="black-text fw-bold">Project Title</th> <!-- Auto width takes remaining space -->
+                                <th class="text-center black-text fw-bold" style="width: 7%">Qty.</th>
+                                <th class="text-center black-text fw-bold" style="width: 13%">Unit Cost</th>
+                                <th class="text-center black-text fw-bold" style="width: 13%">Amount</th>
+                                <th class="text-center black-text fw-bold" style="width: 17%">Category</th>
+                                <th class="text-start px-0" style="width: 30px"></th> <!-- Fixed strict pixel width -->
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="pr-item-row">
                                 <td class="px-1"><input type="text" class="form-control form-control-sm text-center"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')"></td>
-                                {{-- Stock --}}
-                                <td class="px-1"> {{-- Unit --}}
+                                <td class="px-1">
                                     <select class="form-select form-control-sm">
                                         <option value="" selected disabled>Select</option>
                                         <option value="">Piece</option>
@@ -147,7 +148,7 @@
                                         <option value="">More options</option>
                                     </select>
                                 </td>
-                                <td class="px-1"> {{-- Project Title --}}
+                                <td class="px-1">
                                     <div class="input-group input-group-sm">
                                         <input type="text" class="form-control">
                                         <span class="input-group-text bg-white border-start-0 add-description-btn"
@@ -160,37 +161,58 @@
                                 <td class="px-1"><input type="text"
                                         class="form-control form-control-sm text-center qty-input"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                </td> {{-- Qty. --}}
+                                </td>
                                 <td class="px-1"><input type="text"
                                         class="form-control form-control-sm text-center cost-input"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                                </td> {{-- Unit Cost --}}
+                                </td>
                                 <td class="px-1 text-center">
                                     <span class="amount-display fw-bold" data-amount="0">₱ 0.00</span>
-                                </td> {{-- Amount --}}
-                                <td class="px-1"> {{-- Category --}}
+                                </td>
+                                <td class="px-1">
                                     <select class="form-select form-control-sm">
                                         <option value="" selected disabled>Select</option>
                                         <option value="">Consumable</option>
                                         <option value="">Equipment</option>
-                                        <option value="">Equipment (50k and above)</option>
+                                        <option value="">Equipment (50k & ↑)</option>
                                     </select>
+                                </td>
+                                <td class="text-start px-0">
+                                    <button type="button"
+                                        class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
+                                        style="visibility: hidden;">
+                                        <img src="{{ asset('img/remove.svg') }}" alt="Remove">
+                                    </button>
                                 </td>
                             </tr>
                             <tr class="pr-description-row d-none">
                                 <td colspan="2"></td>
                                 <td class="px-1">
-                                    <div class="description-container w-100">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <label class="form-label mb-0 fw-bold"
-                                                style="font-size: 0.8rem;">Description</label>
-                                            <button type="button" class="btn-close btn-sm remove-description-btn"
-                                                aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
+                                    <div class="custom-description-container">
+                                        <div class="d-flex justify-content-between align-items-center bg-white border rounded-top custom-description-header toggle-description-action"
+                                            style="cursor: pointer; border-color: #ced4da !important;">
+                                            <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
+                                                Description
+                                            </div>
+                                            <div class="d-flex align-items-center pe-3">
+                                                <button type="button"
+                                                    class="btn-close btn-sm remove-description-btn me-2"
+                                                    aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
+                                                <svg class="description-arrow" width="12" height="12"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </div>
                                         </div>
-                                        <textarea class="form-control form-control-sm" rows="2"></textarea>
+                                        <div class="description-body border border-top-0 rounded-bottom bg-white"
+                                            style="border-color: #ced4da !important;">
+                                            <textarea class="form-control form-control-sm border-0 shadow-none px-2" rows="2"
+                                                placeholder="Enter description details..."></textarea>
+                                        </div>
                                     </div>
                                 </td>
-                                <td colspan="4"></td>
+                                <td colspan="5"></td>
                             </tr>
                         </tbody>
                     </table>
