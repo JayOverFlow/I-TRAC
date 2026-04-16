@@ -69,3 +69,19 @@
     border: 1px solid #dee2e6 !important;
     cursor: pointer;
 }
+
+.collapse-toggle .arrow-icon {
+    transition: transform 0.3s ease;
+}
+.collapse-toggle.rotate-arrow .arrow-icon {
+    transform: rotate(180deg);
+}
+
+.bg-transparent,
+.collapse-toggle {
+    background-color: transparent !important;
+}
+
+thead.bg-transparent th {
+    background-color: transparent !important;
+}
