@@ -66,6 +66,7 @@
                     <th class="fw-bold">From</th>
                     <th class="fw-bold">Document</th>
                     <th class="fw-bold">Date Received</th>
+                    <th class="fw-bold">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,6 +80,20 @@
                         <td>{{ $task->assignedBy->user_fullname ?? 'N/A' }}</td>
                         <td>{{ $task->task_type }}</td>
                         <td>{{ \Carbon\Carbon::parse($task->created_at)->format('m/d/Y') }}</td>
+                        <td class="text-center">
+                            @php
+                                $status = strtolower($task->task_status ?? 'pending');
+                                $badgeClass = match ($status) {
+                                    'completed' => 'bg-success',
+                                    'ongoing' => 'bg-info',
+                                    'pending' => 'bg-warning',
+                                    'rejected' => 'bg-danger',
+                                    default => 'bg-secondary',
+                                };
+                            @endphp
+                            <span class="badge {{ $badgeClass }} text-uppercase"
+                                style="font-size: 0.7rem;">{{ $status }}</span>
+                        </td>
                     </tr>
                 @empty
                     <tr>

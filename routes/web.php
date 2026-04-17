@@ -104,4 +104,5 @@ Route::controller(MrController::class)->group(function () {
 
 Route::controller(CreatePrController::class)->group(function () {
     Route::get('/create-pr/{task_id}', 'showCreatePr')->name('show.create.pr');
+    Route::post('/create-pr/{task_id}', 'createPr')->name('create.pr');
 });
