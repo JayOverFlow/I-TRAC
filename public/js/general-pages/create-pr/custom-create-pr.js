@@ -7,29 +7,29 @@ $(document).ready(function() {
         targetCard.slideToggle(300);
     });
 
-    // Add Description
-    $(document).on('click', '.add-description-btn', function() {
+    // Add specification
+    $(document).on('click', '.add-specification-btn', function() {
         var currentRow = $(this).closest('tr.pr-item-row');
-        var descriptionRow = currentRow.next('.pr-description-row');
-        descriptionRow.removeClass('d-none');
+        var specificationRow = currentRow.next('.pr-specification-row');
+        specificationRow.removeClass('d-none');
         // Ensure the body starts visible
-        descriptionRow.find('.description-body').show();
-        descriptionRow.find('.description-arrow').css('transform', 'rotate(180deg)');
+        specificationRow.find('.specification-body').show();
+        specificationRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
     });
 
-    // Remove Description
-    $(document).on('click', '.remove-description-btn', function(e) {
+    // Remove specification
+    $(document).on('click', '.remove-specification-btn', function(e) {
         e.stopPropagation(); // Prevent toggle from firing
-        var descriptionRow = $(this).closest('tr.pr-description-row');
-        descriptionRow.find('textarea').val('');
-        descriptionRow.addClass('d-none');
+        var specificationRow = $(this).closest('tr.pr-specification-row');
+        specificationRow.find('textarea').val('');
+        specificationRow.addClass('d-none');
     });
 
-    // Toggle Description (Minimize/Maximize) - 100% jQuery Solution
-    $(document).on('click', '.toggle-description-action', function(e) {
-        var container = $(this).closest('.custom-description-container');
-        var body = container.find('.description-body');
-        var arrow = container.find('.description-arrow');
+    // Toggle specification (Minimize/Maximize) - 100% jQuery Solution
+    $(document).on('click', '.toggle-specification-action', function(e) {
+        var container = $(this).closest('.custom-specification-container');
+        var body = container.find('.specification-body');
+        var arrow = container.find('.specification-arrow');
         
         body.slideToggle(300, function() {
             if ($(this).is(':visible')) {
@@ -45,7 +45,7 @@ $(document).ready(function() {
         e.preventDefault();
         var tbody = $(this).closest('.card').find('tbody');
         var firstRow = tbody.find('tr.pr-item-row').first();
-        var firstDescRow = tbody.find('tr.pr-description-row').first();
+        var firstDescRow = tbody.find('tr.pr-specification-row').first();
         
         var newRow = firstRow.clone();
         var newDescRow = firstDescRow.clone();
@@ -58,11 +58,11 @@ $(document).ready(function() {
         // Show remove button for new rows using visibility hidden so width translates accurately
         newRow.find('.remove-row-btn').css('visibility', 'visible');
         
-        // Reset description state
+        // Reset specification state
         newDescRow.addClass('d-none');
         newDescRow.find('textarea').val('');
-        newDescRow.find('.description-body').show();
-        newDescRow.find('.description-arrow').css('transform', 'rotate(180deg)');
+        newDescRow.find('.specification-body').show();
+        newDescRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
         
         tbody.append(newRow);
         tbody.append(newDescRow);
@@ -72,9 +72,9 @@ $(document).ready(function() {
     // Remove Row
     $(document).on('click', '.remove-row-btn', function() {
         var row = $(this).closest('tr.pr-item-row');
-        var descriptionRow = row.next('.pr-description-row');
+        var specificationRow = row.next('.pr-specification-row');
         row.remove();
-        descriptionRow.remove();
+        specificationRow.remove();
         updateTotals();
     });
 
