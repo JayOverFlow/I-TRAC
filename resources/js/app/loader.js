@@ -19,7 +19,7 @@ window.addEventListener("load", function(){
                 boxed: true,
                 logo: {
                     darkLogo: '/img/logo.svg',
-                    lightLogo: '/img/itrac-header-logo.png.svg'
+                    lightLogo: '/img/itrac-header-logo.png'
                 }
             }
         },
@@ -69,7 +69,8 @@ window.addEventListener("load", function(){
         }
         if (equationThemeObject.settings.layout.logo.lightLogo && 
             (equationThemeObject.settings.layout.logo.lightLogo.includes('../src/assets/img/') || 
-             equationThemeObject.settings.layout.logo.lightLogo.includes('../../src/assets/img/'))) {
+             equationThemeObject.settings.layout.logo.lightLogo.includes('../../src/assets/img/') ||
+             equationThemeObject.settings.layout.logo.lightLogo.includes('.png.svg'))) {
             equationThemeObject.settings.layout.logo.lightLogo = '/img/itrac-header-logo.png';
         }
         // Save updated paths back to localStorage
