@@ -33,6 +33,12 @@ class Task extends Model
         return $this->belongsTo(User::class, 'assigned_to', 'user_id');
     }
 
+    // The PR linked to this task
+    public function purchaseRequest()
+    {
+        return $this->belongsTo(PrParent::class, 'pr_id_fk', 'pr_id');
+    }
+
     // All APP items dedicated to this task
     public function appItems()
     {

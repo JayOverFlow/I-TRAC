@@ -22,11 +22,18 @@ class PrParent extends Model
         'pr_approved_by_designation',
         'saved_by_user_id_fk',
         'pr_unique_code',
+        'pr_status',
     ];
 
     // One PR has many items
     public function prItems()
     {
         return $this->hasMany(PrItem::class, 'pr_id_fk', 'pr_id');
+    }
+
+    // The task that owns this PR
+    public function task()
+    {
+        return $this->hasOne(Task::class, 'pr_id_fk', 'pr_id');
     }
 }
