@@ -14,7 +14,10 @@
 @section('content')
     <form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form">
         @csrf
-        @php $rowIndex = 0; @endphp
+        @php
+            $rowIndex = 0;
+            $isReadOnly = $task->task_status !== 'Pending';
+        @endphp
 
         <div class="card allocated-budget-card mb-3">
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
@@ -35,17 +38,24 @@
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
 
                     <div class="text-end">
-                        <button type="button" id="submit-pr-btn"
-                            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                            <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
-                            <span>Submit</span>
-                        </button>
+                        @if (!$isReadOnly)
+                            <button type="button" id="submit-pr-btn"
+                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
+                                <span>Submit</span>
+                            </button>
 
-                        <button type="submit"
-                            class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
-                            <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
-                            <span class="fw-bold">Save as Draft</span>
-                        </button>
+                            <button type="submit"
+                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                                <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
+                                <span class="fw-bold">Save as Draft</span>
+                            </button>
+                        @else
+                            <div class="badge bg-info p-2 px-3">
+                                <h6 class="mb-0 text-white"><i class="fas fa-check-circle me-1"></i> Purchase Request
+                                    {{ $task->task_status }}</h6>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -83,7 +93,8 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="pr_section" class="form-control form-control-sm w-100"
-                                    value="{{ $pr?->pr_section ?? old('pr_section') }}">
+                                    value="{{ $pr?->pr_section ?? old('pr_section') }}"
+                                    {{ $isReadOnly ? 'disabled' : '' }}>
                             </div>
                         </div>
                     </div>
@@ -94,7 +105,9 @@
                                 <h6 class="mb-0 black-text fw-bold">Date:</h6>
                             </div>
                             <div class="col-8">
-                                <h6 class="mb-0">{{ now()->format('F d, Y') }}</h6>
+                                <h6 class="mb-0">
+                                    {{ $pr?->pr_date ? \Carbon\Carbon::parse($pr->pr_date)->format('F d, Y') : now()->format('F d, Y') }}
+                                </h6>
                             </div>
                         </div>
                         <div class="row align-items-center">
@@ -103,7 +116,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="pr_no" class="form-control form-control-sm w-100"
-                                    value="{{ $pr?->pr_no ?? old('pr_no') }}">
+                                    value="{{ $pr?->pr_no ?? old('pr_no') }}" {{ $isReadOnly ? 'disabled' : '' }}>
                             </div>
                         </div>
                     </div>
@@ -125,7 +138,8 @@
                             <button type="button" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
                                 style="text-decoration: none; box-shadow: none;">
                                 <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
                                     <polyline points="18 15 12 9 6 15"></polyline>
                                 </svg>
                             </button>
@@ -165,7 +179,8 @@
                                                 {{-- Unit --}}
                                                 <td class="px-1">
                                                     <select class="form-select form-control-sm"
-                                                        name="items[{{ $rowIndex }}][unit]">
+                                                        name="items[{{ $rowIndex }}][unit]"
+                                                        {{ $isReadOnly ? 'disabled' : '' }}>
                                                         <option value="" {{ !$saved ? 'selected' : '' }} disabled>
                                                             Select</option>
                                                         <option value="Piece"
@@ -187,13 +202,16 @@
                                                     <div class="input-group input-group-sm">
                                                         <input type="text" class="form-control"
                                                             name="items[{{ $rowIndex }}][description]"
-                                                            value="{{ $saved?->pr_items_descrip ?? '' }}">
-                                                        <span
-                                                            class="input-group-text bg-white border-start-0 add-specification-btn"
-                                                            title="Add Specifications" style="cursor: pointer;">
-                                                            <img src="{{ asset('img/add-description-btn.png') }}"
-                                                                alt="Add" style="width: 14px; height: 14px;">
-                                                        </span>
+                                                            value="{{ $saved?->pr_items_descrip ?? '' }}"
+                                                            {{ $isReadOnly ? 'disabled' : '' }}>
+                                                        @if (!$isReadOnly)
+                                                            <span
+                                                                class="input-group-text bg-white border-start-0 add-specification-btn"
+                                                                title="Add Specifications" style="cursor: pointer;">
+                                                                <img src="{{ asset('img/add-description-btn.png') }}"
+                                                                    alt="Add" style="width: 14px; height: 14px;">
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                 </td>
                                                 {{-- Qty. --}}
@@ -201,14 +219,16 @@
                                                         class="form-control form-control-sm text-center qty-input"
                                                         name="items[{{ $rowIndex }}][quantity]"
                                                         value="{{ $saved?->pr_items_quantity ?? '' }}"
-                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                                        {{ $isReadOnly ? 'disabled' : '' }}>
                                                 </td>
                                                 {{-- Unit Cost --}}
                                                 <td class="px-1"><input type="text"
                                                         class="form-control form-control-sm text-center cost-input"
                                                         name="items[{{ $rowIndex }}][cost]"
                                                         value="{{ $saved?->pr_items_cost ? number_format($saved?->pr_items_cost, 2, '.', '') : '' }}"
-                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
+                                                        {{ $isReadOnly ? 'disabled' : '' }}>
                                                 </td>
                                                 {{-- Amount --}}
                                                 @php
@@ -232,7 +252,8 @@
                                                 @endphp
                                                 <td class="px-1">
                                                     <select class="form-select form-control-sm"
-                                                        name="items[{{ $rowIndex }}][category]">
+                                                        name="items[{{ $rowIndex }}][category]"
+                                                        {{ $isReadOnly ? 'disabled' : '' }}>
                                                         <option value=""
                                                             {{ !$saved || !$saved?->pr_items_category ? 'selected' : '' }}
                                                             disabled>Select</option>
@@ -248,11 +269,13 @@
                                                     </select>
                                                 </td>
                                                 <td class="text-start px-0">
-                                                    <button type="button"
-                                                        class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
-                                                        style="{{ $loop->first && $loop->parent->first && !$saved ? 'visibility: hidden;' : 'visibility: visible;' }}">
-                                                        <img src="{{ asset('img/remove.svg') }}" alt="Remove">
-                                                    </button>
+                                                    @if (!$isReadOnly)
+                                                        <button type="button"
+                                                            class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
+                                                            style="{{ $loop->first && $loop->parent->first && !$saved ? 'visibility: hidden;' : 'visibility: visible;' }}">
+                                                            <img src="{{ asset('img/remove.svg') }}" alt="Remove">
+                                                        </button>
+                                                    @endif
                                                 </td>
                                             </tr>
                                             {{-- Specification --}}
@@ -270,10 +293,12 @@
                                                                 Specification
                                                             </div>
                                                             <div class="d-flex align-items-center pe-3">
-                                                                <button type="button"
-                                                                    class="btn-close btn-sm remove-specification-btn me-2"
-                                                                    aria-label="Close"
-                                                                    style="width: 0.5em; height: 0.5em;"></button>
+                                                                @if (!$isReadOnly)
+                                                                    <button type="button"
+                                                                        class="btn-close btn-sm remove-specification-btn me-2"
+                                                                        aria-label="Close"
+                                                                        style="width: 0.5em; height: 0.5em;"></button>
+                                                                @endif
                                                                 <svg class="specification-arrow" width="12"
                                                                     height="12" viewBox="0 0 24 24" fill="none"
                                                                     stroke="currentColor" stroke-width="2"
@@ -285,7 +310,8 @@
                                                         <div class="specification-body border border-top-0 rounded-bottom bg-white"
                                                             style="border-color: #ced4da !important;">
                                                             <textarea class="form-control form-control-sm border-0 shadow-none px-2"
-                                                                name="items[{{ $rowIndex }}][specification]" rows="2" placeholder="Enter specification details.">{{ $specText }}</textarea>
+                                                                name="items[{{ $rowIndex }}][specification]" rows="2" placeholder="Enter specification details."
+                                                                {{ $isReadOnly ? 'disabled' : '' }}>{{ $specText }}</textarea>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -298,9 +324,12 @@
                             </table>
                         </div>
                         <hr class="m-0 p-0">
-                        <div class="text-center my-2">
-                            <button class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add Item</button>
-                        </div>
+                        @if (!$isReadOnly)
+                            <div class="text-center my-2">
+                                <button class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
+                                    Item</button>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -324,10 +353,13 @@
 
     <script>
         // Submit button changes the form action to the submit route, then submits
-        document.getElementById('submit-pr-btn').addEventListener('click', function() {
-            const form = document.getElementById('pr-form');
-            form.action = "{{ route('submit.pr', $task->task_id) }}";
-            form.submit();
-        });
+        const submitBtn = document.getElementById('submit-pr-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function() {
+                const form = document.getElementById('pr-form');
+                form.action = "{{ route('submit.pr', $task->task_id) }}";
+                form.submit();
+            });
+        }
     </script>
 @endpush

@@ -30,17 +30,17 @@ class CreatePrController extends Controller
         // Group items by project title
         $groupedItems = $task->appItems->groupBy('app_item_proj_title');
 
-        // Check if a draft PR already exists for this task
+        // Check if a PR already exists for this task
         $pr = null;
         $savedItemsGrouped = collect();
 
         if ($task->pr_id_fk) {
-            $draft = PrParent::with(['prItems.prSpecs'])->find($task->pr_id_fk);
+            $existingPr = PrParent::with(['prItems.prSpecs'])->find($task->pr_id_fk);
 
-            if ($draft && $draft->pr_status === 'Draft') {
-                $pr = $draft;
-                // Group saved items by app_item_id to handle multiple rows per item (e.g. added items)
-                $savedItemsGrouped = $draft->prItems->groupBy('pr_app_item_id_fk');
+            if ($existingPr) {
+                $pr = $existingPr;
+                // Group saved items by app_item_id to handle multiple rows per item
+                $savedItemsGrouped = $existingPr->prItems->groupBy('pr_app_item_id_fk');
             }
         }
 
@@ -62,6 +62,11 @@ class CreatePrController extends Controller
 
         if ($task->assigned_to !== $user->user_id) {
             abort(403, 'Unauthorized action.');
+        }
+
+        if ($task->task_status !== 'Pending') {
+            return redirect()->route('show.create.pr', $task_id)
+                ->with('error', 'This Purchase Request has already been submitted and can no longer be edited.');
         }
 
         try {
@@ -95,6 +100,11 @@ class CreatePrController extends Controller
 
         if ($task->assigned_to !== $user->user_id) {
             abort(403, 'Unauthorized action.');
+        }
+
+        if ($task->task_status !== 'Pending') {
+            return redirect()->route('show.create.pr', $task_id)
+                ->with('error', 'This Purchase Request has already been submitted.');
         }
 
         try {
