@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\PrParent;
 use App\Models\PrItem;
 use App\Models\PrSpec;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -16,15 +17,12 @@ class CreatePrController extends Controller
 
     public function showCreatePr($task_id)
     {
-        // Get the authenticated user
         $user = Auth::user();
-
-        // Get the user role
         $userRole = $user->roles->first()?->gen_role;
 
         $task = Task::with('appItems')->findOrFail($task_id);
 
-        // Optional: Ensure only the assigned user can view their PR task
+        // Ensure only the assigned user can view their PR task
         if ($task->assigned_to !== $user->user_id) {
             abort(403, 'Unauthorized action.');
         }
@@ -32,91 +30,195 @@ class CreatePrController extends Controller
         // Group items by project title
         $groupedItems = $task->appItems->groupBy('app_item_proj_title');
 
-        // Redirect user based on role
+        // Check if a draft PR already exists for this task
+        $pr = null;
+        $savedItemsGrouped = collect();
+
+        if ($task->pr_id_fk) {
+            $draft = PrParent::with(['prItems.prSpecs'])->find($task->pr_id_fk);
+
+            if ($draft && $draft->pr_status === 'Draft') {
+                $pr = $draft;
+                // Group saved items by app_item_id to handle multiple rows per item (e.g. added items)
+                $savedItemsGrouped = $draft->prItems->groupBy('pr_app_item_id_fk');
+            }
+        }
+
         return match ($userRole) {
-            'Head'        => view('head/pages/head-create-pr', compact('task', 'groupedItems')),
-            null          => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems')), // Unassinged (No role) users
-            // 'Supply'      => view('supply.dashboard'),
-            default       => view('errors.403'),
+            'Head'   => view('head/pages/head-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped')),
+            null     => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped')),
+            default  => view('errors.403'),
         };
     }
 
-    public function createPr(Request $request, $task_id)
+    /**
+     * Save or update the PR as a Draft.
+     * Task status stays "Pending".
+     */
+    public function saveDraft(Request $request, $task_id)
     {
-
         $user = Auth::user();
+        $task = Task::findOrFail($task_id);
 
-        // Get the user's department ID from their role
-        $departmentId = $user->roles->first()?->role_dep_id_fk;
+        if ($task->assigned_to !== $user->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
 
         try {
-            // Wrap all inserts in a transaction — if anything fails, nothing is saved
-            DB::transaction(function () use ($request, $user, $departmentId, $task_id) {
+            DB::transaction(function () use ($request, $user, $task) {
+                $pr = $this->saveOrUpdatePr($request, $user, $task, 'Draft');
 
-                // Step 1: Create the PR header row in pr_tbl
-                $pr = PrParent::create([
-                    'pr_section'           => $request->input('pr_section'),
-                    'pr_department'        => $departmentId,
-                    'pr_no'                => $request->input('pr_no'),
-                    'pr_date'              => now()->toDateString(),
-                    'pr_name_of_requestor' => $user->user_id,
-                    'saved_by_user_id_fk'  => $user->user_id,
-                    'pr_unique_code'       => strtoupper(Str::random(8)),
-                ]);
+                // Link PR to task if not already linked
+                if (!$task->pr_id_fk) {
+                    $task->update(['pr_id_fk' => $pr->pr_id]);
+                }
+                // Task status stays "Pending" for drafts
+            });
 
-                // Step 2: Loop through every item row submitted by the form.
-                // The array key ($appItemId) IS the app_item_id — encoded directly in the form field name.
-                foreach ($request->input('items', []) as $appItemId => $row) {
+            return redirect()->route('show.create.pr', $task_id)
+                ->with('success', 'Purchase Request saved as draft.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Something went wrong while saving the draft. Please try again.');
+        }
+    }
 
-                    // Skip rows that are effectively blank (no description and no quantity)
-                    if (empty($row['description']) && empty($row['quantity'])) {
-                        continue;
-                    }
+    /**
+     * Submit the PR to the department head.
+     * Task status changes to "Submitted".
+     */
+    public function submitPr(Request $request, $task_id)
+    {
+        $user = Auth::user();
+        $task = Task::findOrFail($task_id);
 
-                    // Map the form's Category dropdown text to the DB enum value
-                    $categoryMap = [
-                        'Consumable'           => 'consumable',
-                        'Equipment'            => 'equipment',
-                        'Equipment (50k & ↑)'  => 'equipment_50k',
-                    ];
-                    $category = $categoryMap[$row['category'] ?? ''] ?? null;
+        if ($task->assigned_to !== $user->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
 
-                    $qty  = (int)   ($row['quantity'] ?? 0);
-                    $cost = (float) ($row['cost']     ?? 0);
+        try {
+            DB::transaction(function () use ($request, $user, $task) {
 
-                    // Step 3: Save the item row in pr_items_tbl
-                    $prItem = PrItem::create([
-                        'pr_id_fk'            => $pr->pr_id,
-                        'pr_app_item_id_fk'   => $appItemId,  // comes from the array key, never null
-                        'pr_items_descrip'    => $row['description']  ?? null,
-                        'pr_items_unit'       => $row['unit']         ?? null,
-                        'pr_items_quantity'   => $qty,
-                        'pr_items_cost'       => $cost,
-                        'pr_items_total_cost' => $qty * $cost,
-                        'pr_items_category'   => $category,
-                    ]);
+                // Save/update the PR data first
+                $pr = $this->saveOrUpdatePr($request, $user, $task, 'Submitted');
 
-                    // Step 4: If the user filled in a specification, save it in pr_items_specs_tbl
-                    if (!empty($row['specification'])) {
-                        PrSpec::create([
-                            'pr_items_id_fk' => $prItem->pr_items_id,
-                            'pr_spec_spec'   => $row['specification'],
+                // Link PR to task if not already linked
+                if (!$task->pr_id_fk) {
+                    $task->update(['pr_id_fk' => $pr->pr_id]);
+                }
+
+                // Mark the original task as Submitted
+                $task->update(['task_status' => 'Submitted']);
+
+                // Find the department head of the user's department
+                $departmentId = $user->departments->first()?->dep_id;
+
+                if ($departmentId) {
+                    // Find the Head role for this department
+                    $headRole = Role::where('role_dep_id_fk', $departmentId)
+                        ->where('gen_role', 'Head')
+                        ->first();
+
+                    if ($headRole && $headRole->user) {
+                        $headUserId = $headRole->user->user_id_fk;
+
+                        // Create a new task for the department head to review
+                        Task::create([
+                            'assigned_by'      => $user->user_id,
+                            'assigned_to'      => $headUserId,
+                            'task_description'  => 'Purchase Request submitted for review.',
+                            'pr_id_fk'         => $pr->pr_id,
+                            'task_type'        => 'PR Review',
+                            'task_status'      => 'Pending',
                         ]);
                     }
                 }
-
-                // Step 5: Update task status to indicate PR has been created
-                Task::where('task_id', $task_id)->update(['task_status' => 'completed']);
             });
-            // Redirect to tasks page with a success flash message
-            return redirect()->route('show.tasks')->with('success', 'Purchase Request submitted successfully.');
-        } catch (\Exception $e) {
-            // Log the error if necessary
-            // \Log::error($e->getMessage());
 
+            return redirect()->route('show.tasks')
+                ->with('success', 'Purchase Request submitted successfully.');
+        } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Something went wrong while saving the PR. Please try again.');
+                ->with('error', 'Something went wrong while submitting the PR. Please try again.');
         }
+    }
+
+    /**
+     * Shared helper: create or update a PR record with its items and specs.
+     */
+    private function saveOrUpdatePr(Request $request, $user, Task $task, string $status): PrParent
+    {
+        $departmentId = $user->departments->first()?->dep_id;
+
+        // Check if a PR already exists for this task
+        $pr = $task->pr_id_fk ? PrParent::find($task->pr_id_fk) : null;
+
+        if ($pr) {
+            // Update existing PR header
+            $pr->update([
+                'pr_section'    => $request->input('pr_section'),
+                'pr_no'         => $request->input('pr_no'),
+                'pr_department' => $departmentId,
+                'pr_status'     => $status,
+            ]);
+
+            // Delete old items (cascades to specs via FK)
+            $pr->prItems()->delete();
+        } else {
+            // Create new PR header
+            $pr = PrParent::create([
+                'pr_section'           => $request->input('pr_section'),
+                'pr_department'        => $departmentId,
+                'pr_no'                => $request->input('pr_no'),
+                'pr_date'              => now()->toDateString(),
+                'pr_name_of_requestor' => $user->user_id,
+                'saved_by_user_id_fk'  => $user->user_id,
+                'pr_unique_code'       => strtoupper(Str::random(8)),
+                'pr_status'            => $status,
+            ]);
+        }
+
+        // Insert items and specs
+        foreach ($request->input('items', []) as $row) {
+
+            $appItemId = $row['app_item_id'] ?? null;
+
+            // Skip blank rows or missing app_item_id
+            if (!$appItemId || (empty($row['description']) && empty($row['quantity']))) {
+                continue;
+            }
+
+            $categoryMap = [
+                'Consumable'          => 'consumable',
+                'Equipment'           => 'equipment',
+                'Equipment (50k & ↑)' => 'equipment_50k',
+            ];
+            $category = $categoryMap[$row['category'] ?? ''] ?? null;
+
+            $qty  = (int)   ($row['quantity'] ?? 0);
+            $cost = (float) ($row['cost']     ?? 0);
+
+            $prItem = PrItem::create([
+                'pr_id_fk'            => $pr->pr_id,
+                'pr_app_item_id_fk'   => $appItemId,
+                'pr_items_descrip'    => $row['description']  ?? null,
+                'pr_items_unit'       => $row['unit']         ?? null,
+                'pr_items_quantity'   => $qty,
+                'pr_items_cost'       => $cost,
+                'pr_items_total_cost' => $qty * $cost,
+                'pr_items_category'   => $category,
+            ]);
+
+            if (!empty($row['specification'])) {
+                PrSpec::create([
+                    'pr_items_id_fk' => $prItem->pr_items_id,
+                    'pr_spec_spec'   => $row['specification'],
+                ]);
+            }
+        }
+
+        return $pr;
     }
 }

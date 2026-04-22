@@ -49,21 +49,37 @@ $(document).ready(function() {
         
         var newRow = firstRow.clone();
         var newDescRow = firstDescRow.clone();
-        
+
+        // Generate a unique index for new rows to prevent overwriting in POST
+        var newIndex = 'new_' + Date.now() + Math.floor(Math.random() * 1000);
+
+        // Update all field names with the new unique index
+        newRow.find('[name*="items["]').each(function() {
+            var name = $(this).attr('name');
+            var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+            $(this).attr('name', newName);
+        });
+
+        newDescRow.find('[name*="items["]').each(function() {
+            var name = $(this).attr('name');
+            var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+            $(this).attr('name', newName);
+        });
+
         // Clear inputs in basic row
-        newRow.find('input').val('');
+        newRow.find('input').not('[name*="app_item_id"]').val('');
         newRow.find('select').prop('selectedIndex', 0);
         newRow.find('.amount-display').text('₱ 0.00').attr('data-amount', 0);
-        
-        // Show remove button for new rows using visibility hidden so width translates accurately
+
+        // Show remove button for new rows
         newRow.find('.remove-row-btn').css('visibility', 'visible');
-        
+
         // Reset specification state
         newDescRow.addClass('d-none');
         newDescRow.find('textarea').val('');
         newDescRow.find('.specification-body').show();
         newDescRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
-        
+
         tbody.append(newRow);
         tbody.append(newDescRow);
         updateTotals();

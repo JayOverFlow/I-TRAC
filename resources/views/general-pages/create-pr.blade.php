@@ -12,8 +12,9 @@
 @endpush
 
 @section('content')
-    <form method="POST" action="{{ route('create.pr', $task->task_id) }}">
+    <form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form">
         @csrf
+        @php $rowIndex = 0; @endphp
 
         <div class="card allocated-budget-card mb-3">
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
@@ -34,13 +35,13 @@
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
 
                     <div class="text-end">
-                        <button type="submit"
+                        <button type="button" id="submit-pr-btn"
                             class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                            <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
-                            <span>Done</span>
+                            <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
+                            <span>Submit</span>
                         </button>
 
-                        <button type="button"
+                        <button type="submit"
                             class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                             <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                             <span class="fw-bold">Save as Draft</span>
@@ -49,6 +50,20 @@
                 </div>
             </div>
         </div>
+
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body">
@@ -59,7 +74,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Department:</h6>
                             </div>
                             <div class="col-8">
-                                <h6 class="mb-0">College of Education and Arts</h6>
+                                <h6 class="mb-0">{{ auth()->user()->departments->first()?->dep_name ?? 'N/A' }}</h6>
                             </div>
                         </div>
                         <div class="row align-items-center">
@@ -67,7 +82,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Section:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="pr_section" class="form-control form-control-sm w-100">
+                                <input type="text" name="pr_section" class="form-control form-control-sm w-100"
+                                    value="{{ $pr?->pr_section ?? old('pr_section') }}">
                             </div>
                         </div>
                     </div>
@@ -78,7 +94,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Date:</h6>
                             </div>
                             <div class="col-8">
-                                <h6 class="mb-0">April 14, 2026</h6>
+                                <h6 class="mb-0">{{ now()->format('F d, Y') }}</h6>
                             </div>
                         </div>
                         <div class="row align-items-center">
@@ -86,7 +102,8 @@
                                 <h6 class="mb-0 black-text fw-bold">P.R No.:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="pr_no" class="form-control form-control-sm w-100">
+                                <input type="text" name="pr_no" class="form-control form-control-sm w-100"
+                                    value="{{ $pr?->pr_no ?? old('pr_no') }}">
                             </div>
                         </div>
                     </div>
@@ -133,102 +150,149 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($items as $item)
-                                        {{-- Use app_item_id as the array key — it is unique per item and
-                                             encodes the FK directly in the key, making a hidden input unnecessary. --}}
-                                        @php $rowKey = $item->app_item_id; @endphp
+                                        @php
+                                            $rowKey = $item->app_item_id;
+                                            // Get all saved rows for this APP item, default to one empty row if none saved
+                                            $currentSavedItems = $savedItemsGrouped->get($rowKey, [null]);
+                                        @endphp
 
-                                        <tr class="pr-item-row" data-id="{{ $item->app_item_id }}">
-                                            {{-- Unit --}}
-                                            <td class="px-1">
-                                                <select class="form-select form-control-sm"
-                                                    name="items[{{ $rowKey }}][unit]">
-                                                    <option value="" selected disabled>Select</option>
-                                                    <option value="Piece">Piece</option>
-                                                    <option value="Lot">Lot</option>
-                                                    <option value="Set">Set</option>
-                                                    <option value="More options">More options</option>
-                                                </select>
-                                            </td>
-                                            {{-- Item Description --}}
-                                            <td class="px-1">
-                                                <div class="input-group input-group-sm">
-                                                    <input type="text" class="form-control"
-                                                        name="items[{{ $rowKey }}][description]">
-                                                    <span
-                                                        class="input-group-text bg-white border-start-0 add-specification-btn"
-                                                        title="Add Specifications" style="cursor: pointer;">
-                                                        <img src="{{ asset('img/add-description-btn.png') }}"
-                                                            alt="Add" style="width: 14px; height: 14px;">
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            {{-- Qty. --}}
-                                            <td class="px-1"><input type="text"
-                                                    class="form-control form-control-sm text-center qty-input"
-                                                    name="items[{{ $rowKey }}][quantity]"
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                            </td>
-                                            {{-- Unit Cost --}}
-                                            <td class="px-1"><input type="text"
-                                                    class="form-control form-control-sm text-center cost-input"
-                                                    name="items[{{ $rowKey }}][cost]"
-                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                                            </td>
-                                            {{-- Amount --}}
-                                            <td class="px-1 text-center">
-                                                <span class="amount-display fw-bold" data-amount="0">₱ 0.00</span>
-                                            </td>
-                                            {{-- Category --}}
-                                            <td class="px-1">
-                                                <select class="form-select form-control-sm"
-                                                    name="items[{{ $rowKey }}][category]">
-                                                    <option value="" selected disabled>Select</option>
-                                                    <option value="Consumable">Consumable</option>
-                                                    <option value="Equipment">Equipment</option>
-                                                    <option value="Equipment (50k & ↑)">Equipment (50k & ↑)</option>
-                                                </select>
-                                            </td>
-                                            <td class="text-start px-0">
-                                                <button type="button"
-                                                    class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
-                                                    style="visibility: hidden;">
-                                                    <img src="{{ asset('img/remove.svg') }}" alt="Remove">
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {{-- Specification --}}
-                                        <tr class="pr-specification-row d-none">
-                                            <td colspan="1"></td>
-                                            <td class="px-1">
-                                                <div class="custom-specification-container">
-                                                    <div class="d-flex justify-content-between align-items-center bg-white border rounded-top custom-specification-header toggle-specification-action"
-                                                        style="cursor: pointer; border-color: #ced4da !important;">
-                                                        <div class="p-1 px-2 black-text flex-grow-1"
-                                                            style="font-size: 0.8rem;">
-                                                            Specification
+                                        @foreach ($currentSavedItems as $saved)
+                                            <tr class="pr-item-row" data-id="{{ $item->app_item_id }}">
+                                                {{-- Identity for the row --}}
+                                                <input type="hidden" name="items[{{ $rowIndex }}][app_item_id]"
+                                                    value="{{ $rowKey }}">
+
+                                                {{-- Unit --}}
+                                                <td class="px-1">
+                                                    <select class="form-select form-control-sm"
+                                                        name="items[{{ $rowIndex }}][unit]">
+                                                        <option value="" {{ !$saved ? 'selected' : '' }} disabled>
+                                                            Select</option>
+                                                        <option value="Piece"
+                                                            {{ ($saved?->pr_items_unit ?? '') === 'Piece' ? 'selected' : '' }}>
+                                                            Piece</option>
+                                                        <option value="Lot"
+                                                            {{ ($saved?->pr_items_unit ?? '') === 'Lot' ? 'selected' : '' }}>
+                                                            Lot</option>
+                                                        <option value="Set"
+                                                            {{ ($saved?->pr_items_unit ?? '') === 'Set' ? 'selected' : '' }}>
+                                                            Set</option>
+                                                        <option value="More options"
+                                                            {{ ($saved?->pr_items_unit ?? '') === 'More options' ? 'selected' : '' }}>
+                                                            More options</option>
+                                                    </select>
+                                                </td>
+                                                {{-- Item Description --}}
+                                                <td class="px-1">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control"
+                                                            name="items[{{ $rowIndex }}][description]"
+                                                            value="{{ $saved?->pr_items_descrip ?? '' }}">
+                                                        <span
+                                                            class="input-group-text bg-white border-start-0 add-specification-btn"
+                                                            title="Add Specifications" style="cursor: pointer;">
+                                                            <img src="{{ asset('img/add-description-btn.png') }}"
+                                                                alt="Add" style="width: 14px; height: 14px;">
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                {{-- Qty. --}}
+                                                <td class="px-1"><input type="text"
+                                                        class="form-control form-control-sm text-center qty-input"
+                                                        name="items[{{ $rowIndex }}][quantity]"
+                                                        value="{{ $saved?->pr_items_quantity ?? '' }}"
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                </td>
+                                                {{-- Unit Cost --}}
+                                                <td class="px-1"><input type="text"
+                                                        class="form-control form-control-sm text-center cost-input"
+                                                        name="items[{{ $rowIndex }}][cost]"
+                                                        value="{{ $saved?->pr_items_cost ? number_format($saved?->pr_items_cost, 2, '.', '') : '' }}"
+                                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                                </td>
+                                                {{-- Amount --}}
+                                                @php
+                                                    $amount = $saved
+                                                        ? $saved->pr_items_quantity * $saved->pr_items_cost
+                                                        : 0;
+                                                @endphp
+                                                <td class="px-1 text-center">
+                                                    <span class="amount-display fw-bold"
+                                                        data-amount="{{ $amount }}">₱
+                                                        {{ number_format($amount, 2) }}</span>
+                                                </td>
+                                                {{-- Category --}}
+                                                @php
+                                                    $catMap = [
+                                                        'consumable' => 'Consumable',
+                                                        'equipment' => 'Equipment',
+                                                        'equipment_50k' => 'Equipment (50k & ↑)',
+                                                    ];
+                                                    $savedCat = $saved ? $catMap[$saved->pr_items_category] ?? '' : '';
+                                                @endphp
+                                                <td class="px-1">
+                                                    <select class="form-select form-control-sm"
+                                                        name="items[{{ $rowIndex }}][category]">
+                                                        <option value=""
+                                                            {{ !$saved || !$saved?->pr_items_category ? 'selected' : '' }}
+                                                            disabled>Select</option>
+                                                        <option value="Consumable"
+                                                            {{ $savedCat === 'Consumable' ? 'selected' : '' }}>Consumable
+                                                        </option>
+                                                        <option value="Equipment"
+                                                            {{ $savedCat === 'Equipment' ? 'selected' : '' }}>Equipment
+                                                        </option>
+                                                        <option value="Equipment (50k & ↑)"
+                                                            {{ $savedCat === 'Equipment (50k & ↑)' ? 'selected' : '' }}>
+                                                            Equipment (50k & ↑)</option>
+                                                    </select>
+                                                </td>
+                                                <td class="text-start px-0">
+                                                    <button type="button"
+                                                        class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
+                                                        style="{{ $loop->first && $loop->parent->first && !$saved ? 'visibility: hidden;' : 'visibility: visible;' }}">
+                                                        <img src="{{ asset('img/remove.svg') }}" alt="Remove">
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {{-- Specification --}}
+                                            @php
+                                                $specText = $saved?->prSpecs->first()?->pr_spec_spec ?? '';
+                                            @endphp
+                                            <tr class="pr-specification-row {{ !$specText ? 'd-none' : '' }}">
+                                                <td colspan="1"></td>
+                                                <td class="px-1">
+                                                    <div class="custom-specification-container">
+                                                        <div class="d-flex justify-content-between align-items-center bg-white border rounded-top custom-specification-header toggle-specification-action"
+                                                            style="cursor: pointer; border-color: #ced4da !important;">
+                                                            <div class="p-1 px-2 black-text flex-grow-1"
+                                                                style="font-size: 0.8rem;">
+                                                                Specification
+                                                            </div>
+                                                            <div class="d-flex align-items-center pe-3">
+                                                                <button type="button"
+                                                                    class="btn-close btn-sm remove-specification-btn me-2"
+                                                                    aria-label="Close"
+                                                                    style="width: 0.5em; height: 0.5em;"></button>
+                                                                <svg class="specification-arrow" width="12"
+                                                                    height="12" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                                </svg>
+                                                            </div>
                                                         </div>
-                                                        <div class="d-flex align-items-center pe-3">
-                                                            <button type="button"
-                                                                class="btn-close btn-sm remove-specification-btn me-2"
-                                                                aria-label="Close"
-                                                                style="width: 0.5em; height: 0.5em;"></button>
-                                                            <svg class="specification-arrow" width="12"
-                                                                height="12" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2"
-                                                                stroke-linecap="round" stroke-linejoin="round">
-                                                                <polyline points="6 9 12 15 18 9"></polyline>
-                                                            </svg>
+                                                        <div class="specification-body border border-top-0 rounded-bottom bg-white"
+                                                            style="border-color: #ced4da !important;">
+                                                            <textarea class="form-control form-control-sm border-0 shadow-none px-2"
+                                                                name="items[{{ $rowIndex }}][specification]" rows="2" placeholder="Enter specification details.">{{ $specText }}</textarea>
                                                         </div>
                                                     </div>
-                                                    <div class="specification-body border border-top-0 rounded-bottom bg-white"
-                                                        style="border-color: #ced4da !important;">
-                                                        <textarea class="form-control form-control-sm border-0 shadow-none px-2"
-                                                            name="items[{{ $rowKey }}][specification]" rows="2" placeholder="Enter specification details."></textarea>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td colspan="5"></td>
-                                        </tr>
+                                                </td>
+                                                <td colspan="5"></td>
+                                            </tr>
+                                            @php $rowIndex++; @endphp
+                                        @endforeach
                                     @endforeach
                                 </tbody>
                             </table>
@@ -257,4 +321,13 @@
 
     <!-- CUSTOM js -->
     <script src="{{ asset('js/general-pages/create-pr/custom-create-pr.js') }}"></script>
+
+    <script>
+        // Submit button changes the form action to the submit route, then submits
+        document.getElementById('submit-pr-btn').addEventListener('click', function() {
+            const form = document.getElementById('pr-form');
+            form.action = "{{ route('submit.pr', $task->task_id) }}";
+            form.submit();
+        });
+    </script>
 @endpush

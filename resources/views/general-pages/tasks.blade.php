@@ -84,9 +84,9 @@
                             @php
                                 $status = strtolower($task->task_status ?? 'pending');
                                 $badgeClass = match ($status) {
-                                    'completed' => 'bg-success',
-                                    'ongoing' => 'bg-info',
                                     'pending' => 'bg-warning',
+                                    'submitted' => 'bg-info',
+                                    'approved' => 'bg-success',
                                     'rejected' => 'bg-danger',
                                     default => 'bg-secondary',
                                 };
