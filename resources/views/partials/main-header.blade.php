@@ -207,8 +207,9 @@
                 <div class="user-profile-section">
                     <div class="media mx-auto">
                         <div class="media-body">
-                            <h5>Patrick </h5>
-                            <p style="color: #8B0000 !important;">Project Leader</p>
+                            <small>{{ auth()->user()->user_fullname }}</small> <br>
+                            <small class="red-text-2">
+                                {{ auth()->user()->roles->first()?->role_name ?? auth()->user()->user_type }}</small>
                         </div>
                     </div>
                 </div>
