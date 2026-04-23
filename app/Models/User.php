@@ -93,6 +93,11 @@ class User extends Authenticatable
         return $this->hasMany(Task::class, 'assigned_to', 'user_id');
     }
 
+    public function appParents()
+    {
+        return $this->hasMany(AppParent::class, 'saved_by_user_id_fk', 'user_id');
+    }
+
     /**
      * Override the broken MySQL virtual column with a proper PHP accessor.
      * The DB expression uses literal strings instead of column references.
