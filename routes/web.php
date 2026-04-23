@@ -108,6 +108,6 @@ Route::controller(CreatePrController::class)->group(function () {
     Route::post('/submit-pr/{task_id}', 'submitPr')->name('submit.pr');
 });
 
-Route::get('/account-settings', function () {
-    return view('sample-pages/account-settings');
-});
+Route::get('/account-settings', [\App\Http\Controllers\AccountSettingsController::class, 'showAccountSettings'])
+    ->middleware('auth')
+    ->name('account.settings');
