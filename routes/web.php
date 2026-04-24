@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
 use App\Http\Controllers\CreatePrController;
+use App\Http\Controllers\PrReviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +29,12 @@ Route::middleware(['auth', 'role:Head'])->group(function () {
 
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
-        // Route::post('/reports/store', 'store')->name('reports.store');
+    });
+
+    Route::controller(PrReviewController::class)->group(function () {
+        Route::get('/pr-review/{task_id}', 'showPrReview')->name('show.pr.review');
+        Route::post('/pr-review/{task_id}/approve', 'approvePr')->name('approve.pr');
+        Route::post('/pr-review/{task_id}/reject', 'rejectPr')->name('reject.pr');
     });
 });
 
@@ -108,6 +114,7 @@ Route::controller(CreatePrController::class)->group(function () {
     Route::post('/submit-pr/{task_id}', 'submitPr')->name('submit.pr');
 });
 
+// TODO: Fix this route
 Route::get('/account-settings', [\App\Http\Controllers\AccountSettingsController::class, 'showAccountSettings'])
     ->middleware('auth')
     ->name('account.settings');

@@ -31,9 +31,27 @@ class PrParent extends Model
         return $this->hasMany(PrItem::class, 'pr_id_fk', 'pr_id');
     }
 
-    // The task that owns this PR
-    public function task()
+    // A PR can have multiple tasks (subordinate's "Purchase Request" + Head's "PR Review")
+    public function tasks()
     {
-        return $this->hasOne(Task::class, 'pr_id_fk', 'pr_id');
+        return $this->hasMany(Task::class, 'pr_id_fk', 'pr_id');
+    }
+
+    // The department this PR belongs to
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'pr_department', 'dep_id');
+    }
+
+    // The user who requested this PR
+    public function requestor()
+    {
+        return $this->belongsTo(User::class, 'pr_name_of_requestor', 'user_id');
+    }
+
+    // The user who saved this PR
+    public function savedBy()
+    {
+        return $this->belongsTo(User::class, 'saved_by_user_id_fk', 'user_id');
     }
 }

@@ -16,7 +16,6 @@ class PrItem extends Model
         'pr_items_quantity',
         'pr_items_unit',
         'pr_items_cost',
-        'pr_items_total_cost',
         'pr_items_descrip',
         'bidding_status',
         'pr_items_category'
@@ -32,5 +31,11 @@ class PrItem extends Model
     public function prSpecs()
     {
         return $this->hasMany(PrSpec::class, 'pr_items_id_fk', 'pr_items_id');
+    }
+
+    // The APP item this PR item was created from
+    public function appItem()
+    {
+        return $this->belongsTo(AppItem::class, 'pr_app_item_id_fk', 'app_item_id');
     }
 }

@@ -10,6 +10,7 @@ use App\Models\PrSpec;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CreatePrController extends Controller
@@ -64,7 +65,7 @@ class CreatePrController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        if ($task->task_status !== 'Pending') {
+        if (!in_array($task->task_status, ['Pending', 'Rejected'])) {
             return redirect()->route('show.create.pr', $task_id)
                 ->with('error', 'This Purchase Request has already been submitted and can no longer be edited.');
         }
@@ -83,6 +84,7 @@ class CreatePrController extends Controller
             return redirect()->route('show.create.pr', $task_id)
                 ->with('success', 'Purchase Request saved as draft.');
         } catch (\Exception $e) {
+            Log::error('Draft Save Error: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Something went wrong while saving the draft. Please try again.');
@@ -102,7 +104,7 @@ class CreatePrController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        if ($task->task_status !== 'Pending') {
+        if (!in_array($task->task_status, ['Pending', 'Rejected'])) {
             return redirect()->route('show.create.pr', $task_id)
                 ->with('error', 'This Purchase Request has already been submitted.');
         }
@@ -133,15 +135,28 @@ class CreatePrController extends Controller
                     if ($headRole && $headRole->user) {
                         $headUserId = $headRole->user->user_id_fk;
 
-                        // Create a new task for the department head to review
-                        Task::create([
-                            'assigned_by'      => $user->user_id,
-                            'assigned_to'      => $headUserId,
-                            'task_description'  => 'Purchase Request submitted for review.',
-                            'pr_id_fk'         => $pr->pr_id,
-                            'task_type'        => 'PR Review',
-                            'task_status'      => 'Pending',
-                        ]);
+                        // Check if a review task already exists for this PR
+                        $reviewTask = Task::where('pr_id_fk', $pr->pr_id)
+                            ->where('task_type', 'PR Review')
+                            ->first();
+
+                        if ($reviewTask) {
+                            // Update existing review task back to Pending
+                            $reviewTask->update([
+                                'task_status'      => 'Pending',
+                                'task_description' => 'Revised Purchase Request submitted for review.',
+                            ]);
+                        } else {
+                            // Create a new task for the department head to review
+                            Task::create([
+                                'assigned_by'      => $user->user_id,
+                                'assigned_to'      => $headUserId,
+                                'task_description' => 'Purchase Request submitted for review.',
+                                'pr_id_fk'         => $pr->pr_id,
+                                'task_type'        => 'PR Review',
+                                'task_status'      => 'Pending',
+                            ]);
+                        }
                     }
                 }
             });
@@ -149,6 +164,7 @@ class CreatePrController extends Controller
             return redirect()->route('show.tasks')
                 ->with('success', 'Purchase Request submitted successfully.');
         } catch (\Exception $e) {
+            Log::error('PR Submit Error: ' . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Something went wrong while submitting the PR. Please try again.');
@@ -217,7 +233,6 @@ class CreatePrController extends Controller
                 'pr_items_unit'       => $row['unit']         ?? null,
                 'pr_items_quantity'   => $qty,
                 'pr_items_cost'       => $cost,
-                'pr_items_total_cost' => $qty * $cost,
                 'pr_items_category'   => $category,
             ]);
 
