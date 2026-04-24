@@ -67,6 +67,11 @@ body {
   color: var(--black-text) !important;
 }
 
+.btn-gray {
+  background-color: var(--gray-text) !important;
+  color: var(--white-text) !important;
+}
+
 .red-text {
     color: var(--red-text) !important;
 }

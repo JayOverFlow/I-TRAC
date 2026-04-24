@@ -16,7 +16,7 @@
         @csrf
         @php
             $rowIndex = 0;
-            $isReadOnly = $task->task_status !== 'Pending';
+            $isReadOnly = !in_array($task->task_status, ['Pending', 'Rejected']);
         @endphp
 
         <div class="card allocated-budget-card mb-3">

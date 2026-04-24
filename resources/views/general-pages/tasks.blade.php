@@ -76,7 +76,8 @@
                         data-email="{{ $task->assignedBy->user_email ?? '' }}"
                         data-date="{{ \Carbon\Carbon::parse($task->created_at)->format('m/d/Y') }}"
                         data-time="{{ \Carbon\Carbon::parse($task->created_at)->format('g:i A') }}"
-                        data-description="{{ $task->task_description ?? '' }}">
+                        data-description="{{ $task->task_description ?? '' }}" data-task-type="{{ $task->task_type }}"
+                        data-task-status="{{ $task->task_status }}">
                         <td>{{ $task->assignedBy->user_fullname ?? 'N/A' }}</td>
                         <td>{{ $task->task_type }}</td>
                         <td>{{ \Carbon\Carbon::parse($task->created_at)->format('m/d/Y') }}</td>
