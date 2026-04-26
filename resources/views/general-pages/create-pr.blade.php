@@ -87,13 +87,25 @@
                                 <h6 class="mb-0">{{ auth()->user()->departments->first()?->dep_name ?? 'N/A' }}</h6>
                             </div>
                         </div>
-                        <div class="row align-items-center">
+
+                        <div class="row align-items-center mb-3">
                             <div class="col-4">
                                 <h6 class="mb-0 black-text fw-bold">Section:</h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="pr_section" class="form-control form-control-sm w-100"
                                     value="{{ $pr?->pr_section ?? old('pr_section') }}"
+                                    {{ $isReadOnly ? 'disabled' : '' }}>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" name="pr_purpose" class="form-control form-control-sm w-100"
+                                    value="{{ $pr?->pr_purpose ?? old('pr_purpose') }}"
                                     {{ $isReadOnly ? 'disabled' : '' }}>
                             </div>
                         </div>
@@ -137,8 +149,8 @@
                             <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
                             <button type="button" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
                                 style="text-decoration: none; box-shadow: none;">
-                                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <polyline points="18 15 12 9 6 15"></polyline>
                                 </svg>
