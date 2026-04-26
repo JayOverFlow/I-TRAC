@@ -33,6 +33,8 @@ Route::middleware(['auth', 'role:Head'])->group(function () {
 
     Route::controller(PrReviewController::class)->group(function () {
         Route::get('/pr-review/{task_id}', 'showPrReview')->name('show.pr.review');
+        Route::get('/pr-review/{task_id}/edit', 'editPrReview')->name('edit.pr.review');
+        Route::post('/pr-review/{task_id}/update', 'updatePrReview')->name('update.pr.review');
         Route::post('/pr-review/{task_id}/approve', 'approvePr')->name('approve.pr');
         Route::post('/pr-review/{task_id}/reject', 'rejectPr')->name('reject.pr');
         Route::post('/pr-review/{task_id}/cancel-approve', 'cancelApprovePr')->name('cancel.approve.pr');
