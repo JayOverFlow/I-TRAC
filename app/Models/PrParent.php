@@ -23,6 +23,11 @@ class PrParent extends Model
         'saved_by_user_id_fk',
         'pr_unique_code',
         'pr_status',
+        'approved_at',
+    ];
+
+    protected $casts = [
+        'approved_at' => 'datetime',
     ];
 
     // One PR has many items

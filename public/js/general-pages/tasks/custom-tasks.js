@@ -14,26 +14,36 @@ $(document).on("click", ".task-row", function () {
     const taskType = row.data("task-type");
     const taskStatus = row.data("task-status");
 
-    const btn = $("#modal-create-pr-btn");
+    const createBtn = $("#modal-create-pr-btn");
+    const viewBtn = $("#modal-view-pr-btn");
 
     // Reset visibility and content
-    btn.show();
-    $("#modal-description").text(row.data("description"));
+    createBtn.show();
+    viewBtn.hide();
+    
+    // Clear and set description to avoid multiple appendings
+    $("#modal-description").html(row.data("description"));
 
     if (taskStatus === "Approved") {
-        btn.hide();
+        createBtn.hide();
+
+        if (taskType === "PR Review") {
+            viewBtn.show();
+            viewBtn.attr("href", "/pr-review/" + taskId);
+        }
+
         $("#modal-description").append('<div class="mt-3 p-3 text-success border border-success rounded text-center fw-bold" style="background-color: rgba(25, 135, 84, 0.1);">This Purchase Request has been approved.</div>');
     } else {
         // Set button label and URL based on task type and status
         if (taskType === "PR Review") {
-            btn.text("Review Purchase Request");
-            btn.attr("href", "/pr-review/" + taskId);
+            createBtn.text("Review Purchase Request");
+            createBtn.attr("href", "/pr-review/" + taskId);
         } else if (taskStatus === "Rejected") {
-            btn.text("Revise Purchase Request");
-            btn.attr("href", "/create-pr/" + taskId);
+            createBtn.text("Revise Purchase Request");
+            createBtn.attr("href", "/create-pr/" + taskId);
         } else {
-            btn.text("Create Purchase Request");
-            btn.attr("href", "/create-pr/" + taskId);
+            createBtn.text("Create Purchase Request");
+            createBtn.attr("href", "/create-pr/" + taskId);
         }
     }
 
