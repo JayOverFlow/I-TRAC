@@ -125,7 +125,7 @@
                             <h6 class="mb-0">{{ $pr->department->dep_name ?? 'N/A' }}</h6>
                         </div>
                     </div>
-                    <div class="row align-items-center">
+                    <div class="row align-items-center mb-3">
                         <div class="col-4">
                             <h6 class="mb-0 black-text fw-bold">Section:</h6>
                         </div>
@@ -133,6 +133,14 @@
                             <h6 class="mb-0">{{ $pr->pr_section ?? 'N/A' }}</h6>
                         </div>
                     </div>
+                    <div class="row align-items-center">
+                            <div class="col-4">
+                                <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="mb-0">{{ $pr?->pr_purpose ?? 'N/A' }}</h6>
+                            </div>
+                        </div>
                 </div>
 
                 <div class="col-md-6 border-start-md">

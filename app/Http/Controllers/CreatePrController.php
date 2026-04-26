@@ -187,6 +187,7 @@ class CreatePrController extends Controller
                 'pr_section'    => $request->input('pr_section'),
                 'pr_no'         => $request->input('pr_no'),
                 'pr_department' => $departmentId,
+                'pr_purpose'    => $request->input('pr_purpose'),
                 'pr_status'     => $status,
             ]);
 
@@ -199,6 +200,7 @@ class CreatePrController extends Controller
                 'pr_department'        => $departmentId,
                 'pr_no'                => $request->input('pr_no'),
                 'pr_date'              => now()->toDateString(),
+                'pr_purpose'    => $request->input('pr_purpose'),
                 'pr_name_of_requestor' => $user->user_id,
                 'saved_by_user_id_fk'  => $user->user_id,
                 'pr_unique_code'       => strtoupper(Str::random(8)),
