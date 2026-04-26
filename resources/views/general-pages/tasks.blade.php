@@ -51,6 +51,7 @@
 
                 <!-- Footer -->
                 <div class="modal-footer border-top-0 pt-0 justify-content-center">
+                    <a href="#" id="modal-view-pr-btn" class="btn btn-dark-red px-4">View Purchase Request</a>
                     <a href="#" id="modal-create-pr-btn" class="btn btn-red px-4">Create Purchase Request</a>
                 </div>
 
