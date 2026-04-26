@@ -68,11 +68,11 @@
                             </button>
                         </form>
 
-                        <button type="button" id="edit-pr-btn" disabled
-                            class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-3">
+                        <a href="{{ route('edit.pr.review', $task->task_id) }}" id="edit-pr-btn"
+                            class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-3 text-decoration-none">
                             <img src="{{ asset('img/Edit.svg') }}" width="18" height="18">
-                            <span class="fw-bold">Edit</span>
-                        </button>
+                            <span class="fw-bold text-dark">Edit</span>
+                        </a>
                     @elseif ($task->task_status === 'Approved')
                         <button type="button"
                             class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3"
@@ -134,13 +134,13 @@
                         </div>
                     </div>
                     <div class="row align-items-center">
-                            <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
-                            </div>
-                            <div class="col-8">
-                                <h6 class="mb-0">{{ $pr?->pr_purpose ?? 'N/A' }}</h6>
-                            </div>
+                        <div class="col-4">
+                            <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
                         </div>
+                        <div class="col-8">
+                            <h6 class="mb-0">{{ $pr?->pr_purpose ?? 'N/A' }}</h6>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-6 border-start-md">

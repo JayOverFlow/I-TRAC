@@ -1,24 +1,22 @@
-{{-- Extend the main layout that you want to use --}}
 @extends('layouts.head-layout')
 
-{{-- Define contents to show in the layout --}}
-@section('title', 'Tasks | I-TRAC')
+@section('title', 'Edit Purchase Request | I-TRAC')
 
 @push('css')
     <!-- Page SPECIFIC css -->
-    <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/datatables.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/dt-global_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/edit-submitted-pr/page-specific/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/edit-submitted-pr/page-specific/dt-global_style.css') }}">
 
     <!-- FilePond CSS -->
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
 
     <!-- CUSTOM css -->
-    <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/page-specific/accordions.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/custom-create-pr.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/edit-submitted-pr/page-specific/accordions.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/edit-submitted-pr/edit-submitted-pr.css') }}">
 @endpush
 
 @section('content')
-    <form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form">
+    <form method="POST" action="{{ route('update.pr.review', $task->task_id) }}" id="pr-form">
         @csrf
         @php
             $rowIndex = 0;
@@ -29,40 +27,23 @@
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
                 <div class="d-flex flex-column">
                     <h5 class="fw-bold red-text-2">PURCHASE REQUEST</h5>
-                    <div class="d-flex align-items-center mt-1">
-                        <img src="{{ asset('img/user-profile.jpeg') }}"
-                            class="avatar-img rounded-circle border border-2 border-white">
-                        <img src="{{ asset('img/user-profile.jpeg') }}"
-                            class="avatar-img rounded-circle border border-2 border-white ms-n2">
-                        <div class="avatar-add rounded-circle border bg-white d-flex align-items-center justify-content-center ms-n2"
-                            style="width: 35px; height: 35px; color: #ccc;">
-                            <span>+</span>
-                        </div>
-                    </div>
                 </div>
                 <div>
-                    <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
+                    <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP
+                        {{ number_format($pr?->prItems->sum('pr_items_total_cost') ?? 0, 2) }}</h5>
 
                     <div class="text-end">
-                        @if (!$isReadOnly)
-                            <button type="button" id="submit-pr-btn"
-                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                                <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
-                                <span>Submit</span>
-                            </button>
+                        <button type="submit" id="save-changes-pr-btn"
+                            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                            <img src="{{ asset('img/Save.svg') }}" width="18" height="18" style="filter: brightness(0) invert(1);">
+                            <span>Save Changes</span>
+                        </button>
 
-                            <button type="submit"
-                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
-                                <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
-                                <span class="fw-bold">Save as Draft</span>
-                            </button>
-                        @else
-                            <div class="badge {{ $task->task_status == 'Submitted' ? 'bg-info' : 'bg-success' }} p-2 px-3">
-                                <h6 class="mb-0 text-white">
-                                    <i class="fas fa-check-circle me-1"></i> Purchase Request {{ $task->task_status }}
-                                </h6>
-                            </div>
-                        @endif
+                        <a href="{{ route('show.pr.review', $task->task_id) }}"
+                            class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2 text-decoration-none">
+                            <img src="{{ asset('img/Cancel.svg') }}" width="18" height="18">
+                            <span class="fw-bold text-dark">Discard Changes</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -91,7 +72,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Department:</h6>
                             </div>
                             <div class="col-8">
-                                <h6 class="mb-0">{{ auth()->user()->departments->first()?->dep_name ?? 'N/A' }}</h6>
+                                <h6 class="mb-0">{{ $pr->department->dep_name ?? 'N/A' }}</h6>
                             </div>
                         </div>
 
@@ -156,9 +137,8 @@
                             <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
                             <button type="button" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
                                 style="text-decoration: none; box-shadow: none;">
-                                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
+                                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="18 15 12 9 6 15"></polyline>
                                 </svg>
                             </button>
@@ -368,17 +348,5 @@
     <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
 
     <!-- CUSTOM js -->
-    <script src="{{ asset('js/general-pages/create-pr/custom-create-pr.js') }}"></script>
-
-    <script>
-        // Submit button changes the form action to the submit route, then submits
-        const submitBtn = document.getElementById('submit-pr-btn');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function() {
-                const form = document.getElementById('pr-form');
-                form.action = "{{ route('submit.pr', $task->task_id) }}";
-                form.submit();
-            });
-        }
-    </script>
+    <script src="{{ asset('js/head/edit-submitted-pr/custom-edit-submitted-pr.js') }}"></script>
 @endpush

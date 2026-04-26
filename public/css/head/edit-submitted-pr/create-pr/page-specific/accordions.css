@@ -1,0 +1,90 @@
+/*
+    Accordion Component Styles
+*/
+
+.accordion .card {
+    border: 1px solid #d3d3d3;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    background: #fff;
+}
+
+.accordion .card-header {
+    background-color: transparent;
+    color: #f8538d;
+    border-radius: 0;
+    padding: 0;
+    position: relative;
+    border-bottom: none;
+}
+
+.accordion .card-header section > div {
+    padding: 13px 19px;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.accordion .card-header section > div.collapsed {
+    color: #888ea8;
+}
+
+.accordion .card-header section > div:not(.collapsed) {
+    color: #4361ee;
+    border-bottom: 1px solid #d3d3d3;
+    font-weight: 600;
+}
+
+.accordion .card-header section > div .icons {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 9px;
+}
+
+.accordion .card-header section > div .icons svg {
+    width: 18px;
+    transition: 0.5s;
+    transform: rotate(0);
+}
+
+.accordion .card-header section > div[aria-expanded=true] .icons svg {
+    transform: rotate(180deg);
+}
+
+.accordion .card .card-body p {
+    color: #888ea8;
+    letter-spacing: 1px;
+    font-size: 13px;
+}
+
+.accordion.no-outer-spacing {
+    border: 1px solid #d3d3d3;
+    border-radius: 6px;
+}
+
+.accordion.no-outer-spacing .card {
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+}
+
+.accordion.no-outer-spacing .card:first-child {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.accordion.no-outer-spacing .card:last-child {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.accordion.no-outer-spacing .card:not(:last-child) {
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.accordion.no-outer-spacing .card-header section > div:not(.collapsed) {
+    border-bottom: none;
+}

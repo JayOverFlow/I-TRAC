@@ -1,0 +1,134 @@
+.card-budget{
+    /* background: linear-gradient(45deg, #C60202, #930000) !important; */
+    border: none;
+}
+
+.w-6  {
+    width: 6% !important; 
+    }
+.w-13 { 
+    width: 13% !important; 
+}
+.w-45 { 
+    width: 45% !important; 
+}
+.article-cell-wrapper{
+    width: 100%;
+}
+.specification-box-container {
+    width: 100%;
+}
+.add-specification-btn{
+    cursor: pointer;
+}
+
+.choose-btn, #btndefault{
+    width: 150px;
+    height:50px;
+    border: 1px solid #BFC9D4 !important;
+    border-radius: 6px !important;
+    background-color: #FFFFFF !important;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-btn{
+    width: 10px;
+    height:10px;
+   
+}
+
+.pr-specification-row td {
+    border-top: none !important; /* Seamless look */
+    padding-top: 0 !important;
+}
+
+.card-pad,.card-body{
+    padding: 25px 30px !important;
+}
+
+.rounded-circle {
+    object-fit: cover;
+}
+
+.avatar-img, .avatar-add {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+}
+
+.ms-n2 {
+    margin-left: -10px !important; /* This creates the overlapping effect */
+}
+
+.avatar-add {
+    background-color: white;
+    color: #adb5bd;
+    border: 1px solid #dee2e6 !important;
+    cursor: pointer;
+}
+
+.collapse-toggle .arrow-icon {
+    transition: transform 0.3s ease;
+}
+.collapse-toggle.rotate-arrow .arrow-icon {
+    transform: rotate(180deg);
+}
+
+.bg-transparent,
+.collapse-toggle {
+    background-color: transparent !important;
+}
+
+thead.bg-transparent th {
+    background-color: transparent !important;
+}
+
+/* Stable Table Layout */
+.pr-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Custom Description Toggle Styling */
+.custom-specification-header {
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.custom-specification-header:hover {
+    background-color: #f1f2f3 !important;
+}
+
+.specification-arrow {
+    transition: transform 0.3s ease;
+    transform: rotate(180deg); /* Default open state */
+}
+
+.specification-body {
+    display: block; /* Default open state */
+}
+
+.remove-specification-btn {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.remove-specification-btn:hover {
+    opacity: 1;
+}
+
+/* Remove button visibility control without shifting */
+.remove-row-btn {
+    padding: 2px !important;
+    line-height: 1 !important;
+}
+
+.remove-row-btn img {
+    width: 18px;
+    height: 18px;
+    display: block;
+    margin: 0 auto;
+}

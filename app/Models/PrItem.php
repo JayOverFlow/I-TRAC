@@ -21,6 +21,13 @@ class PrItem extends Model
         'pr_items_category'
     ];
 
+    protected $appends = ['pr_items_total_cost'];
+
+    public function getPrItemsTotalCostAttribute()
+    {
+        return $this->pr_items_quantity * $this->pr_items_cost;
+    }
+
     // Each item belongs to a PR parent
     public function prParent()
     {
