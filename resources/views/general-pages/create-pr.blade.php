@@ -51,9 +51,10 @@
                                 <span class="fw-bold">Save as Draft</span>
                             </button>
                         @else
-                            <div class="badge bg-info p-2 px-3">
-                                <h6 class="mb-0 text-white"><i class="fas fa-check-circle me-1"></i> Purchase Request
-                                    {{ $task->task_status }}</h6>
+                            <div class="badge {{ $task->task_status == 'Submitted' ? 'bg-info' : 'bg-success' }} p-2 px-3">
+                                <h6 class="mb-0 text-white">
+                                    <i class="fas fa-check-circle me-1"></i> Purchase Request {{ $task->task_status }}
+                                </h6>
                             </div>
                         @endif
                     </div>
