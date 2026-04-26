@@ -24,15 +24,21 @@ $(document).on("click", ".task-row", function () {
     // Clear and set description to avoid multiple appendings
     $("#modal-description").html(row.data("description"));
 
-    if (taskStatus === "Approved") {
+    if (taskStatus === "Submitted" || taskStatus === "Approved") {
         createBtn.hide();
+        viewBtn.show();
 
         if (taskType === "PR Review") {
-            viewBtn.show();
             viewBtn.attr("href", "/pr-review/" + taskId);
+        } else {
+            viewBtn.attr("href", "/create-pr/" + taskId);
         }
 
-        $("#modal-description").append('<div class="mt-3 p-3 text-success border border-success rounded text-center fw-bold" style="background-color: rgba(25, 135, 84, 0.1);">This Purchase Request has been approved.</div>');
+        if (taskStatus === "Approved") {
+            $("#modal-description").append('<div class="mt-3 p-3 text-success border border-success rounded text-center fw-bold" style="background-color: rgba(25, 135, 84, 0.1);">This Purchase Request has been approved.</div>');
+        } else {
+             $("#modal-description").append('<div class="mt-3 p-3 text-info border border-info rounded text-center fw-bold" style="background-color: rgba(13, 202, 240, 0.1);">This Purchase Request has been submitted and is pending review.</div>');
+        }
     } else {
         // Set button label and URL based on task type and status
         if (taskType === "PR Review") {
