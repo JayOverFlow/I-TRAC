@@ -24,6 +24,7 @@ class PrParent extends Model
         'pr_unique_code',
         'pr_status',
         'approved_at',
+        'pr_total',
     ];
 
     protected $casts = [
@@ -58,5 +59,11 @@ class PrParent extends Model
     public function savedBy()
     {
         return $this->belongsTo(User::class, 'saved_by_user_id_fk', 'user_id');
+    }
+
+    // The user who approved this PR
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'pr_approved_by', 'user_id');
     }
 }

@@ -1,0 +1,938 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="generator" content="PhpSpreadsheet, https://github.com/PHPOffice/PhpSpreadsheet" />
+      <title>CHEM_1</title>
+      <meta name="author" content="rikki" />
+      <meta name="lastModifiedBy" content="John Rex Duran" />
+      <meta name="created" content="2016-02-03T00:24:18+00:00" />
+      <meta name="modified" content="2026-04-24T16:47:04+00:00" />
+    <style type="text/css">
+      html { font-family:Calibri, Arial, Helvetica, sans-serif; font-size:11pt; background-color:white }
+      a.comment-indicator:hover + div.comment { background:#ffd; position:absolute; display:block; border:1px solid black; padding:0.5em }
+      a.comment-indicator { background:red; display:inline-block; border:1px solid black; width:0.5em; height:0.5em }
+      div.comment { display:none }
+      table { border-collapse:collapse }
+      .b { text-align:center }
+      .e { text-align:center }
+      .f { text-align:right }
+      .inlineStr { text-align:left }
+      .n { text-align:right }
+      .s { text-align:left }
+      .floatright { float:right }
+      .floatleft { float:left }
+      td.style0, th.style0 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style1, th.style1 { vertical-align:bottom; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style2, th.style2 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style3, th.style3 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style4, th.style4 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial'; font-size:9pt }
+      td.style5, th.style5 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style6, th.style6 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:10pt }
+      td.style7, th.style7 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:10pt }
+      td.style8, th.style8 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; text-decoration:underline; color:#0000FF; font-family:'Arial'; font-size:10pt }
+      td.style9, th.style9 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:9pt }
+      td.style10, th.style10 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial'; font-size:10pt }
+      td.style11, th.style11 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style12, th.style12 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style13, th.style13 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style14, th.style14 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style15, th.style15 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style16, th.style16 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:2px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style17, th.style17 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:2px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style18, th.style18 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style19, th.style19 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style20, th.style20 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style21, th.style21 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:2px solid #000000 !important; border-left:2px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial'; font-size:10pt }
+      td.style22, th.style22 { vertical-align:bottom; border-bottom:none #000000; border-top:2px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style23, th.style23 { vertical-align:bottom; border-bottom:none #000000; border-top:2px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style24, th.style24 { vertical-align:bottom; border-bottom:none #000000; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style25, th.style25 { vertical-align:bottom; border-bottom:none #000000; border-top:2px solid #000000 !important; border-left:none #000000; border-right:2px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:11pt }
+      td.style26, th.style26 { vertical-align:middle; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style27, th.style27 { vertical-align:middle; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style28, th.style28 { vertical-align:middle; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style29, th.style29 { vertical-align:middle; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style30, th.style30 { vertical-align:middle; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style31, th.style31 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style32, th.style32 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style33, th.style33 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:2px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style34, th.style34 { vertical-align:bottom; text-align:center; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style35, th.style35 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt; background-color:#FFFFFF }
+      td.style36, th.style36 { vertical-align:bottom; text-align:center; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style37, th.style37 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style38, th.style38 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style39, th.style39 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt; background-color:#FFFFFF }
+      td.style40, th.style40 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style41, th.style41 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style42, th.style42 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:2px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:14pt }
+      td.style43, th.style43 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:14pt }
+      td.style44, th.style44 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:14pt }
+      td.style45, th.style45 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:14pt }
+      td.style46, th.style46 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:14pt }
+      td.style47, th.style47 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style48, th.style48 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style49, th.style49 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style50, th.style50 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style51, th.style51 { vertical-align:top; text-align:center; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style52, th.style52 { vertical-align:top; text-align:center; border-bottom:2px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style53, th.style53 { vertical-align:bottom; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style54, th.style54 { vertical-align:bottom; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style55, th.style55 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:2px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style56, th.style56 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style57, th.style57 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style58, th.style58 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:2px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style59, th.style59 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style60, th.style60 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style61, th.style61 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style62, th.style62 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style63, th.style63 { vertical-align:top; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style64, th.style64 { vertical-align:top; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style65, th.style65 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style66, th.style66 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style67, th.style67 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style68, th.style68 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style69, th.style69 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style70, th.style70 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style71, th.style71 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt; background-color:#FFFFFF }
+      td.style72, th.style72 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt; background-color:#FFFFFF }
+      td.style73, th.style73 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style74, th.style74 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style75, th.style75 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial'; font-size:12pt }
+      td.style76, th.style76 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt; background-color:#FFFFFF }
+      td.style77, th.style77 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial'; font-size:12pt; background-color:#FFFFFF }
+      td.style78, th.style78 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style79, th.style79 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style80, th.style80 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style81, th.style81 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style82, th.style82 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style83, th.style83 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style84, th.style84 { vertical-align:bottom; text-align:center; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style85, th.style85 { vertical-align:bottom; text-align:center; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style86, th.style86 { vertical-align:bottom; text-align:center; border-bottom:1px solid #000000 !important; border-top:2px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt }
+      td.style87, th.style87 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:10.5pt }
+      td.style88, th.style88 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:10.5pt }
+      td.style89, th.style89 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:9pt }
+      td.style90, th.style90 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:9pt }
+      td.style91, th.style91 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:2px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:9pt }
+      td.style92, th.style92 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style93, th.style93 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style94, th.style94 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style95, th.style95 { vertical-align:bottom; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:2px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:11pt }
+      td.style96, th.style96 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style97, th.style97 { vertical-align:top; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style98, th.style98 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:20pt }
+      td.style99, th.style99 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Arial Narrow'; font-size:20pt }
+      td.style100, th.style100 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:20pt }
+      td.style101, th.style101 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:20pt }
+      td.style102, th.style102 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:20pt }
+      td.style103, th.style103 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      td.style104, th.style104 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; color:#000000; font-family:'Arial Narrow'; font-size:12pt }
+      table.sheet0 col.col0 { width:54pt }
+      table.sheet0 col.col1 { width:51.75pt }
+      table.sheet0 col.col2 { width:52.5pt }
+      table.sheet0 col.col3 { width:255.75pt }
+      table.sheet0 col.col4 { width:56.25pt }
+      table.sheet0 col.col5 { width:32.25pt }
+      table.sheet0 col.col6 { width:104.25pt }
+      table.sheet0 col.col7 { width:42.75pt }
+      table.sheet0 col.col8 { width:46.5pt }
+      table.sheet0 col.col9 { width:42pt }
+      table.sheet0 col.col10 { width:42pt }
+      table.sheet0 col.col11 { width:42pt }
+      table.sheet0 col.col12 { width:42pt }
+      table.sheet0 col.col13 { width:42pt }
+      table.sheet0 tr { height:15pt }
+      table.sheet0 tr.row0 { height:6pt }
+      table.sheet0 tr.row1 { height:15.95pt }
+      table.sheet0 tr.row2 { height:15.95pt }
+      table.sheet0 tr.row3 { height:15pt }
+      table.sheet0 tr.row4 { height:17.1pt }
+      table.sheet0 tr.row5 { height:5.1pt }
+      table.sheet0 tr.row6 { height:8.1pt }
+      table.sheet0 tr.row7 { height:21.95pt }
+      table.sheet0 tr.row8 { height:21.95pt }
+      table.sheet0 tr.row9 { height:8.1pt }
+      table.sheet0 tr.row10 { height:15.75pt }
+      table.sheet0 tr.row11 { height:18pt }
+      table.sheet0 tr.row12 { height:18pt }
+      table.sheet0 tr.row13 { height:21pt }
+      table.sheet0 tr.row14 { height:18pt }
+      table.sheet0 tr.row15 { height:18pt }
+      table.sheet0 tr.row16 { height:18pt }
+      table.sheet0 tr.row17 { height:18pt }
+      table.sheet0 tr.row18 { height:18pt }
+      table.sheet0 tr.row19 { height:18pt }
+      table.sheet0 tr.row20 { height:18pt }
+      table.sheet0 tr.row21 { height:18pt }
+      table.sheet0 tr.row22 { height:18pt }
+      table.sheet0 tr.row23 { height:18pt }
+      table.sheet0 tr.row24 { height:18pt }
+      table.sheet0 tr.row25 { height:18pt }
+      table.sheet0 tr.row26 { height:18pt }
+      table.sheet0 tr.row27 { height:18pt }
+      table.sheet0 tr.row28 { height:18pt }
+      table.sheet0 tr.row29 { height:18pt }
+      table.sheet0 tr.row30 { height:18pt }
+      table.sheet0 tr.row31 { height:18pt }
+      table.sheet0 tr.row32 { height:18pt }
+      table.sheet0 tr.row33 { height:18pt }
+      table.sheet0 tr.row34 { height:18pt }
+      table.sheet0 tr.row35 { height:18pt }
+      table.sheet0 tr.row36 { height:18pt }
+      table.sheet0 tr.row37 { height:18pt }
+      table.sheet0 tr.row38 { height:36pt }
+      table.sheet0 tr.row39 { height:18pt }
+      table.sheet0 tr.row40 { height:18pt }
+      table.sheet0 tr.row41 { height:18pt }
+      table.sheet0 tr.row42 { height:18pt }
+      table.sheet0 tr.row43 { height:18pt }
+      table.sheet0 tr.row44 { height:18pt }
+      table.sheet0 tr.row45 { height:18pt }
+      table.sheet0 tr.row46 { height:8.1pt }
+      table.sheet0 tr.row47 { height:24pt }
+      table.sheet0 tr.row48 { height:42.95pt }
+      table.sheet0 tr.row49 { height:24pt }
+      table.sheet0 tr.row50 { height:24pt }
+@page page0 { margin-left: 0.51181102362205in; margin-right: 0.19685039370079in; margin-top: 0.31496062992126in; margin-bottom: 0in; size: portrait; }
+@media print {
+    table.sheet0 td.column7 { display:none }
+    table.sheet0 td.column8 { display:none }
+    table.sheet0 td.column9 { display:none }
+    table.sheet0 td.column10 { display:none }
+    table.sheet0 td.column11 { display:none }
+    table.sheet0 td.column12 { display:none }
+    table.sheet0 td.column13 { display:none }
+}
+.navigation {page-break-after: always;}
+.scrpgbrk, div + div {page-break-before: always;}
+@media screen {
+  .gridlines td {border: 1px solid black;}
+  .gridlines th {border: 1px solid black;}
+  body>div {margin-top: 5px;}
+  body>div:first-child {margin-top: 0;}
+  .scrpgbrk {margin-top: 1px;}
+}
+@media print {
+  .gridlinesp td {border: 1px solid black;}
+  .gridlinesp th {border: 1px solid black;}
+  .navigation {display: none;}
+}
+    </style>
+  </head>
+
+  <body>
+<div style='page: page0'>
+    <table data-printarea='A1:G51' id='sheet0' class='sheet0 gridlines'>
+        <col class="col0" />
+        <col class="col1" />
+        <col class="col2" />
+        <col class="col3" />
+        <col class="col4" />
+        <col class="col5" />
+        <col class="col6" />
+        <col class="col7" />
+        <col class="col8" />
+        <col class="col9" />
+        <col class="col10" />
+        <col class="col11" />
+        <col class="col12" />
+        <col class="col13" />
+        <tbody>
+          <tr class="row0">
+            <td class="column0 style21 s" style='position: relative;'>
+<img style="position: absolute; z-index: 1; left: 0px; top: 0px; width: 0px; height: 42px;" src="data:image/png;base64,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" alt="Embedded image" /><br />
+<br />
+</td>
+            <td class="column1 style22 null">&nbsp;</td>
+            <td class="column2 style22 null">&nbsp;</td>
+            <td class="column3 style23 null">&nbsp;</td>
+            <td class="column4 style24 null">&nbsp;</td>
+            <td class="column5 style22 null">&nbsp;</td>
+            <td class="column6 style25 null">&nbsp;</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row1">
+            <td class="column0 style16 null" style='position: relative;'>
+<img style="position: absolute; z-index: 1; left: 23px; top: 6px; width: 67px; height: 78px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKMAAACkCAYAAAD7aZ44AAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAADcAAAAAQAAANwAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAKOgAwAEAAAAAQAAAKQAAAAAulRmvwAAAAlwSFlzAAAh1QAAIdUBBJy0nQAAQABJREFUeAHsvQVgXFX6/n/uxKqpe5OmVJBCcakABRZfWBZ3SmGxxd1bipRCkeJaivvibgVqOMWhVJO6JqlE5/6fzzu508lkkkzSKd/t778H0pm5cu695z7n9fc9nvtfS3oEJuUMHJru3NXlvl9e30lpXiij0g8/OLhgyq31Hfu//ZER0Nj+ryU7Ap7zB6d7ab0qXLjeUzI8z1V6bncd+D8w1jtakQNCSR73//vDfDci5DvXv9yA6AuNdf+V2W5vs6+7bt/s//eDl+QA/A+MSQ7U5z0+6qRDN6kUIpNpvvN9z7lu5RkZPZI5/n/HOPf/LJv+sNtO7Xo0bbeqz5/vlKbiRadXVvT1Ql7bSt9AlkyXfrrnNanwQ/108K/JnFDXMZNyB0KaK1xa+KkBs6fOruvYjXXf/3NgnJg7qF+a809Id6FjF5YVPqsXc1lKXk7IbZPuPC9s7Dm5HtN0mJSd7fTxUnJnJD5qSvdB+0tevTZds6Gs0l0wOXfQmyHPjV87J+PzPdyEisRnbXxbxUk2/vZCv36ZXQtb7uWFQqd4vr9fhhdqXuHgp16pC3n7DZg9ccL6PuWk7gOfyAx5J0gWrF97qbqYwBMq98PvDs6fsn9jrz+5+4C2vudNSfNcX1FlXdsLZUo5Esj1gP6XvvOeKEsr/88es79a2Nhr/Lect1GDcWrPnTuFK0KH6wUN1fvZIc15DsVBD2WASfO8kGS8n8vSMgfvMXvCysYO+idDhqRnziz9MuS8bcMGiOR68gQc3/Nnl63N2mqPJRNWJXdW9aMm5exyb6aXdlb8JBASPYkBXuSZ/QUS/l+p8MNP7Fow9YvqPWw8vzZKMH7RbfDWlWn+UFHBI/RCulWKClZEZDnIYbWWJepU4vy7B8+dfG61HQ348WnX3XLS0it+0PVa67SkKaOOFR5dufO97QflT/6pAZe0Qz/vPmA/Pd8bEg3g+DWeLegP0GNK0oXKBcrPNQFH63rvB/s3ls+NSpvW2whNzB34sJ8Wnprh3Pn63Q2KAfvSrEr4skr9sJ/uuzMnSu5q7EvJCJVvIjQ0FIhczs9woUwBcrOGXvuH3MFtQiHvDmEMuT7hswV9SnMPMw6aj+lNvbQ99XtIsG9j+tyoFBjY70Tf7y7vRpN4tlXHoEuscukh54+Vze+rHeZ/s7SOY23Xz5JBCwuzO3gurXs4LdxdUuIRAj8CW4MbJh79f+qUHoOyBJf8sBcqaFqxdqHuY01dnRX5lSNF1TdrwHPSnV+ieSmt+6u6+v5v3bdRgZFBlJj0hUC5X0MGFMqZ6YX6lKZnjdJ5/4o913dHpH2du6CHXvpWnudvJ8PN1iuLXG8ZCbvKh9I63Q95kvsQAxqDRRMfQp63b5rv9oW8hVy4uDQtc9GknAEzJIP+JGr2bXooNG11KGOG5NoS7k1ux32ksJyue6qTIsY+R9V3T4pNaTgU/j3Bvv/6TRudzDg5Z8AhoowI6w0FB8K+Xxl2R1Wmp01Kc5UDvbC/h0A3QBDvI7NNSwQzOkUGjcAAjbVuFtmQN6zOGG8ZaERz9RUZiQsIQCWaCLN0bSjaZG08V7LiFhHtWVuSbIHC1FoKU79GKkxJXmqDHLbRgXFi10Gbemnh7zQaTfTXIMqhlwWVKxIeSgW+joChSvkBJQ0FdypfCAD1dE/2QKLC+mw4JTZTkgt/OHjulL1TeXN/VV8blQLDoKxwJfn6KNC7a/BEishvXiu96Y5QVuSxKuXn/xKIPJYYckQJkV1SRLnhQKQTe5m+a7DWzrn/DW2jA+NBEvxFDn+DijSu8aIb97Ibd72/9ixR/x/+2ium7mobHRirHv37xkIxdUP339UT8ihUNeyHf/nvurPk72bjBKPvf/9/zVeTH+K/5siIPOyWNA03mfHXXDH1V9kowSiTyA+S+bDT/Y9AVmFCgROSPrwlM+cvkYK2cbaNEoyyBbbQ2K8VFv8HxircoQBpMDbLyW31roIrdt8Y4fiXvsxPu+6YI1dxm90KvmiUkD2t0z7N12SuPk8k4ELJSG1NO94YR30D3jPmHZmrlKPjj1sbdtfvVTBlXkMvRxhepu9Gyqf/xG75k19r6PmNPf4vAyNAzEjPeF2kuJdm8cjMjmVjd/jmm3oTm4IHm9ht0B6hNP+WDOftUBaxRf81YiPXwu6HFRw7e/C9PhOniLZZn0J6YvFQYeSvJOSePE54Y+bKqH/1oLmTnwzGsa7PT5yik3LLzpI78Vqd367MhYsqw94xgwsmvV3Xeana95eAcWq3neXjTXtN5pjtNEDO4vGc/7Ff6S4aNG/y93U9zCcdhrTIbFp2jV7l+ZIVMxvheamr++r7DGgCXIVoi4AHgLwmWS6tZQuX1jrbpbdv7UKts7201q1cWotmLtS8qfOyMg1sYNOvUBRlSakLr1rrKouKXcWKQhdeUeRXLFvpKguLXHj1WtEsxcJq1L00+WD0B1A3VJMhnWmg+eM/VxKuvGSPeV8U1HatT3IGbpnl3Bh5fvYNjO6cr+MFyPDRgwumvlPbuanavuFGouoOPxEQm6SlvSogbh/r9FcALOykUJLOjQWtVo498uefy+If6rMeu2yXEQ7dq/CoXRQAwDtMPTUU6AAI4As1beIyOnVwGb1yvCab93ZN+uS5jJzOXnrH9gJkc+dpv5cuECVD5XS/+B79MqVwCYQAs2L+Yr90doEr+fVPVzZ9tl82e76rXFmo4yrVr0ZIfadaDNYc8RRw4ekJZyur8dxd5059I3acoYYZuaVnK/BSkeReG8xDsfs1HfFeFpaH/aN3LZjybuy+VH/foGAEiFlVQIx/yMiDRKKWNVCfyE130cA5U3DzWZMQfoqoxhi9+tYpp4Ya77BAAhsFaE227OM1H7Cta7L15l5WXnejgl6GYkiglAIK7NnYtH43uKFjwbKhgFBDgKx+wmtLXPnCpa7095n+mi+muTXf/OiXzphjwN0QwDQqRw6Nc6PzswtHMvk1xgoO8W5TEPLecCzdWDUgBs9aRSELdcxRu+VPeS/YnurPDQZGPWg3gQnWvH1iIK57lCoqWSST7Y2VaRlPhsIVV2qWno2Y1ljX2Lreq74BrCoKCPVrtlN/r+XfBrmm2/XzMrp0MMrkw56rwFfj/JgNgDj4Y7PuG1YYcwT4iwxt/PboQQZQAdMoreKDVq1xpdNnu9UTv/FXfTLFL/nlTwOsl6lwyDS4ZUqayZKlvv+6YkamihpekogaJroSgNRTr9S5R+2+gQJ3NwgYDYie96oedIf6gLjuwUUzdDfyFS/UeZ31aVN13f5GflM34dIyF5Js13TbLVz2QXt5LXbd0cvo3tkA45crPlrsNL4BpjRRsuCvQvJgWVlEkigpEVXTefzR2rZta8dVAmS1rKwst3r1auu/efPmrrS0NArWkCgj4K3RACfAFLsOr1nr1v70hyt6a4K/6sNJftm8hREZE2qdgkY6htgv0ULqLTE1THQZAKkzVoZd5ZGD537xQaJj1mdbysEYAFFynrTeRKNe3+0iNCc/QLX2JrIKCNNatXAt9hzgtT7iAK/Z9lu6kBQS5DijgDEnA750ASEAGIBbtGiRmzlzpvvxxx9dp06d3AknnOCKi4vdUUcd5X7//Xe3dq1MnWq77LKLe+CBB1y7du0MgHx/8MEH7fuRRx7pLrzwQgMrgAakLVq0sGtliupxvQDE0dsBmAIeFLF8/hJX/MFEf+WL7/glP/8R0cwzFOr7f9SqWPYKSblHDZ47KaWAlMScujax6+DcUJp7tfFAtHupzu8aensBJWzezLU+bH+v83Xnhdoef4iXKUposh/arFGEdR0DxDVr1rhff/3VQPfHH3+4f/zjH+6OO+5wzz33nPvhhx9cq1at3H777ecA1JgxY1y/fv3ceeedZ5+PP/64nbfHHnu4L774wg0bNswdeuihLjc3191zzz2ue/fubtCgQe777793Bx10kNtrr70cFPL99993rVu3tj+oKcwgSjVRfiQ2pLVo6jSJvOy/7+k16dvTVSxc4srnLbJnSCH7XjcY9XzTy1G4sddMd7fvCW26PPX4yvmNSjRLdJnU0P2qnhVnmC2X1GaiO+sHqER3msQ2X2wUGavVP/fx2p16pNd0iz5GAX1RyPiWIerCi+evSZMmRsnuu+8+9/XXX7vs7Gw3e/Zs969//cudeuqprkuXLrYNNg3b5twBAwa4M844w6jj+PHj3bx584zazZo1yy41dOhQN3DgQGPRK1assPOgsEuXLrX+AO1JJ51kLH6nnXYygO6+++6uZ8+eDooJ6Lk308il7HiZGa7VIXt7LfYe5BW/85m/7JHn/ZLfZkr8EJVEKfoLm4QJiVPu5SWz85ZE4oFTc/GUgpEMOIXMy2Dq3SbD9F8GSFguyknzXbZ17c85MdR8l22McoRl84ttgAiKBGu85pprXFFRkbvzzjttG7cL2ABBx44djZrBTjt06GAAXbhwoTv44IMNKC1btnSvv/66W7x4sZszZ44DbPvss48Bc4cddnDsh/ode+yx7rLLLjOAITd+++23rlevXkZlhwwZ4qZOnWqA/vDDD92ECRPcNtts49566y33+eefuz59+rj27duvo5RQTT0PMmXrI/bzWuw1wFvx9Ov+8vEvy465wsSP2GfdUN+RN/Vu/1Cm5NVHuhcjQnKKLpbyKdU6u/AeyYqfoiGn6B7r7IYXlN6mtety3fle7ribQ5hoTCaEHasBvoCaffrpp+6KK66w371793ZQtJdeeskoI8BDdgOMKB1bbrmlg1JuuummxrJvvPFGkxeRK5s1a+YWLFjg3nvvPffuu++6m266ye29997G6jfffHP36quvul133dWNGzfOHXDAAUZl6XvatGmuf//+puBA/Xr06GGARqZk3y233GL7EAMuuugio8Dcf9OmTe27PRCgXKvaBBJDOpxzotfjmTtC2fvt5tkzi61v4CYMepWK4r1wYMGU5am+VsoB00/2q/Rw2nmiVcXSjlKuIEUHABYm9ttyn131Qm4PtT3pUCWVKAcwhiUjC0K9AA4vv7Cw0GQ4WOTpp5/u/vnPf7rLL7/cqBsyIWwR0AA4QAgQbrvtNqNaH330kbHUgOBDCb/55hu39dZbG+igjpx//vnnG6V855133CuvvGJK0Mcff+xWrVrl/vzzT7f99tubYgOV5nzYO0BGrgSotDZt2th9M4lQpO6++2731Vdf2SSKfX5slVm9cl33u4Z7XUdf5qW3b2vUM3pMir/gYqz0/McGzZn8Voq7tu5SDkZ63XnexGky6dws6rhBwAgVwBvS6dpzvJx7hnuZMlTzYgJRFeDxIlEKRo0aZcCDBaOA9O3b1z3yyCP28OyjXX311cZaAzDyCYXj85BDDjEqh6aMJgxA6RcWj/IBVYSqoajAngEeVBSQsZ8JwfbZkkHRxLfaaiujvtwfCkxOTo4pQWjmiA8cj8xKQ5s//vjj3bXXXuuQRbl2fAtsp62P2N/r8fRtoRZ77OKZeJJiKQktWr6kWV6Guyr+HlL1u+bTpajnyrQmt5c5fwpRJCnq0rphoJts1svljhsdanfy4R6eEV4IjRcJgCZNmuTmz59voEFJ4Pcbb7xhMhgKyWuvveZ+++03k+VgjU8//bSDkgWKA9QRmQ05b8SIEQaIwYMHu3333dcABbgADgBC6UB7fvHFFx1y5ZVXXum+++47t8UWW7i//e1vDnFg//33N8oGu0VBoX+0d8C45557mgwZUFyeA8qYn59vkwfT0ttvv23yJ9dM2Ix1l7jMHt1czn0jvQ4XDDMigDaeoqZMNk11z7tk0IzJi1PUZ41uNgjlCq4iZWZHIXGCnqMpJoFge6M+GXCx4Oz9d/c6jzjPS+/QNsqSASFUg08oCMDBLgiFws53yimnGCAnT55sFG277bZzZ511llEcZEQA+vzzzxslQ3kIZDlMNVDDvLw8A9e2227rjj76aLdkyRIDPcfRAAkiABQNeRJFhWtBQZEZUVqgvhMnTnRvvvmmiQE///yzadvPPvusmXtgxzTkVSj2yJEjTQlCbu3WrZuxazug6h+elcnDJ1SfSWhNzCik7UXvfuYvHD7Wr1i63DTx2HMb+l3sOSSz/VMqEXNCQ89tyPEbFIzcCHUFZb4dvl7+ZQ00Jo52px6lWX+yqh1JNoyZ9VAawIAWDCjPPfdcU064PuYZKNeBBx5oysvFF19sGiyU8ssvvzQAQdGGDBlibBE5DvABsLlz5xqVglIFdkBAA4ulAWQagOAvAATyIH80qCv3x3lQUrw19PXMM8/YZAD8aM0cQ+P+oaSYm/7zn/8YcOMpIiBkkiD70j+mIcQIQBk0gj7W/vi7m3/JzeGS32Y0Wttmiitqd2all7brbnM+XxD0vyE+NzgY31AZ4TZpWT+KQm4iCpnAD1b3YwFCRM+Ol5/hoaQYSw6ogE7lpT366KNmooHqACQUhd12281BAfGUoJxgomE75hQUmp133tnde++9ZuuDRQKKlStXGjVCgWEbnwAsAFndd1r33ljA8h1wLlu2zHXt2jV6IiD95JNPzISE8oNiE1DM4CCO+emnn9yZZ55pRnS2IwqguaNMxQKX8Lby+VLgLhkVXjX5W4tKCvpJ9tMquTk3pTBz8R4H/PlndVtZsp0keVxK5blE12ydnnWYHqgbIkei/XVtw37oZaa7LqMu8Uw+lOIiZNgpUJ5AxkPugiqcffbZ9vLQhE877TRz5b388sumGX/22WcmR6KZwm7xhKB4ADqoC6wdOyJUL5DfoHwGRFEri6TRyw01zbKXiluRl21/sMuq72yHKnGcbSMsTJOJPgNQ851JhIcmtgFS5FfMSkwm7iu2MTmQJRE9ACnUHbkTaooWzxjQR9CwLGR0bu+63XtdqKWM5abkBTuT/CSvXAHNA7JLO9yc5CmNPmzdnTe6i9pP/FLh6wrU/ExHkCLQIKoIEAlu6HrzpeYKix1IgAgV/OWXX8yoDICwIf797383P/ANN9wQpX7Ii8hfDz30kBshZQQAI7vRBy+XvxoN8OEb1ieBFJUrFSi7eJkrm7/IVSyQO27pMle5QsGyCmjwS8QamWcCnCeqlaaA27Q2rRwybUbXji6jS0eFqbWTj7ylAdoM9IgYMdQ9uD6gQuYFaLgbAzEg2M+9o5BBxdHaUbJ4Dp7tnHPOMUqJiSgW9JxrwRcSEeZfOtoveudTn8nSwGalYco9xTTOnfJiA89N+vAEbyLpc+s8UAETTWX8flDCb9vkI3ciXRpr1iB3SQBEjgB82A9RUDbZZBN3zDHHuCGS+QAh2uyOO+7ojjjiCLMh8vvwww832RHZCi0WbZgXD4UKqKA2RAR9gaRiyXJHCNeab37S5x+udFaBq1S0NhMCMBn4MKFG/kdotG1G+gEmTduIwgk1a+rS27VxmZvkuKZb9nXNttvSNdm8l0vTNlqs2AGIUHagbrHsluOYNFgAsARgAcBEhamIZ4FaYrRH+eFc5E+AjDLFJxHoIVHirrdcbtaH4vc+ayggpUnbCI2dkrfLVxuqpvgGo4woLmJewxscuWMUw3NdbrrIa334/rWyFmSnf//73ybk406DtfESsMuhzUI9eFFoxAQ9AEpecPyLhgIK3a5i0VK3eup3rvijKW7tdz+5cv0GKGaZEqiiFioALHOSARLgBeADMbQqEPLqrNnxYgqihpbKIB8z1LLZDlu5lnsNdM133FpUtI2upf0CTW0Nto4LEhcjci+mI54FJQtvDwoa0UKAD48OJiECOJCXA2AzOYg6n3fuyHDxZ182WKkxrVqxkPPzux2aalcgz71BwCiquJOCEz9R4lXDTDq8OAGg0xVneu3+dVStQOTGoY5QOTRPGnZCNFUUFny8Y8eONa15+vTpRjEwu0SpoI4noALJoURxgytfed8VfzzZomE4xhNVtogYTYwg4BYwek1kTG/R3IVaZbu0bH3yHdkR7R5cSkbzJeehNJTlzzfQRtl9lfZvx9JvFdAzcru67L0HEwThmmzaS3emMUA2jmuwaLww+Lyvv/56d8EFFxhFPPnkk92MGTPcBPm24RK4O++66y5j33CIJ5980sYlCkhNvoqlK1z+6VeFS3743eTauEvV+RM3b0nYP223gskP13lgI3amHIzTe++ftbhk5ceqOTiwoeYcfK7tTjnS63TVmRGtmTdcR+MFEfaFcRnNk5AvfMW4+h5++GFj37wEABbIUQCNF776i+/d8idfdasmfq0EKgXCimKRIGVRMlBQgS+9XWuX1SdPaQmbOsK3MvO6iYpJ/iMfxkAo5URAXNdk3hErn3PSRapOmuY6/HNfN+e2h1yFZM5mW29uYC2dOdeOMYVIlApqCfiQKVvuMcC1Pf4fCgLup1uMTMx1fUcmICAcL586HqKCggIzEwE4nh9PDSwcKwHsHlElLy/PDPKYfgLzERORFIf8YZeHyxcsNvk49jp1fZfwoVnpFqmw886DZk2eU9exDd2XcjCKPZ8r9jy2oewZz0qLvQZ6OXcPJ8Q6oYCf6OHwauChIPAVtoUtj1hCjMUI9wE1NEqn32un/eqWPvisU2i/gQONlxZQo4xunVzzAdu5Frvt5Jr238yld2pvipSBA3kR8MCm7aTqkwUqufCme92KZ99wW7813jVXUteqab+46Rff5EoWLXGdL/mXgbt4whe6/lSH/c+CHrI0QXTvFpHerInL3mc31/60o+Vp6q1cHSlIuiYNOZdJhYEeXzlGdxQaXIwYyjGsI77gDcJaQCDH/fff72699dbqEUD0pXtd9flXLv/Ma8Pi43Ru10jmH9i1eMBTSoE9ob7jqQK8alW7bk1KmizeetH7q+s6PqVgpBB7enrF13IddUSyquvCsfvQWDN75rrcx28JZShBKpCdAm0XE0cAqtjzgu/IUxiwCb/CrEMABGw8oIYMPErJ0oeedSuef0v5JvIxV4HQAKD9zXba2rX+x96u+cDtDIDWt1ipKSzBher45BqF73zq8v99res7doTrdPRB0aMrCovdrOF3uMX/ece1G3ak63jBMO3z3ZrvfnFFb37sij6Y6IxCQZ0BnNh9ulJj257wTyeTlsSCljZx6JAJB+D45I/GxMOYT9AHNkhkaOyO+NUD70wwFnZC1T9o1csee8lfNPJuP5iUsfvr+C7yGArr8vvvEhPt/fX222eUL8vo5ld6m+rx+stYvoPucossz8vTG7xe4L2ljj7rlxkn5uxyQUYoLb3cd9+nhSqnr0hvs+CAWladmpgz4AGlRVL+N2kgMuthnd0fujHUQkAwJ7/uGCAiqBPsiv2QwUw0oMHDQQX545goePVikdmKP5rsFt/6kCv5Q8EGepFm99MLJ9gCJaLtcf9wzcQaOZasQe6pIY3zyubMc7OOPs+133c31+f2axKePv2iG9y8ex53JIJ1G3WpadXIjmX5C1zh6x+6FS+8Zf3ETpSmW23mOl12umsxaHsDKRQ6aIGZCuUF9o11AcM9rk4UN+TJeFslkzRg11BjlBp5afyV/3lfGrbGJsmm6sEhme2+Es0Zrq9b6b4UROptqUSvHhr1bBnGhMdIMVZdRfk24V9VSnp7hZ5FcjUSXKdOyvhV7uBNBKyfm1DQXSnLYlBFonoF6ud3Oc1/0Nz4oTLkfm9Z2nx2cebqzVX9+nNRMJ5o3YgluGjsJsDX8ZJ/eR3+fUI1hYXZ/8QTT5jGjDsPWQiABrY3BpXfyISJQGrAkvy25K7H3fIn/mOyINt4+UzBlkN2ESs8huxAu52ATcfeW1LfZV9EU55zyuWuVGx3+4kvu0zZFePbmj9muh8OOc21kVxYIuCu/n2G63r9hU7pBAK/lCaBolwpBbD45c+8ZkoG1Jb7QnFqf9qxxrqRNQPOAWUkegjlBbYcSy35HgVd1c2wDb86btNgzJCTK5avdHNPuDiMPMsYJd8EQz1+LPBkJGd4a8xmPDlSaP85MH/Kq7X1L+Gs9jY0u/tZitreR8tXBMaMJgol6qBInM3FUIboqkfpAqeUpZUdp+c8WkBtr96SBiLapzL1XOdrlEMONYo5k4Ek9g9BnDAtQvaJIcR2BgjRmtnOMWyLZeNQv7K58928C0QpXvvABtjYnwzUWb17uC7Dz3Mdzxsqo3SniKwol2NjG9daLMDLmGysv3DKNy57h/4uo23raJeVMo7/cqKUGrHbLcbf5joevr9MR0vcvJsfcGGxcMw8gBFW2WKwIsUF2EpVuS8VgCP6gpOi9ZWlsjbfeWtTdoQ06x8RhThIxosxCMYhAFtwE1BRopcOO+ww82WjedvE1jmIBJk5XfQMEyLvQC8zyQadVmEQuWkiV5Y5MvYtrutFmCEWsuW4woJn1m2t/q3Wq+JTbpuW+bXAt7kAV9fb0q1H7r4hciKsMCQQ5T45JtRki95RBSLeGA3QPvjgAxPUMfQ+9dRT5kojGgaqgDuMCJ2ACsBqVn85zc27dLQrFwVC67WgCj1pmyP/7jqee5J5R8K42mLAX31YkvsF5SqSCDD3tCtdnzFXuZbbbul+//fVrlQJU73HXOk6/GMf62jGVbe6RaJ227z7hGu26SbRzhe/+LabccXNLlMae5frLjCjONp4hDqpjMObH0m8eNg8P1wLZQeDebdbr3BN+/WJijTRDuv4wrji2UGeDsYtiG7nNPpfMOIupTG81FCDeB1XrbYLmJR6YX8nseofq+2p+lErZTy3Ta/9RILPrQeIQZ+81ga92rCoVPuzT/BaKY85iM5mwIhGgQXjTeA3AjhKyZAhQ8xmRpoANkXcZgQTECQQ2NAQyIs+mCSKeL0UlmVGaUjSwgPSRSyxwxnHmn0RhWl9G+ySLL25p1/l2u8/xOVdfpax5w6H7u/KFixys26422S8MrHe2aPuc31vv9a1loYe25oLUG2lOS944Gm3XOwZzb3pVpL9sUmK0vFdwbI2qTDFAJiKxUtdsTRxwEj1i9jopdi+479DQQkQQckj3hJAImsGYg9vr8lWfb1VH3/hV65YaYpUfB/r+1taeIZUwpJxRQXvJeqrVjAOy+42WqR1M8hvohPXZxtgwDXWZcR5knUh7L4BD+GbIABkRdJFYTlES2O+gV1DDckvIcwL8wb5ykFUC0AslGY6/9KbIyVCkA8lj2IjzLlnhIkDphyl4nEQlCS4FFx4o9ZNKHNbPHqrBUcwJigf7fbd3TVRoGuBlJXFUko6HXGg63HJ6QmHbOWnU92y9z5zrQdu75Y8+rx5flrsvI24RhPToNPbtnLZ++1unGPNtz+JnUvJkjWg+OMpFmSc1atHnYBkYgNEAkZwmzLB8eLgrWFMifQxrqJxgV2HlGde/O7nZnNNeMPrsVHsFU6ce3rLro8/UjyvhiKTEIyfdxvcV8rILZIFIkF563EDCU/Vg3cafm4IQJpCoYMYJHyt2MUAIsAkEZ7gU+L2iNwm3AobIjOaCOtYIBa9+ymBAGaXM7eX2F3LPQe47mOHu8zcbnqx1SNgEt5XkhuRE5fc84QrfnuC2+KJO1zTnjk1zmzRr69bJhmsXMGt5TIrZcpk1Vyps7Ft9S/T3S8ykHc58VC36d0jXVPJswvve9IVvT/RNdtmc5fZrbNAKDtjKM212H1neX1autWTv7E3ipixasJUTba+LkvXT0QhUQLJvcEVig0St+hjjz1mASVo2dgnsVUGIg5mrKw+Pb2SH3/zy2ZImZEcm+Lmy4PTqiIU+nNcYf638X2H4jfw20urPE4nNdfXlFNFBrH5bjt52TKpmNxWdQMMCGAjAgU5kaoNJL0jnOOTZUAJdMDUgyITmCyQCVdN+trNv/wWY4toh8hWrQ7+m4B4rUuXImEvtOo66/vB9Yo//cItunOcsX+UkkRt1vV3udWqNrbVSw+4Dofs43474yr356U3mY2T47F1/nHOcDOMw+JpyJhbvz3eZcrNOOvoc8W6VRJHlNCYh0CJzbHrjRdL1GBbSGX2Vrl5F93k1v7wWw23Hkoe7kPyfgjkxSvD5MZXzdjhUsRrs3z58ojqwQ2ISCCvtjv92BDPye9UN3FarncK1c/i+64BfarDlqeV3SO1qJ1uJbV3w8NqkDqPPD+UmdtFJpHqehGARAZkwJjJhEgRpUJoGJUdSJyHImKigIXjwiv9Y7YrOGeElZxjIFEAAGK3UZdY+H2yRuv4gUn0G0pRsXCpm3vWta7Vjv3Vf4bLv+NR1ySnq4EqOGfZuxPcn5ocvW+5wrU/YA+Zcwa6ZqJ6+Xc95paLgqPozHvgSbdSrsh+T491mSpEFTS08I6HqnKFzC3zbrrPzD3kg5OaitiBVyhDFLNYVBFLXlgFo1Z/9aM08F1UPU0To8pGivbMmOG35hNQwkkYO8QeTDzkjBMVT7WLaOiZ3kFmbldp7nMUsTTd3ldwb6n45I0rlqmL1zL86bji/NmxfdYA4/HtOx8ks82ZBFXGHpiK77i2Wv5tsNdeQRB+2boIFWYxgwfAUFiggAwWRlxC8sfLF9u5c2e32WabmXLDcbgMw8WrXMF517nSP+eIMsjgLYqY/bfBrtstl6cciJAnBJ4CyaT+8kK35fP3uk5HHexK5duddcNd8j8XutaDdnRlivb56dhzReX+5vIuOzM6bLgG20n2WyE35Lx7ZQpSeFrfu0aYrBg9qOoLE3b5e5+qb8VPFixyhW99LGVmMzO/IPci3qS3b2OKjNkJpayVzpzjWklWpaoZFI2JTaQ7ciI5NFBDQIiCSDQPhnFcikQ5QSGRK21cdQ/0qcpsXvGbH+PU1waePDWNnpqF0tKoMCRF5vXYXquB8QUt6pidXXSHDJS9Uq64QMn0kJ2GnxPKFCXRvdh9AEIia6ZMmWJuLhQWBhIKyDYGD4GbgQy0ZlBBX4uuv8dcaWiZaOTNttnCWDORNamkiNwoCtLSR55zK2SiwVbYrE9Po4ztpA03kVabf+djbuXnX7qlUqK4n80fuMk+Ywc7Q1p9i36buoVPvBxRTlR8oJWqX5hXKObAhU+/4uaMfsBt/tBolyvXYaHCvRbePd6lZ7dwTRVwwdgBTtIxVou6cj0mJEEeLaWxB8+O8sIfDbsjlgiSz2DbBE7gu0YcCmy3jLs19YOPvlTlUyhsyuRITWNd7JBX5le+o7VfR0puXBLbbzWZseum85tpWjVho2hPtX2xJzXmO54EAhCay8AbmHIQsHHqE2LPDMb9BzhpJEEReYMJAgoZbGcfgaKEfa2QnQ6QILynq8Zi19GXujRpn4GHgmNT0YjgXjXlW7f49kddjyv+7VrpOWJbJ9kvt3nncbd2Vr5b/sHnRgHRTOMbIsSMK0a75gJS37uvc0vf+ND9cNApFkwRHLtaIW0zrrjFdT9bdXj22dVlde/itnxOxaPOPEF2wLFu3iWjJJJEVtfAK9P6sP1MNAGQshHK7jkpOgmgdCiGKH/I2SSnQS2Jd2QbE51xxYFA3jfUEzYetNbHHuyZaxJOtJ6NlGXNnSKV4bu4pFfWwapg9nN8l9Uo47hl+WUX5fR+aW1pJZWmdpL/MSNlFFIzs+PFp3rKefYAD4ME0KB6QdwdA4V/mYFCnoE6Iiei9cFqmN3M0rK58+ylwJYZPP6QEZvvrNImopCpbCYnyrY394yrXXb/zc24naj/1b9Od0teetu1GrSDW/rqe2b4bi3QBn5mzkGpWf7hRNfv8TvMLYh9coVkP+TOTIWmIXv+cvLFrokqphFsEVAkuEBreapabNPPLRJ1LnzjI4voQYvGnbl6yvdWnQwKQtm8bPnHkTFh14wNFA/ug9JC5TTGFBMZQciE4JHcRYAF3hnkdWPXGutMeajWfP2jj9+de2hMg6hFyji7SZWu8pjB+VNffnz27IQiYI0r3LdkdtmjRfkfD8vOkbHJ9RdZ7SZDJfOl0dMDSpXVu6freOGwiF1RTwX7IB6P8iHkqCBgAza2M3DkdFBRAQGbKmCBcZZBWXj93W7NVz/Yi0aGajfsCNM0zY7YmBGr7RyADmW55g635ovvTFvP6tyxmrLCqaXKjfn5mHNk1N7ZbfH4ba6pbH/5YqvL3vrEtVRNyEwZs5dK7ptx9a0yfl9tQOS8iLKyv8m6+bc/4pYoWKKyeLXr99RYB0uPb/SzREAneHfla0rEqnIfUtSgSNfC9omxX4PlsvccaBwDYCEPYg7DjAMRgCJilSCPiPxtAEpAbqzPmmsHE6nofUGhEWYegik0hCWVvjdqWWXJ6XsXfDU3/plif9cAY7BzXFH+nJM75z6r1bvpcaeQF0pHKQ/2N+QTatXmhEM8BSdEgmZ1MoOErMKAkEIKGHFPIRfi9sNbgIflxBNPjMYlEjCwSsbexWMfiygoGM9lz+t60yUaOUkVjbu9Wh8FEWD54y8rzOpFt/m4W126gmpnDr/dlSsfBlaNNs1Ew2wDiLZ47DYlZDVzzQWOdvvv4VaIZWL4ZhrPvf1h11HBtrkX/ava9XjJbWRDLJf2vPhlVbUQ4NruLfbceZ2GbSeojz/Ov86tUTBG/zfGuUyJI/Pk2Sn9fZZrc8QBtvICGjbsuuTXGa6ZtH38za7K7854Y8fFnXryyScbCKGIGL8JNSNFgwnP+AdyJnGb8gp5q9773Gf1BiZmsk1EjMCIaQqwPmFwwZTHni1eUK/bq1YwclHY9qOF+R8Oa5EzWQjfRhfoIkN4svcTOU6DQFJSx8tOC6Ura860M+2BfaCUELHMrCRhHTDiZyafmBg9XIII3NZ0PKCef9VtlqHnyRCMra3rjRdFwvU1kKlsBC2o6LsruOAGKRGq0Tj0cDPRNN0kN2Kief9Tl638lUUvvOkWPfWKsd5mffKit5ChKPGOh+3viGWcM/p+F5L4sel9N1iwRPSgqi9rFNo285rbpJ3/3aVpgs5WgC7KSkslbwVtgZSegrHj3GYPjbLrttplO1HdrdxiyYnLJTsDSKJ+yucuUImLCstmzD5wD50eeV+IPzgPqClJqgb2XAJzSccgjwYPDeY0ChoQfrYuiKKlJaStxfsj01kyjQidCt+NL03LPGb3uRN/S+YcjlknrdZzxtebbN+qvDzrWj3c6WL4EkiSQyWKS7MB23m5j90s4SUiKgBEZiBgg4VgnCVkHlMD25BxEKwxQexZlRPNjEdhmX/5aJlxFDQg9txaxuRuCkhIpVHbBkWiQGXRKjfzqLNdc8lx/Z6+q9qLWPP7TDf9wuvdWplTKpXg1PPa81zXU49OOIJzb3vYFdz3hK0lkyGlps8d18rO2C96LBE9P/zzNPu99euPSjYLuTljHnL5UpY6KC+m9y1XSv5c6L7b70TX/YzjXd5VZ0fP5UupWPaMy292hV9+H5EfJ32jNyMepjHMuXekTF2DTLzgWMYceZwcISY8ueRo2BMmTDD5HWIAhSSZDeUSakqKAl6fuadcLgU4OcpokeC+f5Hqdd7OdZNtyUFdve0w85tCfVyktIIWSis4TXGOSZFIBqXlXgOMrVpEioBIIhX5GVTgonYN2jSpAwjURGwzCCTVY/TG7igSaGyQnBVcY8hGaKuE5jcgoDy5MdG1uB7pA15puQXKxlMEIm/63nu9+26vY22VgtVinYA3TdQstqFZQxX73HaNBUnAZqcdfIrrNVIuwJOPsENn33iPWyvKSERPIKPhkSEMbfoFIw2ouExbSzHKTeDfzlJuds65J7vlBw51VOqFC+Gj5zGWPy5uQ3AGPzSmTHwqa1xyySXmTJg9e7ZNfogDgKSqLv5/KCh5RWjXFkeggI0sReKXzpgdVapinzP+OyRHLPoAfTQIjMlBvepqQh+uDwVPJNk0APhT5UGIyoqciRCNjEgSPjnNgbkB4J2ipHuUF5z4BkSOF8vED2seAbwsGiRF+1igQODbTvKO6j3MKLDccMuefMW1P+hvZlqJP4nYy1kj5TlREG0fKSTL3vrIQLZK+TVBKy1YYDJex8MPcJ2PP8QCJ7Z8XiYaUbc/Lxvl/hDQFoq9L3jsBfPUxIaW0UdbGe8xF5VrMaPib390LWQOQkaNbxVaeYu+misSvMO5Q107+bl5BqLnV0vJY42ZSBIaeIw4FWDRaM0UpyLgBKsGFBNPTM+ePa2qBQC1xjuUZ6fZLttUe4fx9xH7mxW2pGf0n9pz506x2+v73iAwTsoZJInYbcnFkmkI9002jWTVBYZYBoQZSkolVSCIVcSBj9sPUw7el9tvv9006+AapAKseOkd/dR1bXCyXZtjDjJtMTgmFZ+wJBK2Ft32iGs9eEe34PGX3J+XyJ8s5SS2zX/wGbfs7Y8NRF2GHuG2lkJBxuC0g4YZwCrXlDhSDNJbtnC9bpRyVfViqQ4Gm0VbXqnJ9fvZ17p2B+zpOiqqJ1ErVB43FJdrzHvoGffL0IvNwxN77Myrb3Oly5a7rjdcpM2+a6oAixa77WjpE1C1FTI32bjpX6wV+P+JaSSAAkWR8YYDUbMSEQlTG0W00LijgBQnajFYRU6TNn77YdkUO8iC1z/2Xuv7XqcCE3/yKa1yBgjxp0kiSYo4Ii/KT+wpeiY6q6CKuP+ogoDWxkAAxqFDh9rMZIaS4QflRHaERWI7W3LvkzY4JCu1klutjfJWUhGXGDwjshrBC9gTmyn8a6uX7nfNlJ6K0rBU0TcoC0TeFCnF9fczr1L84plSOA6y0wN/MuVOkBFhzygl/R6/3bwzwTWCT6J8lsndxxJuuBPTRPlNWQmokQ4kyOKXky50XU441Gyb2TIRLZCysvDpVxX909coLZR17h2PuJw7r7FKFZaioPHCA1X09icuJE0dXzpyI6FoiDeMP1YMjNyIQpRRgQPBkvlNTXLsjbwjCAeNT9ktvaI3P/F9PWMwuWxnLf9IbtRCmt4fjxXlf1bLITU2NwiMw1p3P1JljfYizLxGT7VsUJ6Jl9mzO5ZXGwiARpEivACwBTQ57IyEjBGhA5tGhgxcU7DoZZJ9VssDYuxGGnTnS0+zwpj0mZKGmJie4RaOvMuVTvtdlOtOlyEjdMREM8Qtx0QjuyGmnrnKg24ht2NvJVTFCvRQjTbKq4EbLJA5CBNNx3/u5zLjTTS6YQJvCaYgogdWD8vHZNNKMY3U6mG1LIBIH5veM9ImZJMe3S36B1GAXOzyZSvcvPuVoC8tH9YctbFirFbFitVKQ6UqRnj1GpcpL05zZT9yb1BH7LawZwInmPSMOxo2+wAhgA2AaOMLNxLlX61KZmXyMiVjcxTR8kSximUifC7Zd9QgNq0cl22TIolcXQ+WJt9rVt88j4QlGhoa5euotEWVMKqBER6G7YuC6oATY2zU9SdKUSnTyCqFbEEhkQ8JEmguYR7jN+BIxR9y7cr/vGtprL1vu8o1iYlPxAfdX1Sys144bjqSqXpec05CllWmvJbFYovIich43x94spuvgNnYtkxROxjEe11/sSkpueef4rZ89m5X9NU0N01KSKE019mj7jXXYt+xI+z5gvMB9hbjx7jc84fJFz7OZcme2fGcEyMZjcFBUDGt+Npyv90MfIwT2ZEoj9hOABliEvZF3IOmpGgbmjaN/dWAWNUvhKCpJmGyiZ9VJsDNP8kbknSVqaS16QeVE+svdpsma2dERszM62oVGPxwBIzYrtCaKdFBth9aNcEQaNRQS2rGUJ8Q9yCsAwCu/f6XqtkIGJUpp20YoqOUoGqw7EMDaS2G3UV3s48/zfpqTcdyrxi2c84Z6tr/fa9qu/kB4Jv1zrNlfaEQfyg3uvdtqgOulxM0+ph+8Y3WV18F9KYL4HPHPGi+aFg74WSYgdCQ8WV3Pv6fwamujbwl27zzhPtT+TBE/GCq6nvP9SYmRA8Kvuj+8U1j0O4y4nwzc8WLK0xash+X3v+0hZ2V/PanbIX5WiW2pwGU98BYQwnNnhj0XccnIIQQJCs3kiWo0e6WHq5QVIybWUfX0V1Jg3H7pc3al7iK7skZdPTeZVNUJp5HglQAHARiqCMCMiwCdoBxG/sWvmdsXAjWgeDMrF499Xs73yigvBtlswvcEtngoBJV0Is+TJnkL2Z/plx2sQ29sFQsC7aOvzW2sa9MtWdYardCMiOAgVXGtuLvflZ84miXc97JZsjGxviDlJVNbrjYdTnpcDt0niK0lysZv/9/HoxmBvaQiaZlYKI57HTTcrMUi2hKTewF9D1LUTI9rzzbfff5STZ2yyTzkYoQz+ahvPMeftbl3DVc1oRNIhQvri/YsUQj10SmnjVKTguXrjb3qS3SpH20wFLBd94Df8jwgfcFSglQo1RS3A1xS1zEh/WTe15X096wjN/NZX7fRMelFoxrKity0jyn/MuA/NR1K9qnw7LIhIuhUoAM9kwMHSyCmDqCaRkAInSIOsaJH8xW4h/lqDeWTHAFaaae7Ggt83KMMukiMTfhuV+HXWJR0Js9MIobqLbvj/MUgKs4xC2evKPGvlnX3ekWiU0vlr93lTwNfe5UBHZVikCFUkZ/P0fBtJK5cs4bZuYVYhnn3PqgadqrRLlJqpp9ywMu70pF9AhAsc1MNO896X489HRXKIM0uTCJosNho2jgyKlQ6BnX3u6+3/8k11f30lruQhrG9hkyC7UbepjDu2KsN/ZiMd8JSyMo12RtjTu+fC1bF3NEpFACYMO0Q/wo8jtxAZTemy0bJIrMUCmWEA4oIzUnqTVZOkMEA3tvPY186rAf6qPDPqznUNudNGWU3tAD0TbZYk7IGFmanVDIoCGfkGxO+PuIESMsApm4OgYEIAJUXFHGomFHS1ZYgSIEZsw7RDmXL1YggAY3kc2N+D6UisT7xJ61P9E+5FsWOieDcJ6CZ6f9fZjrNeoyy2+eee1tymNZ4bZ85q7ouShVPa8+x2S+GVfe4hbIJol/GeNzorZWsYZQ345HHugWSAMukUel982Xm/ISHD/75vvcKlkNtlHaARMB7fpPeVZ+POrfLu+Ks1zn4w5xTKgMBWF0vPAUk5+DcxN9IjbYwp0yJxEnTV0f5O8QVF/sDQ6F94VqbQSsoEBCBAjdy8vLszwkXLP4sa3pHXFuRk4nT/nc8jrUD0bOkw8HyphU0xtKrmlppO5JH8yNN2vi0jt30NSorvECNCgjVn5iGamxiJGbgInRo0fbzRhr0MOWzVGRTgUQaA7YdgssFRA3RDObqACZ98QYp7qQcveNdD8edoZb+vYE02ibKKkrvhG53ULBrl5GmoCkYu4K74pvRPSQS91WcmE/JW8RmAv1heqtVGI+jYieArH53poAAUU2ZeWxMeZqROHh+LVSniiLgpeFCVRXM06iBYvSRM2YvJh4SK2NpWjEBmDaYUk5InfQpFEoUSIhGiTGxbJz5MXMHCW31XPt4L4ivCmcG/yu77NeyviCqkh1KW7TXSVPd6r78dddyqI95ICnnHCs1xC5BIc9ETnIjRT4xO1EdDfKDGafoCEvkocBRYQS4VUwtq+0zg3VzE4nStJ5+Dm2NvX8q283G2BWl+pyZnD9+ZLdSA/Anrjq5+mOZP1ChZr1vukymYa0NIhEC1gv8m4vgYgGBd1anhWSs346+hzX7fRj3RKJCF1OPMx1OubgoOvIp0DU/awTrFwz5p8cKUYk8dfFnqMdCDBpyqchn4WVWLGBYpYhm1Ak0LRo1rUBdFgvyKUmnI/4Rqp0YPTGfw0YY22OGTmdo5eo7wvKrsjIZpPyBm6TFSqdVeVSrvW0amAk7SC329wufpq3WWXY21Yy3nauyKmYT7iHCG5LeV6Sw6MNhHJwqwI8uTpA5AEJ8IQiAka2kduCn5rCRSgwgX0RAo8GaCKqKK0NrPywvODa7FwYrq30XYLHBdyxdsHYQ6r1p3unTndr5bAQJ7hgxJ1i2ye7Ta6/qJoGXKyInpkj7nC5F/7LZEbkRsw50y+4TiadoUZNC6VFr5RZaqtXpNTExCdmyQ64hQCcL4M6IEtvle26qe5PorZW9W9wGVK9rPXhkajuRMcl2oZIkqUoI+RGGuOJ3B5I04w1BACZME+sGSsGnIqyMciMcCyoZ0Adef0Zsn0ylsm0qgIQ/SUWfFlambVA6wL9Jknpu0oX/laj/NPa0rVz9l30Q9S9lT6x26A9Ql64n8Jn5e8p6F/pp/WUPbFNls7ipkF3bcV8ar0hwNM622MwkF1ozK6rrrrK8qAx42BjDEw7rECAnxp7IwCFTQO6clag57fkToRn7IFoywjyC59UMae4GyhRNS8GaoH2xTYY+1pVZCBCJtE+Qv3jB5gochLkezwyWrV0xhuFK5JmuolSRbnw72dfI2VlB9Owg2u1laeDgIc/Lx3lfjrmXLMC9JT5pdXO2waHRD9tYqifDK33B1B/OvY8BVRcJcP5gOgxWCGQE0NSGjD0B2MZPaC+LwIeBU6t6Xt5wcJqnCo4nfGGOlJGjwIKrIPI8sRQzcD+aMfiwWnTytPkjR/6oKtEn8KdS9c7yJV2nStKuY/0doXJ+iUtMpsXCKC/6J1+68LuJxWY9T9WnKJ1AmwAn64U1jKu0Y55mQ1pyBSWNomQKzACMKK2iZkjYuQGFYIHiMzSoUOHmguKQE9YBVUiymRW8BUxQ01FnWzykc1IsWupKG7Vj7+a/GSoiN6YxNMqNk8yU819MvrqmRLtq1SWIYXfq5+jXxiC9QydLz9D+/u5eVeOcatls8MtGFZ2Y987rpG8WD14AdNN71uvdN/ueYwLSxMvUmgX+dB4U2Ib6QdzpLT0HnO1AnGHRNi2QtbQtnNk1EY+myMNfZUWFur5/N0uJD93Q0PljJLJlBWZaDJsY96qMu0E9wIIA3MOvmrsvzQAisLJX2DdQPEhMokUYQtQ0ftLsqk334+LacjSu+yd7nm91cvBYb1morerAS/Jzus+TDgOyXYYsAQ+YQk8VOBd4XfgfiLAlhZ1zuvuoAoECVgtRa20TWqmadU6r90Be7neoy83cEVvROfgMwYcfe+6Lm6fJzPMjRYBs7koHbMt2nRvmHaKVKLOyG50R9UXTSzuJZvkKPmq5181xnJdugswJEvFNyYi6QXELvZSBPocRWN/v/+JltPSeted7HCL6BHF66Dg2y4qCIqCsYUiyQtUc2e28mRWKSm/jep8z3vgKZXNu8hq7iQlJ8bfjMBDKWjzXonToE0jg5tYIngAQiqTzZw5094P7wQQwpb5433tqXhSuJhRSO1DMSWgxFKNNebr0QygStCKdlFNZoxuXe8vumlMCFUzh4dENsQPysxDNsQpj7GbyGIijCkOTwX/yCyUiKAZGZYsY4DWDYvtR/tDoUlkqwOIzNqE+zSA7Ec+i28oR1DNuhqAxOuRq0jrpfc/5RY+8rxVdIBtx5a/m6/oGgzWW714v5KodpLhegeFjMlEc8RZMtH82yLG8dSkxUX0MFbdzzzeZYtCY1Rf8sq75nNufeQBNg513Vut+2Cr8hjx3Ig9GKvNi1VlloEwkOAPxwKYvCecDrwfInjgaDgjkCUj7DoSbEt/kRm9fmiMv+8NBEYRNOWrxDZmHAXgKfXLH6BDs2YG8sDU2MGBz2/YCjMY7TZopgwFP2oDDtsbuy/ou45PWBNUptPF/4qw7StudcUHDhMlHm6pAMiUKCQ9LjvLgEhXERONqJ4ATETP4hffNJvjVjKcx4I4uGy2ij5libUiLnW65DSJOdIZ654nwak1PzUWkdhGvWaklGBMMQ1pH4rLddddZ7I8dkeqT2DdwG9NYj8A5B0FVg6GFqqKCGHfa15xvbZsMDBqqlW7MWZdkAuNXYtcXSz/VIxg5gFIDK/RpuPtRVRR18hsjO79v/tSxbZbyG64yUv3KXPwdrNH5l54qlv8ynuW+ZejnOdqTRSm+79PlDLmuemKj4S9kxuTqCEnrpR5qOczd7o0iSbrm3prvmTkbjVTgHT/QUNMwukA4FAwEZOghnAsIsIDmbGaEkNfslpsiLbhwFgFotibBpD8EcVNzUVYMOyBVAOqjZEJyGNwhdYAADNiSURBVAy1Fk8NYjhCvOYbXAMNtVbzDWafqpcSHB981tZfsD/RJ3VvWFwo98EbtXrCM5ZExYvf9K4RRj3jz6FO43wFYxDRQ7zhj0eeZZmCRO1AbWkrtBYNKaudVVkXhapRcmL8hRm3YOwYU0haVQOELF1HuiqcCyUTjoVVA8M3FBGPGCJVNUDa+ev6Cfpb388NB0YoWy2NB47IhsrsUqAn3hjkRnyhhDfZYzL7AE/VMwdmDQBcIs8M8YDBPruMBpxgCACRcJ/MGgRCUKauWtN52PJqA2q1Y+N+4LVB1qMkMymzC5TP/dvpqmKriB6S+YPGvUMRMVGxz8qcyLU567qx0ranSbkZbqIJOTLU+G573MGmNAXnr8+nuWMlO9LMBhtD1QAj6+ZgzoEiQh179uxplT2o7gGhgGMNGTJkHRgBs1HXAOHrc3fVz91gYLQFHqtfK/oLQNH4ZBDwgfLgyDBswzAFW45QjMhA+grlZ/YCmsIpX7viH36N9hd8QUinEc4f3wzM6oqgh+pNypKCFFh6ozq6qx9V6y/dEzZJrWHj8jCSa4mNiLJylutmrDmkINinLPrbInqqjN/dVJqkpSpEYEf8QUEUGfJWeVL6ulx9tl62bpSXvr5Nwwybt0mj7iJjGigfmoSifBABUkB4DzTGn3EOGr8DmVFfzTRkjofUY1GF6jdQS8RimIk8KCSfP2QSAiSQVaCUUdMOWqAUIKvHXTUwmHkMqKIyJMhvohrY8ZSRWEG06d6jr6ixj7zkctn9NlWNm/jz5tx8vytW2qleRaNHw9i2bIk5913vlimgdpayC4sV0dNBa8sgB+ZdVTOiJ1sTgKQrwFis9Qp7Pp0aOTH6EExshcSZTVAbzSyjdxA8PwCEJWPkppoE8jtyPe7ZQKOOik3WqfqTfTUSP9n4sYreX9yXDQNGDQKG5MChDohoKC7IIigumBCghPyhQSNMBwK0BEsDIoGs2KFI1q9QmD390RNVGzAuxzd8wIAx4T5pkCHJeYn2sQ5gKihRwLY7yJ/ctP/mZpNc/OJbFjybc87J8bdrv8l1KZk113W69HQL+cKElLImsBGnaeDRONoywxof2GzwTkiKw9bI2EMckOkBKWYfzDvkrhOBzzvSSeZYMON76rEo/4LetGzKmiys4hrMmfUbDh4UA2uQtA815AGZbSRgocExA4M/tgf7TFDmeGyJMtiafCItFG+MmXoAtvYnbGxvzL4qmSphnw3dqOvDFUgdzZNGvHDk3bY+Yf6dj6qy2NCIwbmqz7LFy9wfcis2VyZie/meSTZLZeM92OqwVeJLulyPZgCHdVeN0/jx440rQRywZsCpCJAgvpFllJEZAag1vYdw8eoqk1vq0Ki3FhIOXbrKUHzjeb6iclxHKgFw0Yg/mm9JBkZwaGxTN3KF+ZqRCIUGECjfNddcY7Ihsw5hGarIjOQ7s5DvgWKDIpKhaBmifgjRYgleqrQyOzeGZmxbPuWcu0e4ZVoUac7oBxXR873rc+tVMu2oVreUmRmUVRYoVGg/IiHUNpEa+8AaqzLKnVT1S8VbXjFTGeIA8Cg3iH2XCCrcgfzBpk2R1HkANApG9RdewXuVvRUK24gWAE/WSiJ6nJg+f8UiiAvSVYJip8m9BrYPlYf7yB+9tV719jqhv47bRL7Dthm6AW4evyKuw6SurxlUuVwr1UteCcmXGQwGpB4ZhFrdaHATVMUAcwJApEoWfmtqv9jD67qEznMuA0hZ4cBXXTVnat6Krmvgr7nH+qgNyNafrme2TPqo1oLfjEJ8S2KfRrzDmcdZoOu8y0a7H1RRos+d11oq6lKFw+U9PsaW3Fhfe2L8nfEbsaGsylIAHoPxZB8EYLYicyg4j/cLQsC4w63y8vIszhH2TI510BgngpuZSMGTB/vq+AypNqNCIyBy4Ci8RiDKl9/8Z73Z74TI73w/TUu5VS4gmkJTdLKSRxx/k/TnRuiV7tN9AKFkm1aE/W1EKbfXO1Lys5cHO+eYuho3DZtmlScCJgIIA0SqpQ4bNswMrdiwqNc9b94888DwyeDQkA+zeucZWzFZRVQxWE6sTCx7Fdp07J3oQVhKFzaUaB9VvlCCYqs+2IV0XpnKyBHvt0a5LtWDgas0S5sQ8cMfu485Xv1mjA3GnEd9oM7KtV6kdIWfjz/fLt1JEdusiJVI2bMD1ucfTS6KD5AzhJE6pHHJ2iTHgES3WC8InoUCsvAl4KQaHNFTrEZG/SNYNRU/opRR5xH5U/1Z6S1xY8QEuOXCz2TJ/t+FfPdd2E/7Oc2rzE+0hmBCBWaEXsmIginz1Bd/H+vPTcwZdFSm555Tp7Gjzq6aTQOBHxR5JVMDwJyALUDyiVskeJOUVfzVyDVo2UQc4yaElbOUWKXkHGZymnzJ1O7GNFOiCBaUl5VaOYpl0aoPisAhANNYo6/WfVZkKfYRqs7TY8054UI7P/afdaACcNVbg/cJFERaW/CxvCvmd0Yx2AANtx3AYbVWZADkxQx5fmLttdOmTbN3QM0jRKeePXta/ADPFSiXsUDkXBZ1r5UzxT0HZfG01N8Tg+ZOkemj/pYQjIlOExmdLUkBUV/wqUYGEh3uwjLdqOKpr7IYEkcjM5FqEVSSIFgCwZh6gYAR1gwwGQTYBdt4cMLGMlXdYe00hbxpJq9WchYl8NqedKgdE3/h6EDr2PhW2z5PitIS2QErZ+ZHon3iTqSsSJECaanRbU8es58ydStUL5JIIIuEidm3SFr0UpV63nzcLeYfjtllixDNH/9iZBRj50XsQev5nftZ++NvVhCA8YTL2DIkGOrVABnEgYgcqCOadGzjnEButO36DQUXwKWW15yYsefGfpfwMz32d13fkwZjie/PE9KLBBOpuPWDEW7OshjMShoPjx2LgkMst0YED2ybuEZYNxSRcslkC5oSo/PJ9WDpXeok4vAvVVAts9JWtVd/qWiYg4gi95Uj0lxelPhGeWOu3VwrbcU3CnoCZvJg4luW1qZBZLAcGbHA2LZaxTwDKh67PZXfob6rp3xno8+1mu2wpd0PciRAY9JThhBlBRaNgsm4G7XXjQSfwT0x7hUqklq+YEnSlBHlRHiZEfRR32fSEO/YepXovT9fZSvq69P2Q8lKtCpoYK7gYTGsUjkC5YWCQ5RfI0gCuREhmnRVlJlgIBjE5gO2icqN1Kah0DsjjEaXqj8zHwn8iZqBhn0J9purTdsDo3Ls+bZPGxLvS81Eir1ete8AZ9EytxYZWBOCCRcpbxK5LiyZ2ozI7BQPJUqH9FTeEe5ZKCJiVbUmalg2e550ARW3j99X7cDID42YTIb+2spw2qwEuxNuirtiwmNsY7+ffy4TBv5AJU+mmcwye55fKWN1cPNo09Tops4LYIQ9A0iWgqAaGbIk9q4oGAW4yCI8MvGIEjKjiz+crBe8gV9mMg/4X3wM6R5rVC4FKmZpqcoSzOq7ScQtqPuGS1Ffh3wXvC9wJTRnAiJICSFTE1sj4x00Iy6//unHhvUF+xJ9SjrmvwXZFUXoHUm1pMFovXnetKRPYHZq3TxbMEjyCw2QwQoAIDUCydsljhHzAZodS7JR+mSy6gYye6FYCN7NB2xvhlZsW2u0mI9p1XGszy6wPv/EDHy1bqAC7Euw3wR5dlU9X+x5tk8bEu5rgMwV22ey36HmrH8NNYctUzDUCpnqNwBDNEJzpogC5WRQZHALUvJkwoQJVhYPBZNkrKBBDNZ8J9k9CarIORixdQPTt45JuAr6qu2zujBT21FV2xWA/02FWYzqObBqN7No7Xe/+BoMKTHrAmVhBwzKbNm5qL0DpWTpBwYJFhHrDwXArVTEaKWKrwMI3FtFirzpqLB/c78ldyv1HoVwXoIZJK5RUYLnKCFT0QZ43QHlWgoXNrw2waKPVAnjBRIRFL/oUJlYaHxf63pdv284C0qnzzZxBpmV3y1VsD4YK0w6VI4gIxN5kVVsWZiIsoR8YggnXRWuFVVqICySF0t/naE8huQgA/nRG5dMlXxLrueq/ipC7kcvHCYqtKVwX68B3DRghUi1jzFfICwzEykIyqwEfFTbR1bBRwrFpGgopgUaQKAyQhMtd1ai3GQM06yD0laFkwipN3nPjmz8P8x2Ep9IoopvJjNKEP9WJZPjGwlPsMHv9jk+fldE1NCk+37/oTX2iU+SZQe/rLlvPbcAwMLXPjAbLyFjyIq2uLwmDQ0W3bNnT1s0nnQDKCK1GqnLeMIJJ5hiSSXhwE/NOVB3lEfMRLWlAnNcbOPJxFO+jN1W3/cGgXHI7Jz8yTnzfk/z3A64seprNkt/nemX5S/0yB+BUjAzSeInWAJAorw8+eSTDh8pK38yIAjTyJfYv6CiIQWjtv7nPm7BtN8kjEurlhkG6thWyUypMBijeVLGuNdNkUT72OeiICeGcqqIxVMzgiBWSmvuqwy/+HIfSzVhiJ20DEJp3LGNhYgWPv9GVJaO3bde3zW2ZUrvXfn6RyrFoqQpsejWSvpChgwCMOA0vANkRjIxEY/4I7L70ksvNfcg9l4cEwCXZkRlqhwleieelKEkWqhc1uG0NP/7JI6NHtIgMHruxcpJ/sDJkgd2kFU92kmtX+S2qVi+wlZZyuqV40m3shlHngWmHVgBACSmjgFgxlLGF9MPIEWeZIaikWfvP0Rl617W7FSJDs3U5U+9asWPLDdGgF2/Ju4jTxGlk+MbSfhr/pwdzWmJ3V+sYkosSNla5efiG9E4BHu02WNADdAZm2Yyx7H9+D4a+hvQrdRi65ZvLg6UpeoTrLYaWDRi+2OSk/rx8ccfW+owVg4UyeOOO87SDqLKi+4RB8aaSd/6EJdkmhYjks89/Gu+iJdzU5M5xY5JWh8JepQI/K6AmAQSq87Qw1Cs0o9ZzpfZycNCDdHekBHJUkNuQZ7BeU/liah5QQOHAbzNUQdEFBkNSonKFK9UnW9eeEoa5vwEDWpuj5vgkYN9Cc03RMronERACOS3BJdr9CbjQuIYK557M0IVdd9tVSwqUFzoGBHJFEN9Z/zhTohDyIl8J+qboAnWGbSQMY7TxC9hQUtsvAkUNfqNb1Xq6vtHinjF76vrd4PBqOoTWaJDCCCoS/U2fKJrv/nJZ70/yD0NNoEfGtMC2jXsGLmRWYqJB9sXCg2LFQUzlJfaRgWZzL+qF80iP8vGv4yXJ+lBqvdmN+IDkOWWPvSsXLAKZFCxraZaLqPV3/eITgaASIAKa7wgpzOu5CEhFlHOBGcD4hKV4Ajxg3LSAHnxJ1MU3rAWBCc1QnBNecN7f9Z51w5JnVB1UNJgfKPr9s1UiuIGPcQzmvHQ68SkJP7qaGIqB7dqwhd+EHbEg+KJIUqHBRVZjAhKiOAMCFlhldIazFTYtAFS56SrkkO7U47SVNBc0OCzht6Se54QG4yAPP7SDfpd20AH24PP2E6rtiUU6quifxLvS3rYY69W63c8RMVaBrjw1Q8sQh460V4FpcjNDpgYYMRqQXQUtTEx7eBgYMKjxJB/hJuWyh5BmgHgI9hl1QeTfRSjZJv0CQqFHp2eWfn5pB4DD0z2vKSuMDV3Z4WVpY/VwYPk+IYkNkhI89K1gupbn/htjv67xTfCpmEXgBGgwY5nzZpl8iORxbgN8QoceuihFkTB8fwhhKPIsOjOGsUG8hJWSnNsIZmt1YFDpMxU968mOwgch9ZeTjmVuAZFgB0HdSFjd1eSFK9wKhY8j5eniJhBE2cfSxLHNvNixG5Yn++alITXLb71YVNYuNfsfXdVBYzBoorrxoNJjXEbxQXQ7bnnnlZ78eyzzzY5PYjOgW0z1jRkUIHcL5XM3BAwcm65Hl6A3FRweW1yzoD7RbqGK1Kn5gBzcFWrk+5+4oakN8kpO1foGy6LenayhUKDzmM/eWk5j44KETIVxO4BQqqRITijWRM4gazCOoIHH6xV7jWAbOMvYB1QV9xcc06+VACSS1AsiZTRvCdv04LdCraoMmHEXruu77jKFihLj9WkCMuPb/QHqBLJpsh+PBcvLZ6FkbQEMBLuUxBJSEWsNnn5PvOLr495Ct/4gmvvMIUODTqU3cLlPXW7AiN61BgLJj7xihRTQGGBMvJ38cUXW131WFcs44AZreDs4X7Ru5/5TPxGNs+W4XA++bAXDcyf8l5t/dRKGSd2HbRpKK30DmlG+5OHIoN3g6hh/AXJwyh88R2/xaDtoxMA6ggrhkWfoiU3Tj/9dJNhWGsaTwzyzfDhw81v/cILLxgVjdgdt3LtTj3KLb5jnPldy1V9bMF1d7mce65DIG2w7RFKwAoHPVQhNr5RO3H1L9Mja/ZVseXgmGWi0KxS0POac2uYdqjvvXLCFNdzuIrAA9aYVqglLJZoVa3ATRqzq0FfmUgrpD2b0iKwUHa6k1Y/oJRfYPICgAGl4zuRU9gV4To333yzu/XWW82kgzwJN4oqLmLLJbIIrJ74jZ9oIjbgRn2W9hOV7Cee+ubU3AH3aN3WkbvOnSg/cfVWA4w/qzjo8qLs49M8/yYtbtEJclv9lMb94oG05Jpf8sufHgUvoThQPlyDGFyps4NWTbkN5BfKaxDgic8UfzYtGFQGvb3ASL3vVRO/NnZd/PFUt1iF5ztdeZaxXB2c/I3q2MwObV2Hg/eucc7qn353JVp6jUpi8a1E2usqAbXDofvF73LktxRphStWVq1JNcNuyZsf1theo5M6NkCpVsuhsHDU/eaiQ4RpdaByrrVyWGBTBHyAC7ceYwcnosgTIhHJceQjwa4JUIETcXzQUDZXPv+2j7iBbXd9G3Kk+lCvofP1dS/pHxcry+D92H5rSNKFRdmHNfXSHtW9pwyIdkE9aGXRarfi6TewutomBohSGgwKSg3G7jfeeMOMrbDm8TL9vPXWW9FFFQGrmXtkhoE9sfREZhVrJrV1Gcvd6q8xLKW2OWe52LrPROA2E432JRINbJv2BcCIHfRIqmfsloZ959nx+VN/3BKkJA40kdG+89X/jgBc1w2AxRLJsGQCUAhizsvLc5tttpnZFrHtUhAUmy+LEkEcaMi/JZITtcqWqGJ1qt6wO61xNFQy3CQU2koDemb83hpg1GN8WepXFiYc/fizG/gb6lj0zieijrj1IkQZQGLqQaNjpQPARzlfzDysD8NMxki+8847O4Rt7GEcz8smirzLDRca+PCieGnpbtEtD9lSwLCw/xcbLB+jdsH512tt6fli9SoRI4N915sujuTSYN9UY4ww4UD50KKxHZKWih2RUjLEjlKklbUEMe3ENuyJK5563Sc9eH1Fidh+g++mBHvu0eB38FkDjCKdM/ReX1cg7TqaHRy9vp/qktyY5eNegmdEewOQxDNicqD2C/ZHhGkCJxhU9rGEG4NI9Vu20cjAY/GdzkqQN8rFHevmFwy/0xa+NEDGsB47qaH/BOcHn7HnB9tiniW6O5l90YOT+wJFpEh8/tkjTJ5jQsNOWaWhmdY2DBRDKCAlY1AKmcCAEHcfXi0io3Jzc01JRE4ksJk0j6CWDn0iKxa+9v76yooJH0rxsFoxw/9FSoiE5uptHSJituv4h3UCUyzlgDTq+PYEn8VyAsEeuYaZyxqCDBqpCUSOAFLSE1jejYBc2A1snFg7Y9e6QQT11lrBvtOFiuJBk2YOiTosUHWwZUoLsGskMa/QijHVxP+hMKG7schlzX3KX9E9UrAgfp95XmxfzfMSse6Y4U/4FdGDaBwW2iQXCNAwPp1VDqWVXKWBwsLJsGjiFG9QheChQ4e6vLw8i1EcMWKE2RWRxwErZWVQIi2yPriqzl320HN+pZLbYglGsHt9P1kbRq/jqaQTssrzM6a43NIvFSM8QD7GBmgCSdyqHhaKtuSeJ/3cR0Yp/lLg4aVJ7uEPYRttGv80MxoKyawFsKS1Bjm9zH4GkXNw4LdT7ZqwwLhk7PiIzU8AWnj9PRbxzDrM2DqDWjzxd2lROwqG+HrQYfG7LGsQ2fDrwYfX3KeJAFi/2f1IEFBtP4DDzvftXsfU2EdtHws40L3X29SvKSta0Gje5bdE/M4BEKWstTl2XZEoQAi4mKiEiDGxWeYEijhe8jdchYgokuLYRtQU8noARijvKi2AqVjIDUIVNUKeaocUVXiVzyV67hraNAft4SZUTAwPeFTPNCCJ4UrUb53beOg1k77x8RhgCA9mNYMJ6AiJp2weaQoI1bBlFjKiAPqoUaMMkLgN8zTj+eMclIIOFFqSTLX4tkeNOsDCltz3lKVrQkG0Lo1NhPibg8Kwon03LUzOxIg2T1Ti/c+sOD2LlgcTx/Zr34pPpljoGctjmKszOFf7Vgo8RV9+p6U1jovYGmP2FX/7s1s+UdFVidh79OK6HL5g9bVcix4tGvOw5aFbdJDOo0BUW4AoNymNsWNiYo0g0Qr5m5QOOAlKCtoyWjPWCdb2njBhguvevbudYx2oTwIilo59PAyHCbiW7UvRP8qf1rK//ju7z/1yVqIuE4KRA1VN+xWtEjdCpKu79MWUmHeq3YAGeundT/jNB27nYbQ2A7JeGBSPjDUGjMDbwBsDq2a1JvzWGMoxTQBSDORkFgaAxA2WrpLLC2+81zwyUJXCtycosGK2XuC/LeoZ4MKWo03XpVps11OPjm4KvmCiIYi2679E4eIarNkWChLg4pvUKYdZCKDGtyUqKrr8s6kRcMfv5LdICAG55arpCAiZtAZM3WearA9dRl4gM478zqK+QYOjIL7gWqVQP4uZY6lAQUFGxEyG/x+lBZcg35noTEQa4tOSR17wiaRPhSknuK/gU1dRaimyn/9YsC3+M6HMyEH7yXWjyfYsFSU2RIOSEHsn2yDvLfpiYMkI2ZgfSEeArcCuYd38Yd6BdTPLGXzYEXXBATFUDRGgzdEHmQE8Q9SOFwYgWZBn7pnXGEiRh+KVm9pNO5JDkVSqXlrsWATmG/uM3aHvZr7ROQHVj91NiejampWtk2mlUHXBZx9/oSLc3zP5MFxarqVAclVT/KZIAEQVEGHJgd8Z8xgrXEEF2UbxVULCoJjIh0Tn4FiYM2eOseYAiBSMXysxZdnDz6falBN9TBm9PfmrfuyS1XpCdGPcl1rByHFydD0usqpwDYNL3KkacBiNtB2StanTw/caB9WxAZAUvfER7DrqbmLgoHSvvPKKmXlIDkLDJpoE9oO3hsEkoYsgCwCJXxXPQqBlA4DmyvvoodIhLbQiFT5rC1jQy1qqwvCztOaKpTHoN2X3jP3WcZ9/xS4UEsYDTTb/3OvMdEOkE+5EWDG+9x7jb3VNtQRI4IPneQEjrBmugXOAGFH8+4AOpQ83KhozeUXI4WyDPQdyIqIC/vdFo+4Ph5PM/Fs3HipJoHfOuwcDfNdgqnBETbyguAgwT/X585115HxdR/atVjbN3sFzJ/08MWfgB7rYwfLESAvyvHUFe6S0arFXMTvqpvyi3L3vpJrspZsa0iAftgZj8S0P+1pGzMvqk2cKAQMFBSRBKGjIRLBn2A8uRNgzlcugABwfneU6ju9QSFud4L6Rbtm4F93Sh58zAzEUkbCzeZeO1mLnEgPOOk7XFPWrjwPUtX899plspvslrH/5068rpeJDifiqRSm2CQjT2rV0nc4+0bXRUm5Y2wLzDSCEi2BhIPQL4za22gsvvNAWpyQYIi8vz5QVIqEALOPJ2ATGbcYWsC+64zGfHOuG2GYhPGK70yt97xK97766t/7qenNBrof+2gFQ+kcY0ttwquO0Uov+Ps+22lqdYOQk3ws/IrPqwXpbJep4rm7gN1Utm6YCet9qCvxcmpZZsMfsCZaw8nm3nd4Ih7zJOq0pp3J+fQ12XaFaNwuHjw3nPHRjCHkFeY5BQw4EbN9++62FljHboYYkEUENASe5M+RyYAIClPxxjgFSgjgzv8PZJ1hNm0VSbFYrTYDwM0BAcYD8069SbnGGlrzopzuu45ZFRWsFLPv8WpiC7Yvrl+sIWJiMMHGtePFtpeBOUriWxAeBkPtDhs7WWjCsoGq+Zk2uIECZicnzYZdFQUFkOUW+fVa1GqZ0ARQ/InSwMfbo0cP2YatF/KkGRE3MIpnZlo97McqZ6ntfwX5SUSW9jBxUMPm1YJvvRoQ+7/FRJ5GHnqXhyv6yA+jP31yKS1/Jiu8Nnj9xbnBsok+NSN3tk7whTUIV5XtmpIdnKqR2TiL7UGwP8jmOyfK8i2RlZ1Ik3WCtbY4/xOsy8nwvkMU4GS8CMXcMJHYzzBN4FPDOsJgRQAzYDiweUwYUgFVCYwce8GGGIfxsmVh1ye+zTBaDffNi0xX711QyWfXmuVLJtRViX820dFvEyhUAS5q/FIwKZSs227RXHGNSXURNsHKl6jbbrHfVdaQZA0C9xHKlYpRp+eIsLaVGBLXJtZLbiPLhr6mqV7Q//RhbCIlzApkUthzYBeEcBDZgvmFi4iCA+iFX04jMYfLybCTAIWejyDBGNChv6W8z3NyTLw/jaUk2iptzYcmidB8Myu+2P6kobKur/ZA7uM2azPLKXf78QhUAam/1grH2UxPvmdx9QFutQ/iFxrB31UKGiQ+M36p3jNCvQAev3alHVjP3QOmQFceMGWPhTshACOtE8jDAgA5tklwagIu8OWTIEKOs1S4jigLlYRH0wlffd8uf15os02cb9eRlxNshYS/pbdvYivcUTUpr1UIUVZTLQKUXqhet/9c1G039wyc7yrUQkOQxYiFL/5xtJiaoPhMALsb14Aym7OgUMiCxG7ZSkXlCwYwlV12AMVi6dKmx4G+++caimjDZADLkZth1sH40Ch3el/vuu8+CTrhBxisKRPVFdY78U68ImwEdapxkwzCs6bGmLOR23X2OeHsKm6ZratujRQVrT23VPV/DfZReR/Jg5x3qMZFdshTO1WSLPp4FIlTd3p7yscKCASSGbwYeFkQwKC8EAJLdxprVUM0g1TX+6QwAGvzmO/Y38wgaKqXyKgQYKCegJFDAPg0oMqyL+oXFQgEH4CGvxBaglEkqs3tnh9ae0bm9FVZCCYH9hlcUO0Lb8JqUKq+6UtHuNM6310m8o54HsaTZzttYHnini091zXdQDAGjhohR1ZAPEUmwHGBfRSQhBhTlBHsi/nuAx7Nj+gJ4KCo4CTiHxjZrmggSNt38S26OyIncbwNaFlTRc6N2mzsloeG6AV3VODR5sNQ4te4NE3MGjNeNn0SURt1HVt8Lm0oTuLrdMzzUQstXsGQbjRcIm8L4TY0YKq0iU2LSIdoHsOJSpBICgj3sqd6mlxxoq1CIIi0uiQeibFaBmWRMBgecUDHMO7BRHqeqb+5JNxb5Q0Tmf/bxp+22H/DBatkGAHU+S9mxYmuL3XZWgv0g11QhdZh0Ahdi/H1D9fHLo6SgEfOc2BIBJdoz40AACbIitlk0a8YnKDsYUETkZ164XKX+iuff8huisHBPkv3kVw5/taps9R6xS/PG329jf28wME7qNFBkwymt1fWqimVL+h6RkShr0v3eESES+APjLi83CCPj5aBVU0kLoZ2X8f7779vLiQ5+slcEOFXUsLKo2ORJFIs136qUikK1rJ44CgRADEAGq9Z3/bPuKgZSgU7ADUAJS+alp6uaWVafnlYNrJmoMpYDFicyY38MFVzX2bpvPDMgRHGDIiKaYO7Cf49HBerHpJwyZYqFghHlhFIDUJmY1gCi/hbddL+/7LGGKyyRqeWtloC4x+B8tMDUt5iRTH3nUmb2ERjfEBgJitNbSr4hR2V06uC63T1cgFxnW6MHhHjsjwFLgmIiR0INamPPSV85BphMChQUim6WKVyLKrAkgVFDCPML9j6T9wApL1tKEsBjXey0Dm1cprw6mXndXWZuV0uJYDHOiGwqU5SopFHQJG6MScgEI5OP5wwaHhYUF5QVNGsyLjF5ocQhuiDWWDMgegqve9hf/sjzkcQ4m0hBT/V/orTI5nyRorpur//oxh2xQcHILX2eO3CEEiOHN5Rdcy4yHBmB3e68KtR8l22NdbKdBuvCfka4GcuNEQMJhUC+SopFR7qp/19eJAqHAG+UUNTPtF4B1QAF69Y2Y8lx8ibH271wjP7Mk1P/FRMewYQj4BiOQPYeZhyyKcnmI9OPoAfkQiYqbDuQEU1B0v0tGvWAr8DjSABEA4GIzVB25v8M2KX7kd6L9WvPCR8giY0pV2Dir3liYa+JrlXFdlrkelOkrfj9df1mIIlkXvXxVF8VKYhmjio1zHoCRcnlwPsyXlEpsDEM4SkFo16kVoiXvCilRJMjStH0Qg2ksHd5T4zNcxyPiJ1UlE/PLIeszoNCNejJa44KzwS7DuoQsd4iWjQyNN4ofM2wZMYleH7uK1xS5hZec6e/4tnXGwVE1C1No59K0yqO6Tn5A+osbbC2wSnjC+6ItG65Ba/qdf1dMZLCY8MbLxaTTKerzvJaK8rH7G6wRjUoBiysoKDAZKmAIjT8KonPgNJQBgR7JwoDshnX4LrByw/kWHrAzAQY2I9ixb6ePXtGzSqJr5L8Vu6Hsi+Ysbj+vvvua8EP2BtjZWXsiCxXsuDKMeFilXpuqLIS3FEVex4m9vxYsG1DfW5wynh+Tusz9EAXNBaIPDiCN2xulQbVX1vmmu+8tQclEirsxcMi8TDEvoxUDBhyF94fqA4gJE8EkxI2PRZ6JESL6xIpQz4J4gLpEQAQoJBbgmJF0hm/U9F4Rq5BEAkyJIZtuEHsswM8rAPzzhkZXq16QI0FYtX9qpyhnzMss8ez49bkR+LVUvEgCfrYoGCUAbx3yAs9Lcg007XXi1EBOP5WK3kfP26zHbbyIgXTxUTU1pciYlQGRPQDZeNa2O0IPiBqGmUJqgcIiIAhR4dqashtVL9ATkO75zxML/iGcdURwoUoESgTUEyoLNcI2Kk9QAP+4R4JrQuK8gfPbmKDlKii1z705100yi9XVqO5FxvQd/yhemm+ZMaulWlhb1xRwUfx+1P5e4OBET/l3FYzHsv0vG2xrqXkpgGkQFOqok+rP/nCz+zRFROJZzZAvdzGNgAyffp0C7/CkA5FxNuBgR3TCWujUP2C8CxYNiH7gI5iVRjgWUeF2pJo8iSU4Z7EAM9qU1BGwrg4nuuQUoELEyCtj3wLAAMQ8twWWCH5etHoh/zFtz3i+5o4yIypaHp/cpd7O57SuvsnjxYW5Keiz0R9IHFvkDYx572hYs8HNUaLru+GLD4xX8t4nHmtv1B2M1xu5vmo78Ra9kMVWeYWfzbhV8hl2Oiw7ZEIxm+UJdbSw+sBiDAws2IAGj11g/jDtIQyBcUjuojgBcLdACRgpB8S56m8NnbsWKOQtdxS8pvNjqlVI2QXnTP00jAac1T7T76X+o5UGIjXJBz2xn6tmkv1HdzY/RsEjJN6Duwha/2Nsi829r7qPS8y630lDz3rzz3hovCqT1VYSkK7yZL1nl39AMCDPIgMSAFN5DsACoUMFu6BAm6zzTamlJD+gPGZY6BOnA8bBpDY/aCuUEOqq2GOYaUpTE7IdVTKoGgBWnHAuqvfTZK/BG4mYLhI1PDmh/z8YZebn9nkQ+1LdSMsUAEwO5SmZ12S6r6D/lIORsHPC5f7Y8QgOksqSg17Du42/pMXgrD+iwJST7/an3/ZLaqSKzlJ2zBCJ9uQ9zAaI/Ph6w2UDT5hy2jDgIma15iPoKJETWN0hmLCnukDWZDGedgCYdc0NH1YNMdQLYPrAH5+N6YRrIGLsVDFtOYce0F46f1P+VgcMLpvyCajtx9S/KJWS9thQ1wn+TeW5NUn5w48LiPkHa4Qsg1HFuPuJXgJK194259z9HnhJcqtIT+7IaAMABhQK9gqgCIIgTqGUEGMy4AW+ZIwNSgh1JJqDfxBJQEtMZb0AyuHulJOBDDS2E7fwXXiHqXOnzwnf2u+/sHln3FteN551/ulM+ZUPWfqqWH8zaByaQ40l7p4J6GF8fvX93dqJNyqu3ivU//m4ljXMNj4Htb35hp0vlHJLFep0KjFYx7xC//znt/m/2vvWmOjKqLwnbu73dJSlEIN0gdWEQ1JfYEtffiooj+sITFG0RCNf0xMBF8xEWMCqNHKI0rERzAaJPjHFyYmogEjkD6oRAQ1qIhK6VJAARG0bNvdveP3ze7CZd1ud3bvrr3IhLL3MXPn9c05Z86cOTNnlhgza6bwnTdOreaoVZAUHyW7jQeCilYvBBInIpxpc1MYralpV8mVEG6F4NkppIi0mqG8SNbMGTTBRrCSvXMCZA/2fOzPk16zLUnxMLZ59MXR1WslDHElLdkpluQ7RNm12WiEB+gA/Rkn83d0Nr2m77fwvjGV+8GpW1BI2iad6l0nS53qWxi6lCeVk8tNXxp/r++QEVAt7/llQh3+TfadBtHmgCJoCCzKd5zQUBbkzJmA5DPaWFLNQzDSfpCTFaqDSC0JRlJDUkcethR3lp+q6PZ3XH2iTMgl0RNbtsvfl6w0Di1/W/bv/Onkyo89fh6vBTdXRWCz+taxwBdPO5hxTmh7W0X9bVgKewdILNKRGxFfYAZOJSsPBXdE3lTryOhQH9a4i5vrxDmzbhSjrph6ymImhcECAck1cOoXCS4qvsmOuQzH1RiCjZMSsnCyc/4SsHGWz34iUMm+05IPMVBo0sZBQOMMevs9/vHnMohTHmjdoygkypR94MYpxQZ0iYXqH8iOLzYEOh9HSXTTpyy6EzVLmgHc597ugY0nEJUWIEHPsLsQy7qG8SE+WAoRvRlqIVbWmQpTLwdQsrP98F84+oZ6wcOS/FOqAcyiqHkYOvy0/dRJakb2zT+C0M5uCUTe21dCkiQ//RFZMABNSs5BEzvvTx5f32ac6PpGhn7DoZE00sAgcCrQJhFgOgy6XxrbVJXuoFdARJ8sbwxsecxpILJ+OQMjP95WVX8H1qRXo49GDUUhgTQBI1x6GjiA66e4BkpdVr+nYAnYwYMcv0OlZR7agd8j6PBn0sh18gVGUe0Vggdm+mGI4S0rja5aIGNFVWH0oIgIC5JNUMADQYL/cQKMtpEW/PcM9hwwgju+l31wIBrc8YMMY1+NMsClnEiRwrnALaUGfG+s84rw3JBl1mJYLcG++Ko0Bn2UIhry5YaezkdyAURWM6dgZAabK2fMBthWgcb9C5BRaohdZobxvkeEnqjbe7rbi/ZJM+Z4pGcZBNsJTjktZZlOBgIObFqxQFAn77hSo+CiKsETpejQtKC6Unhx5AfPiFE6TFAxTIWjyZk2CUDJ2lWI/RJYNOygYp6Heg7SNnL3XhmE7De4a49SRdGpFNMpHSmA6nSA92Fs5JT9Eg5gC8YPvjB92za1UL554tWVXq+vFTnOYZ5D7FlSbpAB4hUbAMRFiOZ0+eLfyzkYmRGMbO8CC16FvitEo5D3KmoI4wmcm2E9Vd/TtTpeoMRfbH+dYnq8L0GpcQviO0slEzMjcAhOsEwaZ3CDPw1ivZiNe8ePjQKT13jGo+KoOlLKd1IwEk6ko1ddqw/Ag2opwvOZwWojh45K7rHhLjzleJ5GEwp8pJI2gCeWJ8t7FMksBDUEH9gRsqxHr9nXtSnZJ+EA/m4MhlZwsUl2KhnvpwFpvNoY6HgIYMkZEFmuvICRGbHC6OFVaHq/gpQ03jU81vz67q5uvk8VaIZWUbnvARR3IdhKmb3BUqXL+h0pHwcAWTWBGrtns1HprFqPc4F4iMc/GQ8vCDqCleAm1YtRzHiSXP1SNkSJ+1H6FQNm8Pnm7h1/psprY3ldhd/jeR61uofxSCVpVIstqa/3Bjrnwc9a1CIl1UeyfJc3MLKckCHvHWV45sNZXGtjT+ca3bLTCgjbYJ9Fl87GSBZw15fTkapbvpEQH81igsKRGrZBAHoSXKdDp1xYXZkNf+6LQVEn9VmRlfsDFQ/qnnSlk589bl7ByIw3ll0/uvnQJjg5yzx0VtXDwlYswKjH+TRnQ7wFSKtBeLstKZb2jjn21p04sD7+Tue3fWJTlddj3RoMFLzRDPeIOmmziZt3MGZTWHtarvaUFBRvRetPHULwtkf/X1xTVTNoiZbr9nWsc2OFHV0OzGcDlPiKcYahGAsN+dkQawGyZ/hGqnZrg9ikb3dVwRLmhSDr50WVgO4qey5LCxv1abn8fi6/7VowggJMxcwak3OHVmhy2cp5+jYtssEoaqh9yFOWjmbjWjB6pFHjWoHX0S489bEIkAhGXT1h0kFwDPcF14IR7Kgmc71O1NsqdXHovhHRBsDRSS+wUQ+w+mACXZTQapaaljVZP/V/n2JEdIRuM3AmjTSTM9nWANUz5zyHYPy7DLZ5m0FJjnAWSu9a3CPMawJDt0ya8ZUqnIOBimX+QivwFyjbV9DBLsVK00csi+Y3qYOXEF1QJety3bQjIb4rZ9PFnhKcwGBNRAMCN3qBtnhQBS2C5clrTAlFejn8LV4GQ41arFNehR6dgijlQGwJOha3cO6JVbBs1Edcg+G3GCjXAXQ4CMY4CNDh3DpjOwrUhTHybW+gvJsK5i/La8eFTVGDsnLAaTMAZHWlysxl/7kSjNIbmUIXS7odRWoDivhZOOB/I95P8MTbi2v+fcpnNKcvktb5YRGuBkAng8pcABXSTVCbTAOQtMFPShwRxi4YeqwD8PZiBelnU1i/Cp/sHcqTa13v1iPtFY0Pw7aHLoq1JmnxSQypO+CvDWS2wX8VXDkH6FDOpMyF/cMZH9paldQJlT1i+syGul/bf7K9GvaStpk+KT7IxHKI7B8OTx7C8ueKYTNKiNBe1fCy3xDzsBafNqhYT6xJ90HWuCQ20BK+OnJvteWSEVKVIOxjjlPeooyXTpnohAnrtQt1gchvY1rwI6gkj4zQHrxIByhZ36VTxsQ4IfPEAhgq7ExvQhOdlMG3M9zris3Qw2pT8cT8832fVkfmu1DD5QcqszhoRaaHhIX1aeNH2uuRBZM1JUvLd6Aun4Uv8q9M9n64ZyUDxd2I0wuqowtGUqmjUIdqUeJ4eWhpY0lzLjQHSQcC6sv9KGoShGnZQVDuV+D3t6Gpp7MFDj2xF8ldQbdxR1ztaHhRWBS6GfOC+zDJmAl3KqNAjXAbFfzJtkDP/rA8oqFpT8euTCsA0eATyI2wqUyfZRIoYcyQ9wfKZ2Rj+dJe1diK3W3z4+yag45W2zH5cDtky9Ve4X1v+t62A5nWbySkc+UExt5wMQugtXi2FjPjmrCA1bIQd8IYtxqdpkglKMaCpj2dGQNR5SeN7fDCe4uOCQtMZwEY69tsgMi8Q0Hfc6JwcCbkz+msE2bhJ/C3ASz5zbKCczekOnVKld0l/7kejPZ2hsBO2Wx+W1XTYhxC1gKyf/+AlMdCgczYs/3bkPy+jqjVR/vT4a8x8/h6+FipY3DAtZc3zrM8xipoENZBDH07VtfUCV321vVsOlV7U6baUlFfiI7j+YdZhY0T6y/1edSRdGntB2feEGChyZHX6hq4DlVQKvtzccrAUPnl+/kZRRkTGw8jTRoOAJHf9ZvQERoyAAH0Ym5ASMwr8Z6THVDFw9hWtzvxXab3ZzIQ2SZJZ5+ZNtaZnC5KXcX3mJSkVU3Gw7/dG37pPJxWgrORzoJREwM704NidNnEktauRS5bBdFsD0ej/wPuS6NUvmQIzgAAAABJRU5ErkJggg==" alt="Embedded image" />&nbsp;</td>
+            <td class="column1 style92 s style93" colspan="3">Republic of the Philippines</td>
+            <td class="column4 style94 s style95" colspan="3">PROCUREMENT OFFICE</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row2">
+            <td class="column0 style17 null">&nbsp;</td>
+            <td class="column1 style96 s style97" colspan="3">TECHNOLOGICAL UNIVERSITY OF THE PHLIPPINES</td>
+            <td class="column4 style98 s style100" colspan="3" rowspan="2">PURCHASE REQUEST</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row3">
+            <td class="column0 style16 null">&nbsp;</td>
+            <td class="column1 style92 s style93" colspan="3">Km.14 East Service Road, Western Bicutan, Taguig City 1630</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row4">
+            <td class="column0 style17 null">&nbsp;</td>
+            <td class="column1 style87 s style88" colspan="3">http:www.tup.edu.ph  |  Telephone Nos.: (632) 8824-7250 to 54 local 113</td>
+            <td class="column4 style89 s style91" colspan="3">FM-PR-007        REV01      11MARCH2025</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row5">
+            <td class="column0 style26 null">&nbsp;</td>
+            <td class="column1 style27 null">&nbsp;</td>
+            <td class="column2 style27 null">&nbsp;</td>
+            <td class="column3 style28 null">&nbsp;</td>
+            <td class="column4 style29 null">&nbsp;</td>
+            <td class="column5 style27 null">&nbsp;</td>
+            <td class="column6 style30 null">&nbsp;</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row6">
+            <td class="column0 style19 null">&nbsp;</td>
+            <td class="column1 style20 null">&nbsp;</td>
+            <td class="column2 style20 null">&nbsp;</td>
+            <td class="column3 style20 null">&nbsp;</td>
+            <td class="column4 style20 null">&nbsp;</td>
+            <td class="column5 style20 null">&nbsp;</td>
+            <td class="column6 style20 null">&nbsp;</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row7">
+            <td class="column0 style32 s">Department:</td>
+            <td class="column1 style78 s style79" colspan="3">pr_department</td>
+            <td class="column4 style18 s">PR NO. :</td>
+            <td class="column5 style103 s style104" colspan="2">pr_no</td>
+            <td class="column7 style4 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row8">
+            <td class="column0 style32 s">Section:</td>
+            <td class="column1 style78 s style79" colspan="3">pr_section</td>
+            <td class="column4 style31 s">Date:</td>
+            <td class="column5 style80 s style81" colspan="2">pr_date</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row9">
+            <td class="column0 style82 null style83" colspan="7">&nbsp;</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row10">
+            <td class="column0 style33 s">Quantity</td>
+            <td class="column1 style36 s">Unit</td>
+            <td class="column2 style84 s style85" colspan="2">Item Description</td>
+            <td class="column4 style84 s style86" colspan="2">&nbsp;&nbsp;Unit Cost</td>
+            <td class="column6 style34 s">Total Cost</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row11">
+            <td class="column0 style12 s">pr_items_quantity</td>
+            <td class="column1 style1 s">bottlepr_items_unit</td>
+            <td class="column2 style76 s style77" colspan="2">pr_items_descrip + pr_spec_spec</td>
+            <td class="column4 style39 s style39" style='position: relative;' colspan="2">
+<img style="position: absolute; z-index: 1; left: 0px; top: 0px; width: 0px; height: 44px;" src="data:image/png;base64,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" alt="Embedded image" />pr_items_cost</td>
+            <td class="column6 style35 s">pr_items_total_cost</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style5 null">&nbsp;</td>
+            <td class="column9 style6 null">&nbsp;</td>
+            <td class="column10 style5 null">&nbsp;</td>
+            <td class="column11 style5 null">&nbsp;</td>
+            <td class="column12 style5 null">&nbsp;</td>
+            <td class="column13 style5 null">&nbsp;</td>
+          </tr>
+          <tr class="row12">
+            <td class="column0 style12 s">pr_items_quantity</td>
+            <td class="column1 style1 s">bottlepr_items_unit</td>
+            <td class="column2 style76 s style77" colspan="2">pr_items_descrip + pr_spec_spec</td>
+            <td class="column4 style39 s style39" colspan="2">pr_items_cost</td>
+            <td class="column6 style35 s">pr_items_total_cost</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style8 null">&nbsp;</td>
+            <td class="column9 style7 null">&nbsp;</td>
+            <td class="column10 style9 null">&nbsp;</td>
+            <td class="column11 style5 null">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row13">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style1 null">&nbsp;</td>
+            <td class="column2 style76 null style77" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row14">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style1 null">&nbsp;</td>
+            <td class="column2 style76 null style77" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row15">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style76 null style77" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row16">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style76 null style77" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row17">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style11 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row18">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row19">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row20">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row21">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row22">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row23">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row24">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row25">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row26">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row27">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style73 null style74" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row28">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style73 null style75" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row29">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style73 null style74" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row30">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row31">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row32">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row33">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row34">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row35">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row36">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row37">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row38">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style69 null style70" colspan="2">&nbsp;</td>
+            <td class="column4 style71 null style72" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row39">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row40">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row41">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row42">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row43">
+            <td class="column0 style13 null">&nbsp;</td>
+            <td class="column1 style2 null">&nbsp;</td>
+            <td class="column2 style37 null style38" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row44">
+            <td class="column0 style14 null">&nbsp;</td>
+            <td class="column1 style15 null">&nbsp;</td>
+            <td class="column2 style40 null style41" colspan="2">&nbsp;</td>
+            <td class="column4 style39 null style39" colspan="2">&nbsp;</td>
+            <td class="column6 style35 null">&nbsp;</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row45">
+            <td class="column0 style42 s style44" colspan="5">TOTAL</td>
+            <td class="column5 style45 s style46" colspan="2">pr_total</td>
+            <td class="column7 style10 null">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row46">
+            <td class="column0 style53 null style54" colspan="7">&nbsp;</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row47">
+            <td class="column0 style55 s style56" colspan="2">PURPOSE:</td>
+            <td class="column2 style57 s style58" colspan="5">pr_purpose</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row48">
+            <td class="column0 style59 s style60" colspan="2">SIGNATURE:</td>
+            <td class="column2 style61 null style62" colspan="2">&nbsp;</td>
+            <td class="column4 style63 s style64" colspan="3">Approved by:</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row49">
+            <td class="column0 style59 s style60" colspan="2">NAME OF REQUESTOR:</td>
+            <td class="column2 style65 s style66" colspan="2">pr_name_of_request     pr_approved_by (user_fullname FIRST NAME M.I SURNAME format)</td>
+            <td class="column4 style67 s style68" colspan="3">Engr. REXMELLE F. DECAPIA, JR. Ph.D.</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+          <tr class="row50">
+            <td class="column0 style47 s style48" colspan="2">DESIGNATION:</td>
+            <td class="column2 style49 s style50" colspan="2">pr_designation                                             pr_approved_by_designation</td>
+            <td class="column4 style51 s style52" colspan="3">Campus Director</td>
+            <td class="column7 style0">&nbsp;</td>
+            <td class="column8 style0">&nbsp;</td>
+            <td class="column9 style0">&nbsp;</td>
+            <td class="column10 style0">&nbsp;</td>
+            <td class="column11 style0">&nbsp;</td>
+            <td class="column12 style0">&nbsp;</td>
+            <td class="column13 style0">&nbsp;</td>
+          </tr>
+    </tbody></table>
+</div>
+  </body>
+</html>

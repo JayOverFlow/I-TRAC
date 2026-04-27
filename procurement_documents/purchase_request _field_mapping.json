@@ -1,0 +1,378 @@
+{
+  "meta": {
+    "template_file": "Purchase_Request_Excel_Template__2_.xlsx",
+    "sheet_name": "CHEM_1",
+    "version": "1.0",
+    "export_format": "pdf",
+    "orientation": "portrait",
+    "paper_size": "A4",
+    "print_area": "A1:G51",
+    "notes": "Template spans A1:N51 but active form content is within A1:G51. Column D is the widest column (48.71 units) holding item descriptions. Always write to the top-left cell of a merged region."
+  },
+
+  "sections": [
+    {
+      "section_id": "institutional_header",
+      "label": "Institutional Header",
+      "row_start": 1,
+      "row_end": 6,
+      "repeatable": false,
+      "readonly": true,
+      "notes": "Static university branding, logo area, and form code. Never write to these rows."
+    },
+    {
+      "section_id": "form_info",
+      "label": "Form Information",
+      "row_start": 8,
+      "row_end": 9,
+      "repeatable": false,
+      "notes": "Contains Department, PR Number, Section, and Date. Row 10 is a full-width divider line (A10:G10 merged). Do not write to row 10."
+    },
+    {
+      "section_id": "items_table",
+      "label": "Item List",
+      "row_start": 11,
+      "row_end": 45,
+      "repeatable": true,
+      "row_template": 12,
+      "max_rows": 34,
+      "notes": "Row 11 is the table header (read-only). Data rows are 12-45 (34 slots). Each row: A=Quantity, B=Unit, C:D merged=Item Description, E:F merged=Unit Cost, G=Total Cost (formula). Write item descriptions to column C (top-left of C:D merge). Write unit costs to column E (top-left of E:F merge)."
+    },
+    {
+      "section_id": "total_row",
+      "label": "Total",
+      "row_start": 46,
+      "row_end": 46,
+      "repeatable": false,
+      "readonly": true,
+      "notes": "A46:E46 merged with TOTAL label. G46 holds the SUM formula for all Total Cost values. Do not write to any cell in this row."
+    },
+    {
+      "section_id": "footer",
+      "label": "Footer — Purpose, Signature, Requestor",
+      "row_start": 47,
+      "row_end": 51,
+      "repeatable": false,
+      "notes": "Row 47 is a blank divider (A47:G47 merged). Rows 48-51 contain the purpose, signature, and requestor fields. E50 and E51 contain static text (Campus Director info) — do not overwrite them."
+    }
+  ],
+
+  "form_fields": [
+
+    {
+      "field_id": "department",
+      "label": "Department",
+      "section": "form_info",
+      "excel_cell": "B8",
+      "merged_range": "B8:D8",
+      "type": "text",
+      "required": true,
+      "default": null,
+      "validation": { "max_length": 100 },
+      "pdf_location": "Top-left meta block, first row left column",
+      "example": "Basic Arts and Sciences Department"
+    },
+
+    {
+      "field_id": "pr_number",
+      "label": "PR Number",
+      "section": "form_info",
+      "excel_cell": "F8",
+      "merged_range": "F8:G8",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "pdf_location": "Top-left meta block, first row right column",
+      "example": "PR-2026-001"
+    },
+
+    {
+      "field_id": "section_name",
+      "label": "Section",
+      "section": "form_info",
+      "excel_cell": "B9",
+      "merged_range": "B9:D9",
+      "type": "text",
+      "required": true,
+      "default": null,
+      "validation": { "max_length": 100 },
+      "pdf_location": "Top-left meta block, second row left column",
+      "example": "Chemistry and Physics"
+    },
+
+    {
+      "field_id": "date",
+      "label": "Date",
+      "section": "form_info",
+      "excel_cell": "F9",
+      "merged_range": "F9:G9",
+      "type": "date",
+      "format": "MMM DD, YYYY",
+      "required": true,
+      "default": null,
+      "pdf_location": "Top-left meta block, second row right column",
+      "example": "Apr 26, 2026"
+    },
+
+    {
+      "field_id": "items",
+      "label": "Line Items",
+      "section": "items_table",
+      "type": "repeating_row",
+      "row_start": 12,
+      "row_end": 45,
+      "row_template": 12,
+      "max_rows": 34,
+      "notes": "Each element in the items array maps to one Excel row starting at row 12. Fields within each row are listed below.",
+      "row_fields": [
+        {
+          "field_id": "quantity",
+          "label": "Quantity",
+          "excel_column": "A",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "validation": { "min": 1 },
+          "example": 4
+        },
+        {
+          "field_id": "unit",
+          "label": "Unit",
+          "excel_column": "B",
+          "type": "text",
+          "required": true,
+          "default": null,
+          "allowed_values": ["bottle", "pcs", "unit", "box", "pack", "set", "pair", "ream", "liter", "kg", "g", "ml"],
+          "example": "bottle"
+        },
+        {
+          "field_id": "item_description",
+          "label": "Item Description",
+          "excel_column": "C",
+          "merged_range_per_row": "C{row}:D{row}",
+          "type": "text",
+          "required": true,
+          "default": null,
+          "validation": { "max_length": 255 },
+          "notes": "Write to column C. The C:D merge will display the full text across the wide column D (width 48.71). This is the main description field.",
+          "example": "Potassium Hydrogen Phthalate, AR Grade, 500g, branded"
+        },
+        {
+          "field_id": "unit_cost",
+          "label": "Unit Cost",
+          "excel_column": "E",
+          "merged_range_per_row": "E{row}:F{row}",
+          "type": "currency",
+          "format": "#,##0.00",
+          "required": true,
+          "default": null,
+          "validation": { "min": 0 },
+          "notes": "Write to column E. The E:F merge displays the unit cost. Do NOT write a currency symbol — format is handled by Excel cell formatting.",
+          "example": 3500.00
+        },
+        {
+          "field_id": "total_cost",
+          "label": "Total Cost",
+          "excel_column": "G",
+          "type": "formula",
+          "formula": "=A{row}*E{row}",
+          "readonly": true,
+          "format": "#,##0.00",
+          "notes": "Computed automatically as Quantity × Unit Cost. Do not write to this column — it must remain a formula. If the template has no formula pre-loaded, inject the formula =A{row}*E{row} for each populated row.",
+          "example": 14000.00
+        }
+      ]
+    },
+
+    {
+      "field_id": "grand_total",
+      "label": "Grand Total",
+      "section": "total_row",
+      "excel_cell": "G46",
+      "merged_range": "F46:G46",
+      "type": "formula",
+      "formula": "=SUM(G12:G45)",
+      "readonly": true,
+      "format": "#,##0.00",
+      "notes": "This is the SUM of all total_cost values. Do not write to this cell. If the template has no formula pre-loaded, inject =SUM(G12:G45).",
+      "example": 100000.00
+    },
+
+    {
+      "field_id": "purpose",
+      "label": "Purpose",
+      "section": "footer",
+      "excel_cell": "C48",
+      "merged_range": "C48:G48",
+      "type": "text",
+      "required": true,
+      "default": null,
+      "validation": { "max_length": 500 },
+      "pdf_location": "Footer, PURPOSE row",
+      "example": "For CHEM1ET and CHEMENG Laboratory experiments"
+    },
+
+    {
+      "field_id": "requestor_name",
+      "label": "Name of Requestor (Section Head)",
+      "section": "footer",
+      "excel_cell": "C50",
+      "merged_range": "C50:D50",
+      "type": "text",
+      "required": true,
+      "default": null,
+      "pdf_location": "Footer, NAME OF REQUESTOR row, left column",
+      "example": "PATRICK JUSTIN ARIADO"
+    },
+
+    {
+      "field_id": "department_head_name",
+      "label": "Name of Department Head",
+      "section": "footer",
+      "excel_cell": "C50",
+      "merged_range": "C50:D50",
+      "type": "text",
+      "required": false,
+      "default": null,
+      "notes": "IMPORTANT — The PDF example shows a Department Head column (HEHERSON P. RAMOS) between the Section Head and Campus Director. However, the current template has NO separate cell mapped for this. The C50:D50 merged cell is shared with requestor_name. You have two options: (1) Place both names in C50 separated by spacing or a tab, or (2) Modify the template to add a dedicated Department Head column by splitting C50:D50 into two separate cells.",
+      "pdf_location": "Footer, NAME OF REQUESTOR row, middle column",
+      "example": "HEHERSON P. RAMOS"
+    },
+
+    {
+      "field_id": "requestor_designation",
+      "label": "Designation of Requestor (Section Head)",
+      "section": "footer",
+      "excel_cell": "C51",
+      "merged_range": "C51:D51",
+      "type": "text",
+      "required": true,
+      "default": "Section Head",
+      "pdf_location": "Footer, DESIGNATION row, left column",
+      "example": "Section Head"
+    }
+  ],
+
+  "readonly_cells": [
+    {
+      "range": "A1:G7",
+      "reason": "Institutional header — static branding, address, and form code"
+    },
+    {
+      "range": "A10:G10",
+      "reason": "Full-width horizontal divider line between meta fields and item table"
+    },
+    {
+      "range": "A11:G11",
+      "reason": "Table column headers: Quantity, Unit, Item Description, Unit Cost, Total Cost"
+    },
+    {
+      "range": "A46:G46",
+      "reason": "TOTAL row — A46:E46 is the label, G46 is the SUM formula"
+    },
+    {
+      "range": "A47:G47",
+      "reason": "Blank divider row between TOTAL and footer sections"
+    },
+    {
+      "range": "A49:B49",
+      "reason": "SIGNATURE label — static"
+    },
+    {
+      "range": "E49:G49",
+      "reason": "Approved by label — static"
+    },
+    {
+      "range": "E50:G50",
+      "reason": "Campus Director name (Engr. REXMELLE F. DECAPIA, JR. Ph.D.) — static, do not overwrite"
+    },
+    {
+      "range": "E51:G51",
+      "reason": "Campus Director title — static, do not overwrite"
+    }
+  ],
+
+  "merged_cell_groups": [
+    { "range": "B2:D2",   "note": "University name header — static" },
+    { "range": "E2:G2",   "note": "PROCUREMENT OFFICE label — static" },
+    { "range": "B3:D3",   "note": "University full name — static" },
+    { "range": "E3:G4",   "note": "PURCHASE REQUEST heading — static" },
+    { "range": "B4:D4",   "note": "Address — static" },
+    { "range": "B5:D5",   "note": "Website and phone — static" },
+    { "range": "E5:G5",   "note": "Form code FM-PR-007 — static" },
+    { "range": "B8:D8",   "note": "INPUT — Department name. Write to B8." },
+    { "range": "F8:G8",   "note": "INPUT — PR Number. Write to F8." },
+    { "range": "B9:D9",   "note": "INPUT — Section name. Write to B9." },
+    { "range": "F9:G9",   "note": "INPUT — Date. Write to F9." },
+    { "range": "A10:G10", "note": "Full-width divider — static" },
+    { "range": "C11:D11", "note": "Item Description column header — static" },
+    { "range": "E11:F11", "note": "Unit Cost column header — static" },
+    { "range": "C{12-45}:D{12-45}", "note": "INPUT — Item description per row. Write to column C of each row." },
+    { "range": "E{12-45}:F{12-45}", "note": "INPUT — Unit cost per row. Write to column E of each row." },
+    { "range": "A46:E46", "note": "TOTAL label — static" },
+    { "range": "F46:G46", "note": "Grand total formula — readonly, do not overwrite" },
+    { "range": "A47:G47", "note": "Blank divider — static" },
+    { "range": "A48:B48", "note": "PURPOSE label — static" },
+    { "range": "C48:G48", "note": "INPUT — Purpose text. Write to C48." },
+    { "range": "A49:B49", "note": "SIGNATURE label — static" },
+    { "range": "C49:D49", "note": "Signature line area — left blank for physical signature" },
+    { "range": "E49:G49", "note": "Approved by label — static" },
+    { "range": "A50:B50", "note": "NAME OF REQUESTOR label — static" },
+    { "range": "C50:D50", "note": "INPUT — Requestor name (Section Head). Write to C50." },
+    { "range": "E50:G50", "note": "Campus Director name — static, DO NOT OVERWRITE" },
+    { "range": "A51:B51", "note": "DESIGNATION label — static" },
+    { "range": "C51:D51", "note": "INPUT — Requestor designation. Write to C51." },
+    { "range": "E51:G51", "note": "Campus Director title — static, DO NOT OVERWRITE" }
+  ],
+
+  "rules": {
+    "preserve_formatting": true,
+    "do_not_alter_merged_cells": true,
+    "do_not_delete_rows": true,
+    "empty_item_rows_behavior": "leave_blank",
+    "formula_injection": {
+      "total_cost_per_row": "=A{row}*E{row}",
+      "grand_total": "=SUM(G12:G45)",
+      "inject_if_missing": true,
+      "notes": "If the template rows 12-45 do not have pre-loaded formulas in column G, inject =A{row}*E{row} for each populated row only. Always inject =SUM(G12:G45) in G46 if missing."
+    },
+    "acceptance_criteria": [
+      "department, section_name, and date must always be filled",
+      "At least one line item (rows 12-45) must be populated",
+      "Every populated item row must have quantity, unit, item_description, and unit_cost",
+      "total_cost column G must be a formula — never a hardcoded number",
+      "G46 must always show the correct grand total via SUM formula",
+      "Do NOT overwrite E50:G50 (Campus Director name) or E51:G51 (Campus Director title)",
+      "Do NOT alter any cell formatting, borders, or merged regions",
+      "Export the sheet as PDF preserving full layout including borders and merged cells",
+      "PDF print area must be A1:G51"
+    ],
+    "known_template_gap": {
+      "issue": "Department Head column missing",
+      "description": "The PDF example shows a separate Department Head column (Name and Designation) between Section Head and Campus Director. The current template does NOT have a dedicated cell for this. The C50:D50 merged range is the only non-static input in the NAME OF REQUESTOR row.",
+      "recommended_fix": "Split C50:D50 into two separate cells: C50 for Section Head name and D50 for Department Head name. Do the same for C51:D51 (Designation row). Update this JSON after template modification."
+    }
+  },
+
+  "sample_data_payload": {
+    "department": "Basic Arts and Sciences Department",
+    "pr_number": "PR-2026-001",
+    "section_name": "Chemistry and Physics",
+    "date": "Apr 26, 2026",
+    "purpose": "For CHEM1ET and CHEMENG Laboratory experiments",
+    "requestor_name": "PATRICK JUSTIN ARIADO",
+    "requestor_designation": "Section Head",
+    "items": [
+      { "quantity": 4,  "unit": "bottle", "item_description": "Potassium Hydrogen Phthalate, AR Grade, 500g, branded", "unit_cost": 3500.00 },
+      { "quantity": 50, "unit": "pcs",    "item_description": "Lead Electrode Metal Plate, 4cm x 10cm",               "unit_cost": 250.00  },
+      { "quantity": 4,  "unit": "bottle", "item_description": "Glycerol, Analytic grade, 500 ml",                      "unit_cost": 1500.00 },
+      { "quantity": 1,  "unit": "bottle", "item_description": "Anhydrous Calcium chloride, 500 g",                     "unit_cost": 1500.00 },
+      { "quantity": 2,  "unit": "bottle", "item_description": "Acetone, Analytic grade, 1L",                           "unit_cost": 1000.00 },
+      { "quantity": 1,  "unit": "bottle", "item_description": "Hydrochloric Acid, concentrated, AR Grade, 2.5L",       "unit_cost": 1500.00 },
+      { "quantity": 1,  "unit": "bottle", "item_description": "Anhydrous Iron (III) chloride, 500 g",                  "unit_cost": 1800.00 },
+      { "quantity": 1,  "unit": "bottle", "item_description": "Potassium Chloride, 500 g",                             "unit_cost": 1500.00 },
+      { "quantity": 1,  "unit": "bottle", "item_description": "Potassium Iodide, 500 g",                               "unit_cost": 10000.00},
+      { "quantity": 1,  "unit": "bottle", "item_description": "Copper (II) Sulfate Pentahydrate, 500 g",               "unit_cost": 2000.00 }
+    ]
+  }
+}
