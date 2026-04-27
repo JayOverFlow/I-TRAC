@@ -74,11 +74,11 @@
                             <span class="fw-bold text-dark">Edit</span>
                         </a>
                     @elseif ($task->task_status === 'Approved')
-                        <button type="button"
-                            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3"
-                            disabled><img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                        <a href="{{ route('export.pr.pdf', $task->task_id) }}"
+                            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                            <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                             <span> Export as PDF</span>
-                        </button>
+                        </a>
 
                         @php
                             $deadline = $pr->approved_at ? \Carbon\Carbon::parse($pr->approved_at)->addDays(7) : null;
