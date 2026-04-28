@@ -287,7 +287,7 @@ class PrReviewController extends Controller
         $pr = PrParent::with(['prItems.prSpecs', 'department', 'requestor', 'approver'])
             ->findOrFail($task->pr_id_fk);
 
-        $templatePath = base_path('procurement_documents/Purchase Request Excel Template.xlsx');
+        $templatePath = base_path('procurement_documents/Purchase Request Excel Template (2).xlsx');
 
         if (!file_exists($templatePath)) {
             return redirect()->back()->with('error', 'Excel template not found.');
@@ -302,7 +302,7 @@ class PrReviewController extends Controller
             $sheet->getPageSetup()->setFitToPage(true);
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(1);
-            $sheet->getPageSetup()->setPrintArea('A1:G51');
+            $sheet->getPageSetup()->setPrintArea('A1:G48');
             $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
             $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
             $sheet->getPageSetup()->setHorizontalCentered(true);
@@ -313,53 +313,37 @@ class PrReviewController extends Controller
             $sheet->getPageMargins()->setLeft(0.5);
             $sheet->getPageMargins()->setRight(0.5);
 
-            // 2. Institutional Header Styles (Rows 1-6)
-            $headerStyles = [
-                'B2' => 11, // Republic of the Philippines
-                'B3' => 12, // TECHNOLOGICAL UNIVERSITY...
-                'B4' => 11, // Km. 14 East Service Road...
-                'B5' => 10.5, // Website and Phone
-                'E2' => 11, // PROCUREMENT OFFICE
-                'E3' => 20, // PURCHASE REQUEST
-                'E5' => 9,   // REV info
-            ];
-            foreach ($headerStyles as $cell => $size) {
-                $sheet->getStyle($cell)->getFont()->setSize($size);
-                $sheet->getStyle($cell)->getAlignment()->setWrapText(false);
-            }
-
-            // Prevent header headings from breaking into multiple lines
-            $sheet->getStyle('E3')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('E3')->getFont()->setSize(20);
-
-            // Adjust institutional header height and remove gap
+            // 2. Institutional Header Row Height Adjustment (Rows 1-5)
             $headerRowHeights = [
                 1 => 10,
-                2 => 13,
-                3 => 13,
-                4 => 13,
-                5 => 12,
-                6 => 11,
+                2 => 14,
+                3 => 14,
+                4 => 14,
+                5 => 14,
+                6 => 0,   // Remove unnecessary row/border
+                7 => 12,  // Blank Gap row
             ];
-            for ($i = 1; $i <= 6; $i++) {
-                $sheet->getRowDimension($i)->setRowHeight($headerRowHeights[$i] ?? 12);
+            foreach ($headerRowHeights as $row => $height) {
+                $sheet->getRowDimension($row)->setRowHeight($height);
             }
-            $sheet->getRowDimension(7)->setRowHeight(0); // Remove gap under header
 
-            // 3. Header Data Mapping
+            // 3. Header Data Mapping (Form Info)
             $sheet->setCellValue('B8', $pr->department->dep_name ?? 'N/A');
             $sheet->setCellValue('F8', $pr->pr_no ?? 'N/A');
             $sheet->setCellValue('B9', $pr->pr_section ?? 'N/A');
             $sheet->setCellValue('F9', $pr->pr_date ? \Carbon\Carbon::parse($pr->pr_date)->format('M d, Y') : 'N/A');
 
-            // 4. Items mapping (Row 12-45)
+            // Set Form Info (A8:G9) styles
+            $sheet->getStyle('A8:G9')->getFont()->setSize(11);
+
+            // 4. Items mapping (Row 12-42) - Max 31 items
             $currRow = 12;
             $items = $pr->prItems;
 
-            $sheet->getStyle('A12:G45')->getFont()->setSize(12);
+            $sheet->getStyle('A12:G42')->getFont()->setSize(10); // Standard font size for items in this template
 
             foreach ($items as $item) {
-                if ($currRow > 45) break;
+                if ($currRow > 42) break;
 
                 $sheet->setCellValue('A' . $currRow, $item->pr_items_quantity);
                 $sheet->setCellValue('B' . $currRow, $item->pr_items_unit);
@@ -382,16 +366,13 @@ class PrReviewController extends Controller
                 $currRow++;
             }
 
-            // 5. Total Mapping
-            $sheet->getStyle('A46:G46')->getFont()->setSize(14)->setBold(true);
-            // NOTE: In the template, the grand total cell is typically a merged region (F46:G46).
-            // Always write formulas to the top-left cell of a merged region.
-            $sheet->setCellValue('F46', '=SUM(G12:G45)');
-            $sheet->getStyle('F46')->getNumberFormat()->setFormatCode('#,##0.00');
+            // 5. Grand Total Row (Row 43)
+            $sheet->setCellValue('F43', '=SUM(G12:G42)');
+            $sheet->getStyle('F43')->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('F43')->getFont()->setBold(true);
 
-            // 6. Footer (Rows 47-51)
-            $sheet->getStyle('A47:G51')->getFont()->setSize(11);
-            $sheet->setCellValue('C48', $pr->pr_purpose ?? 'N/A');
+            // 6. Footer (Rows 45-48)
+            $sheet->setCellValue('C45', $pr->pr_purpose ?? 'N/A');
 
             // Name Formatter Helper
             $formatName = function ($user) {
@@ -403,26 +384,16 @@ class PrReviewController extends Controller
             $requestorName = strtoupper($formatName($pr->requestor));
             $departmentHeadName = strtoupper($formatName($pr->approver));
 
-            // Expected layout (based on PDF example):
-            // - C50: Requestor name
-            // - D50: Department Head name (if template has a dedicated cell; safe to write even if merged)
-            $sheet->setCellValue('C50', $requestorName);
-            $sheet->setCellValue('D50', $departmentHeadName);
-            $sheet->getStyle('C50:D50')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('C50:D50')->getFont()->setSize(10);
+            // Footer names and designations
+            $sheet->setCellValue('C47', $requestorName);
+            $sheet->setCellValue('D47', $departmentHeadName);
+            $sheet->getStyle('C47:D47')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
+            $sheet->getStyle('C47:D47')->getFont()->setSize(10)->setBold(false);
 
-            // NAME OF REQUESTOR label (readonly in template) — enforce single-line rendering
-            $sheet->getStyle('A50')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-
-            $sheet->setCellValue('C51', $pr->pr_designation ?? 'Section Head');
-            $sheet->setCellValue('D51', $pr->pr_approved_by_designation ?? 'Department Head');
-            $sheet->getStyle('C51:D51')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('C51:D51')->getFont()->setSize(10);
-
-            // Director line (ensure single line)
-            $sheet->setCellValue('E50', 'Engr. REXMELLE F. DECAPIA, JR. Ph.D.');
-            $sheet->getStyle('E50:G50')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('E50:G50')->getFont()->setSize(9.5);
+            $sheet->setCellValue('C48', $pr->pr_designation ?? 'Section Head');
+            $sheet->setCellValue('D48', $pr->pr_approved_by_designation ?? 'Department Head');
+            $sheet->getStyle('C48:D48')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
+            $sheet->getStyle('C48:D48')->getFont()->setSize(9);
 
             // 7. Apply Thick Borders
             $thickStyle = [
@@ -432,16 +403,17 @@ class PrReviewController extends Controller
                     ],
                 ],
             ];
-            $sheet->getStyle('A1:G6')->applyFromArray($thickStyle);   // Header
-            $sheet->getStyle('A11:G45')->applyFromArray($thickStyle); // Items Table
-            $sheet->getStyle('A46:G46')->applyFromArray($thickStyle); // Total Row
-            $sheet->getStyle('A47:G51')->applyFromArray($thickStyle); // Footer
+            $sheet->getStyle('A1:G5')->applyFromArray($thickStyle);   // Header Box (1-5)
+            $sheet->getStyle('A8:G9')->applyFromArray($thickStyle);   // Form Info Box (8-9)
+            $sheet->getStyle('A11:G42')->applyFromArray($thickStyle); // Items Table (11-42)
+            $sheet->getStyle('A43:G43')->applyFromArray($thickStyle); // Total Row
+            $sheet->getStyle('A45:G48')->applyFromArray($thickStyle); // Footer
+
+            // 8. Final Calculation
+            Calculation::getInstance($spreadsheet)->clearCalculationCache();
+            $sheet->getCell('F43')->getCalculatedValue();
 
             // Export to PDF using mPDF
-            // Force formula calculation so PDF renders numeric totals (not blank/uncomputed)
-            Calculation::getInstance($spreadsheet)->clearCalculationCache();
-            $sheet->getCell('F46')->getCalculatedValue();
-
             $pdfWriter = new Mpdf($spreadsheet);
             $pdfWriter->setPreCalculateFormulas(true);
             $filename = "PR_" . str_replace('-', '_', $pr->pr_no ?: 'EXPORT') . ".pdf";
