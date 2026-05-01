@@ -118,7 +118,11 @@ Route::controller(CreatePrController::class)->group(function () {
     Route::post('/submit-pr/{task_id}', 'submitPr')->name('submit.pr');
 });
 
-// TODO: Fix this route
-Route::get('/account-settings', [\App\Http\Controllers\AccountSettingsController::class, 'showAccountSettings'])
-    ->middleware('auth')
-    ->name('account.settings');
+// Account Settings
+Route::middleware('auth')->controller(\App\Http\Controllers\AccountSettingsController::class)->group(function () {
+    Route::get('/account-settings', 'showAccountSettings')->name('account.settings');
+    Route::post('/account-settings/update-profile', 'updateProfile')->name('account.settings.update.profile');
+    Route::post('/account-settings/update-password', 'updatePassword')->name('account.settings.update.password');
+    Route::post('/account-settings/update-avatar', 'updateAvatar')->name('account.settings.update.avatar');
+    Route::delete('/account-settings/delete-avatar', 'deleteAvatar')->name('account.settings.delete.avatar');
+});

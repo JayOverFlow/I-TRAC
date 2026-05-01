@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
     <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
     {{-- Google Fonts --}}
@@ -87,6 +88,9 @@
     <!-- END MAIN CONTAINER -->
 
     @include('partials.toast-feedback')
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Inject SPECIFIC and CUSTOM js-->
     @stack('js')

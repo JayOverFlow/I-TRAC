@@ -1,0 +1,306 @@
+/* 
+    PROFILE TAB STYLES
+    Matches the mockup provided: Sidebar on left, Information Grid on right.
+*/
+
+:root {
+    --itrac-red: #a30000;
+    --text-muted: #888ea8;
+    --text-dark: #3b3f5c;
+    --border-color: #e0e6ed;
+}
+
+/* 
+   Main Container 
+   Height matches the Inbox page (calc(100vh - 158px)) 
+*/
+.profile-container {
+    display: flex;
+    gap: 20px;
+    min-height: calc(100vh - 170px); /* Changed from height to min-height */
+    margin-top: 20px;
+    padding-bottom: 20px; /* Added breathing room at the bottom */
+}
+
+/* 
+   LEFT SIDEBAR: Profile Summary 
+   Corresponds to the red/white card on the left of the mockup.
+*/
+.profile-sidebar {
+    flex: 0 0 450px; /* Enlarged to reach almost half-size of the main content */
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+/* Red header at the top of the sidebar */
+.profile-sidebar-header {
+    background-color: var(--itrac-red);
+    height: 100px;
+    width: 100%;
+}
+
+/* Avatar container with overlapping position and double border */
+.profile-avatar-wrapper {
+    margin-top: -60px; /* Overlaps the red header */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.profile-avatar-wrapper img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid #fff; /* White inner border */
+    box-shadow: 0 0 0 5px #4361ee; /* Blue outer border matching mockup */
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.profile-sidebar-info {
+    text-align: center;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.profile-sidebar-info h4 {
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 1.25rem;
+}
+
+.profile-sidebar-info p {
+    color: var(--itrac-red);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Edit Profile Button Style: Using high specificity to ensure it matches the mockup */
+.profile-container .btn.btn-edit-profile {
+    border: 1px solid #bfc9d4 !important;
+    background-color: #fff !important;
+    padding: 7px 20px !important;
+    border-radius: 7px !important; /* Matches the rounded mockup */
+    color: #888ea8 !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    transition: all 0.3s ease !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: none !important;
+}
+
+.profile-container .btn.btn-edit-profile:hover {
+    background-color: #f8f9fa !important;
+    border-color: #a0aab4 !important;
+}
+
+/* 
+   RIGHT COLUMN: General Information 
+   Corresponds to the large information card on the right.
+*/
+.profile-main-content {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 30px; /* Further reduced top padding */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.profile-main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px; /* Tighter spacing */
+    border-bottom: 1px solid #f1f2f3;
+    margin-bottom: 30px; /* Reduced margin */
+}
+
+.profile-main-header h3 {
+    color: var(--itrac-red);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+/* Information Grid Placement */
+.info-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px; /* Minimized gap between columns */
+    padding-left: 50px; /* Shifts content to the right */
+}
+
+.info-section-title {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+}
+
+.info-item {
+    margin-bottom: 20px;
+}
+
+.info-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    display: block;
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Password field with eye icon */
+.password-field {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex-wrap: wrap; /* Fixes error message overlap */
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    color: var(--text-muted);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.field-error-msg {
+    display: block;
+    width: 100%;       /* pushes it below the input row */
+    margin-top: 5px;
+    font-size: 0.78rem;
+    color: #e7515a;
+}
+
+/* 
+   EDIT MODE TRANSITION LOGIC
+*/
+
+/* Toggle Visibility */
+.profile-container.edit-mode .view-mode-only {
+    display: none !important;
+}
+
+.profile-container:not(.edit-mode) .edit-mode-only {
+    display: none !important;
+}
+
+/* Sidebar Edit Buttons */
+.avatar-edit-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 75%;
+    padding: 20px 40px;
+}
+
+.btn-upload-photo {
+    background-color: var(--itrac-red) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+.btn-delete-photo {
+    background-color: #fff !important;
+    color: var(--text-dark) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* Form Controls */
+.profile-container .form-control {
+    border: 1px solid #bfc9d4;
+    padding: 12px 15px;
+    border-radius: 8px;
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.profile-container .form-control:focus {
+    border-color: var(--itrac-red);
+    box-shadow: 0 0 0 0.2rem rgba(163, 0, 0, 0.1);
+}
+
+.profile-container .form-control::placeholder {
+    color: #d3d3d3;
+    font-weight: 400;
+}
+
+/* Footer Buttons */
+.profile-footer {
+    margin-top: auto;
+    padding-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.btn-go-back {
+    background-color: #fff !important;
+    color: var(--text-muted) !important;
+    border: 1px solid #bfc9d4 !important;
+    padding: 10px 25px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.btn-save-changes {
+    background-color: var(--itrac-red) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 10px 25px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* Adjustments for Edit Mode Header */
+.profile-container.edit-mode .profile-main-header h3 {
+    color: var(--itrac-red);
+}
+
+.profile-container.edit-mode .info-sections {
+    padding-left: 0; /* Align to left in edit mode */
+}

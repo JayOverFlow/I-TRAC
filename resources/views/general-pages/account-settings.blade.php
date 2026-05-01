@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/apexcharts.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dash_1.css') }}">
 
-    <!-- CUSTOM css -->
+    <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/profile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/account-setting/custom-account-setting.css') }}">
 @endpush
 
@@ -75,5 +75,6 @@
     <script src="{{ asset('js/head/dashboard/page-specific/dash_1.js') }}"></script> --}}
 
     <!-- CUSTOM js -->
+    <script src="{{ asset('js/account-setting/page-specific/profile.js') }}"></script>
     {{-- <script src="{{ asset('js/account-setting/custom-account-setting.js') }}"></script> --}}
 @endpush
