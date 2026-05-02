@@ -11,6 +11,9 @@ use Illuminate\Validation\Rule;
 class AdminAuthController extends Controller
 {
     public function adminShowRegister (){
+        if (session('is_admin_logged_in')) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('auth.admin-register');
     }
 
@@ -70,6 +73,9 @@ class AdminAuthController extends Controller
     }
 
     public function adminShowLogin (){
+        if (session('is_admin_logged_in')) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('auth.admin-login');
     }
 
