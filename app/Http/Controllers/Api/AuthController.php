@@ -40,7 +40,7 @@ class AuthController extends Controller
         }
 
         // If authentication is successful, create a token for the user
-        $user = Auth::user();
+        $user = Auth::user()->load(['roles', 'departments']);
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

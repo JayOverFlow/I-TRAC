@@ -29,7 +29,7 @@
                                     </div>
                                     <div class="f-body">
                                         <div class="meta-info">
-                                            <span class="user-name" data-name="Sophia Jane Ferrer">Sophia Jane Ferrer</span>
+                                            <span class="user-name" data-name="Sophia Jane Ferrer">Jane Doe</span>
                                             <span class="user-meta-time">2:09 PM</span>
                                         </div>
                                         <span class="preview">Sige po, thank you!</span>
