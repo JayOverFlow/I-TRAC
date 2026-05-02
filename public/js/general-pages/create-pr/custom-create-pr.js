@@ -148,6 +148,16 @@ $(document).ready(function() {
         }
         form.submit();
     });
+
+    // Cancel button logic
+    $(document).on('click', '#cancel-pr-btn', function() {
+        const url = $(this).data('url');
+        const form = $('#cancel-pr-form');
+        if (url) {
+            form.attr('action', url);
+            form.submit();
+        }
+    });
 });
 
 $(document).on('click', '.dropdown-item', function(e) {

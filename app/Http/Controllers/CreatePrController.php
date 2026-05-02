@@ -189,6 +189,7 @@ class CreatePrController extends Controller
                 'pr_department' => $departmentId,
                 'pr_purpose'    => $request->input('pr_purpose'),
                 'pr_status'     => $status,
+                'submitted_at'  => $status === 'Submitted' ? now() : $pr->submitted_at,
             ]);
 
             // Delete old items (cascades to specs via FK)
@@ -205,6 +206,7 @@ class CreatePrController extends Controller
                 'saved_by_user_id_fk'  => $user->user_id,
                 'pr_unique_code'       => strtoupper(Str::random(8)),
                 'pr_status'            => $status,
+                'submitted_at'         => $status === 'Submitted' ? now() : null,
             ]);
         }
 
@@ -247,5 +249,52 @@ class CreatePrController extends Controller
         }
 
         return $pr;
+    }
+    /**
+     * Cancel a submitted PR and return it to Draft status.
+     * Allowed only within 3 days of submission.
+     */
+    public function cancelPr($task_id)
+    {
+        $user = Auth::user();
+        $task = Task::with('purchaseRequest')->findOrFail($task_id);
+
+        if ($task->assigned_to !== $user->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $pr = $task->purchaseRequest;
+
+        if (!$pr || $task->task_status !== 'Submitted') {
+            return redirect()->back()->with('error', 'Only submitted purchase requests can be cancelled.');
+        }
+
+        // Check 3-day deadline
+        $deadline = \Carbon\Carbon::parse($pr->submitted_at)->addDays(3);
+        if (now()->greaterThan($deadline)) {
+            return redirect()->back()->with('error', 'Cancellation period (3 days) has expired.');
+        }
+
+        try {
+            DB::transaction(function () use ($task, $pr) {
+                // Revert PR status to Draft
+                $pr->update(['pr_status' => 'Draft']);
+
+                // Revert Task status to Pending
+                $task->update(['task_status' => 'Pending']);
+
+                // Find and delete the head's review task
+                Task::where('pr_id_fk', $pr->pr_id)
+                    ->where('task_type', 'PR Review')
+                    ->where('task_status', 'Pending') // Only delete if not already being processed
+                    ->delete();
+            });
+
+            return redirect()->route('show.create.pr', $task_id)
+                ->with('success', 'Purchase Request submission cancelled. It is now back to Draft.');
+        } catch (\Exception $e) {
+            Log::error('PR Cancel Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong while cancelling the submission.');
+        }
     }
 }

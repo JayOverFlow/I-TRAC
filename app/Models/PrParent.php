@@ -24,11 +24,13 @@ class PrParent extends Model
         'pr_unique_code',
         'pr_status',
         'approved_at',
+        'submitted_at',
         'pr_total',
     ];
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'submitted_at' => 'datetime',
     ];
 
     // One PR has many items

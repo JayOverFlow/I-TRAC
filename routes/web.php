@@ -116,6 +116,7 @@ Route::controller(CreatePrController::class)->group(function () {
     Route::get('/create-pr/{task_id}', 'showCreatePr')->name('show.create.pr');
     Route::post('/create-pr/{task_id}', 'saveDraft')->name('draft.pr');
     Route::post('/submit-pr/{task_id}', 'submitPr')->name('submit.pr');
+    Route::post('/cancel-pr/{task_id}', 'cancelPr')->name('cancel.pr');
 });
 
 // Account Settings
