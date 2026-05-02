@@ -4,4 +4,6 @@
 {{-- Define contents to show in the layout --}}
 @section('title', 'Create Purchase Request | I-TRAC')
 
-@include('general-pages.create-pr')
+@section('content')
+    @include('general-pages.create-pr')
+@endsection
