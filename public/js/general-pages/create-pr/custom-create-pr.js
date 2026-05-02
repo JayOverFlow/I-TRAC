@@ -138,6 +138,16 @@ $(document).ready(function() {
 
     // Generate initial values
     updateTotals();
+
+    // Submit button logic
+    $(document).on('click', '#submit-pr-btn', function() {
+        const url = $(this).data('url');
+        const form = $('#pr-form');
+        if (url) {
+            form.attr('action', url);
+        }
+        form.submit();
+    });
 });
 
 $(document).on('click', '.dropdown-item', function(e) {

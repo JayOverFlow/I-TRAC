@@ -1,8 +1,3 @@
-{{-- Extend the main layout that you want to use --}}
-@extends('layouts.head-layout')
-
-{{-- Define contents to show in the layout --}}
-@section('title', 'Tasks | I-TRAC')
 
 @push('css')
     <!-- Page SPECIFIC css -->
@@ -17,7 +12,6 @@
     <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/custom-create-pr.css') }}">
 @endpush
 
-@section('content')
     <form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form">
         @csrf
         @php
@@ -46,6 +40,7 @@
                     <div class="text-end">
                         @if (!$isReadOnly)
                             <button type="button" id="submit-pr-btn"
+                                data-url="{{ route('submit.pr', $task->task_id) }}"
                                 class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                                 <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
                                 <span>Submit</span>
@@ -360,7 +355,6 @@
         </div>
 
     </form>
-@endsection
 
 @push('js')
     <!-- FilePond JavaScript -->
@@ -370,15 +364,5 @@
     <!-- CUSTOM js -->
     <script src="{{ asset('js/general-pages/create-pr/custom-create-pr.js') }}"></script>
 
-    <script>
-        // Submit button changes the form action to the submit route, then submits
-        const submitBtn = document.getElementById('submit-pr-btn');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function() {
-                const form = document.getElementById('pr-form');
-                form.action = "{{ route('submit.pr', $task->task_id) }}";
-                form.submit();
-            });
-        }
-    </script>
+
 @endpush
