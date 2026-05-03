@@ -18,19 +18,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        $user = Auth::user();
-        $gen_role = $user->roles->first()?->gen_role;
-        return $gen_role === 'Head' ? redirect()->route('show.dashboard') : redirect()->route('show.mr');
-    }
-    return redirect()->route('login');
+    return view('auth/login');
 });
 
 Route::get('/sample', function () {
     return view('sample-content');
 })->middleware('auth');
 
-Route::middleware(['auth', 'role:Head'])->group(function () {
+Route::middleware(['auth', 'role:Head,Procurement'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
     });

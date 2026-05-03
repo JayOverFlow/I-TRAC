@@ -26,7 +26,7 @@ class TaskController extends Controller
         return match ($userRole) {
             'Head'        => view('head/pages/head-tasks', compact('tasks')), // Fix this
             null          => view('unassigned/pages/unassigned-tasks', compact('tasks')), // Unassinged (No role) users
-            // 'Supply'      => view('supply.dashboard'),
+            'Procurement' => view('procurement/pages/procurement-tasks', compact('tasks')),
             default       => view('errors.403'),
         };
     }

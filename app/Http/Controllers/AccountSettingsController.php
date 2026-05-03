@@ -16,14 +16,16 @@ class AccountSettingsController extends Controller
 
         $userRole = $user->roles()->first();
 
-        if (!$userRole) {
-            abort(403, 'Unassigned Role');
-        }
-
         // Use switch statement to redirect user
         if ($userRole->gen_role === 'Head') {
             $apps = $user->appParents;
             return view('head.pages.head-account-settings', compact('user', 'apps'));
+        } elseif ($userRole->gen_role === 'Procurement') {
+            $apps = $user->appParents;
+            $loadedPrs = null;
+            $pos = null;
+            
+            return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs', 'pos'));
         }
 
         abort(404, 'Account settings not available for this role yet.');
