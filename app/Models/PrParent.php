@@ -23,13 +23,11 @@ class PrParent extends Model
         'saved_by_user_id_fk',
         'pr_unique_code',
         'pr_status',
-        'approved_at',
         'submitted_at',
         'pr_total',
     ];
 
     protected $casts = [
-        'approved_at' => 'datetime',
         'submitted_at' => 'datetime',
     ];
 

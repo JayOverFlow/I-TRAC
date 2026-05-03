@@ -10,22 +10,6 @@
 @endpush
 
 @section('content')
-    @if ($task->task_status === 'Approved' && $pr->approved_at)
-        @php
-            $deadline = \Carbon\Carbon::parse($pr->approved_at)->addDays(7);
-            $now = now();
-            $diff = $now->diff($deadline);
-            $isPast = $now->greaterThanOrEqualTo($deadline);
-        @endphp
-        @if (!$isPast)
-            <div class="alert alert-info py-2" role="alert">
-                You have
-                <strong>{{ $diff->d }}</strong> {{ Str::plural('day', $diff->d) }} and
-                <strong>{{ $diff->h }}</strong> {{ Str::plural('hour', $diff->h) }}
-                left to cancel your approval.
-            </div>
-        @endif
-    @endif
 
     <div class="card allocated-budget-card mb-3">
         <div class="card-body d-flex justify-content-between align-items-center">
@@ -80,19 +64,6 @@
                             <span> Export as PDF</span>
                         </a>
 
-                        @php
-                            $deadline = $pr->approved_at ? \Carbon\Carbon::parse($pr->approved_at)->addDays(7) : null;
-                            $canCancel = $deadline && now()->lessThan($deadline);
-                        @endphp
-                        <form action="{{ route('cancel.approve.pr', $task->task_id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" id="cancel-approval-pr-btn"
-                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-3"
-                                {{ !$canCancel ? 'disabled' : '' }}>
-                                <img src="{{ asset('img/Cancel.svg') }}" width="18" height="18">
-                                <span class="fw-bold black-text"> Cancel Approval</span>
-                            </button>
-                        </form>
                     @endif
                 </div>
             </div>

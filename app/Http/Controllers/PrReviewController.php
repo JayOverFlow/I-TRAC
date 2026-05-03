@@ -184,7 +184,6 @@ class PrReviewController extends Controller
             $pr = PrParent::findOrFail($task->pr_id_fk);
             $pr->update([
                 'pr_status' => 'Approved',
-                'approved_at' => now(),
                 'pr_approved_by' => $user->user_id,
                 'pr_approved_by_designation' => $user->roles->first()?->gen_role ?? 'Department Head',
             ]);
@@ -202,45 +201,6 @@ class PrReviewController extends Controller
             ->with('success', 'Purchase Request has been approved.');
     }
 
-    /**
-     * Cancel the PR Approval — revert PR status and both task statuses back to Pending.
-     */
-    public function cancelApprovePr($task_id)
-    {
-        $user = Auth::user();
-        $task = Task::findOrFail($task_id);
-
-        if ($task->task_type !== 'PR Review' || $task->assigned_to !== $user->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        DB::transaction(function () use ($task) {
-            $pr = PrParent::findOrFail($task->pr_id_fk);
-
-            // Validate if exactly within 7 days
-            if ($pr->approved_at && \Carbon\Carbon::parse($pr->approved_at)->diffInDays(now()) >= 7) {
-                // If it's already past 7 days, we cannot cancel
-                abort(403, 'Cancellation period has expired.');
-            }
-
-            // Revert PR status to Pending and remove approved_at
-            $pr->update([
-                'pr_status' => 'Pending',
-                'approved_at' => null,
-            ]);
-
-            // Revert the Head's PR Review task
-            $task->update(['task_status' => 'Pending']);
-
-            // Revert the subordinate's original Purchase Request task
-            Task::where('pr_id_fk', $pr->pr_id)
-                ->where('task_type', 'Purchase Request')
-                ->update(['task_status' => 'Pending']);
-        });
-
-        return redirect()->back()
-            ->with('success', 'Purchase Request approval has been cancelled.');
-    }
 
     /**
      * Reject the PR — update PR status and both task statuses.
