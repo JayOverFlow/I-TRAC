@@ -20,7 +20,7 @@ class DashboardController extends Controller
         // Redirect user based on role
         return match ($userRole) {
             'Head'        => view('head/pages/head-dashboard', compact('data')),
-            // 'Procurement' => view('procurement.dashboard'),
+            'Procurement' => view('procurement/pages/procurement-dashboard', compact('data')),
             // 'Supply'      => view('supply.dashboard'),
             default       => view('errors.403'),
         };

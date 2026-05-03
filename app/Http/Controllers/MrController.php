@@ -21,7 +21,7 @@ class MrController extends Controller
         return match ($userRole) {
             'Head'        => view('head/pages/head-mr', compact('data')),
             null          => view('unassigned/pages/unassigned-mr', compact('data')), // Unassinged (No role) users
-            // 'Supply'      => view('supply.dashboard'),
+            'Procurement'      => view('procurement/pages/procurement-mr', compact('data')),
             default       => view('errors.403'),
         };
     }

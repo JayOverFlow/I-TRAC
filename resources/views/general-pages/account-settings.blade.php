@@ -36,14 +36,43 @@
                                 <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
                                 Settings</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
-                                data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
-                                aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
-                                tabindex="-1">
-                                <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
-                                Annual Procurement Plan</button>
-                        </li>
+
+
+                        @if (auth()->user()->roles()->first()->gen_role === 'Head')
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
+                                    data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
+                                    aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
+                                    tabindex="-1">
+                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    Annual Procurement Plan</button>
+                            </li>
+                        @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
+                                    data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
+                                    aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
+                                    tabindex="-1">
+                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    Annual Procurement Plan</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link red-text-2" id="animated-underline-purchase-request-tab"
+                                    data-bs-toggle="tab" href="#animated-underline-purchase-request" role="tab"
+                                    aria-controls="animated-underline-purchase-request" aria-selected="false"
+                                    tabindex="-1">
+                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    Purchase Request</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link red-text-2" id="animated-underline-purchase-order-tab"
+                                    data-bs-toggle="tab" href="#animated-underline-purchase-order" role="tab"
+                                    aria-controls="animated-underline-purchase-order" aria-selected="false"
+                                    tabindex="-1">
+                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    Purchase Order</button>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -57,7 +86,13 @@
                 @include('general-pages.account-settings-partials._settings')
                 {{-- End Settings Tab --}}
 
-                @include('general-pages.account-settings-partials._annual_procurement_plan')
+                @if (auth()->user()->roles()->first()->gen_role === 'Head')
+                    @include('general-pages.account-settings-partials._annual-procurement-plan')
+                @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
+                    @include('general-pages.account-settings-partials._annual-procurement-plan')
+                    @include('general-pages.account-settings-partials._purchase-request')
+                    @include('general-pages.account-settings-partials._purchase-order')
+                @endif
             </div>
 
         </div>
@@ -65,7 +100,6 @@
     </div>
 
     @include('general-pages.account-settings-partials._upload-modal')
-
 @endsection
 
 @push('js')
