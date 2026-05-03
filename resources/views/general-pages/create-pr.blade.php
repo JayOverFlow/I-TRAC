@@ -242,9 +242,42 @@
                                                     <option value="Set"
                                                         {{ ($saved?->pr_items_unit ?? '') === 'Set' ? 'selected' : '' }}>
                                                         Set</option>
-                                                    <option value="More options"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'More options' ? 'selected' : '' }}>
-                                                        More options</option>
+                                                    <option value="Box"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Box' ? 'selected' : '' }}>
+                                                        Box</option>
+                                                    <option value="Pack"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Pack' ? 'selected' : '' }}>
+                                                        Pack</option>
+                                                    <option value="Ream"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Ream' ? 'selected' : '' }}>
+                                                        Ream</option>
+                                                    <option value="Dozen"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Dozen' ? 'selected' : '' }}>
+                                                        Dozen</option>
+                                                    <option value="Carton"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Carton' ? 'selected' : '' }}>
+                                                        Carton</option>
+                                                    <option value="Liter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Liter' ? 'selected' : '' }}>
+                                                        Liter</option>
+                                                    <option value="Milliliter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Milliliter' ? 'selected' : '' }}>
+                                                        Milliliter</option>
+                                                    <option value="Kilogram"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Kilogram' ? 'selected' : '' }}>
+                                                        Kilogram</option>
+                                                    <option value="Gram"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Gram' ? 'selected' : '' }}>
+                                                        Gram</option>
+                                                    <option value="Meter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Meter' ? 'selected' : '' }}>
+                                                        Meter</option>
+                                                    <option value="Roll"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Roll' ? 'selected' : '' }}>
+                                                        Roll</option>
+                                                    <option value="Square meter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Square meter' ? 'selected' : '' }}>
+                                                        Square meter</option>
                                                 </select>
                                             </td>
                                             {{-- Item Description --}}
