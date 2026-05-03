@@ -100,6 +100,16 @@ class User extends Authenticatable
         return $this->hasMany(AppParent::class, 'saved_by_user_id_fk', 'user_id');
     }
 
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id', 'user_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id', 'user_id');
+    }
+
     /**
      * Override the broken MySQL virtual column with a proper PHP accessor.
      * The DB expression uses literal strings instead of column references.

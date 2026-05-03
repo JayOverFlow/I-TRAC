@@ -646,7 +646,8 @@
   width: 100%;
 }
 .chat-system .chat-box .bubble-wrapper.me {
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 .chat-system .chat-box .bubble-wrapper.you {
   justify-content: flex-start;
@@ -685,10 +686,18 @@
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 6px;
-  margin-left: 10px;
+  white-space: nowrap;
 }
-.chat-system .chat-box .bubble-wrapper:hover .message-info {
+.chat-system .chat-box .bubble:hover + .message-info, .chat-system .chat-box .message-info:hover {
   display: block;
+}
+.chat-system .chat-box .bubble-wrapper.me .message-info {
+  margin-right: 10px;
+  margin-left: 0;
+}
+.chat-system .chat-box .bubble-wrapper.you .message-info {
+  margin-left: 10px;
+  margin-right: 0;
 }
 .chat-system .chat-box .bubble:before {
   position: absolute;
