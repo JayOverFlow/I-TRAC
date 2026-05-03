@@ -195,16 +195,21 @@ class CreatePrController extends Controller
             // Delete old items (cascades to specs via FK)
             $pr->prItems()->delete();
         } else {
+            // Generate incrementing unique code (PR0000 format)
+            $lastPr = PrParent::orderBy('pr_id', 'desc')->first();
+            $nextNum = $lastPr ? ($lastPr->pr_id + 1) : 1;
+            $uniqueCode = 'PR' . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+
             // Create new PR header
             $pr = PrParent::create([
                 'pr_section'           => $request->input('pr_section'),
                 'pr_department'        => $departmentId,
                 'pr_no'                => $request->input('pr_no'),
                 'pr_date'              => now()->toDateString(),
-                'pr_purpose'    => $request->input('pr_purpose'),
+                'pr_purpose'           => $request->input('pr_purpose'),
                 'pr_name_of_requestor' => $user->user_id,
                 'saved_by_user_id_fk'  => $user->user_id,
-                'pr_unique_code'       => strtoupper(Str::random(8)),
+                'pr_unique_code'       => $uniqueCode,
                 'pr_status'            => $status,
                 'submitted_at'         => $status === 'Submitted' ? now() : null,
             ]);

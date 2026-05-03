@@ -262,7 +262,7 @@ class PrReviewController extends Controller
             $sheet->getPageSetup()->setFitToPage(true);
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(1);
-            $sheet->getPageSetup()->setPrintArea('A1:G48');
+            $sheet->getPageSetup()->setPrintArea('A1:G54');
             $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
             $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
             $sheet->getPageSetup()->setHorizontalCentered(true);
@@ -296,14 +296,14 @@ class PrReviewController extends Controller
             // Set Form Info (A8:G9) styles
             $sheet->getStyle('A8:G9')->getFont()->setSize(11);
 
-            // 4. Items mapping (Row 12-42) - Max 31 items
+            // 4. Items mapping (Row 12-47) - Expanded to match new template
             $currRow = 12;
             $items = $pr->prItems;
 
-            $sheet->getStyle('A12:G42')->getFont()->setSize(10); // Standard font size for items in this template
+            $sheet->getStyle('A12:G47')->getFont()->setSize(10); 
 
             foreach ($items as $item) {
-                if ($currRow > 42) break;
+                if ($currRow > 47) break; 
 
                 $sheet->setCellValue('A' . $currRow, $item->pr_items_quantity);
                 $sheet->setCellValue('B' . $currRow, $item->pr_items_unit);
@@ -326,13 +326,13 @@ class PrReviewController extends Controller
                 $currRow++;
             }
 
-            // 5. Grand Total Row (Row 43)
-            $sheet->setCellValue('F43', '=SUM(G12:G42)');
-            $sheet->getStyle('F43')->getNumberFormat()->setFormatCode('#,##0.00');
-            $sheet->getStyle('F43')->getFont()->setBold(true);
+            // 5. Grand Total Row (Row 48)
+            $sheet->setCellValue('F48', '=SUM(G12:G47)');
+            $sheet->getStyle('F48')->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('F48')->getFont()->setBold(true);
 
-            // 6. Footer (Rows 45-48)
-            $sheet->setCellValue('C45', $pr->pr_purpose ?? 'N/A');
+            // 6. Footer (Rows 50-53)
+            $sheet->setCellValue('C50', $pr->pr_purpose ?? 'N/A');
 
             // Name Formatter Helper
             $formatName = function ($user) {
@@ -345,15 +345,20 @@ class PrReviewController extends Controller
             $departmentHeadName = strtoupper($formatName($pr->approver));
 
             // Footer names and designations
-            $sheet->setCellValue('C47', $requestorName);
-            $sheet->setCellValue('D47', $departmentHeadName);
-            $sheet->getStyle('C47:D47')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('C47:D47')->getFont()->setSize(10)->setBold(false);
+            $sheet->setCellValue('C52', $requestorName);
+            $sheet->setCellValue('D52', $departmentHeadName);
+            $sheet->getStyle('C52:D52')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
+            $sheet->getStyle('C52:D52')->getFont()->setSize(10)->setBold(false);
 
-            $sheet->setCellValue('C48', $pr->pr_designation ?? 'Section Head');
-            $sheet->setCellValue('D48', $pr->pr_approved_by_designation ?? 'Department Head');
-            $sheet->getStyle('C48:D48')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('C48:D48')->getFont()->setSize(9);
+            $sheet->setCellValue('C53', $pr->pr_designation ?? 'Section Head');
+            $sheet->setCellValue('D53', $pr->pr_approved_by_designation ?? 'Department Head');
+            $sheet->getStyle('C53:D53')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
+            $sheet->getStyle('C53:D53')->getFont()->setSize(9);
+
+            // 6.1 Unique Code (Row 54)
+            $sheet->setCellValue('G54', $pr->pr_unique_code ?? 'N/A');
+            $sheet->getStyle('G54')->getFont()->setSize(8);
+            $sheet->getStyle('G54')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
             // 7. Apply Thick Borders
             $thickStyle = [
@@ -365,13 +370,13 @@ class PrReviewController extends Controller
             ];
             $sheet->getStyle('A1:G5')->applyFromArray($thickStyle);   // Header Box (1-5)
             $sheet->getStyle('A8:G9')->applyFromArray($thickStyle);   // Form Info Box (8-9)
-            $sheet->getStyle('A11:G42')->applyFromArray($thickStyle); // Items Table (11-42)
-            $sheet->getStyle('A43:G43')->applyFromArray($thickStyle); // Total Row
-            $sheet->getStyle('A45:G48')->applyFromArray($thickStyle); // Footer
+            $sheet->getStyle('A11:G47')->applyFromArray($thickStyle); // Items Table (11-47)
+            $sheet->getStyle('A48:G48')->applyFromArray($thickStyle); // Total Row (48)
+            $sheet->getStyle('A50:G53')->applyFromArray($thickStyle); // Footer (50-53)
 
             // 8. Final Calculation
             Calculation::getInstance($spreadsheet)->clearCalculationCache();
-            $sheet->getCell('F43')->getCalculatedValue();
+            $sheet->getCell('F48')->getCalculatedValue();
 
             // Export to PDF using mPDF
             $pdfWriter = new Mpdf($spreadsheet);

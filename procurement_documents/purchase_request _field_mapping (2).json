@@ -6,8 +6,8 @@
     "export_format": "pdf",
     "orientation": "portrait",
     "paper_size": "A4",
-    "print_area": "A1:G48",
-    "total_rows": 48,
+    "print_area": "A1:G54",
+    "total_rows": 54,
     "total_columns": 7,
     "columns": {
       "A": { "role": "Quantity / Section Labels",           "width": 10.28 },
@@ -22,7 +22,7 @@
       "Item Description per row uses a C:D merge — always write the value to column C (top-left of merge).",
       "Unit Cost per row uses an E:F merge — always write the value to column E (top-left of merge).",
       "Total Cost column G has NO pre-loaded formulas in the template. Inject =A{row}*E{row} for each populated item row.",
-      "Grand Total cell F43:G43 is merged and has NO pre-loaded formula. Inject =SUM(G12:G42) after filling items.",
+      "Grand Total cell F48:G48 is merged and has NO pre-loaded formula. Inject =SUM(G12:G47) after filling items.",
       "Never write to any cell marked readonly:true — these contain static labels or institution-fixed values."
     ]
   },
@@ -32,7 +32,7 @@
       "section_id": "institutional_header",
       "label": "Institutional Header",
       "row_start": 1,
-      "row_end": 7,
+      "row_end": 5,
       "repeatable": false,
       "readonly": true,
       "description": "Static TUP branding block. Contains the university logo area (A1), university name, address, website, and the PROCUREMENT OFFICE / PURCHASE REQUEST title block. Never write to any cell in this section.",
@@ -79,12 +79,12 @@
       "section_id": "items_table",
       "label": "Item List",
       "row_start": 12,
-      "row_end": 42,
+      "row_end": 47,
       "repeatable": true,
       "readonly": false,
       "row_template": 12,
-      "max_rows": 31,
-      "description": "The main repeating section. 31 available item slots (rows 12 to 42). Every row has the same structure: A=Quantity, B=Unit, C:D merged=Item Description, E:F merged=Unit Cost, G=Total Cost (formula to be injected). Leave unfilled rows completely blank.",
+      "max_rows": 36,
+      "description": "The main repeating section. 36 available item slots (rows 12 to 47). Every row has the same structure: A=Quantity, B=Unit, C:D merged=Item Description, E:F merged=Unit Cost, G=Total Cost (formula to be injected). Leave unfilled rows completely blank.",
       "per_row_merges": [
         { "range": "C{row}:D{row}", "role": "Item Description — write to C{row}" },
         { "range": "E{row}:F{row}", "role": "Unit Cost — write to E{row}" }
@@ -93,14 +93,14 @@
     {
       "section_id": "total_row",
       "label": "Grand Total",
-      "row_start": 43,
-      "row_end": 43,
+      "row_start": 48,
+      "row_end": 48,
       "repeatable": false,
       "readonly": true,
-      "description": "Row 43. A43:E43 is merged with the static label 'TOTAL'. F43:G43 is merged and holds the grand total formula. Inject =SUM(G12:G42) into F43 if the formula is not pre-loaded. Never overwrite A43:E43.",
+      "description": "Row 48. A48:E48 is merged with the static label 'TOTAL'. F48:G48 is merged and holds the grand total formula. Inject =SUM(G12:G47) into F48 if the formula is not pre-loaded. Never overwrite A48:E48.",
       "key_merges": [
-        { "range": "A43:E43", "content": "'TOTAL' label — static, readonly" },
-        { "range": "F43:G43", "role": "Grand Total formula cell — inject =SUM(G12:G42)" }
+        { "range": "A48:E48", "content": "'TOTAL' label — static, readonly" },
+        { "range": "F48:G48", "role": "Grand Total formula cell — inject =SUM(G12:G47)" }
       ]
     },
     {
@@ -115,20 +115,20 @@
     {
       "section_id": "footer",
       "label": "Footer — Purpose, Signature, Requestor, Designation",
-      "row_start": 45,
-      "row_end": 48,
+      "row_start": 50,
+      "row_end": 53,
       "repeatable": false,
       "readonly": false,
-      "description": "Four footer rows: PURPOSE (row 45), SIGNATURE (row 46), NAME OF REQUESTOR (row 47), DESIGNATION (row 48). E47:G47 and E48:G48 contain static Campus Director info — never overwrite those.",
+      "description": "Four footer rows: PURPOSE (row 50), SIGNATURE (row 51), NAME OF REQUESTOR (row 52), DESIGNATION (row 53). E52:G52 and E53:G53 contain static Campus Director info — never overwrite those.",
       "key_merges": [
-        { "range": "A45:B45", "content": "'PURPOSE:' label — static" },
-        { "range": "C45:G45", "role": "INPUT — Purpose text value" },
-        { "range": "A46:B46", "content": "'SIGNATURE:' label — static" },
-        { "range": "C46:D46", "role": "Signature area — left blank for physical signature" },
-        { "range": "E46:G46", "content": "'Approved by:' label — static" },
-        { "range": "E47:G47", "content": "STATIC — 'Engr. REXMELLE F. DECAPIA, JR. Ph.D.' — DO NOT OVERWRITE" },
-        { "range": "A48:B48", "content": "'DESIGNATION:' label — static" },
-        { "range": "E48:G48", "content": "STATIC — 'Campus Director' — DO NOT OVERWRITE" }
+        { "range": "A50:B50", "content": "'PURPOSE:' label — static" },
+        { "range": "C50:G50", "role": "INPUT — Purpose text value" },
+        { "range": "A51:B51", "content": "'SIGNATURE:' label — static" },
+        { "range": "C51:D51", "role": "Signature area — left blank for physical signature" },
+        { "range": "E51:G51", "content": "'Approved by:' label — static" },
+        { "range": "E52:G52", "content": "STATIC — 'Engr. REXMELLE F. DECAPIA, JR. Ph.D.' — DO NOT OVERWRITE" },
+        { "range": "A53:B53", "content": "'DESIGNATION:' label — static" },
+        { "range": "E53:G53", "content": "STATIC — 'Campus Director' — DO NOT OVERWRITE" }
       ]
     }
   ],
@@ -201,8 +201,8 @@
       "section": "items_table",
       "type": "repeating_rows",
       "row_start": 12,
-      "row_end": 42,
-      "max_rows": 31,
+      "row_end": 47,
+      "max_rows": 36,
       "row_template": 12,
       "notes": "Each element in the items array maps sequentially to one Excel row starting at row 12. Stop at row 42 regardless of how many items exist. Leave unfilled rows blank. Do NOT write placeholder text like 'N/A' or '0' to empty rows.",
       "row_fields": [
@@ -285,15 +285,15 @@
       "field_id": "grand_total",
       "label": "Grand Total",
       "section": "total_row",
-      "excel_cell": "F43",
-      "merged_range": "F43:G43",
-      "write_to": "F43",
+      "excel_cell": "F48",
+      "merged_range": "F48:G48",
+      "write_to": "F48",
       "type": "formula",
-      "formula": "=SUM(G12:G42)",
+      "formula": "=SUM(G12:G47)",
       "format": "#,##0.00",
       "alignment": "right",
       "readonly": true,
-      "notes": "Template has NO pre-loaded formula here. After filling all item rows, inject =SUM(G12:G42) into F43. Never hardcode this value.",
+      "notes": "Template has NO pre-loaded formula here. After filling all item rows, inject =SUM(G12:G47) into F48. Never hardcode this value.",
       "example": 100000.00
     },
 
@@ -301,9 +301,9 @@
       "field_id": "purpose",
       "label": "Purpose",
       "section": "footer",
-      "excel_cell": "C45",
-      "merged_range": "C45:G45",
-      "write_to": "C45",
+      "excel_cell": "C50",
+      "merged_range": "C50:G50",
+      "write_to": "C50",
       "type": "text",
       "required": true,
       "default": null,
@@ -317,9 +317,9 @@
       "field_id": "requestor_name",
       "label": "Name of Requestor (Section Head)",
       "section": "footer",
-      "excel_cell": "C47",
+      "excel_cell": "C52",
       "merged_range": null,
-      "write_to": "C47",
+      "write_to": "C52",
       "type": "text",
       "required": true,
       "default": null,
@@ -333,9 +333,9 @@
       "field_id": "department_head_name",
       "label": "Name of Department Head",
       "section": "footer",
-      "excel_cell": "D47",
+      "excel_cell": "D52",
       "merged_range": null,
-      "write_to": "D47",
+      "write_to": "D52",
       "type": "text",
       "required": false,
       "default": null,
@@ -350,9 +350,9 @@
       "field_id": "requestor_designation",
       "label": "Designation of Section Head",
       "section": "footer",
-      "excel_cell": "C48",
+      "excel_cell": "C53",
       "merged_range": null,
-      "write_to": "C48",
+      "write_to": "C53",
       "type": "text",
       "required": true,
       "default": "Section Head",
@@ -365,53 +365,64 @@
       "field_id": "department_head_designation",
       "label": "Designation of Department Head",
       "section": "footer",
-      "excel_cell": "D48",
+      "excel_cell": "D53",
       "merged_range": null,
-      "write_to": "D48",
+      "write_to": "D53",
       "type": "text",
       "required": false,
       "default": "Department Head",
       "alignment": "center",
       "pdf_location": "Footer — DESIGNATION row, middle cell",
       "example": "Department Head"
+    },
+    {
+      "field_id": "unique_code",
+      "label": "Unique Code",
+      "section": "extra",
+      "excel_cell": "G54",
+      "write_to": "G54",
+      "type": "text",
+      "required": false,
+      "pdf_location": "Bottom right corner — row 54",
+      "example": "ABC-123-XYZ"
     }
 
   ],
 
   "readonly_cells": [
-    { "range": "A1:G7",   "reason": "Institutional header — TUP branding, address, form code. Never modify." },
+    { "range": "A1:G5",   "reason": "Institutional header — TUP branding, address, form code. Never modify." },
     { "range": "A8",      "reason": "'Department:' label" },
     { "range": "E8",      "reason": "'PR NO. :' label" },
     { "range": "A9",      "reason": "'Section:' label" },
     { "range": "E9",      "reason": "'Date:' label" },
     { "range": "A10:G10", "reason": "Full-width horizontal divider line" },
     { "range": "A11:G11", "reason": "Table column headers: Quantity, Unit, Item Description, Unit Cost, Total Cost" },
-    { "range": "A43:E43", "reason": "'TOTAL' label — static merged region" },
-    { "range": "A44:G44", "reason": "Blank spacer row between TOTAL and footer — leave untouched" },
-    { "range": "A45:B45", "reason": "'PURPOSE:' label" },
-    { "range": "A46:B46", "reason": "'SIGNATURE:' label" },
-    { "range": "C46:D46", "reason": "Physical signature area — must remain blank for wet signature" },
-    { "range": "E46:G46", "reason": "'Approved by:' label" },
-    { "range": "B47",     "reason": "'NAME OF REQUESTOR:' label" },
-    { "range": "E47:G47", "reason": "STATIC — Campus Director name 'Engr. REXMELLE F. DECAPIA, JR. Ph.D.' — DO NOT OVERWRITE." },
-    { "range": "A48:B48", "reason": "'DESIGNATION:' label (merged)" },
-    { "range": "E48:G48", "reason": "STATIC — 'Campus Director' title — DO NOT OVERWRITE." }
+    { "range": "A48:E48", "reason": "'TOTAL' label — static merged region" },
+    { "range": "A49:G49", "reason": "Blank spacer row between TOTAL and footer — leave untouched" },
+    { "range": "A50:B50", "reason": "'PURPOSE:' label" },
+    { "range": "A51:B51", "reason": "'SIGNATURE:' label" },
+    { "range": "C51:D51", "reason": "Physical signature area — must remain blank for wet signature" },
+    { "range": "E51:G51", "reason": "'Approved by:' label" },
+    { "range": "B52",     "reason": "'NAME OF REQUESTOR:' label" },
+    { "range": "E52:G52", "reason": "STATIC — Campus Director name 'Engr. REXMELLE F. DECAPIA, JR. Ph.D.' — DO NOT OVERWRITE." },
+    { "range": "A53:B53", "reason": "'DESIGNATION:' label (merged)" },
+    { "range": "E53:G53", "reason": "STATIC — 'Campus Director' title — DO NOT OVERWRITE." }
   ],
 
   "formula_injection": {
     "description": "The template has NO pre-loaded formulas. The agent must inject these after writing data.",
     "formulas": [
       {
-        "target": "G{row} for each populated item row (rows 12 to 42)",
+        "target": "G{row} for each populated item row (rows 12 to 47)",
         "formula": "=A{row}*E{row}",
         "condition": "Inject only for rows where quantity and unit_cost are populated. Leave blank for empty rows.",
         "example": "G12 → =A12*E12,  G13 → =A13*E13, ..."
       },
       {
-        "target": "F43",
-        "formula": "=SUM(G12:G42)",
+        "target": "F48",
+        "formula": "=SUM(G12:G47)",
         "condition": "Always inject regardless of how many rows are filled.",
-        "example": "F43 → =SUM(G12:G42)"
+        "example": "F48 → =SUM(G12:G47)"
       }
     ]
   },
@@ -426,15 +437,15 @@
     "acceptance_criteria": [
       "department and section_name must always be filled",
       "date must be filled and formatted as MMM DD, YYYY (e.g. Apr 26, 2026)",
-      "At least one item row (rows 12-42) must be populated",
+      "At least one item row (rows 12-47) must be populated",
       "Every populated item row must have: quantity (A), unit (B), item_description (C), unit_cost (E)",
       "G{row} for each populated row must be the formula =A{row}*E{row} — never a hardcoded number",
-      "F43 must be the formula =SUM(G12:G42) — never a hardcoded number",
-      "Do NOT write to E47:G47 (Campus Director name) or E48:G48 (Campus Director title)",
-      "Do NOT write to C46:D46 (physical signature area)",
+      "F48 must be the formula =SUM(G12:G47) — never a hardcoded number",
+      "Do NOT write to E52:G52 (Campus Director name) or E53:G53 (Campus Director title)",
+      "Do NOT write to C51:D51 (physical signature area)",
       "No cell formatting, borders, fonts, or merged regions may be altered",
-      "Export using print area A1:G48 in portrait A4 format",
-      "Max 31 line items (rows 12-42). If data exceeds 31 items, truncate and log a warning"
+      "Export using print area A1:G54 in portrait A4 format",
+      "Max 36 line items (rows 12-47). If data exceeds 36 items, truncate and log a warning"
     ]
   },
 
