@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const res  = await fetch('/account-settings/update-profile', {
             method:  'POST',
-            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
             body:    body.toString(),
         });
 
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const res  = await fetch('/account-settings/update-password', {
             method:  'POST',
-            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
             body:    body.toString(),
         });
 
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 const res  = await fetch('/account-settings/update-avatar', {
                     method:  'POST',
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
                     body:    formData,
                 });
                 const data = await res.json();
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 const res  = await fetch('/account-settings/delete-avatar', {
                     method:  'DELETE',
-                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json' },
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 });
                 const data = await res.json();
 

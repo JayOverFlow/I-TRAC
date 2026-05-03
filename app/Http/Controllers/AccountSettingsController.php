@@ -39,10 +39,13 @@ class AccountSettingsController extends Controller
 
         $validated = $request->validate([
             'user_firstname'  => ['required', 'string', 'max:100'],
-            'user_middlename' => ['nullable', 'string', 'max:100'],
+            'user_middlename' => ['required', 'string', 'max:100'],
             'user_lastname'   => ['required', 'string', 'max:100'],
             'user_suffix'     => ['nullable', 'string', 'max:20'],
             'user_contactno'  => ['nullable', 'string', 'max:20'],
+        ], [
+            'user_middlename.required' => 'Middle name could not be left blank.',
+            'user_lastname.required' => 'Last name could not be left blank.',
         ]);
 
         $user->update($validated);
