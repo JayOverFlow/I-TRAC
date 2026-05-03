@@ -91,6 +91,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/account-settings/update-avatar', 'updateAvatar')->name('account.settings.update.avatar');
         Route::delete('/account-settings/delete-avatar', 'deleteAvatar')->name('account.settings.delete.avatar');
     });
+
+    // Chat System
+    Route::controller(\App\Http\Controllers\ChatController::class)->group(function () {
+        Route::get('/chat/users', 'getUsers')->name('chat.users');
+        Route::get('/chat/search-users', 'searchUsers')->name('chat.search');
+        Route::get('/chat/messages/{userId}', 'getMessages')->name('chat.messages');
+        Route::post('/chat/messages', 'sendMessage')->name('chat.send');
+    });
 });
 
 // Authentication
