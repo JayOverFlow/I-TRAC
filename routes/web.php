@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
 use App\Http\Controllers\CreatePrController;
 use App\Http\Controllers\PrReviewController;
+use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,10 @@ Route::middleware(['auth', 'role:Head,Procurement'])->group(function () {
         Route::post('/pr-review/{task_id}/approve', 'approvePr')->name('approve.pr');
         Route::post('/pr-review/{task_id}/reject', 'rejectPr')->name('reject.pr');
         Route::get('/pr-review/{task_id}/export', 'exportPdf')->name('export.pr.pdf');
+    });
+
+    Route::controller(PrPreviewController::class)->group(function () {
+        Route::get('/pr-preview/{pr_id}', 'showPrPreview')->name('show.pr.preview');
     });
 
     Route::controller(CreateAppController::class)->group(function () {
