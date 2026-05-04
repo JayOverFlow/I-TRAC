@@ -19,12 +19,9 @@
     <ul class="navbar-item flex-row ms-md-auto ms-0 action-area">
 
         <li class="nav-item dropdown notification-dropdown">
-            <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <button type="button" class="btn p-0 border-0 bg-transparent" aria-label="Notifications">
-                    <img src="{{ asset('img/icons/bell.png') }}" alt="Notification">
-                </button>
-            </a>
+            <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </a>
 
             <div class="dropdown-menu position-absolute" aria-labelledby="notificationDropdown">
                 <div class="drodpown-title message">
@@ -214,29 +211,27 @@
                     </div>
                 </div>
                 <div class="dropdown-item">
-                    <a href="user-profile.html">
-                        <img src="{{ asset('img/icons/profile.png') }}" alt="Notification">
-                        <span>Profile</span>
+                    <a href="{{ route('account.settings') }}#animated-underline-profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span>Profile</span>
                     </a>
                 </div>
                 <div class="dropdown-item">
-                    <a href="app-mailbox.html">
-                        <img src="{{ asset('img/icons/inbox.png') }}" alt="Notification">
+                    <a href="{{ route('account.settings') }}#animated-underline-inbox">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                         <span>Inbox</span>
                     </a>
                 </div>
                 <div class="dropdown-item">
-                    <a href="auth-boxed-lockscreen.html">
-                        <img src="{{ asset('img/icons/settings.png') }}" alt="Notification">
-                        <span>Lock Screen</span>
+                    <a href="{{ route('account.settings') }}#animated-underline-settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> 
+                        <span>Settings</span>
                     </a>
                 </div>
                 <div class="dropdown-item">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <a href="javascript:void(0);" onclick="this.closest('form').submit();">
-                            <img src="{{ asset('img/icons/logout.png') }}" width="26" height="26"
-                                alt="Logout">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             <span>Log Out</span>
                         </a>
 

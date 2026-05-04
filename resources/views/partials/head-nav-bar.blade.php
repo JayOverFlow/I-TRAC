@@ -18,21 +18,21 @@
 
         <li class="menu">
             <a href="{{ route('show.dashboard') }}" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/dashboard.png') }}" width="24" height="24" alt=""> 
+                <img src="{{ asset('img/dashboard.svg') }}" width="24" height="24" alt=""> 
                 <span>Dashboard</span>
             </a>
         </li>
 
         <li class="menu">
             <a href="{{ route('show.mr') }}" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/MR.png') }}" width="24" height="24" alt=""> 
+                <img src="{{ asset('img/MR.svg') }}" width="24" height="24" alt=""> 
                 <span>MR</span>
             </a>
         </li>
 
         <li class="menu">
             <a href="{{ route('show.tasks') }}" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/tasks.png') }}" width="24" height="24" alt=""> 
+                <img src="{{ asset('img/tasks.svg') }}" width="24" height="24" alt=""> 
                 <span>Tasks</span>
             </a>
         </li>
