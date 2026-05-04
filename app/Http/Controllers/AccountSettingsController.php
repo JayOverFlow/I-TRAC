@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
+use App\Models\PrParent;
 
 class AccountSettingsController extends Controller
 {
@@ -22,10 +23,10 @@ class AccountSettingsController extends Controller
             return view('head.pages.head-account-settings', compact('user', 'apps'));
         } elseif ($userRole->gen_role === 'Procurement') {
             $apps = $user->appParents;
-            $loadedPrs = null;
-            $pos = null;
+            // Fetch PRs retrieved by this user
+            $loadedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
             
-            return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs', 'pos'));
+            return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs'));
         }
 
         abort(404, 'Account settings not available for this role yet.');
@@ -150,5 +151,39 @@ class AccountSettingsController extends Controller
             'success' => true,
             'message' => 'Profile photo removed.',
         ]);
+    }
+
+    /**
+     * Retrieve an Approved Purchase Request by its unique code.
+     */
+    public function retrievePr(Request $request)
+    {
+        $request->validate([
+            'pr_unique_code' => ['required', 'string', 'max:50'],
+        ]);
+
+        $prCode = $request->pr_unique_code;
+
+        // Find the PR with the given unique code that is 'Approved'
+        $pr = \App\Models\PrParent::where('pr_unique_code', $prCode)
+            ->where('pr_status', 'Approved')
+            ->first();
+
+        if (!$pr) {
+            return redirect(url()->previous() . '#animated-underline-purchase-request')->with('error', "Purchase Request '$prCode' not found or not yet approved.");
+        }
+
+        // Check if it's already retrieved
+        if ($pr->retrieved_by) {
+            if ($pr->retrieved_by === Auth::id()) {
+                return redirect(url()->previous() . '#animated-underline-purchase-request')->with('success', "Purchase Request '$prCode' is already in your list.");
+            }
+            return redirect(url()->previous() . '#animated-underline-purchase-request')->with('error', "Purchase Request '$prCode' has already been retrieved by another procurement user.");
+        }
+
+        // Assign retrieval to current user
+        $pr->update(['retrieved_by' => Auth::id()]);
+
+        return redirect(route('account.settings') . '#animated-underline-purchase-request')->with('success', "Purchase Request '$prCode' successfully retrieved.");
     }
 }

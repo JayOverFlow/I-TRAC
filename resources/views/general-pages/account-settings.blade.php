@@ -53,7 +53,7 @@
                                     data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
                                     aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
                                     tabindex="-1">
-                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
                                     Annual Procurement Plan</button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -61,7 +61,7 @@
                                     data-bs-toggle="tab" href="#animated-underline-purchase-request" role="tab"
                                     aria-controls="animated-underline-purchase-request" aria-selected="false"
                                     tabindex="-1">
-                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    <img src="{{ asset('img/PR.svg') }}" width="20" height="20">
                                     Purchase Request</button>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -69,7 +69,7 @@
                                     data-bs-toggle="tab" href="#animated-underline-purchase-order" role="tab"
                                     aria-controls="animated-underline-purchase-order" aria-selected="false"
                                     tabindex="-1">
-                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    <img src="{{ asset('img/PO.svg') }}" width="20" height="20">
                                     Purchase Order</button>
                             </li>
                         @endif
@@ -110,5 +110,18 @@
 
     <!-- CUSTOM js -->
     <script src="{{ asset('js/account-setting/page-specific/profile.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Check if there is a hash in the URL and activate the corresponding tab
+            var hash = window.location.hash;
+            if (hash) {
+                var tabTriggerEl = document.querySelector('button[href="' + hash + '"]');
+                if (tabTriggerEl) {
+                    var tab = new bootstrap.Tab(tabTriggerEl);
+                    tab.show();
+                }
+            }
+        });
+    </script>
     {{-- <script src="{{ asset('js/account-setting/custom-account-setting.js') }}"></script> --}}
 @endpush

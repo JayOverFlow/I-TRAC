@@ -25,10 +25,12 @@ class PrParent extends Model
         'pr_status',
         'submitted_at',
         'pr_total',
+        'retrieved_by',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
+        'created_at'   => 'datetime',
     ];
 
     // One PR has many items
@@ -65,5 +67,11 @@ class PrParent extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'pr_approved_by', 'user_id');
+    }
+
+    // The procurement user who retrieved this PR
+    public function retriever()
+    {
+        return $this->belongsTo(User::class, 'retrieved_by', 'user_id');
     }
 }
