@@ -44,7 +44,7 @@
                                     data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
                                     aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
                                     tabindex="-1">
-                                    <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                    <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
                                     Annual Procurement Plan</button>
                             </li>
                         @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
@@ -112,15 +112,31 @@
     <script src="{{ asset('js/account-setting/page-specific/profile.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // Check if there is a hash in the URL and activate the corresponding tab
-            var hash = window.location.hash;
-            if (hash) {
-                var tabTriggerEl = document.querySelector('button[href="' + hash + '"]');
-                if (tabTriggerEl) {
-                    var tab = new bootstrap.Tab(tabTriggerEl);
-                    tab.show();
+            /**
+             * Activates the Bootstrap tab based on the current URL hash.
+             * Also ensures the page is scrolled to the top to prevent browser jump.
+             */
+            function activateTabFromHash() {
+                var hash = window.location.hash;
+                if (hash) {
+                    var tabTriggerEl = document.querySelector('button[href="' + hash + '"]');
+                    if (tabTriggerEl) {
+                        var tab = new bootstrap.Tab(tabTriggerEl);
+                        tab.show();
+                        
+                        // Prevent the page from staying scrolled down to the tab content
+                        window.scrollTo(0, 0);
+                    }
                 }
             }
+
+            // Initial activation on page load
+            activateTabFromHash();
+
+            // Listen for hash changes to support same-page navigation from the header
+            $(window).on('hashchange', function() {
+                activateTabFromHash();
+            });
         });
     </script>
     {{-- <script src="{{ asset('js/account-setting/custom-account-setting.js') }}"></script> --}}
