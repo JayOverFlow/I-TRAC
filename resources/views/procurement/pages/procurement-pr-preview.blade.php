@@ -33,12 +33,12 @@
                     {{ number_format($pr->prItems->sum('pr_items_total_cost'), 2) }}</h5>
 
                 <div class="text-end">
-                    <button type="button"
+                    <a href="{{ route('show.create.po', $pr->pr_id) }}"
                         class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                         <img src="{{ asset('img/PO.svg') }}" width="18" height="18" class="img-white-icon"
                             style="filter: invert(1) brightness(100);">
                         <span>Create Purchase Order</span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
