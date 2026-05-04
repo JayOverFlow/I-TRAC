@@ -14,17 +14,23 @@
             </thead>
             <tbody>
                 @foreach ($loadedPrs as $loadedPr)
-                    <tr>
-                        <td class="text-center" style="cursor: pointer;">
+                    <tr class="clickable-row" data-id="{{ $loadedPr->pr_id }}">
+                        <td class="text-center">
                             {{ $loadedPr->pr_unique_code ?? $loadedPr->pr_id }}</td>
-                        <td style="cursor: pointer;">
+                        <td>
                             {{ $loadedPr->pr_purpose ?? 'Untitled PR' }}</td>
-                        <td class="text-center" style="cursor: pointer;">
+                        <td class="text-center">
                             {{ $loadedPr->created_at ? $loadedPr->created_at->format('Y-m-d') : 'N/A' }}</td>
                         <td class="text-center">
-                            <button class="btn bg-transparent p-0 border-0 shadow-none"><img
-                                    src="{{ asset('img/Edit.svg') }}" alt="Edit" width="19"
-                                    height="20"></button>
+                            <button class="btn bg-transparent p-0 border-0 shadow-none" title="View Purchase Request">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="20"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"
+                                    style="color: #4361ee;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
                         </td>
                     </tr>
                 @endforeach
@@ -56,6 +62,12 @@
             padding-left: 40px !important;
             width: 300px !important;
         }
+        .clickable-row {
+            cursor: pointer;
+        }
+        .clickable-row:hover {
+            background-color: rgba(0, 0, 0, 0.05) !important;
+        }
     </style>
 @endpush
 
@@ -78,6 +90,13 @@
                 "stripeClasses": [],
                 "lengthMenu": [5, 10, 20, 50],
                 "pageLength": 5
+            });
+
+            // Handle row click for PR preview
+            $('#pr-table tbody').on('click', 'tr.clickable-row', function(e) {
+                var prId = $(this).data('id');
+                var url = "{{ route('show.pr.preview', ':id') }}".replace(':id', prId);
+                window.location.href = url;
             });
         });
     </script>
