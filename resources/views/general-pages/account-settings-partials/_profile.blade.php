@@ -7,7 +7,7 @@
     - Password fields have proper name attributes
 --}}
 
-<div class="tab-pane fade show active" id="animated-underline-profile" role="tabpanel" aria-labelledby="animated-underline-profile-tab">
+<div class="tab-pane fade show active" id="pane-animated-underline-profile" role="tabpanel" aria-labelledby="animated-underline-profile-tab">
     
     <!-- Profile Container: Matches the placement of the Inbox section -->
     <div class="profile-container" id="profile-section">

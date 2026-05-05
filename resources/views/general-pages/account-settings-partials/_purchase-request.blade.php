@@ -1,5 +1,5 @@
 {{-- Purchase Request Tab --}}
-<div class="tab-pane fade" id="animated-underline-purchase-request" role="tabpanel"
+<div class="tab-pane fade" id="pane-animated-underline-purchase-request" role="tabpanel"
     aria-labelledby="animated-underline-purchase-request-tab">
     <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
         <table id="pr-table" class="table table-striped dt-table-hover" style="width:100%"

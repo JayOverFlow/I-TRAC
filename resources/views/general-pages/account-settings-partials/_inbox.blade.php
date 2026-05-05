@@ -7,7 +7,7 @@
 @endpush
 
 {{-- Inbox Tab --}}
-<div class="tab-pane fade" id="animated-underline-inbox" role="tabpanel"
+<div class="tab-pane fade" id="pane-animated-underline-inbox" role="tabpanel"
     aria-labelledby="animated-underline-inbox-tab">
     <div class="chat-section layout-top-spacing">
         <div class="row">

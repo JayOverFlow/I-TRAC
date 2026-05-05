@@ -19,19 +19,19 @@
                     <ul class="nav nav-pills" id="animateLine" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link red-text-2 active" id="animated-underline-profile-tab"
-                                data-bs-toggle="tab" href="#animated-underline-profile" role="tab"
+                                data-bs-toggle="tab" href="#pane-animated-underline-profile" role="tab"
                                 aria-controls="animated-underline-profile" aria-selected="true"><img
                                     src="{{ asset('img/Profile.svg') }}" width="20" height="20"> Profile</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link red-text-2" id="animated-underline-inbox-tab" data-bs-toggle="tab"
-                                href="#animated-underline-inbox" role="tab" aria-controls="animated-underline-inbox"
+                                href="#pane-animated-underline-inbox" role="tab" aria-controls="animated-underline-inbox"
                                 aria-selected="false" tabindex="-1"><img src="{{ asset('img/Inbox.svg') }}" width="20"
                                     height="20"> Inbox</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link red-text-2" id="animated-underline-settings-tab" data-bs-toggle="tab"
-                                href="#animated-underline-settings" role="tab"
+                                href="#pane-animated-underline-settings" role="tab"
                                 aria-controls="animated-underline-settings" aria-selected="false" tabindex="-1">
                                 <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
                                 Settings</button>
@@ -41,7 +41,7 @@
                         @if (auth()->user()->roles()->first()->gen_role === 'Head')
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
-                                    data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
+                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan" role="tab"
                                     aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
                                     tabindex="-1">
                                     <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
@@ -50,7 +50,7 @@
                         @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
-                                    data-bs-toggle="tab" href="#animated-underline-annual-procurement-plan" role="tab"
+                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan" role="tab"
                                     aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
                                     tabindex="-1">
                                     <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
@@ -58,7 +58,7 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-purchase-request-tab"
-                                    data-bs-toggle="tab" href="#animated-underline-purchase-request" role="tab"
+                                    data-bs-toggle="tab" href="#pane-animated-underline-purchase-request" role="tab"
                                     aria-controls="animated-underline-purchase-request" aria-selected="false"
                                     tabindex="-1">
                                     <img src="{{ asset('img/PR.svg') }}" width="20" height="20">
@@ -66,7 +66,7 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-purchase-order-tab"
-                                    data-bs-toggle="tab" href="#animated-underline-purchase-order" role="tab"
+                                    data-bs-toggle="tab" href="#pane-animated-underline-purchase-order" role="tab"
                                     aria-controls="animated-underline-purchase-order" aria-selected="false"
                                     tabindex="-1">
                                     <img src="{{ asset('img/PO.svg') }}" width="20" height="20">
@@ -114,17 +114,21 @@
         $(document).ready(function() {
             /**
              * Activates the Bootstrap tab based on the current URL hash.
-             * Also ensures the page is scrolled to the top to prevent browser jump.
+             * We use hashes that match the button IDs (minus the '-tab' suffix)
+             * but don't match the tab-pane IDs exactly, preventing native browser jumps.
              */
             function activateTabFromHash() {
                 var hash = window.location.hash;
                 if (hash) {
-                    var tabTriggerEl = document.querySelector('button[href="' + hash + '"]');
+                    // Try to find a button whose ID matches [hash]-tab
+                    var tabButtonId = hash.substring(1) + '-tab';
+                    var tabTriggerEl = document.getElementById(tabButtonId);
+                    
                     if (tabTriggerEl) {
                         var tab = new bootstrap.Tab(tabTriggerEl);
                         tab.show();
                         
-                        // Prevent the page from staying scrolled down to the tab content
+                        // Force scroll to top as an extra precaution
                         window.scrollTo(0, 0);
                     }
                 }
