@@ -1,5 +1,5 @@
 {{-- Annual Procurement Plan Tab --}}
-<div class="tab-pane fade" id="animated-underline-annual-procurement-plan" role="tabpanel"
+<div class="tab-pane fade" id="pane-animated-underline-annual-procurement-plan" role="tabpanel"
     aria-labelledby="animated-underline-annual-procurement-plan-tab">
     <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
         <table id="zero-config" class="table table-striped dt-table-hover" style="width:100%">

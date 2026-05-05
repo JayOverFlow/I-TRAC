@@ -1,5 +1,5 @@
 {{-- Purchase Order Tab --}}
-<div class="tab-pane fade" id="animated-underline-purchase-order" role="tabpanel"
+<div class="tab-pane fade" id="pane-animated-underline-purchase-order" role="tabpanel"
     aria-labelledby="animated-underline-purchase-order-tab">
     <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
         <table id="po-table" class="table table-striped dt-table-hover" style="width:100%">
