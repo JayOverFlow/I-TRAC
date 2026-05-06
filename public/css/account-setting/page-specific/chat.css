@@ -26,8 +26,7 @@
 
 .chat-system {
   display: flex;
-  height: calc(100vh - 104px);
-  height: calc(100vh - 158px);
+  height: 720px !important; /* Fixed height for stability during zoom */
   box-shadow: none;
   border: 1px solid #e0e6ed;
   border-radius: 6px;
@@ -149,7 +148,7 @@
   background-color: #fff;
   border-bottom-right-radius: 8px;
   border-top-right-radius: 8px;
-  height: calc(100vh - 158px);
+  height: 100%;
 }
 .chat-system .chat-box .chat-not-selected {
   display: flex;

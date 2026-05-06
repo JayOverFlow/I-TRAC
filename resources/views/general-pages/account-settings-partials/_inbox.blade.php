@@ -1,5 +1,8 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/chat.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/dark/chat.css') }}">
 @endpush
 
 @push('js')

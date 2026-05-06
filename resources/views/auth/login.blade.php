@@ -23,6 +23,19 @@
 
 </head>
 <body class="layout-boxed">
+
+    <script>
+        (function() {
+            var theme = localStorage.getItem("theme");
+            if (theme) {
+                var parseObj = JSON.parse(theme);
+                if (parseObj.settings.layout.darkMode) {
+                    document.body.classList.add('dark');
+                }
+            }
+        })();
+    </script>
+
     <div class="main-container" id="container">
         <div class="row">
             <div id="cover" class="col-6 p-4 d-flex justify-content-center align-items-center">

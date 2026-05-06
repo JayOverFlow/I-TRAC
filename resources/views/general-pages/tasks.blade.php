@@ -7,6 +7,11 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/custom-tasks.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dash_1.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/dark/modal.css') }}">
 @endpush
 
 @section('content')

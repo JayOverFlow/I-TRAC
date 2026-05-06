@@ -38,6 +38,10 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dt-global_style.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
 @endpush
 
 @push('js')

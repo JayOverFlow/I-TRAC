@@ -96,4 +96,287 @@ body {
     background-color: var(--white-2) !important;
 }
 
-/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJjdXN0b20uc2NzcyJdLCJzb3VyY2VzQ29udGVudCI6WyIiXSwiZmlsZSI6ImN1c3RvbS5jc3MifQ== */
+/* Theme Toggle Icons */
+.theme-toggle svg.feather-moon, .theme-toggle svg.feather-sun {
+    cursor: pointer;
+}
+body:not(.dark) .theme-toggle svg.feather-sun {
+    display: none;
+}
+body.dark .theme-toggle svg.feather-moon {
+    display: none;
+}
+body.dark .theme-toggle svg.feather-sun {
+    display: block;
+    color: #e0e6ed;
+}
+body:not(.dark) .theme-toggle svg.feather-moon {
+    display: block;
+    color: #3b3f5c;
+}
+
+/* Dark Mode Overrides for Custom Classes */
+body.dark {
+    background-color: #060818 !important;
+}
+body.dark .header-container {
+    background-color: #060818 !important;
+}
+
+/* Dark Mode Contrast Fixes */
+body.dark .black-text {
+    color: #e0e6ed !important;
+}
+
+body.dark .gray-text {
+    color: #888ea8 !important;
+}
+
+body.dark .red-text-2 {
+    color: #e7515a !important;
+}
+
+/* Table Striped Fix for Dark Mode */
+body.dark .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #e0e6ed !important;
+}
+
+body.dark .table-striped > tbody > tr:nth-of-type(even) > * {
+    background-color: transparent !important;
+    color: #e0e6ed !important;
+}
+
+body.dark .table.dt-table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Fix layout shrinking in dark mode */
+body.dark.layout-boxed .container-xxl,
+body.dark.layout-boxed .container-xl,
+body.dark.layout-boxed .container-lg,
+body.dark.layout-boxed .container-md,
+body.dark.layout-boxed .container-sm,
+body.dark.layout-boxed .container {
+    max-width: 1585px !important;
+}
+
+/* Ensure the header and sidebar wrapper respect the boxed width */
+body.dark.layout-boxed .header-container.container-xxl {
+    max-width: 1600px !important;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+body.dark.layout-boxed .sidebar-wrapper {
+    max-width: 1536px !important;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+body.dark .header-container .navbar {
+    margin: 0 32px !important;
+}
+
+/* Logo Toggling */
+.dark-logo {
+    display: none !important;
+}
+
+body.dark .light-logo {
+    display: none !important;
+}
+
+body.dark .dark-logo {
+    display: block !important;
+}
+
+/* Card Title Color in Dark Mode */
+body.dark .card-title {
+    color: #E7515A !important;
+}
+
+/* Dark Mode Modals */
+body.dark .modal-content {
+    background-color: #0e1726 !important;
+    border: 1px solid #191e3a !important;
+}
+
+body.dark .modal-header {
+    border-bottom: 1px solid #191e3a !important;
+}
+
+body.dark .modal-footer {
+    border-top: 1px solid #191e3a !important;
+}
+
+body.dark .modal-title {
+    color: #e0e6ed !important;
+}
+
+body.dark .modal-body {
+    color: #888ea8 !important;
+}
+
+body.dark .modal-content hr {
+    border-top: 1px solid #191e3a !important;
+}
+
+body.dark .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Header User Name Fix */
+body.dark .user-profile-dropdown .media-body small {
+    color: #e0e6ed !important;
+}
+
+body.dark .user-profile-dropdown .media-body .red-text-2 {
+    color: #e7515a !important;
+}
+
+/* Account Settings Tabs */
+body.dark .nav.nav-pills {
+    background: #1b2e4b !important;
+    padding: 6px !important;
+    border-radius: 8px !important;
+}
+
+body.dark .nav.nav-pills .nav-link {
+    color: #bfc9d4 !important;
+}
+
+body.dark .nav.nav-pills .nav-link.red-text-2 {
+    color: #bfc9d4 !important;
+}
+
+body.dark .nav.nav-pills .nav-link.active {
+    background-color: #0e1726 !important;
+    color: #e7515a !important; /* Keep the active tab accent color */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+}
+
+body.dark .account-content {
+    background: transparent !important;
+}
+
+/* Profile Tab Dark Mode */
+body.dark .profile-container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.dark .profile-sidebar {
+    background-color: #1b2e4b !important;
+    border: 1px solid #1b2e4b !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+body.dark .profile-sidebar-header {
+    height: 100px !important;
+    width: 100% !important;
+}
+
+body.dark .profile-avatar-wrapper {
+    margin-top: -60px !important;
+}
+
+body.dark .profile-sidebar-info h4 {
+    color: #e0e6ed !important;
+}
+
+body.dark .profile-sidebar-info p {
+    color: #888ea8 !important;
+}
+
+body.dark .profile-main-content {
+    background-color: #0e1726 !important;
+    border: 1px solid #1b2e4b !important;
+    border-radius: 8px !important;
+}
+
+body.dark .profile-main-header h3 {
+    color: #e0e6ed !important;
+}
+
+body.dark .info-section-title {
+    color: #e7515a !important;
+    border-bottom: 1px solid #1b2e4b !important;
+}
+
+body.dark .info-label {
+    color: #888ea8 !important;
+}
+
+body.dark .info-value {
+    color: #e0e6ed !important;
+}
+
+body.dark .info-item {
+    border-bottom: 1px solid #1b2e4b !important;
+}
+
+body.dark .profile-avatar-wrapper img {
+    border: none !important;
+}
+
+body.dark .profile-main-header .btn-edit-profile,
+body.dark .profile-footer .btn-go-back {
+    background-color: #3b3f5c !important;
+    color: #fff !important;
+    border: 1px solid #3b3f5c !important;
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark .profile-main-header .btn-edit-profile:hover,
+body.dark .profile-footer .btn-go-back:hover {
+    background-color: #0e1726 !important;
+    border-color: #e7515a !important;
+    color: #e7515a !important;
+}
+
+body.dark .profile-main-header .btn-edit-profile svg,
+body.dark .profile-footer .btn-go-back svg {
+    color: #fff !important;
+}
+
+body.dark .profile-main-header .btn-edit-profile:hover svg,
+body.dark .profile-footer .btn-go-back:hover svg {
+    color: #e7515a !important;
+}
+
+/* Form Controls in Dark Mode (for Edit Profile) */
+body.dark .info-item .form-control {
+    background-color: #1b2e4b !important;
+    color: #e0e6ed !important;
+    border: 1px solid #3b3f5c !important;
+}
+
+body.dark .info-item .form-control[readonly] {
+    background-color: #0e1726 !important;
+    border-color: #1b2e4b !important;
+    color: #515365 !important;
+}
+
+body.dark .password-toggle-icon {
+    color: #888ea8 !important;
+}
+
+/* Global Contrast Fixes */
+body.dark .black-text {
+    color: #e0e6ed !important;
+}
+
+body.dark .fw-bold.black-text {
+    color: #e0e6ed !important;
+}
+
+body.dark .red-text-2 {
+    color: #e7515a !important;
+}

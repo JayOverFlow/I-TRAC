@@ -7,6 +7,10 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/custom-dashboard.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dash_1.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
 @endpush
 
 @section('content')

@@ -17,9 +17,13 @@
 .profile-container {
     display: flex;
     gap: 20px;
-    min-height: calc(100vh - 170px); /* Changed from height to min-height */
+    min-height: auto; /* View mode height dictacted by content */
     margin-top: 20px;
-    padding-bottom: 20px; /* Added breathing room at the bottom */
+    padding-bottom: 20px;
+}
+
+.profile-container.edit-mode {
+    min-height: 720px; /* Kept fixed for stability during edit/zoom */
 }
 
 /* 
@@ -59,7 +63,7 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    border: 5px solid #fff; /* White inner border */
+    border: none; /* Removed white inner border */
     box-shadow: 0 0 0 5px #4361ee; /* Blue outer border matching mockup */
     object-fit: cover;
     margin-bottom: 10px;
@@ -86,6 +90,7 @@
 }
 
 /* Edit Profile Button Style: Using high specificity to ensure it matches the mockup */
+
 .profile-container .btn.btn-edit-profile {
     border: 1px solid #bfc9d4 !important;
     background-color: #fff !important;
