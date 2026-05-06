@@ -198,6 +198,52 @@ var App = function() {
             }
 
         },
+        themeToggle: function (layoutName) {
+
+            var togglethemeEl = document.querySelector('.theme-toggle');
+            
+            if (togglethemeEl) {
+                togglethemeEl.addEventListener('click', function() {
+                    
+                    var getLocalStorage = localStorage.getItem("theme");
+                    var parseObj = JSON.parse(getLocalStorage);
+
+                    if (parseObj && parseObj.settings && parseObj.settings.layout) {
+                        if (parseObj.settings.layout.darkMode) {
+
+                            var getObjectSettings = parseObj.settings.layout;
+                            var newParseObject = {...getObjectSettings, darkMode: false};
+                            var newObject = { ...parseObj, settings: { layout: newParseObject }}
+
+                            localStorage.setItem("theme", JSON.stringify(newObject))
+                            document.body.classList.remove('dark')
+                            
+                        } else {
+
+                            var getObjectSettings = parseObj.settings.layout;
+                            var newParseObject = {...getObjectSettings, darkMode: true};
+                            var newObject = { ...parseObj, settings: { layout: newParseObject }}
+
+                            localStorage.setItem("theme", JSON.stringify(newObject))
+                            document.body.classList.add('dark')
+                        }
+                    } else {
+                        // Default if localStorage is empty
+                        var settingsObject = {
+                            admin: 'Equation Admin Template',
+                            settings: {
+                                layout: {
+                                    name: layoutName,
+                                    darkMode: true,
+                                }
+                            }
+                        }
+                        localStorage.setItem("theme", JSON.stringify(settingsObject));
+                        document.body.classList.add('dark');
+                    }
+                })
+            }
+        },
     }
 
     var inBuiltfunctionality = {
@@ -686,6 +732,7 @@ MaterialRippleEffect: function() {
         init: function(Layout) {
             toggleFunction.overlay();
             toggleFunction.search();
+            toggleFunction.themeToggle(Layout);
             
             /*
                 Desktop Resoltion fn

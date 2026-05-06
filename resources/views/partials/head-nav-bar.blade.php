@@ -4,7 +4,8 @@
         <div class="nav-logo">
             <div class="nav-item theme-logo">
                 <a href="./index.html">
-                    <img src="{{ asset('img/itrac-header-logo.png') }}" class="navbar-logo" alt="logo">
+                    <img src="{{ asset('img/itrac-header-logo.png') }}" class="navbar-logo light-logo" alt="logo">
+                    <img src="{{ asset('img/itrac-header-logo-white.svg') }}" class="navbar-logo dark-logo" alt="logo">
                 </a>
             </div>
         </div>

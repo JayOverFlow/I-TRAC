@@ -2,3 +2,10 @@
 @import './app/loader.css';
 @import './app/plugins.css';
 @import './app/custom.css';
+
+/* Dark Mode Styles */
+@import './app/dark/loader.css';
+@import './app/dark/structure.css';
+@import './app/dark/plugins.css';
+@import './app/dark/main.css';
+@import './app/dark/custom.css';

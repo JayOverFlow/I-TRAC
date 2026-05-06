@@ -42,6 +42,11 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dt-global_style.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
+
     <style>
         .custom-search-wrapper {
             display: flex;
@@ -67,6 +72,9 @@
         }
         .clickable-row:hover {
             background-color: rgba(0, 0, 0, 0.05) !important;
+        }
+        body.dark .clickable-row:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
         }
     </style>
 @endpush
