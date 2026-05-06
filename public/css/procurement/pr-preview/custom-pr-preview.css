@@ -132,3 +132,193 @@ thead.bg-transparent th {
     display: block;
     margin: 0 auto;
 }
+
+/* 
+==================
+    Switches
+==================
+*/
+.switch {
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5em;
+  margin-bottom: 0.125rem;
+}
+.switch .switch-input {
+  float: left;
+  margin-left: -1.5em;
+}
+
+.switch-input {
+  width: 1em;
+  height: 1em;
+  vertical-align: top;
+  background-color: #bfc9d4;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 2px solid #bfc9d4;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+  width: 48px;
+  height: 25px;
+  cursor: pointer;
+}
+.switch-input[type=checkbox] {
+  border-radius: 0.25em;
+}
+.switch-input:active {
+  filter: brightness(90%);
+}
+.switch-input:focus {
+  outline: 0;
+}
+.switch-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+.switch-input:checked[type=checkbox] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+}
+
+.form-switch-custom {
+  padding-left: 2.5em;
+}
+.form-switch-custom .switch-input {
+  margin-left: -2.5em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' style='fill: %231b2e4b;'%3E%3Cpath d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm4.207 12.793-1.414 1.414L12 13.414l-2.793 2.793-1.414-1.414L10.586 12 7.793 9.207l1.414-1.414L12 10.586l2.793-2.793 1.414 1.414L13.414 12l2.793 2.793z'%3E%3C/path%3E%3C/svg%3E");
+  background-position: left center;
+  border-radius: 2em;
+  transition: background-position 0.15s ease-in-out;
+}
+.form-switch-custom .switch-input:focus, .form-switch-custom .switch-input:active {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' style='fill: %231b2e4b;'%3E%3Cpath d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm4.207 12.793-1.414 1.414L12 13.414l-2.793 2.793-1.414-1.414L10.586 12 7.793 9.207l1.414-1.414L12 10.586l2.793-2.793 1.414 1.414L13.414 12l2.793 2.793z'%3E%3C/path%3E%3C/svg%3E");
+}
+.form-switch-custom .switch-input:checked {
+  background-position: right center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' style='fill: rgba(255, 255, 255, 1);'%3E%3Cpath d='M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.705L7.7 11.292l2.299 2.295 5.294-5.294 1.414 1.414-6.706 6.706z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.switch-inline {
+  display: inline-block;
+  margin-right: 1rem;
+}
+.switch-inline .input-checkbox {
+  display: block;
+  float: left;
+  position: relative;
+}
+
+.form-switch-custom.form-switch-primary .switch-input:checked {
+  background-color: #4361ee;
+  border-color: #4361ee;
+}
+
+/* 
+========================
+    Inner Label
+========================
+*/
+.switch.inner-label-toggle {
+  padding: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+.switch.inner-label-toggle .switch-input {
+  min-width: 200px;
+  height: 38px;
+  border-radius: 8px;
+  margin-left: 0;
+  background-color: #fff !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+.switch-inline.inner-label-toggle .input-checkbox {
+  display: block;
+  float: left;
+  position: relative;
+  width: 200px;
+  height: 38px;
+}
+.switch-inline.inner-label-toggle .input-checkbox:before {
+  content: "";
+  position: absolute;
+  height: 34px;
+  width: 98px;
+  background: #8C0404 !important;
+  top: 2px;
+  z-index: 3;
+  left: 2px;
+  border-radius: 6px;
+  transition: 0.5s;
+  pointer-events: none;
+}
+.switch-inline.inner-label-toggle.show .input-checkbox:before {
+  left: 100px;
+  background: #8C0404 !important;
+}
+.switch-inline.inner-label-toggle.show .input-checkbox span.label-left {
+  color: #000;
+}
+.switch-inline.inner-label-toggle.show .input-checkbox span.label-left svg {
+  fill: #000;
+}
+.switch-inline.inner-label-toggle.show .input-checkbox span.label-right {
+  color: #fff;
+}
+.switch-inline.inner-label-toggle.show .input-checkbox span.label-right svg {
+  fill: #fff;
+}
+.switch-inline.inner-label-toggle .input-checkbox span.switch-chk-label {
+  position: absolute;
+  top: 8px;
+  color: #000;
+  pointer-events: none;
+  border-radius: 8px !important;
+  font-size: 13px;
+  width: 50%;
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  z-index: 4;
+}
+.switch-inline.inner-label-toggle .input-checkbox span.switch-chk-label svg {
+  fill: #000;
+  width: 17px;
+  height: 17px;
+  vertical-align: sub;
+}
+.switch-inline.inner-label-toggle .input-checkbox span.label-left {
+  z-index: 4;
+  color: #fff;
+  left: 0;
+}
+.switch-inline.inner-label-toggle .input-checkbox span.label-left svg {
+  fill: #fff;
+}
+.switch-inline.inner-label-toggle .input-checkbox span.label-right {
+  right: 0;
+  z-index: 4;
+}
+
+.inner-label-toggle.form-switch-custom .switch-input {
+  z-index: 2;
+  position: relative;
+}
+.inner-label-toggle.form-switch-custom .switch-input:checked {
+  z-index: 2;
+  position: relative;
+}
+
+.switch-inline.inner-label-toggle .switch-input {
+  background-image: none;
+}
+
+.inner-label-toggle.form-switch-custom .switch-input:active {
+  background-image: none;
+  filter: none;
+}
