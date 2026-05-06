@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Master Admin Register</title>
+    <title>Admin Register</title>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +17,8 @@
 
     {{-- Font Awesome for icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/itrac-favicon.svg') }}">
 
     <!-- Inject SPECIFIC and CUSTOM css-->
     <link rel="stylesheet" href="{{ asset('css/auth-admin/admin-register.css') }}">

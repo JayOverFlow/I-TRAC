@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Login</title>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,9 +17,10 @@
     {{-- Font Awesome for icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/itrac-favicon.svg') }}">
+
     <!-- Inject SPECIFIC and CUSTOM css-->
-    <link rel="stylesheet" href="{{ asset('css/auth/login/page-specific/auth-cover.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/auth/login/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth-admin/admin-register.css') }}">
 
 </head>
 <body class="layout-boxed">
@@ -36,61 +37,60 @@
         })();
     </script>
 
-    <div class="main-container" id="container">
-        <div class="row">
+    <div class="main-container vh-100" id="container">
+        <div class="row vh-100 g-0">
             <div id="cover" class="col-6 p-4 d-flex justify-content-center align-items-center">
                 <div class="text-center">
                     <img src="{{ asset('img/itrac-cover-logo.png') }}" alt="I-TRAC logo" class="my-5" width="500" height="100">
-                    <h4 class="white-text">A Digital System for Item Status Tracking and QR-Code Enabled Material Requisition Control</h4>
+                    <h4 class="white-text">A Digital System for Item Status Tracking and <br> QR-Code Enabled Material Requisition Control</h4>
                 </div>
             </div>
-            <div class="col-6 px-4 py-2 d-flex align-items-center justify-content-center">
-                <div class="row px-3">
-                    <div class="mt-3">
-                        <h2 class="black-text">Login</h2>
-                        <h5 class="black-text">Enter your email and password to login</h5>
+            <div class="col-5 px-2 py-5">
+                
+                <div class="p-4">
+                    <div class="mt-5">
+                        <h2 class="black-text pl-5" >Login</h2>
+                        <h5 class="black-text-h5">Enter your email and password to login</h5>
                     </div>
-                    <form action="{{ route('login') }}" method="POST">
+                    <form class="needs-validation" action="{{ route('login') }}" method="POST">
                     @csrf
-                        <div class="col-md-12 mt-3 mb-3">
-                        <div class="d-flex align-items-center mb-2">
-                            <label for="email" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                Email
-                            </label>
-                            
-                            <div class="text-danger ms-2 mt-0" style="display: none;" id="login-error">
-                                @error('all_fields')
-                                    {{ $message }}
-                                @enderror
-                                @error('auth_failed')
-                                    Email or password is invalid
-                                @enderror
-                            </div>
-                        </div>
-                            <input type="text" class="form-control mb-2 @error('email') is-invalid @enderror @error('password') is-invalid @enderror @error('auth_failed') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
-                        </div>
-                        <div class="col-md-12 mt-3 mb-4">
+                        <div class="form-group mb-3">
                             <div class="d-flex align-items-center mb-2">
-                                <label for="first-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                <label for="email" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                    Email
+                                </label>
+                                
+                                <div class="text-danger ms-2 mt-0" style="display: none;" id="login-error">
+                                    @error('all_fields')
+                                        {{ $message }}
+                                    @enderror
+                                    @error('auth_failed')
+                                        Email or password is invalid
+                                    @enderror
+                                </div>
+                            </div>
+                            <input type="text" class="form-control mb-2 @error('email') is-invalid @enderror @error('password') is-invalid @enderror @error('auth_failed') is-invalid @enderror" 
+                                   id="email" name="email" value="{{ old('email') }}" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <label for="password" class="form-label mb-0 flex-shrink-0 text-nowrap">
                                     Password
                                 </label>
                             </div>
-                            <input type="password" class="form-control @error('email') is-invalid @enderror @error('password') is-invalid @enderror @error('auth_failed') is-invalid @enderror" id="password" name="password" >
+                            <input type="password" class="form-control mb-2 @error('email') is-invalid @enderror @error('password') is-invalid @enderror @error('auth_failed') is-invalid @enderror" 
+                                   id="password" name="password" required>
                         </div>
                         
-                        <div class="col-12 mt-3 mb-3">
-                            <div class="mb-4">
-                                <button class="btn btn-red w-100">LOG IN</button>
-                            </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-red w-100">Login</button>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <p class="black-text">Don't have an account? <a href="{{ route('show.register') }}" class="red-text">Register</a></p>
                         </div>
                     </form>
-
-                    <div class="col-12">
-                        <div class="text-center">
-                            <p class="mb-0">Dont't have an account? <a href="javascript:void(0);" class="red-text">Register</a></p>
-                        </div>
-                    </div>
-                    
                 </div>
             </div>
         </div>
