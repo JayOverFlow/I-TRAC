@@ -11,7 +11,6 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
 use App\Http\Controllers\CreatePrController;
-use App\Http\Controllers\CreatePoController;
 use App\Http\Controllers\PrReviewController;
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
@@ -81,11 +80,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/create-pr/{task_id}', 'saveDraft')->name('draft.pr');
         Route::post('/submit-pr/{task_id}', 'submitPr')->name('submit.pr');
         Route::post('/cancel-pr/{task_id}', 'cancelPr')->name('cancel.pr');
-    });
-
-    Route::controller(CreatePoController::class)->group(function () {
-        Route::get('/create-po/{pr_id}', 'showCreatePo')->name('show.create.po');
-        Route::post('/create-po/{pr_id}/save', 'savePo')->name('save.po');
     });
 
     // Account Settings

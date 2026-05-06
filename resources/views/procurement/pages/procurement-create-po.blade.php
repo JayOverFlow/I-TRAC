@@ -14,34 +14,38 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/page-specific/accordions.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/procurement/create-po/custom-create-po.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/custom-create-po.css') }}">
 @endpush
 
-@section('content')
-<form method="POST" action="{{ route('save.po', $pr->pr_id) }}" id="pr-form">
+<form method="POST" action="{{ route('draft.po') }}" id="pr-form">
     @csrf
-    @php
-        $rowIndex = 0;
-        $isReadOnly = false;
-    @endphp
 
     <div class="card allocated-budget-card mb-3">
         <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
             <div class="d-flex flex-column">
-                <h5 class="fw-bold red-text-2">PURCHASE ORDER</h5>
+                <h5 class="fw-bold red-text-2">PURCHASE REQUEST</h5>
+                <div class="d-flex align-items-center mt-1">
+                    <img src="{{ asset('img/user-profile.jpeg') }}"
+                        class="avatar-img rounded-circle border border-2 border-white">
+                    <img src="{{ asset('img/user-profile.jpeg') }}"
+                        class="avatar-img rounded-circle border border-2 border-white ms-n2">
+                    <div class="avatar-add rounded-circle border bg-white d-flex align-items-center justify-content-center ms-n2"
+                        style="width: 35px; height: 35px; color: #ccc;">
+                        <span>+</span>
+                    </div>
+                </div>
             </div>
             <div>
                 <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
 
                 <div class="text-end">
-                    <input type="hidden" name="status" id="form-status" value="Draft">
-                    <button type="button" id="submit-pr-btn" data-url="{{ route('save.po', $pr->pr_id) }}" onclick="document.getElementById('form-status').value='Submitted'"
+                    <button type="button" id="submit-pr-btn" data-url="{{ route('create.po') }}"
                         class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                        <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
+                        <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
                         <span>Done</span>
                     </button>
 
-                    <button type="submit" onclick="document.getElementById('form-status').value='Draft'"
+                    <button type="submit"
                         class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                         <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                         <span class="fw-bold">Save as Draft</span>
@@ -51,7 +55,19 @@
         </div>
     </div>
 
-    @include('partials.toast-feedback')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body">
@@ -62,7 +78,7 @@
                             <h6 class="mb-0 black-text fw-bold">Department:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">{{ $pr->department->dep_name ?? 'N/A' }}</h6>
+                            <h6 class="mb-0">pr_department</h6>
                         </div>
                     </div>
 
@@ -71,7 +87,7 @@
                             <h6 class="mb-0 black-text fw-bold">Section:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">{{ $pr->pr_section ?? 'N/A' }}</h6>
+                            <h6 class="mb-0">pr_section</h6>
                         </div>
                     </div>
 
@@ -80,7 +96,7 @@
                             <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">{{ $pr->pr_purpose ?? 'N/A' }}</h6>
+                            <h6 class="mb-0">pr_purpose</h6>
                         </div>
                     </div>
                 </div>
@@ -91,7 +107,7 @@
                             <h6 class="mb-0 black-text fw-bold">Date:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">{{ $po?->po_date ?? now()->format('F d, Y') }}</h6>
+                            <h6 class="mb-0">pr_date</h6>
                         </div>
                     </div>
                     <div class="row align-items-center">
@@ -99,7 +115,7 @@
                             <h6 class="mb-0 black-text fw-bold">P.R No.:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">{{ $pr->pr_no ?? 'N/A' }}</h6>
+                            <h6 class="mb-0">pr_no</h6>
                         </div>
                     </div>
                 </div>
@@ -114,10 +130,7 @@
                 <div class="d-flex justify-content-between ms-4 mb-1">
                     <div class="d-flex align-items-baseline gap-2">
                         <h5 class="red-text fw-bold">Project Title: {{ $projectTitle }}</h5>
-                        @php
-                            $projectItems = $savedItemsGrouped->get($items->first()->app_item_id, collect());
-                        @endphp
-                        <small class="black-text item-count">{{ $projectItems->count() ?: $items->count() }} Item/s</small>
+                        <small class="black-text item-count">{{ $items->count() }} Item/s</small>
                     </div>
                     <div class="d-flex align-items-baseline gap-2 me-4">
                         <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
@@ -152,12 +165,12 @@
                                 @foreach ($items as $item)
                                     @php
                                         $rowKey = $item->app_item_id;
-                                        // Get all saved rows for this APP item, default to the PR item if none saved in PO yet
-                                        $currentSavedItems = $savedItemsGrouped->get($rowKey, collect([$item]));
+                                        // Get all saved rows for this APP item, default to one empty row if none saved
+                                        $currentSavedItems = $savedItemsGrouped->get($rowKey, [null]);
                                     @endphp
 
                                     @foreach ($currentSavedItems as $saved)
-                                        <tr class="pr-item-row" data-id="{{ $rowKey }}">
+                                        <tr class="pr-item-row" data-id="{{ $item->app_item_id }}">
                                             {{-- Identity for the row --}}
                                             <input type="hidden" name="items[{{ $rowIndex }}][app_item_id]"
                                                 value="{{ $rowKey }}">
@@ -167,11 +180,53 @@
                                                 <select class="form-select form-control-sm"
                                                     name="items[{{ $rowIndex }}][unit]"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
-                                                    <option value="" {{ !$saved->unit ? 'selected' : '' }} disabled>
+                                                    <option value="" {{ !$saved ? 'selected' : '' }} disabled>
                                                         Select</option>
-                                                    @foreach(['Piece', 'Lot', 'Set', 'Box', 'Pack', 'Ream', 'Dozen', 'Carton', 'Liter', 'Milliliter', 'Kilogram', 'Gram', 'Meter', 'Roll', 'Square meter'] as $u)
-                                                        <option value="{{ $u }}" {{ $saved->unit === $u ? 'selected' : '' }}>{{ $u }}</option>
-                                                    @endforeach
+                                                    <option value="Piece"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Piece' ? 'selected' : '' }}>
+                                                        Piece</option>
+                                                    <option value="Lot"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Lot' ? 'selected' : '' }}>
+                                                        Lot</option>
+                                                    <option value="Set"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Set' ? 'selected' : '' }}>
+                                                        Set</option>
+                                                    <option value="Box"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Box' ? 'selected' : '' }}>
+                                                        Box</option>
+                                                    <option value="Pack"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Pack' ? 'selected' : '' }}>
+                                                        Pack</option>
+                                                    <option value="Ream"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Ream' ? 'selected' : '' }}>
+                                                        Ream</option>
+                                                    <option value="Dozen"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Dozen' ? 'selected' : '' }}>
+                                                        Dozen</option>
+                                                    <option value="Carton"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Carton' ? 'selected' : '' }}>
+                                                        Carton</option>
+                                                    <option value="Liter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Liter' ? 'selected' : '' }}>
+                                                        Liter</option>
+                                                    <option value="Milliliter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Milliliter' ? 'selected' : '' }}>
+                                                        Milliliter</option>
+                                                    <option value="Kilogram"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Kilogram' ? 'selected' : '' }}>
+                                                        Kilogram</option>
+                                                    <option value="Gram"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Gram' ? 'selected' : '' }}>
+                                                        Gram</option>
+                                                    <option value="Meter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Meter' ? 'selected' : '' }}>
+                                                        Meter</option>
+                                                    <option value="Roll"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Roll' ? 'selected' : '' }}>
+                                                        Roll</option>
+                                                    <option value="Square meter"
+                                                        {{ ($saved?->pr_items_unit ?? '') === 'Square meter' ? 'selected' : '' }}>
+                                                        Square meter</option>
                                                 </select>
                                             </td>
                                             {{-- Item Description --}}
@@ -179,7 +234,7 @@
                                                 <div class="input-group input-group-sm">
                                                     <input type="text" class="form-control"
                                                         name="items[{{ $rowIndex }}][description]"
-                                                        value="{{ $saved->description }}"
+                                                        value="{{ $saved?->pr_items_descrip ?? '' }}"
                                                         {{ $isReadOnly ? 'disabled' : '' }}>
                                                     @if (!$isReadOnly)
                                                         <span
@@ -195,7 +250,7 @@
                                             <td class="px-1"><input type="text"
                                                     class="form-control form-control-sm text-center qty-input"
                                                     name="items[{{ $rowIndex }}][quantity]"
-                                                    value="{{ $saved->quantity }}"
+                                                    value="{{ $saved?->pr_items_quantity ?? '' }}"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
                                             </td>
@@ -203,13 +258,15 @@
                                             <td class="px-1"><input type="text"
                                                     class="form-control form-control-sm text-center cost-input"
                                                     name="items[{{ $rowIndex }}][cost]"
-                                                    value="{{ number_format($saved->cost, 2, '.', '') }}"
+                                                    value="{{ $saved?->pr_items_cost ? number_format($saved?->pr_items_cost, 2, '.', '') : '' }}"
                                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
                                             </td>
                                             {{-- Amount --}}
                                             @php
-                                                $amount = $saved->quantity * $saved->cost;
+                                                $amount = $saved
+                                                    ? $saved->pr_items_quantity * $saved->pr_items_cost
+                                                    : 0;
                                             @endphp
                                             <td class="px-1 text-center">
                                                 <span class="amount-display fw-bold"
@@ -223,30 +280,41 @@
                                                     'equipment' => 'Equipment',
                                                     'equipment_50k' => 'Equipment (50k & ↑)',
                                                 ];
-                                                $catLabel = $catMap[$saved->category] ?? 'Select';
+                                                $savedCat = $saved ? $catMap[$saved->pr_items_category] ?? '' : '';
                                             @endphp
                                             <td class="px-1">
                                                 <select class="form-select form-control-sm"
                                                     name="items[{{ $rowIndex }}][category]"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
-                                                    <option value="" {{ $catLabel === 'Select' ? 'selected' : '' }} disabled>Select</option>
-                                                    <option value="Consumable" {{ $catLabel === 'Consumable' ? 'selected' : '' }}>Consumable</option>
-                                                    <option value="Equipment" {{ $catLabel === 'Equipment' ? 'selected' : '' }}>Equipment</option>
-                                                    <option value="Equipment (50k & ↑)" {{ $catLabel === 'Equipment (50k & ↑)' ? 'selected' : '' }}>Equipment (50k & ↑)</option>
+                                                    <option value=""
+                                                        {{ !$saved || !$saved?->pr_items_category ? 'selected' : '' }}
+                                                        disabled>Select</option>
+                                                    <option value="Consumable"
+                                                        {{ $savedCat === 'Consumable' ? 'selected' : '' }}>Consumable
+                                                    </option>
+                                                    <option value="Equipment"
+                                                        {{ $savedCat === 'Equipment' ? 'selected' : '' }}>Equipment
+                                                    </option>
+                                                    <option value="Equipment (50k & ↑)"
+                                                        {{ $savedCat === 'Equipment (50k & ↑)' ? 'selected' : '' }}>
+                                                        Equipment (50k & ↑)</option>
                                                 </select>
                                             </td>
                                             <td class="text-start px-0">
                                                 @if (!$isReadOnly)
                                                     <button type="button"
                                                         class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
-                                                        style="{{ $loop->first && $loop->parent->first ? 'visibility: hidden;' : 'visibility: visible;' }}">
+                                                        style="{{ $loop->first && $loop->parent->first && !$saved ? 'visibility: hidden;' : 'visibility: visible;' }}">
                                                         <img src="{{ asset('img/remove.svg') }}" alt="Remove">
                                                     </button>
                                                 @endif
                                             </td>
                                         </tr>
                                         {{-- Specification --}}
-                                        <tr class="pr-specification-row {{ !$saved->specification ? 'd-none' : '' }}">
+                                        @php
+                                            $specText = $saved?->prSpecs->first()?->pr_spec_spec ?? '';
+                                        @endphp
+                                        <tr class="pr-specification-row {{ !$specText ? 'd-none' : '' }}">
                                             <td colspan="1"></td>
                                             <td class="px-1">
                                                 <div class="custom-specification-container">
@@ -275,7 +343,7 @@
                                                         style="border-color: #ced4da !important;">
                                                         <textarea class="form-control form-control-sm border-0 shadow-none px-2"
                                                             name="items[{{ $rowIndex }}][specification]" rows="2" placeholder="Enter specification details."
-                                                            {{ $isReadOnly ? 'disabled' : '' }}>{{ $saved->specification }}</textarea>
+                                                            {{ $isReadOnly ? 'disabled' : '' }}>{{ $specText }}</textarea>
                                                     </div>
                                                 </div>
                                             </td>
@@ -305,7 +373,10 @@
     </div>
 
 </form>
-@endsection
+
+<form id="cancel-pr-form" method="POST" style="display: none;">
+    @csrf
+</form>
 
 @push('js')
     <!-- FilePond JavaScript -->
@@ -313,5 +384,5 @@
     <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
 
     <!-- CUSTOM js -->
-    <script src="{{ asset('js/procurement/create-po/custom-create-po.js') }}"></script>
+    <script src="{{ asset('js/general-pages/create-pr/custom-create-po.js') }}"></script>
 @endpush
