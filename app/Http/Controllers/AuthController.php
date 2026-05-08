@@ -19,12 +19,21 @@ class AuthController extends Controller
     public function login(Request $request) {
         // Valdations
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|exists:users,user_email',
+            'email' => ['required', 'string', 'regex:/^.+@tup\.edu\.ph$/i', 'exists:users,user_email'],
             'password' => 'required|string'
         ]);
 
         if ($validator->fails()) {
-            // Authentication failed
+            $errors = $validator->errors();
+
+            // If email validation fails (required, format, or exists)
+            if ($errors->has('email')) {
+                return back()
+                    ->withErrors(['all_fields' => 'Email must be a valid TUP email.'])
+                    ->withInput($request->only('email'));
+            }
+
+            // Fallback for other errors (like missing password)
             return back()
                 ->withErrors(['all_fields' => 'All fields are required.'])
                 ->withInput($request->only('email'));
