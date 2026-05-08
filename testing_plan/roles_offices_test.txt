@@ -1,0 +1,125 @@
+I-TRAC ROLES & OFFICES PAGE MANUAL TESTING PLAN
+================================================
+
+Project: I-TRAC
+Page Component: Roles and Offices (admin/pages/roles-offices.blade.php)
+Description: Management interface for Roles and Departments/Offices with inline editing and batch creation capabilities.
+
+SYSTEM OVERVIEW:
+- Roles & Offices Table: Integrated DataTables for searching, pagination, and department-based filtering.
+- Multi-Action Edit Mode: Toggle global management mode to modify existing records or add new ones.
+- Inline Modal Editing: Clickable text triggers modals to update role names, department linkages, and department types.
+- Batch Add Functionality: Dynamically prepend rows to the table to build new roles/departments before batch saving.
+- Smart Deletion: Context-aware delete options (Role only vs Role & Department).
+
+---
+
+TEST SCENARIO 1: DATA DISPLAY & TOOLBAR INTERACTION
+----------------------------------------------------
+Goal: Verify DataTables initialization and toolbar components.
+Steps:
+1. Navigate to the "Roles & Offices" page.
+2. Observe the table loading.
+3. Test Search Bar: Type "Admin" or a specific department name.
+   - Expected: Table filters instantly; search highlights or scrolls if applicable.
+4. Test Department Filter: Select a department from the dropdown (top-left).
+   - Expected: Table shows ONLY roles for that department.
+5. Test Pagination: Change "Results" length to 7 or 10.
+   - Expected: Valid navigation through pages showing "Showing page X of Y".
+
+TEST SCENARIO 2: EDIT MODE TRANSITIONS
+---------------------------------------
+Goal: Verify the entry and exit of the Management Mode.
+Steps:
+1. Click the "Edit" button (top-right of table).
+2. Expected Result:
+   - "Edit" button disappears.
+   - "Add Row", "Save All", and "Cancel" buttons appear.
+   - Department Filter dropdown is HIDDEN to prevent filtering during row addition.
+   - Table rows gain a hover effect on Role and Department names (cursor changes to pointer).
+   - Delete icons (X) appear at the end of each row.
+3. Click the "Cancel" button.
+4. Expected Result:
+   - "Manage Mode" buttons disappear, "Edit" returns.
+   - Department Filter reappears.
+   - Hover effects and delete buttons are removed.
+
+TEST SCENARIO 3: EDITING EXISTING RECORDS
+------------------------------------------
+Goal: Ensure modals update data correctly via AJAX.
+Steps:
+1. Click "Edit" to enter management mode.
+2. Click on a Role Name (e.g., "Secretary").
+   - Expected: "Edit Role" modal opens with correct data pre-filled.
+3. Change Role Name and select a different Department. Click "Save changes".
+   - Expected: SweetAlert success appears; table row updates instantly WITHOUT page reload.
+4. Click on a Department Name.
+   - Expected: "Edit Department" modal opens.
+5. Change Department Name or Type (Academic/Administrative). Click "Save changes".
+   - Expected: EVERY row sharing that department in the table updates its name/type immediately.
+
+TEST SCENARIO 4: DELETION LOGIC (ROLE VS DEPARTMENT)
+----------------------------------------------------
+Goal: Test the context-aware deletion system.
+Steps:
+1. Click "Edit".
+2. Click the Red (X) button for a specific role.
+3. Expected Result: SweetAlert asks: "Role Only" or "Role & Department"?
+4. Case A: Click "Role Only".
+   - Expected: Role is removed, but the Department row remains with placeholder "No Role Assigned".
+5. Case B: Click "Role & Department".
+   - Expected: Entire row is removed from the system.
+6. Case C: Click (X) on a row labeled "No Role Assigned".
+   - Expected: Direct confirmation to delete the empty department.
+
+TEST SCENARIO 5: ADDING NEW RECORDS (BATCH PROCESS)
+----------------------------------------------------
+Goal: Test dynamic row addition and batch saving.
+Steps:
+1. Click "Edit".
+2. Click "+ Add Row".
+   - Expected: An empty row with input fields is prepended to the top of the table.
+3. Scenario A (Existing Dept): Enter "Head Clerk", select an existing department, click "Save All".
+   - Expected: Review modal shows "New Role in: [Dept Name]".
+4. Scenario B (New Dept): Click "+ Add Row", select "CREATE NEW DEPARTMENT".
+   - Expected: Input fields for Dept Name and Type appear. Enter "QA Department" and "Administrative".
+   - Expected: Review modal shows "New Role in New Department: QA Department".
+5. Click "Yes, save changes!" in the review modal.
+   - Expected: Page reloads, and new entries appear in the master list.
+
+TEST SCENARIO 6: HUMAN ERROR & VALIDATION HANDLING
+-------------------------------------------------
+Goal: Ensure the system prevents invalid data entry.
+Steps:
+1. Scenario A (Missing Role Name): Click "Add Row", select an existing dept, leave Role Name empty. Click "Save All".
+   - Expected: SweetAlert error: "You must specify a Role Name".
+2. Scenario B (Empty New Dept): Click "Add Row", select "NEW", leave Dept Name empty. Click "Save All".
+   - Expected: SweetAlert error: "You must specify a New Department Name".
+3. Scenario C (Cancel with Pending Rows): Click "Add Row" 3 times, fill some data, then click "Cancel".
+   - Expected: Pending rows are removed instantly, table reverts to original data.
+4. Scenario D (No Action): Enter edit mode, click "Save All" immediately.
+   - Expected: SweetAlert info: "Nothing to save".
+
+TEST SCENARIO 7: RESPONSIVENESS & UI POLISH
+-------------------------------------------
+Goal: Validate visual experience and UX details.
+Steps:
+1. Verify Tooltips: Hover over (X) delete buttons.
+   - Expected: "Delete Role" or "Delete Empty Department" title appears.
+2. Verify Modal Focus: Open an edit modal.
+   - Expected: Modal is centered; background is dimmed; "Save" button is primary color.
+3. Mobile Check: Resize window.
+   - Expected: Table becomes scrollable; DataTables controls (Search/Length) stack vertically.
+
+---
+
+Manual Tester Signature: ____________________
+Date: ____________________
+Pass/Fail: ____________________
+Summary of Observations:
+
+Bugs/Notes:
+- kapag nag add role at nag lagay ng department kahit may existing na same sa iaadd mo nagaadd parin.
+which is na duduplicate yung role at department. idk kung pwede.
+- 
+- 

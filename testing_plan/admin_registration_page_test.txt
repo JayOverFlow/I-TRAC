@@ -1,0 +1,87 @@
+I-TRAC ADMIN REGISTRATION PAGE MANUAL TESTING PLAN
+==================================================
+
+Project: I-TRAC
+Page: Admin Registration (auth/admin-register.blade.php)
+Description: Single-page registration for Master Admin accounts.
+
+SYSTEM OVERVIEW:
+- Fields: Username, Master Key, Password, Confirm Password
+- Actions: Register, Link to Login
+- Validations: Required fields, Master Key authorization, Password matching, Unique credentials
+
+---
+
+TEST SCENARIO 1: HAPPY PATH (SUCCESSFUL ADMIN REGISTRATION)
+-----------------------------------------------------------
+Goal: Ensure an admin can register successfully with valid credentials.
+Steps:
+1. Navigate to the Admin Register page.
+2. Enter a unique Username (e.g., "admin_tester").
+3. Enter the correct Master Key (The system's secret administrative key).
+4. Enter a strong Password (e.g., "AdminPass123!").
+5. Enter the same password in the "Confirm Password" field.
+6. Click the "Register" button.
+Expected Result: User is registered successfully. An alert with a success message should appear, and the user should be redirected to the login page or dashboard.
+
+TEST SCENARIO 2: MASTER KEY SECURITY VALIDATION (HUMAN ERRORS)
+-------------------------------------------------------------
+Goal: Verify that registration fails without the authorized Master Key.
+- Case A (Incorrect Key): Enter a valid Username and matching passwords, but an incorrect Master Key (e.g., "invalid_key").
+  Expected: Error message "Invalid master key" or similar appears; registration is blocked.
+- Case B (Empty Key): Leave the Master Key field blank.
+  Expected: Browser-level validation (required) or server-side error "The master key field is required." appears.
+
+TEST SCENARIO 3: PASSWORD VALIDATION & HUMAN ERRORS
+---------------------------------------------------
+Goal: Test error handling for password-related mistakes.
+- Case A (Password Mismatch): Enter "Password123" in Password and "Password321" in Confirm Password.
+  Expected: Error message "The password confirmation does not match" appears.
+- Case B (Password Complexity/Length): Enter a short password (e.g., "123").
+  Expected: Error message regarding minimum length (usually 8 characters) appears.
+- Case C (Empty Passwords): Leave both password fields blank.
+  Expected: "The password field is required" error messages appear.
+
+TEST SCENARIO 4: USERNAME VALIDATION
+------------------------------------
+Goal: Ensure usernames are handled correctly.
+- Case A (Duplicate Username): Attempt to register using a username that is already in use.
+  Expected: Error message "The username has already been taken" appears.
+- Case B (Empty Username): Leave the username field empty.
+  Expected: "The username field is required" error message appears.
+
+TEST SCENARIO 5: UI/UX & STICKY INPUT
+-------------------------------------
+Goal: Verify data persistence and visual elements.
+1. Clear fields: Enter a valid Username but trigger a password mismatch error.
+2. Check the Username field after the page reloads.
+   Expected: The "Username" field should still contain the value you typed (old input). Password fields should be cleared.
+3. Check Error Display:
+   Expected: A red alert box at the top lists all errors. Additionally, each field with an error should be highlighted in red with a message below it.
+
+TEST SCENARIO 6: NAVIGATION
+---------------------------
+Goal: Ensure links to other pages work correctly.
+1. Locate the text "Already have an account? Login." at the bottom.
+2. Click the "Login." link.
+Expected Result: User is redirected to the Admin Login page (admin.show.login).
+
+TEST SCENARIO 7: FORM RESUBMISSION & INTERRUPTIONS
+--------------------------------------------------
+Goal: Test the robustness of the submission process.
+1. Double-clicking "Register": Click the button twice rapidly.
+   Expected: System should ideally prevent duplicate account creation attempts.
+2. CSRF Protection: Leave the page open for 2 hours, then try to submit.
+   Expected: Graceful handling of session expiry (redirect or error message).
+
+---
+
+Manual Tester Signature: ____________________
+Date: ____________________
+Pass/Fail: ____________________
+Notes:
+
+Bugs:
+- wala nmn so far
+- 
+- 

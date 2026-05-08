@@ -1,0 +1,70 @@
+I-TRAC HEAD DASHBOARD MANUAL TESTING PLAN
+=========================================
+
+Project: I-TRAC
+Page: Head Dashboard (head/pages/head-dashboard.blade.php)
+Description: Main dashboard for Department Heads showing budget overview and assigned personnel.
+
+SYSTEM OVERVIEW:
+- Summary Cards: Department Budget, Utilized Budget, and School Year overview.
+- Assigned Table: Interactive DataTable for tracking members (TUP-ID, Full Name, Status).
+- Navigation: Part of the Head-level layout with sidebar access.
+
+---
+
+TEST SCENARIO 1: PAGE INITIALIZATION & VISUAL INTEGRITY
+-------------------------------------------------------
+Goal: Ensure the dashboard loads with all components visible and styled correctly.
+1. Log in as a 'Head' user and navigate to the Dashboard.
+2. Verify the 3 summary cards are displayed at the top:
+   - Department Budget (with Department Name)
+   - Utilized Budget
+   - School Year
+3. Verify the "Assigned" table is rendered below the cards.
+4. Verify the "Assigned" header (red text) is visible above the table.
+Expected Result: All UI elements load correctly; icons are visible; fonts are consistent.
+
+TEST SCENARIO 2: DATATABLE SEARCH & FILTERING
+---------------------------------------------
+Goal: Test the responsiveness of the search functionality.
+- Case A (Valid Search): Type "tup_id" or "full_name" in the search box.
+  Expected: Table filters in real-time to show only matching rows.
+- Case B (No Results): Type a string that doesn't exist (e.g., "!@#$%^").
+  Expected: Table should display "No matching records found."
+- Case C (Quick Search): Type quickly and then clear the input using the 'X' or backspace.
+  Expected: Table should instantly reset to the original list.
+
+TEST SCENARIO 3: TABLE PAGINATION & DISPLAY
+-------------------------------------------
+Goal: Verify navigation and record count display.
+1. Check the pagination buttons (Next/Previous Arrows).
+2. Click "Next" to see the next set of users.
+3. Verify the text "Showing page _ of _" updates according to the current view.
+Expected Result: Pagination should be smooth; the table should show 5 entries by default (as per current config).
+
+TEST SCENARIO 4: RESPONSIVENESS (MOBILE/TABLET)
+-----------------------------------------------
+Goal: Ensure the layout adapts to different screen sizes.
+1. Open Browser Inspector (F12) and toggle "Device Toolbar" (Mobile view).
+2. Verify the 3 top cards stack vertically or adjust their width to fit the screen.
+3. Check the "Assigned" table.
+   Expected: The table should be horizontally scrollable to prevent breaking the layout.
+
+TEST SCENARIO 5: TYPICAL USER ERRORS & INTERRUPTIONS
+----------------------------------------------------
+Goal: Test resilience against common accidental actions.
+1. Page Refresh: Refresh the page while the search filter is active.
+   Expected: Page reloads to the default state; data is not lost or broken.
+2. Broken Image Fallback: (Simulate by temporary network cut if possible).
+   Expected: Cards should still maintain their structure even if icons fail to load.
+3. Rapid Clicking: Click pagination or search icons repeatedly.
+   Expected: No UI flickering or JavaScript errors in the console.
+
+---
+Manual Tester Signature: ____________________
+Date: ____________________
+Pass/Fail: ____________________
+Notes:
+- Data currently appears to be placeholder; ensure dynamic data binds correctly in future updates.
+- Verify that the "Department Name" under the first card correctly reflects the user's assigned department.
+- change the logo of ALL, Equipment, and Appliances.
