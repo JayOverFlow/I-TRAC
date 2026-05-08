@@ -29,24 +29,37 @@ class AdminRolesAssignmentController extends Controller
                 'u.user_lastname',
                 'u.user_email'
             )
-            ->orderBy('r.role_name', 'ASC')       // Sort alphabetically
+            ->orderByRaw('u.user_id IS NULL ASC') // Show non-null (assigned) users first
+            ->orderBy('r.role_name', 'ASC')       // Then sort alphabetically by role name
             ->get();
 
         $dashboardData['roles'] = $roles;
 
-        // Fetch all users for the dropdowns
+        // Fetch all users for the dropdowns (roles view)
         $allUsers = User::orderBy('user_lastname', 'asc')
             ->orderBy('user_firstname', 'asc')
             ->get(['user_id', 'user_firstname', 'user_lastname', 'user_suffix']);
 
         $dashboardData['allUsers'] = $allUsers;
 
+        // Fetch all roles with dep_id for dependent dropdown logic (users view)
+        $allRoles = DB::table('roles_tbl as r')
+            ->leftJoin('departments_tbl as d', 'd.dep_id', '=', 'r.role_dep_id_fk')
+            ->select('r.role_id', 'r.role_name', 'r.role_dep_id_fk', 'd.dep_name')
+            ->orderBy('r.role_name', 'ASC')
+            ->get();
+
+        $dashboardData['allRoles'] = $allRoles;
+
         return view('admin.pages.roles-assignment', $dashboardData);
     }
 
+    /**
+     * Update role assignments from the ROLES VIEW (role-centric).
+     * Expects: [['role_id' => X, 'user_id' => Y], ...]
+     */
     public function updateRoleAssignments(Request $request)
     {
-        // Expecting an array of assignments: [['role_id' => X, 'user_id' => Y], ...]
         $assignments = $request->input('assignments');
 
         if (!empty($assignments)) {
@@ -56,14 +69,10 @@ class AdminRolesAssignmentController extends Controller
                     $userId = $assignment['user_id'];
 
                     if (empty($userId)) {
-                        // Unassign: delete the specific role assignment
                         DB::table('user_roles_tbl')
                             ->where('role_id_fk', $roleId)
                             ->delete();
                     } else {
-                        // Assign / Reassign
-                        // First check if this role already has an assignment and update it, 
-                        // or if not, insert a new one. Since a role in this context has one assigned user.
                         DB::table('user_roles_tbl')->updateOrInsert(
                             ['role_id_fk' => $roleId],
                             ['user_id_fk' => $userId]
@@ -74,6 +83,40 @@ class AdminRolesAssignmentController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Role assignments updated successfully.']);
+    }
+
+    /**
+     * Update role assignments from the USERS VIEW (user-centric).
+     * Expects: [['user_id' => X, 'role_id' => Y], ...]
+     * A user can only have one role, so we update/insert on user_id_fk.
+     */
+    public function updateUserAssignments(Request $request)
+    {
+        $assignments = $request->input('assignments');
+
+        if (!empty($assignments)) {
+            DB::transaction(function () use ($assignments) {
+                foreach ($assignments as $assignment) {
+                    $userId = $assignment['user_id'];
+                    $roleId = $assignment['role_id'];
+
+                    if (empty($roleId)) {
+                        // Unassign: remove all roles for this user
+                        DB::table('user_roles_tbl')
+                            ->where('user_id_fk', $userId)
+                            ->delete();
+                    } else {
+                        // Assign / Reassign
+                        DB::table('user_roles_tbl')->updateOrInsert(
+                            ['user_id_fk' => $userId],
+                            ['role_id_fk' => $roleId]
+                        );
+                    }
+                }
+            });
+        }
+
+        return response()->json(['success' => true, 'message' => 'User assignments updated successfully.']);
     }
 
     /**
@@ -90,29 +133,35 @@ class AdminRolesAssignmentController extends Controller
         $facultyCount = User::where('user_type', 'Faculty')->count();
         $staffCount   = User::where('user_type', 'Staff')->count();
 
-        // Table: users with their role and department via joins
+        // Table: users with their role, role_id, dep_id, and department via joins
         $users = DB::table('users as u')
             ->leftJoin('user_roles_tbl as ur', 'ur.user_id_fk', '=', 'u.user_id')
             ->leftJoin('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
             ->leftJoin('departments_tbl as d', 'd.dep_id', '=', 'r.role_dep_id_fk')
             ->select(
+                'u.user_id',
                 'u.user_tupid',
                 'u.user_firstname',
                 'u.user_lastname',
                 'u.user_email',
+                'u.user_type',
+                'r.role_id',
                 'r.role_name',
-                'd.dep_name',
-                'u.user_type'
+                'd.dep_id',
+                'd.dep_name'
             )
+            ->orderByRaw('r.role_id IS NULL ASC') // Show users WITH roles first
+            ->orderBy('u.user_lastname', 'ASC')   // Then alphabetically by lastname
+            ->orderBy('u.user_firstname', 'ASC')
             ->get();
 
         return [
-            'departments' => $departments,
+            'departments'  => $departments,
             'officesCount' => $officesCount,
-            'deptsCount' => $deptsCount,
+            'deptsCount'   => $deptsCount,
             'facultyCount' => $facultyCount,
-            'staffCount' => $staffCount,
-            'users' => $users
+            'staffCount'   => $staffCount,
+            'users'        => $users
         ];
     }
 }

@@ -23,6 +23,17 @@
 
 </head>
 <body class="layout-boxed enable-secondaryNav">
+    <script>
+        (function() {
+            var theme = localStorage.getItem("theme");
+            if (theme) {
+                var parseObj = JSON.parse(theme);
+                if (parseObj.settings.layout.darkMode) {
+                    document.body.classList.add('dark');
+                }
+            }
+        })();
+    </script>
     <!-- BEGIN LOADER -->
     <div id="load_screen"> <div class="loader"> <div class="loader-content">
         <div class="spinner-grow align-self-center"></div>

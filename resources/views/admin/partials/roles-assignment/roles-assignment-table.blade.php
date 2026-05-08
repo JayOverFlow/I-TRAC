@@ -1,16 +1,28 @@
-{{-- Department filter: rendered in HTML, moved into DataTables toolbar via JS --}}
-<div id="dept-filter-container" class="d-flex align-items-center gap-2" style="display:none!important;">
-    <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Department</label>
-    <select id="department-filter" class="form-select form-select-sm w-auto">
-        <option value="">All Departments</option>
-        @foreach($departments as $department)
-            <option value="{{ $department->dep_name }}">{{ $department->dep_name }}</option>
-        @endforeach
-    </select>
+{{-- Shared Controls for Roles View --}}
+<div id="roles-controls-container" class="d-flex align-items-center gap-3" style="display:none!important;">
+    {{-- Department filter --}}
+    <div class="d-flex align-items-center gap-2">
+        <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Department</label>
+        <select id="department-filter" class="form-select form-select-sm w-auto">
+            <option value="">All Departments</option>
+            @foreach($departments as $department)
+                <option value="{{ $department->dep_name }}">{{ $department->dep_name }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    {{-- View Mode Switcher --}}
+    <div class="d-flex align-items-center gap-2">
+        <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">View Mode:</label>
+        <select class="view-mode-toggle form-select form-select-sm" style="width: 130px; position: relative; z-index: 5;">
+            <option value="users">Users</option>
+            <option value="roles" selected>Roles</option>
+        </select>
+    </div>
 </div>
 
 {{-- Button States --}}
-<div id="btn-state-container" style="display:none!important;">
+<div id="btn-state-container-roles" style="display:none!important;">
     {{-- Original Edit Button --}}
     <div id="edit-mode-btns">
         <button id="btn-edit-main" class="btn btn-primary d-flex align-items-center">

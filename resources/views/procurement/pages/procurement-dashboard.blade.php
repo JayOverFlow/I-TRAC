@@ -32,7 +32,7 @@
                             <h5 class="card-title fw-bold mb-0">Department Budget</h5>
                             <p class="my-0 text-decoration-underline">user_department</p>
                             <h5 class="mb-0 fw-bold">₱<span>204,534.00</span></h5>
-                        </div>
+                        </div>  
                     </div>
                 </div>
             </div>
