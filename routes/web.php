@@ -145,6 +145,7 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
 
 Route::middleware(['auth', 'role:Procurement'])->group(function () {
     Route::controller(CreatePoController::class)->group(function () {
-        Route::get('/create-po', 'showCreatePo')->name('show.create.po');
+        Route::get('/create-po/{po_id}', 'showCreatePo')->name('show.create.po');
+        Route::post('/create-po/store/{pr_id}', 'createPo')->name('create.po');
     });
 });

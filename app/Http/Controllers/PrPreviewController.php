@@ -11,7 +11,7 @@ class PrPreviewController extends Controller
     public function showPrPreview($pr_id)
     {
         // Load the PR with items (eager load specs and appItem for project title)
-        $pr = PrParent::with(['prItems.prSpecs', 'prItems.appItem', 'department', 'requestor'])
+        $pr = PrParent::with(['prItems.prSpecs', 'prItems.appItem', 'department', 'requestor', 'purchaseOrders'])
             ->findOrFail($pr_id);
 
         // Category display order

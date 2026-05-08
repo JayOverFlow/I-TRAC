@@ -42,7 +42,7 @@
                         </div>
                     </div>
 
-                    <button type="button"
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#createPoModal"
                         class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                         <img src="{{ asset('img/PO.svg') }}" width="18" height="18" class="img-white-icon"
                             style="filter: invert(1) brightness(100);">
@@ -229,15 +229,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="4" class="text-center py-5 text-muted">
-                                    <div class="d-flex flex-column align-items-center">
-                                        <img src="{{ asset('img/no-data.svg') }}" width="60" class="mb-2 opacity-50"
-                                            onerror="this.style.display='none'">
-                                        <span>No Purchase Orders created for this PR yet.</span>
-                                    </div>
-                                </td>
-                            </tr>
+                            @forelse ($pr->purchaseOrders as $po)
+                                <tr onclick="window.location='{{ route('show.create.po', $po->po_id) }}'" style="cursor: pointer;">
+                                    <td class="ps-4">
+                                        <span class="fw-bold">{{ $po->po_unique_code }}</span>
+                                    </td>
+                                    <td>{{ $po->po_title }}</td>
+                                    <td>{{ $po->created_at ? $po->created_at->format('M d, Y') : 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge bg-info p-2 px-3 text-uppercase" style="font-size: 0.75rem;">Draft</span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <img src="{{ asset('img/no-data.svg') }}" width="60" class="mb-2 opacity-50"
+                                                onerror="this.style.display='none'">
+                                            <span>No Purchase Orders created for this PR yet.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -246,7 +259,58 @@
     </div>
 @endsection
 
+{{-- Create PO Modal --}}
+<div class="modal fade" id="createPoModal" tabindex="-1" aria-labelledby="createPoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow bg-white">
+            <div class="modal-header bg-dark-red text-white mb-3">
+                <h5 class="modal-title fw-bold red-text-2" id="createPoModalLabel">Create Purchase Order</h5>
+            </div>
+            <form action="{{ route('create.po', $pr->pr_id) }}" method="POST">
+                @csrf
+                <div class="modal-body py-0">
+                    <div class="mb-3">
+                        <label for="po_title" class="form-label fw-bold black-text">Purchase Order Title</label>
+                        <input type="text" class="form-control form-control-md" id="po_title" name="po_title" 
+                            placeholder="Enter a descriptive title" required>
+                        <div class="form-text black-text mt-2">Example: PO_Armchairs_Ariado</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 py-0">
+                    <button type="button" class="btn btn-light border fw-bold black-text px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="confirmCreatePoBtn" class="btn btn-dark-red px-4" disabled>Create PO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('js')
+    <!-- Page SPECIFIC js -->
+    <script>
+        $(document).ready(function() {
+            // Handle PR/PO Toggle
+            $('#form-custom-switch-inner-label').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#pr-items-container').hide();
+                    $('#po-items-container').show();
+                    $('.label-left').removeClass('fw-bold');
+                    $('.label-right').addClass('fw-bold');
+                } else {
+                    $('#pr-items-container').show();
+                    $('#po-items-container').hide();
+                    $('.label-left').addClass('fw-bold');
+                    $('.label-right').removeClass('fw-bold');
+                }
+            });
+
+            // Modal validation
+            $('#po_title').on('input', function() {
+                const title = $(this).val().trim();
+                $('#confirmCreatePoBtn').prop('disabled', title.length === 0);
+            });
+        });
+    </script>
     <!-- CUSTOM js -->
     <script src="{{ asset('js/procurement/pr-preview/custom-pr-preview.js') }}"></script>
 @endpush

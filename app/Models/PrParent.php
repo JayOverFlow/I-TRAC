@@ -74,4 +74,9 @@ class PrParent extends Model
     {
         return $this->belongsTo(User::class, 'retrieved_by', 'user_id');
     }
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PoParent::class, 'pr_id_fk', 'pr_id');
+    }
 }
