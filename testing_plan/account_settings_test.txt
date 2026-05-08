@@ -1,0 +1,85 @@
+Manual Testing Plan: Account Settings Page
+
+Objective: Validate the functionalities of the Account Settings page, ensuring all tabs (Profile, Inbox, Settings, Annual Procurement Plan) and modals work as expected, and handle human errors gracefully.
+
+1. Navigation and Tab Switching
+- [ ] Click on "Profile" tab -> Content switches to Profile details. Active state on tab updates.
+- [ ] Click on "Inbox" tab -> Content switches to Inbox messages. Active state on tab updates.
+- [ ] Click on "Settings" tab -> Content switches to Settings form. Active state on tab updates.
+- [ ] Click on "Annual Procurement Plan" tab -> Content switches to APP view/upload. Active state on tab updates.
+
+2. Profile Tab
+- [ ] Scenario: View Profile Details
+  - Action: Load the Profile tab.
+  - Expected: User's current personal information (name, email, role, etc.) is displayed correctly.
+
+- [ ] Scenario: Change Profile Picture (Valid)
+  - Action: Click on "Upload/Change Picture" (triggering _upload-modal), select a valid image (JPG/PNG under size limit), click Save/Upload.
+  - Expected: Picture updates successfully, success message displays, and new picture reflects on the page.
+
+- [ ] Scenario: Change Profile Picture (Human Error - Invalid Format/Size)
+  - Action: Select a PDF, DOCX, or an image exceeding the maximum size limit.
+  - Expected: An error message appears (e.g., "Invalid file format", "File size too large"). The upload is blocked.
+
+- [ ] Scenario: Update Profile Information (Valid)
+  - Action: Edit fields like Name, Phone Number, and click Save.
+  - Expected: Information updates in the database, success message is shown, and page reflects new data.
+
+- [ ] Scenario: Update Profile Information (Human Error - Blank Fields)
+  - Action: Clear required fields (like Name or Email) and click Save.
+  - Expected: Form validation triggers, showing error "This field is required". Changes are not saved.
+
+3. Inbox Tab
+- [ ] Scenario: View Messages
+  - Action: Open Inbox tab.
+  - Expected: List of messages/notifications appears, properly paginated if there are many.
+
+- [ ] Scenario: Read Message
+  - Action: Click on an unread message.
+  - Expected: Message content opens, status changes from 'unread' to 'read'.
+
+- [ ] Scenario: Delete Message
+  - Action: Select a message and click Delete.
+  - Expected: Prompt asks for confirmation. Confirming deletes the message and removes it from the list.
+
+4. Settings Tab
+- [ ] Scenario: Change Password (Valid)
+  - Action: Enter correct Current Password, valid New Password, and matching Confirm Password. Click Save.
+  - Expected: Password updates successfully, success message appears.
+
+- [ ] Scenario: Change Password (Human Error - Wrong Current Password)
+  - Action: Enter an incorrect Current Password, and valid new passwords. Click Save.
+  - Expected: Error message "Current password incorrect". Password is not changed.
+
+- [ ] Scenario: Change Password (Human Error - Passwords Don't Match)
+  - Action: Enter a new password, but type a different one in Confirm Password.
+  - Expected: Error message "Passwords do not match".
+
+- [ ] Scenario: Change Password (Human Error - Weak Password)
+  - Action: Enter a new password that is too short (e.g., 3 characters).
+  - Expected: Error message "Password must be at least 8 characters".
+
+5. Annual Procurement Plan Tab
+- [ ] Scenario: Upload APP Document (Valid)
+  - Action: Select a valid document (PDF/Excel) and submit.
+  - Expected: Document uploads successfully, success message shown, file appears in the list.
+
+- [ ] Scenario: Upload APP Document (Human Error - Invalid File Type)
+  - Action: Try uploading a disallowed file type (e.g., .exe, image).
+  - Expected: Error message "Invalid file type. Only PDF/Excel allowed". Upload blocked.
+
+- [ ] Scenario: View/Download existing APP
+  - Action: Click on an existing APP file.
+  - Expected: File is downloaded or opened in a new tab for viewing.
+
+6. General Page Responsiveness and UI
+- [ ] Scenario: Responsive UI Check
+  - Action: Resize the browser window to mobile/tablet sizes.
+  - Expected: Tabs stack correctly or become scrollable, content remains readable, and modals fit within the screen.
+
+
+Bugs:
+1. cant upload photo show this error: "Failed to upload image:
+2. since middle name is required pwede siya ma edit pero di pwede na wala.
+3. pag punta ko sa APP list naka untitled yung title
+4. action buttons of app list are not working

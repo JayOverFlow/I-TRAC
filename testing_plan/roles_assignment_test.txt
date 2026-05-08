@@ -1,0 +1,125 @@
+I-TRAC ROLES ASSIGNMENT TABLE MANUAL TESTING PLAN
+================================================
+
+Project: I-TRAC
+Page Component: Roles Assignment Table (admin/partials/roles-assignment/roles-assignment-table.blade.php)
+Description: Interface for administrators to assign or update user roles across different departments.
+
+SYSTEM OVERVIEW:
+- Roles Table: Displays Role Name, Assigned User (Last Name, First Name, Email), and Department.
+- Department Filter: A dropdown to filter the roles based on the selected department.
+- Inline Editing: Toggle between read-only mode and management mode to reassign users to roles.
+- Save & Cancel: Buttons to commit changes or revert to the original state.
+
+---
+
+TEST SCENARIO 1: INITIAL DATA LOADING & VISIBILITY
+--------------------------------------------------
+Goal: Verify that the table loads and displays current role assignments correctly.
+Steps:
+1. Navigate to the Roles Assignment section.
+2. Observe the table data.
+3. Expected Result:
+   - "Role" column shows the name of the position.
+   - "Last Name", "First Name", and "Email" show the currently assigned user's details.
+   - If a role is empty, columns should show "—".
+   - If no roles exist at all, the table should show "No roles found."
+
+TEST SCENARIO 2: DEPARTMENT FILTERING
+-------------------------------------
+Goal: Test the accuracy of the department-specific role filtering.
+Steps:
+1. Locate the "Filter by Department" dropdown.
+2. Select a specific department (e.g., "ICT Office").
+3. Expected Result:
+   - The table should update to show ONLY roles belonging to the "ICT Office".
+   - The hidden department column data should match the filter.
+4. Select "All Departments".
+5. Expected Result:
+   - All roles from all departments should be visible again.
+
+TEST SCENARIO 3: ENTERING & EXITING EDIT MODE
+---------------------------------------------
+Goal: Verify the transition between read-only and edit states.
+Steps:
+1. Click the "Edit" button.
+2. Expected Result:
+   - "Edit" button disappears.
+   - "Save" (Checkmark) and "Cancel" (X) buttons appear with a fade-in animation.
+   - In the "Last Name" column, the read-only text is replaced by a dropdown select box.
+3. Click the "Cancel" button.
+4. Expected Result:
+   - Management buttons disappear, and the "Edit" button returns.
+   - The dropdown boxes disappear, and read-only text returns.
+
+TEST SCENARIO 4: ROLE REASSIGNMENT (POSITIVE CASE)
+--------------------------------------------------
+Goal: Test successful assignment of a user to a role.
+Steps:
+1. Click "Edit".
+2. Find a role (e.g., "Department Head").
+3. Click the dropdown in the "Last Name" column for that row.
+4. Select a different user from the list.
+5. Click the "Save" (Checkmark) button.
+6. Expected Result:
+   - A SweetAlert confirmation dialog "Are you sure?" should appear.
+   - Click "Yes, save changes!".
+   - A success SweetAlert "Successfully Updated" should appear.
+   - The page should reload, and the table should show the updated assignment.
+
+TEST SCENARIO 5: UNASSIGNING A USER
+-----------------------------------
+Goal: Test the "Unassigned" option in the dropdown.
+Steps:
+1. Click "Edit".
+2. Select "-- Unassigned --" for a role that currently has a user.
+3. Click "Save" and confirm.
+4. Expected Result:
+   - The role should now be vacant.
+   - Name and Email columns should show "—" after the page reloads.
+
+TEST SCENARIO 6: HUMAN ERROR & EDGE CASES
+-----------------------------------------
+Goal: Test the robustness of the UI against common mistakes and system failures.
+
+- Case A (Cancel with Pending Changes):
+  1. Click "Edit", change a user assignment.
+  2. Click "Cancel".
+  3. Expected: The change should NOT be saved. The dropdowns reset to original values (data-original-value).
+  
+- Case B (Save without Changes):
+  1. Click "Edit".
+  2. Click "Save" without changing any dropdowns.
+  3. Expected: The confirmation dialog still appears; click save. System handles it gracefully.
+
+- Case C (Searching/Filtering while Editing):
+  1. Click "Edit".
+  2. Type in the global search bar or filter by department BEFORE clicking edit.
+  3. Expected: The department filter is hidden while editing to prevent data inconsistencies. Global search still works.
+
+- Case D (System/AJAX Error):
+  1. Click "Edit" and change an assignment.
+  2. (Simulate failure if possible) Click "Save" and confirm.
+  3. Expected: If the server returns an error, a SweetAlert error "Oops..." or "Failed" should appear.
+
+TEST SCENARIO 7: RESPONSIVENESS & UI POLISH
+-------------------------------------------
+Goal: Ensure visual consistency and usability.
+1. Hover over the Save/Cancel buttons.
+   - Expected: Hover titles "Save Changes" and "Cancel" should appear (native browser tooltips).
+2. Observe animations.
+   - Expected: The "Manage Mode" button group should have a smooth fade-in appearance.
+3. Scale browser width to mobile.
+   - Expected: The table should be horizontally scrollable. The dropdown menus should be legible and easily tappable.
+
+---
+
+Manual Tester Signature: ____________________
+Date: ____________________
+Pass/Fail: ____________________
+Notes:
+
+Bugs/Observations:
+- wala so far
+- 
+- 
