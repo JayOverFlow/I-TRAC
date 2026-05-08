@@ -13,29 +13,47 @@
 @endpush
 
 @section('content')
-    <form method="POST" action="" id="po-form">
+    @php
+        $isSubmitted = $po->po_status == 'Submitted';
+    @endphp
+
+    <form method="POST" action="{{ route('update.po', ['po_id' => $po->po_id]) }}" id="po-form">
         @csrf
+        <input type="hidden" name="po_status" id="po_status" value="{{ $po->po_status }}">
+        <input type="hidden" name="po_total_amount" id="po_total_amount_input" value="{{ $po->po_total_amount }}">
 
         <div class="card allocated-budget-card mb-3">
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
                 <div class="d-flex flex-column">
                     <h5 class="fw-bold red-text-2">PURCHASE ORDER</h5>
+                    @if ($isSubmitted)
+                        <h5 class="badge bg-success p-2 px-3 text-uppercase"
+                        style="font-size: 0.85rem;">Submitted</h5>
+                    @endif
                 </div>
                 <div>
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
 
                     <div class="text-end">
-                        <button type="button" id="submit-po-btn" data-url=""
-                            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                            <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
-                            <span>Done</span>
-                        </button>
+                        @if ($isSubmitted)
+                            <button type="button"
+                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                                <span>Export as PDF</span>
+                            </button>
+                        @else
+                            <button type="button" id="submit-po-btn"
+                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
+                                <span>Done</span>
+                            </button>
 
-                        <button type="submit"
-                            class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
-                            <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
-                            <span class="fw-bold">Save as Draft</span>
-                        </button>
+                            <button type="submit"
+                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                                <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
+                                <span class="fw-bold">Save as Draft</span>
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -52,7 +70,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Supplier:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_supplier" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_supplier }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -61,7 +80,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Address:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_address" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_address }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -70,7 +90,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Tel No.:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_tele" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_tele }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -79,7 +100,8 @@
                                 <h6 class="mb-0 black-text fw-bold">TIN:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_tin" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_tin }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -88,7 +110,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Place of Delivery:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_place_delivery" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_place_delivery }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -97,8 +120,9 @@
                                 <h6 class="mb-0 black-text fw-bold">Date of Delivery:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name=""
-                                    class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date">
+                                <input type="text" name="po_date_delivery"
+                                    class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date"
+                                    value="{{ $po->po_date_delivery }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
                     </div>
@@ -109,7 +133,8 @@
                                 <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_no" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_no }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -118,8 +143,9 @@
                                 <h6 class="mb-0 black-text fw-bold">Date:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name=""
-                                    class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date">
+                                <input type="text" name="po_date"
+                                    class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date"
+                                    value="{{ $po->po_date }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -128,7 +154,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Mode of Procurement:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_mode" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_mode }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -137,7 +164,8 @@
                                 <h6 class="mb-0 black-text fw-bold">TUP-Taguig TIN:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_tuptin" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_tuptin }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -146,7 +174,8 @@
                                 <h6 class="mb-0 black-text fw-bold">Delivery Term:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_delivery_term" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_delivery_term }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -155,14 +184,14 @@
                                 <h6 class="mb-0 black-text fw-bold">Payment Term:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="" class="form-control form-control-sm w-100">
+                                <input type="text" name="po_payment_term" class="form-control form-control-sm w-100"
+                                    value="{{ $po->po_payment_term }}" {{ $isSubmitted ? 'disabled' : '' }}>
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <hr>
             <h5 class="black-text fw-bold ms-4 ps-1">Add Items</h5>
             <div class="table-responsive mx-3">
                 <table class="table table-sm table-borderless align-middle po-table">
@@ -179,103 +208,23 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-add-items">
-                        <!-- Item Row 1 -->
-                        <tr class="po-item-row" data-id="1">
-                            <input type="hidden" name="items[0][app_item_id]" value="">
-                            <td class="px-1"><input type="text"
-                                    class="form-control form-control-sm text-center stock-input" name=""
-                                    value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></td>
-                            <td class="px-1">
-                                <select class="form-select form-control-sm unit-select" name="items[0][unit]">
-                                    <option value="" selected disabled>Select</option>
-                                    <option value="Piece">Piece</option>
-                                    <option value="Lot">Lot</option>
-                                    <option value="Set">Set</option>
-                                    <option value="Box">Box</option>
-                                    <option value="Pack">Pack</option>
-                                    <option value="Ream">Ream</option>
-                                    <option value="Dozen">Dozen</option>
-                                    <option value="Carton">Carton</option>
-                                    <option value="Liter">Liter</option>
-                                    <option value="Milliliter">Milliliter</option>
-                                    <option value="Kilogram">Kilogram</option>
-                                    <option value="Gram">Gram</option>
-                                    <option value="Meter">Meter</option>
-                                    <option value="Roll">Roll</option>
-                                    <option value="Square meter">Square meter</option>
-                                </select>
-                            </td>
-                            <td class="px-1">
-                                <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control description-input"
-                                        name="items[0][description]" value="">
-                                    <span class="input-group-text bg-white border-start-0 add-specification-btn"
-                                        title="Add Specifications" style="cursor: pointer;">
-                                        <img src="{{ asset('img/add-description-btn.png') }}" alt="Add"
-                                            style="width: 14px; height: 14px;">
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="px-1"><input type="text"
-                                    class="form-control form-control-sm text-center qty-input" name="items[0][quantity]"
-                                    value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></td>
-                            <td class="px-1"><input type="text"
-                                    class="form-control form-control-sm text-center cost-input" name="items[0][cost]"
-                                    value="" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"></td>
-                            <td class="px-1 text-center">
-                                <span class="amount-display fw-bold" data-amount="0">₱ 0.00</span>
-                            </td>
-                            <td class="px-1">
-                                <select class="form-select form-control-sm category-select" name="items[0][category]">
-                                    <option value="" selected disabled>Select</option>
-                                    <option value="Supply and Materials">Supply and Materials</option>
-                                    <option value="Semi-Expendable">Semi-Expendable</option>
-                                    <option value="Equipment">Equipment</option>
-                                </select>
-                            </td>
-                            <td class="text-start px-0">
-                                <button type="button"
-                                    class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
-                                    style="visibility: hidden;">
-                                    <img src="{{ asset('img/remove.svg') }}" alt="Remove">
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="po-specification-row d-none">
-                            <td colspan="2"></td>
-                            <td class="px-1">
-                                <div class="custom-specification-container">
-                                    <div class="d-flex justify-content-between align-items-center bg-white border rounded-top custom-specification-header toggle-specification-action"
-                                        style="cursor: pointer; border-color: #ced4da !important;">
-                                        <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
-                                            Specification</div>
-                                        <div class="d-flex align-items-center pe-3">
-                                            <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
-                                                aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
-                                            <svg class="specification-arrow" width="12" height="12"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="6 9 12 15 18 9"></polyline>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class="specification-body border border-top-0 rounded-bottom bg-white"
-                                        style="border-color: #ced4da !important;">
-                                        <textarea class="form-control form-control-sm border-0 shadow-none px-2" name="items[0][specification]"
-                                            rows="2" placeholder="Enter specification details."></textarea>
-                                    </div>
-                                </div>
-                            </td>
-                            <td colspan="5"></td>
-                        </tr>
+                        @foreach ($otherItems as $index => $item)
+                            @include('procurement.partials.po-item-row', [
+                                'item' => $item,
+                                'index' => 'other_' . $index,
+                                'isSubmitted' => $isSubmitted,
+                            ])
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             <hr class="m-0 p-0">
-            <div class="text-center my-2">
-                <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
-                    Item</button>
-            </div>
+            @if (!$isSubmitted)
+                <div class="text-center my-2">
+                    <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
+                        Item</button>
+                </div>
+            @endif
         </div>
 
         <!-- Supply and Materials -->
@@ -314,7 +263,13 @@
                                 </tr>
                             </thead>
                             <tbody id="tbody-supply">
-                                <!-- Items will be moved here -->
+                                @foreach ($supplyItems as $index => $item)
+                                    @include('procurement.partials.po-item-row', [
+                                        'item' => $item,
+                                        'index' => 'supply_' . $index,
+                                        'isSubmitted' => $isSubmitted,
+                                    ])
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -358,7 +313,13 @@
                                 </tr>
                             </thead>
                             <tbody id="tbody-semi-expendable">
-                                <!-- Items will be moved here -->
+                                @foreach ($semiItems as $index => $item)
+                                    @include('procurement.partials.po-item-row', [
+                                        'item' => $item,
+                                        'index' => 'semi_' . $index,
+                                        'isSubmitted' => $isSubmitted,
+                                    ])
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -402,7 +363,13 @@
                                 </tr>
                             </thead>
                             <tbody id="tbody-equipment">
-                                <!-- Items will be moved here -->
+                                @foreach ($equipItems as $index => $item)
+                                    @include('procurement.partials.po-item-row', [
+                                        'item' => $item,
+                                        'index' => 'equip_' . $index,
+                                        'isSubmitted' => $isSubmitted,
+                                    ])
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -412,7 +379,7 @@
 
         <div class="d-flex justify-content-end align-items-center mb-3 mt-3">
             <h5 class="fw-bold ps-2 pe-5">Total Amount</h5>
-            <h5 class="ps-2 pe-2" id="grand-total-amount">₱ 0.00</h5>
+            <h5 class="ps-2 pe-2" id="grand-total-amount">₱ {{ number_format($po->po_total_amount, 2) }}</h5>
         </div>
 
     </form>

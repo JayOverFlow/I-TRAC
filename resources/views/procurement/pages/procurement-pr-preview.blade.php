@@ -230,22 +230,26 @@
                         </thead>
                         <tbody>
                             @forelse ($pr->purchaseOrders as $po)
-                                <tr onclick="window.location='{{ route('show.create.po', $po->po_id) }}'" style="cursor: pointer;">
+                                <tr onclick="window.location='{{ route('show.create.po', $po->po_id) }}'"
+                                    style="cursor: pointer;">
                                     <td class="ps-4">
                                         <span class="fw-bold">{{ $po->po_unique_code }}</span>
                                     </td>
                                     <td>{{ $po->po_title }}</td>
                                     <td>{{ $po->created_at ? $po->created_at->format('M d, Y') : 'N/A' }}</td>
                                     <td>
-                                        <span class="badge bg-info p-2 px-3 text-uppercase" style="font-size: 0.75rem;">Draft</span>
+                                        <span
+                                            class="badge {{ $po->po_status == 'Draft' ? 'bg-warning' : 'bg-info' }} p-2 px-3">
+                                            {{ $po->po_status }}
+                                        </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="4" class="text-center py-5 text-muted">
                                         <div class="d-flex flex-column align-items-center">
-                                            <img src="{{ asset('img/no-data.svg') }}" width="60" class="mb-2 opacity-50"
-                                                onerror="this.style.display='none'">
+                                            <img src="{{ asset('img/no-data.svg') }}" width="60"
+                                                class="mb-2 opacity-50" onerror="this.style.display='none'">
                                             <span>No Purchase Orders created for this PR yet.</span>
                                         </div>
                                     </td>
@@ -271,14 +275,16 @@
                 <div class="modal-body py-0">
                     <div class="mb-3">
                         <label for="po_title" class="form-label fw-bold black-text">Purchase Order Title</label>
-                        <input type="text" class="form-control form-control-md" id="po_title" name="po_title" 
+                        <input type="text" class="form-control form-control-md" id="po_title" name="po_title"
                             placeholder="Enter a descriptive title" required>
                         <div class="form-text black-text mt-2">Example: PO_Armchairs_Ariado</div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 py-0">
-                    <button type="button" class="btn btn-light border fw-bold black-text px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" id="confirmCreatePoBtn" class="btn btn-dark-red px-4" disabled>Create PO</button>
+                    <button type="button" class="btn btn-light border fw-bold black-text px-4"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="confirmCreatePoBtn" class="btn btn-dark-red px-4" disabled>Create
+                        PO</button>
                 </div>
             </form>
         </div>
