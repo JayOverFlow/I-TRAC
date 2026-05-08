@@ -20,7 +20,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/department.png') }}" alt="Department">
+                            <img src="{{ asset('img/DepBudget.svg') }}" alt="Department">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">ALL</h5>
@@ -34,7 +34,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/department.png') }}" alt="Department">
+                            <img src="{{ asset('img/Equipment.svg') }}" alt="Equipment">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Equipment</h5>
@@ -48,7 +48,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/department.png') }}" alt="Department">
+                            <img src="{{ asset('img/Appliances.svg') }}" alt="Appliances">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Appliances</h5>
@@ -62,7 +62,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/utilized-budget.png') }}" alt="Utilized Budget">
+                            <img src="{{ asset('img/Furnishing.svg') }}" alt="Furnishings">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Furnishings</h5>
@@ -76,7 +76,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/school-year.png') }}" alt="School Year">
+                            <img src="{{ asset('img/Materials.svg') }}" alt="Materials">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Materials</h5>
@@ -142,8 +142,7 @@
                     <td>location</td>
                     <td class="text-center">date_received</td>
                     <td class="text-center"><button class="btn bg-transparent p-0 border-0 shadow-none"><img
-                                src="{{ asset('img/Edit.svg') }}" alt="Edit" width="19"
-                                height="20"></button>
+                                src="{{ asset('img/Edit.svg') }}" alt="Edit" width="19" height="20"></button>
                     </td>
                 </tr>
                 <tr>
@@ -152,8 +151,7 @@
                     <td>location</td>
                     <td class="text-center">date_received</td>
                     <td class="text-center"><button class="btn bg-transparent p-0 border-0 shadow-none"><img
-                                src="{{ asset('img/Edit.svg') }}" alt="Edit" width="19"
-                                height="20"></button>
+                                src="{{ asset('img/Edit.svg') }}" alt="Edit" width="19" height="20"></button>
                     </td>
                 </tr>
             </tbody>
