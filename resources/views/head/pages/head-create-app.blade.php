@@ -129,13 +129,13 @@
                         <div class="form-group col-3">
                             <label>Start of Procurement Activity</label>
                             <input type="text" class="form-control flatpickr-date" name="items[0][start]"
-                                placeholder="Select Date..">
+                                placeholder="Select Date">
                         </div>
 
                         <div class="form-group col-3">
                             <label>End of Procurement Activity</label>
                             <input type="text" class="form-control flatpickr-date" name="items[0][end]"
-                                placeholder="Select Date..">
+                                placeholder="Select Date">
                         </div>
 
                         <div class="form-group col-3">

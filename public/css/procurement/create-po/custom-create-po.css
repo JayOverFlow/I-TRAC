@@ -40,7 +40,7 @@
    
 }
 
-.pr-specification-row td {
+.po-specification-row td {
     border-top: none !important; /* Seamless look */
     padding-top: 0 !important;
 }
@@ -87,7 +87,7 @@ thead.bg-transparent th {
 }
 
 /* Stable Table Layout */
-.pr-table {
+.po-table {
     table-layout: fixed;
     width: 100%;
 }
