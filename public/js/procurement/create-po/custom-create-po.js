@@ -67,13 +67,13 @@ $(document).ready(function() {
         // Update all field names with the new unique index
         newRow.find('[name*="items["]').each(function() {
             var name = $(this).attr('name');
-            var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+            var newName = name.replace(/items\[[^\]]+\]/, 'items[' + newIndex + ']');
             $(this).attr('name', newName);
         });
 
         newDescRow.find('[name*="items["]').each(function() {
             var name = $(this).attr('name');
-            var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+            var newName = name.replace(/items\[[^\]]+\]/, 'items[' + newIndex + ']');
             $(this).attr('name', newName);
         });
 
@@ -120,9 +120,9 @@ $(document).ready(function() {
         const isOnlyRowInAddItems = $('#tbody-add-items tr.po-item-row').length === 1;
 
         let targetTbody = '';
-        if (category === "Supply and Materials") targetTbody = '#tbody-supply';
-        else if (category === "Semi-Expendable") targetTbody = '#tbody-semi-expendable';
-        else if (category === "Equipment") targetTbody = '#tbody-equipment';
+        if (category === "supply_and_materials") targetTbody = '#tbody-supply';
+        else if (category === "semi-expendable") targetTbody = '#tbody-semi-expendable';
+        else if (category === "equipment") targetTbody = '#tbody-equipment';
         else targetTbody = '#tbody-add-items';
 
         if (targetTbody) {
@@ -222,19 +222,17 @@ $(document).ready(function() {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }));
+        $('#po_total_amount_input').val(totalAmount);
     }
 
     // Generate initial values
     manageAddItemsButtons();
     updateTotals();
 
-    // Submit button logic
+    // Submit button logic (Done)
     $(document).on('click', '#submit-po-btn', function() {
-        const url = $(this).data('url');
+        $('#po_status').val('Submitted');
         const form = $('#po-form');
-        if (url) {
-            form.attr('action', url);
-        }
         form.submit();
     });
 
