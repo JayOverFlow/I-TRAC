@@ -26,7 +26,7 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/department.png') }}" alt="Department">
+                            <img src="{{ asset('img/DepBudget.svg') }}" alt="Department">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold mb-0">Department Budget</h5>
@@ -41,7 +41,7 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/utilized-budget.png') }}" alt="Utilized Budget">
+                            <img src="{{ asset('img/Utilized.svg') }}" alt="Utilized Budget">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Utilized Budget</h5>
@@ -55,7 +55,7 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/school-year.png') }}" alt="School Year">
+                            <img src="{{ asset('img/SchoolYear.svg') }}" alt="School Year">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">School Year</h5>
@@ -139,7 +139,7 @@
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
             "pageLength": 5,
-            "initComplete": function() {
+            "initComplete": function () {
                 $('.assigned-title').html('<h5 class="fw-bold mb-0 red-text-2">Assigned</h5>');
             }
         });
