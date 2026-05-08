@@ -127,11 +127,14 @@ class AdminAuthController extends Controller
     // }
 
     // Admin logout
-    public function adminLogout()
+    public function adminLogout(Request $request)
     {
         // Clear admin session
         session()->forget(['admin_id', 'admin_username', 'is_admin_logged_in']);
         
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('admin.show.login')->with('success', 'You have been logged out successfully.');
     }
 }

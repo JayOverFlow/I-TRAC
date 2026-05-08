@@ -17,30 +17,30 @@
     <ul id="nav-bar" class="list-unstyled menu-categories" id="accordionExample">
 
         
-        <li class="menu">
-            <a href="#dashboard" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/dashboard.png') }}" width="24" height="24" alt=""> 
+        <li class="menu {{ request()->is('supply/dashboard*') ? 'active' : '' }}">
+            <a href="{{ url('/supply/dashboard') }}" class="dropdown-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <span>Dashboard</span>
             </a>
         </li>
 
-        <li class="menu">
-            <a href="#dashboard" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/MR.png') }}" width="24" height="24" alt=""> 
+        <li class="menu {{ request()->is('supply/mr*') ? 'active' : '' }}">
+            <a href="#mr" class="dropdown-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                 <span>MR</span>
             </a>
         </li>
 
-        <li class="menu">
-            <a href="#dashboard" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/tasks.png') }}" width="24" height="24" alt=""> 
+        <li class="menu {{ request()->is('supply/tasks*') ? 'active' : '' }}">
+            <a href="#tasks" class="dropdown-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clipboard"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
                 <span>Tasks</span>
             </a>
         </li>
 
-        <li class="menu">
-            <a href="#dashboard" class="dropdown-toggle d-flex align-items-center gap-2">
-                <img src="{{ asset('img/inventory.png') }}" width="24" height="24" alt=""> 
+        <li class="menu {{ request()->is('supply/inventory*') ? 'active' : '' }}">
+            <a href="#inventory" class="dropdown-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-archive"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
                 <span>Inventory</span>
             </a>
         </li>

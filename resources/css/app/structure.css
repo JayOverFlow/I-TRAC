@@ -1165,6 +1165,7 @@ body[layout=full-width] .sidebar-wrapper {
 #sidebar ul.menu-categories li.menu>.dropdown-toggle {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   font-size: 14px;
   color: #e0e6ed;
@@ -1216,7 +1217,7 @@ body[layout=full-width] .sidebar-wrapper {
   width: 25px;
   height: 25px;
   color: #e0e6ed;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-right: 6px;
   stroke-width: 1.3px;
 }
@@ -1231,8 +1232,7 @@ body[layout=full-width] .sidebar-wrapper {
 }
 
 #sidebar ul.menu-categories li.menu.active>.dropdown-toggle span {
-  color: #ffffff;
-  font-weight: bolder;
+  color: #25d5e4;
 }
 
 #sidebar ul.menu-categories li.menu>.dropdown-toggle[aria-expanded=false] svg.feather-chevron-right {
