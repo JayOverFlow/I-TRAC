@@ -40,16 +40,6 @@
         <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
             <div class="d-flex flex-column">
                 <h5 class="fw-bold red-text-2">PURCHASE REQUEST</h5>
-                <div class="d-flex align-items-center mt-1">
-                    <img src="{{ asset('img/user-profile.jpeg') }}"
-                        class="avatar-img rounded-circle border border-2 border-white">
-                    <img src="{{ asset('img/user-profile.jpeg') }}"
-                        class="avatar-img rounded-circle border border-2 border-white ms-n2">
-                    <div class="avatar-add rounded-circle border bg-white d-flex align-items-center justify-content-center ms-n2"
-                        style="width: 35px; height: 35px; color: #ccc;">
-                        <span>+</span>
-                    </div>
-                </div>
             </div>
             <div>
                 <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>

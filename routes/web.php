@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
 use App\Http\Controllers\CreatePrController;
+use App\Http\Controllers\CreatePoController;
 use App\Http\Controllers\PrReviewController;
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
@@ -139,4 +140,10 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
 
     Route::get('/roles-assignment', [AdminRolesAssignmentController::class, 'index'])->name('admin.roles-assignment');
     Route::post('/roles-assignment/update', [AdminRolesAssignmentController::class, 'updateRoleAssignments'])->name('admin.roles-assignment.update');
+});
+
+Route::middleware(['auth', 'role:Procurement'])->group(function () {
+    Route::controller(CreatePoController::class)->group(function () {
+        Route::get('/create-po', 'showCreatePo')->name('show.create.po');
+    });
 });
