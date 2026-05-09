@@ -16,7 +16,7 @@ body.dark .nav.nav-tabs li.nav-item button.nav-link {
   font-weight: 400;
   padding: 8px 14px;
   letter-spacing: 1px;
-  color: #bfc9d4;
+  color: #F3F4F6;
   background: transparent;
 }
 body.dark .nav.nav-tabs li.nav-item button.nav-link svg {
@@ -26,11 +26,11 @@ body.dark .nav.nav-tabs li.nav-item button.nav-link svg {
   height: 20px;
 }
 body.dark .nav.nav-tabs li.nav-item button.nav-link.active {
-  border-bottom: 1.6px solid #008eff;
-  color: #008eff;
+  border-bottom: 1.6px solid #B91C1C;
+  color: #B91C1C;
 }
 body.dark .nav.nav-tabs li.nav-item button.nav-link.active svg {
-  color: #008eff;
+  color: #B91C1C;
 }
 body.dark .nav.nav-tabs li.nav-item button.nav-link:disabled {
   opacity: 0.5;
@@ -38,7 +38,7 @@ body.dark .nav.nav-tabs li.nav-item button.nav-link:disabled {
 body.dark .nav.nav-pills {
   border: none;
   padding: 8px;
-  background: #1b2e4b;
+  background: #1D2127 !important;
   border-radius: 8px;
 }
 body.dark .nav.nav-pills li.nav-item button.nav-link {
@@ -46,19 +46,23 @@ body.dark .nav.nav-pills li.nav-item button.nav-link {
   font-weight: 500;
   padding: 8px 14px;
   letter-spacing: 1px;
-  color: #bfc9d4;
+  color: #A1A1AA !important;
 }
 body.dark .nav.nav-pills li.nav-item button.nav-link svg {
   vertical-align: text-bottom;
   stroke-width: 1.6;
-  color: #bfc9d4;
+  color: #A1A1AA !important;
   width: 20px;
   height: 20px;
 }
 body.dark .nav.nav-pills li.nav-item button.nav-link.active {
   border-bottom: none;
-  background-color: #0e1726;
+  background-color: #0E0F11 !important;
+  color: #B91C1C !important;
   box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.2);
+}
+body.dark .nav.nav-pills li.nav-item button.nav-link.active svg {
+  color: #B91C1C !important;
 }
 body.dark .nav.nav-pills li.nav-item button.nav-link:disabled {
   opacity: 0.5;
@@ -68,18 +72,19 @@ body.dark .nav.nav-pills[aria-orientation=vertical] button.nav-link {
   font-weight: 500;
   padding: 8px 14px;
   letter-spacing: 1px;
-  color: #bfc9d4;
+  color: #A1A1AA !important;
 }
 body.dark .nav.nav-pills[aria-orientation=vertical] button.nav-link svg {
   vertical-align: bottom;
   stroke-width: 1.6;
-  color: #bfc9d4;
+  color: #A1A1AA !important;
   width: 20px;
   height: 20px;
 }
 body.dark .nav.nav-pills[aria-orientation=vertical] button.nav-link.active {
   border-bottom: none;
-  background-color: #0e1726;
+  background-color: #0E0F11 !important;
+  color: #B91C1C !important;
   box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.2);
 }
 body.dark .nav.nav-pills[aria-orientation=vertical] button.nav-link:disabled {

@@ -99,7 +99,27 @@ thead.bg-transparent th {
 }
 
 .custom-specification-header:hover {
-    background-color: #f1f2f3 !important;
+  background-color: #f1f2f3 !important;
+}
+
+body.dark .custom-specification-header:hover {
+  background-color: #2A2F38 !important;
+}
+
+/* Dark mode: make collapse arrows visible */
+body.dark .collapse-toggle,
+body.dark .collapse-toggle svg,
+body.dark button.collapse-toggle {
+  color: #F3F4F6 !important;
+  stroke: currentColor;
+}
+
+/* Dark mode: override Bootstrap's text-black utility */
+body.dark .text-black {
+  color: #F3F4F6 !important;
+}
+body.dark .black-text {
+  color: #F3F4F6 !important;
 }
 
 .specification-arrow {
@@ -213,8 +233,8 @@ thead.bg-transparent th {
 }
 
 .form-switch-custom.form-switch-primary .switch-input:checked {
-  background-color: #4361ee;
-  border-color: #4361ee;
+  background-color: #B91C1C;
+  border-color: #B91C1C;
 }
 
 /* 
@@ -249,7 +269,7 @@ thead.bg-transparent th {
   position: absolute;
   height: 34px;
   width: 98px;
-  background: #8C0404 !important;
+  background: #B91C1C !important;
   top: 2px;
   z-index: 3;
   left: 2px;
@@ -259,7 +279,7 @@ thead.bg-transparent th {
 }
 .switch-inline.inner-label-toggle.show .input-checkbox:before {
   left: 100px;
-  background: #8C0404 !important;
+  background: #B91C1C !important;
 }
 .switch-inline.inner-label-toggle.show .input-checkbox span.label-left {
   color: #000;

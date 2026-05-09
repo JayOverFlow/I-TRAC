@@ -102,6 +102,36 @@ thead.bg-transparent th {
     background-color: #f1f2f3 !important;
 }
 
+body.dark .custom-specification-header:hover {
+  background-color: #2A2F38 !important;
+}
+
+/* Dark mode: make collapse arrows and add-item visible */
+body.dark .collapse-toggle,
+body.dark .collapse-toggle svg,
+body.dark button.collapse-toggle {
+  color: #F3F4F6 !important;
+  stroke: currentColor;
+}
+
+body.dark .add-item-btn,
+body.dark button.add-item-btn {
+  color: #B91C1C !important;
+}
+
+body.dark .add-item-btn:hover,
+body.dark button.add-item-btn:hover {
+  color: #DC2626 !important;
+}
+
+/* Dark mode: override Bootstrap's text-black utility */
+body.dark .text-black {
+  color: #F3F4F6 !important;
+}
+body.dark .black-text {
+  color: #F3F4F6 !important;
+}
+
 .specification-arrow {
     transition: transform 0.3s ease;
     transform: rotate(180deg); /* Default open state */

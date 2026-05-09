@@ -41,7 +41,16 @@ $(document).ready(function() {
                 peopleList.empty();
 
                 if (response.users.length === 0) {
-                    peopleList.append('<div class="p-3 text-center text-muted"><small>No users found</small></div>');
+                    if (isSearch) {
+                        peopleList.append('<div class="p-3 text-center text-muted"><small>No users found</small></div>');
+                    } else {
+                        peopleList.append(`
+                            <div class="no-chat-history text-center p-4 mt-5">
+                                <img src="/img/search-user-chat.svg" alt="Search User" class="img-fluid mb-4" style="max-width: 150px;">
+                                <h6 style="font-size: 14px; font-weight: 600;">Search user and start chatting now</h6>
+                            </div>
+                        `);
+                    }
                     return;
                 }
 

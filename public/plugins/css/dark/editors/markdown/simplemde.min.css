@@ -531,8 +531,8 @@ body.dark .editor-toolbar a.fa-header-smaller:after {
 }
 body.dark .editor-toolbar.disabled-for-preview a:not(.no-disable) {
   pointer-events: none;
-  background: #060818;
-  border-color: #060818;
+  background: #0E0F11;
+  border-color: #0E0F11;
   text-shadow: inherit;
 }
 @media only screen and (max-width: 700px) {
@@ -1172,8 +1172,8 @@ body.dark .editor-toolbar a.fa-header-smaller:after {
 }
 body.dark .editor-toolbar.disabled-for-preview a:not(.no-disable) {
   pointer-events: none;
-  background: #060818;
-  border-color: #060818;
+  background: #0E0F11;
+  border-color: #0E0F11;
   text-shadow: inherit;
 }
 @media only screen and (max-width: 700px) {

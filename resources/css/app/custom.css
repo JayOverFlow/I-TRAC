@@ -108,43 +108,43 @@ body.dark .theme-toggle svg.feather-moon {
 }
 body.dark .theme-toggle svg.feather-sun {
     display: block;
-    color: #e0e6ed;
+    color: #F3F4F6;
 }
 body:not(.dark) .theme-toggle svg.feather-moon {
     display: block;
-    color: #3b3f5c;
+    color: #6B7280;
 }
 
 /* Dark Mode Overrides for Custom Classes */
 body.dark {
-    background-color: #060818 !important;
+    background-color: #0E0F11 !important;
 }
 body.dark .header-container {
-    background-color: #060818 !important;
+    background-color: #0E0F11 !important;
 }
 
 /* Dark Mode Contrast Fixes */
 body.dark .black-text {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .gray-text {
-    color: #888ea8 !important;
+    color: #A1A1AA !important;
 }
 
 body.dark .red-text-2 {
-    color: #e7515a !important;
+    color: #B91C1C !important;
 }
 
 /* Table Striped Fix for Dark Mode */
 body.dark .table-striped > tbody > tr:nth-of-type(odd) > * {
     background-color: rgba(255, 255, 255, 0.05) !important;
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .table-striped > tbody > tr:nth-of-type(even) > * {
     background-color: transparent !important;
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .table.dt-table-hover tbody tr:hover {
@@ -195,33 +195,33 @@ body.dark .dark-logo {
 
 /* Card Title Color in Dark Mode */
 body.dark .card-title {
-    color: #E7515A !important;
+    color: #B91C1C !important;
 }
 
 /* Dark Mode Modals */
 body.dark .modal-content {
-    background-color: #0e1726 !important;
-    border: 1px solid #191e3a !important;
+    background-color: #15181D !important;
+    border: 1px solid #2A2F38 !important;
 }
 
 body.dark .modal-header {
-    border-bottom: 1px solid #191e3a !important;
+    border-bottom: 1px solid #2A2F38 !important;
 }
 
 body.dark .modal-footer {
-    border-top: 1px solid #191e3a !important;
+    border-top: 1px solid #2A2F38 !important;
 }
 
 body.dark .modal-title {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .modal-body {
-    color: #888ea8 !important;
+    color: #A1A1AA !important;
 }
 
 body.dark .modal-content hr {
-    border-top: 1px solid #191e3a !important;
+    border-top: 1px solid #2A2F38 !important;
 }
 
 body.dark .btn-close {
@@ -230,31 +230,31 @@ body.dark .btn-close {
 
 /* Header User Name Fix */
 body.dark .user-profile-dropdown .media-body small {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .user-profile-dropdown .media-body .red-text-2 {
-    color: #e7515a !important;
+    color: #B91C1C !important;
 }
 
 /* Account Settings Tabs */
 body.dark .nav.nav-pills {
-    background: #1b2e4b !important;
+    background: #1D2127 !important;
     padding: 6px !important;
     border-radius: 8px !important;
 }
 
 body.dark .nav.nav-pills .nav-link {
-    color: #bfc9d4 !important;
+    color: #A1A1AA !important;
 }
 
 body.dark .nav.nav-pills .nav-link.red-text-2 {
-    color: #bfc9d4 !important;
+    color: #A1A1AA !important;
 }
 
 body.dark .nav.nav-pills .nav-link.active {
-    background-color: #0e1726 !important;
-    color: #e7515a !important; /* Keep the active tab accent color */
+    background-color: #15181D !important;
+    color: #B91C1C !important; /* Keep the active tab accent color */
     box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
 }
 
@@ -270,8 +270,8 @@ body.dark .profile-container {
 }
 
 body.dark .profile-sidebar {
-    background-color: #1b2e4b !important;
-    border: 1px solid #1b2e4b !important;
+    background-color: #1D2127 !important;
+    border: 1px solid #1D2127 !important;
     border-radius: 12px !important;
     display: flex !important;
     flex-direction: column !important;
@@ -288,38 +288,38 @@ body.dark .profile-avatar-wrapper {
 }
 
 body.dark .profile-sidebar-info h4 {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .profile-sidebar-info p {
-    color: #888ea8 !important;
+    color: #A1A1AA !important;
 }
 
 body.dark .profile-main-content {
-    background-color: #0e1726 !important;
-    border: 1px solid #1b2e4b !important;
+    background-color: #15181D !important;
+    border: 1px solid #1D2127 !important;
     border-radius: 8px !important;
 }
 
 body.dark .profile-main-header h3 {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .info-section-title {
-    color: #e7515a !important;
-    border-bottom: 1px solid #1b2e4b !important;
+    color: #B91C1C !important;
+    border-bottom: 1px solid #1D2127 !important;
 }
 
 body.dark .info-label {
-    color: #888ea8 !important;
+    color: #A1A1AA !important;
 }
 
 body.dark .info-value {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .info-item {
-    border-bottom: 1px solid #1b2e4b !important;
+    border-bottom: 1px solid #1D2127 !important;
 }
 
 body.dark .profile-avatar-wrapper img {
@@ -328,17 +328,17 @@ body.dark .profile-avatar-wrapper img {
 
 body.dark .profile-main-header .btn-edit-profile,
 body.dark .profile-footer .btn-go-back {
-    background-color: #3b3f5c !important;
+    background-color: #6B7280 !important;
     color: #fff !important;
-    border: 1px solid #3b3f5c !important;
+    border: 1px solid #6B7280 !important;
     box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.dark .profile-main-header .btn-edit-profile:hover,
 body.dark .profile-footer .btn-go-back:hover {
-    background-color: #0e1726 !important;
-    border-color: #e7515a !important;
-    color: #e7515a !important;
+    background-color: #15181D !important;
+    border-color: #B91C1C !important;
+    color: #B91C1C !important;
 }
 
 body.dark .profile-main-header .btn-edit-profile svg,
@@ -348,35 +348,35 @@ body.dark .profile-footer .btn-go-back svg {
 
 body.dark .profile-main-header .btn-edit-profile:hover svg,
 body.dark .profile-footer .btn-go-back:hover svg {
-    color: #e7515a !important;
+    color: #B91C1C !important;
 }
 
 /* Form Controls in Dark Mode (for Edit Profile) */
 body.dark .info-item .form-control {
-    background-color: #1b2e4b !important;
-    color: #e0e6ed !important;
-    border: 1px solid #3b3f5c !important;
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+    border: 1px solid #6B7280 !important;
 }
 
 body.dark .info-item .form-control[readonly] {
-    background-color: #0e1726 !important;
-    border-color: #1b2e4b !important;
+    background-color: #15181D !important;
+    border-color: #1D2127 !important;
     color: #515365 !important;
 }
 
 body.dark .password-toggle-icon {
-    color: #888ea8 !important;
+    color: #A1A1AA !important;
 }
 
 /* Global Contrast Fixes */
 body.dark .black-text {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .fw-bold.black-text {
-    color: #e0e6ed !important;
+    color: #F3F4F6 !important;
 }
 
 body.dark .red-text-2 {
-    color: #e7515a !important;
+    color: #B91C1C !important;
 }
