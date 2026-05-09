@@ -1,0 +1,312 @@
+{
+  "_meta": {
+    "document_purpose": "Explicit field mapping for AI agent to populate the Purchase Order Excel template via PhpSpreadsheet. Use the 'Purchase Order' sheet (index 0) as the write target — it is the clean, unstyled template. The 'Purchase Order with mapping' sheet (index 1) is the reference-only document used to produce this JSON and must never be written to or modified.",
+    "template_file": "resources/excel/PO_temp.xlsx",
+    "write_target_sheet": "Purchase Order",
+    "write_target_sheet_index": 0,
+    "reference_sheet": "Purchase Order with mapping",
+    "reference_sheet_index": 1,
+    "coordinate_system": "PhpSpreadsheet letter+number (e.g. 'C4'). For merged cells, ALWAYS write to the TOP-LEFT cell of the merge range only.",
+    "currency_note": "Column E (Unit Cost) cells already have a Philippine Peso (₱) number format applied in the template. Write raw decimal values only — never prepend the '₱' symbol as a string.",
+    "row_offset_note": "Item table rows and all rows below it (summary, footer) are DYNAMIC. Their absolute row numbers depend on how many items are inserted. Use a $currentRow counter — do NOT hardcode any row number below row 12."
+  },
+
+  "static_cells": {
+    "description": "These cells already contain correct values in the template. DO NOT overwrite them under any circumstance.",
+    "cells": [
+      { "cell": "B1",  "merged_range": "B1:D1", "content": "University name, address, and telephone — multi-line static text" },
+      { "cell": "E1",  "merged_range": "E1:F1", "content": "PURCHASE ORDER — document title" },
+      { "cell": "B2",  "merged_range": "B2:D2", "content": "University mission statement — static paragraph" },
+      { "cell": "E2",  "merged_range": "E2:F2", "content": "FM-PR-006 REV 1 03MARCH2017 — form revision code" },
+      { "cell": "A4",  "content": "Supplier: — label" },
+      { "cell": "E4",  "content": "P.O. No.: — label" },
+      { "cell": "A5",  "content": "Address: — label" },
+      { "cell": "E5",  "content": "Date: — label" },
+      { "cell": "A6",  "content": "Tel. No.: — label" },
+      { "cell": "E6",  "content": "Mode of Procurement: — label" },
+      { "cell": "A7",  "content": "TIN: — label" },
+      { "cell": "E7",  "content": "TUP-Taguig TIN: — label" },
+      { "cell": "A8",  "content": "Gentlemen: — static salutation" },
+      { "cell": "B9",  "merged_range": "B9:E9", "content": "Please furnish this Office... — static instruction paragraph" },
+      { "cell": "A10", "content": "Place of Delivery: — label" },
+      { "cell": "E10", "content": "Delivery Term: — label" },
+      { "cell": "A11", "content": "Date of Delivery: — label" },
+      { "cell": "E11", "content": "Payment Term: — label" },
+      { "cell": "A12", "content": "Stock/Property No. — column header" },
+      { "cell": "B12", "content": "Unit — column header" },
+      { "cell": "C12", "content": "Description — column header" },
+      { "cell": "D12", "content": "Quantity — column header" },
+      { "cell": "E12", "content": "Unit Cost — column header" },
+      { "cell": "F12", "content": "Amount — column header" },
+      { "cell": "A41", "merged_range": "A41:F41", "content": "Penalty clause — static legal text (row number shifts with item count)" },
+      { "cell": "B43", "content": "Conforme: — static label (row number shifts)" },
+      { "cell": "E43", "content": "Very Truly yours, — static closing (row number shifts)" },
+      { "cell": "E44", "content": "ENGR. REXMELLE F. DECAPIA, JR., Ph.D — static signatory name" },
+      { "cell": "E45", "content": "Campus Director — static signatory title" },
+      { "cell": "C46", "content": "Signature over Printed Name of Supplier — static label" },
+      { "cell": "C48", "content": "__________ — static signature line" },
+      { "cell": "C49", "content": "Date — static label" },
+      { "cell": "A51", "content": "Funds Cluster: — static label" },
+      { "cell": "B51", "content": "_______________ — static blank line" },
+      { "cell": "E51", "content": "ORS/BURS No: — static label" },
+      { "cell": "F51", "content": "____________ — static blank line" },
+      { "cell": "A52", "content": "Funds Available: — static label" },
+      { "cell": "B52", "content": "_______________ — static blank line" },
+      { "cell": "E52", "content": "ORS/BURS: — static label" },
+      { "cell": "F52", "content": "____________ — static blank line" },
+      { "cell": "E53", "content": "Amount: — static label" },
+      { "cell": "F53", "content": "____________ — static blank line" },
+      { "cell": "C54", "content": "JULIET T. NAREZ — static accountant name" },
+      { "cell": "C55", "content": "Accountant III — static accountant title" }
+    ]
+  },
+
+  "header_fields": {
+    "description": "Dynamic fields in the PO header. Write to the TOP-LEFT cell of each merged range. These are fixed-position cells — they do not shift regardless of item count.",
+    "fields": [
+      {
+        "cell": "C4",
+        "merged_range": "C4:D4",
+        "placeholder": "po_supplier",
+        "data_type": "string",
+        "source": "purchase_orders.supplier_name",
+        "max_length": 255,
+        "notes": "Supplier/vendor business name."
+      },
+      {
+        "cell": "F4",
+        "placeholder": "po_no",
+        "data_type": "string",
+        "source": "purchase_orders.po_number",
+        "max_length": 50,
+        "notes": "Purchase Order number. Write as plain string (e.g. '2024-001'). Do not auto-format."
+      },
+      {
+        "cell": "C5",
+        "merged_range": "C5:D5",
+        "placeholder": "po_address",
+        "data_type": "string",
+        "source": "purchase_orders.supplier_address",
+        "max_length": 500,
+        "notes": "May contain line breaks. PhpSpreadsheet will wrap inside the merged cell."
+      },
+      {
+        "cell": "F5",
+        "placeholder": "po_date",
+        "data_type": "date",
+        "source": "purchase_orders.po_date",
+        "format": "F j, Y",
+        "example": "January 15, 2025",
+        "notes": "Format as string using PHP date('F j, Y', ...) BEFORE writing. Never pass a raw date object or timestamp — PhpSpreadsheet will convert it to an Excel serial number."
+      },
+      {
+        "cell": "C6",
+        "merged_range": "C6:D6",
+        "placeholder": "po_tele",
+        "data_type": "string",
+        "source": "purchase_orders.supplier_telephone",
+        "max_length": 100,
+        "notes": "Telephone/contact number of the supplier."
+      },
+      {
+        "cell": "F6",
+        "placeholder": "po_mode",
+        "data_type": "string",
+        "source": "purchase_orders.procurement_mode",
+        "max_length": 150,
+        "notes": "Mode of Procurement (e.g. 'Small Value Procurement', 'Negotiated Procurement')."
+      },
+      {
+        "cell": "C7",
+        "merged_range": "C7:D7",
+        "placeholder": "po_tin",
+        "data_type": "string",
+        "source": "purchase_orders.supplier_tin",
+        "max_length": 20,
+        "notes": "Supplier Tax Identification Number. Write as plain string to preserve leading zeros and dashes."
+      },
+      {
+        "cell": "F7",
+        "placeholder": "po_tuptin",
+        "data_type": "string",
+        "source": "purchase_orders.tup_tin",
+        "max_length": 20,
+        "notes": "TUP-Taguig campus TIN. Write as plain string."
+      },
+      {
+        "cell": "C10",
+        "merged_range": "C10:D10",
+        "placeholder": "po_place_delivery",
+        "data_type": "string",
+        "source": "purchase_orders.place_of_delivery",
+        "max_length": 255,
+        "notes": "Delivery location/address."
+      },
+      {
+        "cell": "F10",
+        "placeholder": "po_delivery_term",
+        "data_type": "string",
+        "source": "purchase_orders.delivery_term",
+        "max_length": 100,
+        "notes": "Delivery term (e.g. '30 Calendar Days')."
+      },
+      {
+        "cell": "C11",
+        "merged_range": "C11:D11",
+        "placeholder": "po_date_delivery",
+        "data_type": "date",
+        "source": "purchase_orders.date_of_delivery",
+        "format": "F j, Y",
+        "example": "February 14, 2025",
+        "notes": "Format as string using PHP date('F j, Y', ...) BEFORE writing. Same rule as po_date."
+      },
+      {
+        "cell": "F11",
+        "placeholder": "po_payment_term",
+        "data_type": "string",
+        "source": "purchase_orders.payment_term",
+        "max_length": 100,
+        "notes": "Payment term (e.g. '30 Days After Delivery')."
+      }
+    ]
+  },
+
+  "item_table": {
+    "description": "Repeating rows for line items. The table header is at row 12 (static, do not touch). Data rows start at row 13 and repeat downward — one row per item. Maximum 23 rows available in the template (A13:F35). Use a $currentRow variable initialized to 13 and increment it by 1 after writing each item.",
+    "header_row": 12,
+    "data_start_row": 13,
+    "data_end_row_max": 35,
+    "max_items": 23,
+    "columns": [
+      {
+        "column": "A",
+        "placeholder": "po_items_stockno",
+        "data_type": "string",
+        "source": "purchase_order_items.stock_property_no",
+        "notes": "Stock or property number. May be null/empty — write empty string if not applicable."
+      },
+      {
+        "column": "B",
+        "placeholder": "po_items_unit",
+        "data_type": "string",
+        "source": "purchase_order_items.unit",
+        "example": "pcs, reams, boxes, sets",
+        "notes": "Unit of measure."
+      },
+      {
+        "column": "C",
+        "placeholder": "po_items_descrip + po_spec_description",
+        "data_type": "string",
+        "source": "purchase_order_items.description + purchase_order_items.specification",
+        "notes": "Concatenate item description and specification with a newline separator: $item->description . \"\\n\" . $item->specification. If specification is null/empty, write description only. This column is widest (50.71 width) and supports text wrapping."
+      },
+      {
+        "column": "D",
+        "placeholder": "po_items_quantity",
+        "data_type": "integer",
+        "source": "purchase_order_items.quantity",
+        "notes": "Whole number quantity. Write as integer, not string."
+      },
+      {
+        "column": "E",
+        "placeholder": "po_items_cost",
+        "data_type": "decimal",
+        "source": "purchase_order_items.unit_cost",
+        "precision": "10,2",
+        "number_format": "_-\"₱\"* #,##0.00_-;\\-\"₱\"* #,##0.00_-;_-\"₱\"* \"-\"??_-;_-@_-",
+        "notes": "Write raw decimal value only (e.g. 1500.00). The ₱ peso currency format is already applied in the template cells — do NOT prepend '₱' as a string. PhpSpreadsheet will render it automatically."
+      },
+      {
+        "column": "F",
+        "placeholder": "po_items_amount",
+        "data_type": "decimal",
+        "source": "purchase_order_items.amount",
+        "precision": "10,2",
+        "notes": "Line total (quantity × unit_cost). Write computed decimal value. Same currency rule as Column E — write raw decimal, not a formatted string."
+      }
+    ],
+    "end_of_items_marker": {
+      "description": "After writing the LAST item row, write the end-of-list marker on the NEXT row in Column C only. All other columns on that row must be left empty.",
+      "column": "C",
+      "value": "*** Nothing follows ***",
+      "row_logic": "$currentRow after the last item is written (i.e. the row immediately after the last item row)"
+    },
+    "row_counter_pattern": {
+      "php_example": "$currentRow = 13;\nforeach ($purchaseOrder->items as $item) {\n    $sheet->setCellValue('A' . $currentRow, $item->stock_property_no);\n    $sheet->setCellValue('B' . $currentRow, $item->unit);\n    $spec = $item->specification ? $item->description . \"\\n\" . $item->specification : $item->description;\n    $sheet->setCellValue('C' . $currentRow, $spec);\n    $sheet->setCellValue('D' . $currentRow, $item->quantity);\n    $sheet->setCellValue('E' . $currentRow, $item->unit_cost);\n    $sheet->setCellValue('F' . $currentRow, $item->amount);\n    $currentRow++;\n}\n$sheet->setCellValue('C' . $currentRow, '*** Nothing follows ***');\n$currentRow++;"
+    }
+  },
+
+  "summary_fields": {
+    "description": "These fields appear BELOW the item table. Their absolute row numbers shift based on how many items were inserted. All row numbers here assume the template's DEFAULT layout (items rows 13–35 = 23 rows). When items are fewer, rows above row 38 shift up. Use $currentRow (already incremented past the end-of-items marker) as the anchor — do NOT hardcode row 38 or 39.",
+    "offset_note": "After writing the end-of-items marker and incrementing $currentRow, calculate the summary rows as offsets from $currentRow. The static 'Procurement of Consumables...' text in C38 and the totals in C39/F39 are separated by a fixed gap in the original template. Replicate that gap by skipping rows as needed OR calculate: $totalAmountRow = 13 + count($items) + 2 (i.e., 2 rows after the last item row).",
+    "fields": [
+      {
+        "default_cell": "C38",
+        "row_offset_from_data_start": "data_start_row + item_count + 2",
+        "content": "Procurement of Consumables for Various Offices",
+        "data_type": "string",
+        "is_static_looking_but_may_be_dynamic": true,
+        "notes": "This text appears static in the template but may need to reflect the actual procurement purpose from the PO. Confirm with the business if this should be pulled from purchase_orders.purpose or left as-is."
+      },
+      {
+        "default_cell": "C39",
+        "row_offset_from_data_start": "data_start_row + item_count + 3",
+        "placeholder": "[total amount in words]",
+        "data_type": "string",
+        "source": "Computed — convert purchase_orders.grand_total to Filipino peso words",
+        "example": "ONE THOUSAND FIVE HUNDRED PESOS ONLY",
+        "notes": "Must be fully uppercase. Use a number-to-words conversion utility (e.g. a custom PHP helper or the 'NumberToWords' library). Format: '[AMOUNT IN WORDS] PESOS ONLY'."
+      },
+      {
+        "default_cell": "F39",
+        "row_offset_from_data_start": "data_start_row + item_count + 3",
+        "placeholder": "[total amount]",
+        "data_type": "decimal",
+        "source": "purchase_orders.grand_total",
+        "precision": "10,2",
+        "notes": "Write raw decimal value. Apply the same ₱ number format as column E if not already in the template cell."
+      }
+    ]
+  },
+
+  "merged_cells_registry": {
+    "description": "Complete list of all merged cell ranges in the template. PhpSpreadsheet requires that you ONLY write to the TOP-LEFT cell of a merged range. Writing to any other cell in a merged range will throw an exception or silently corrupt the file. DO NOT call mergeCells() in code — the template already has all merges defined.",
+    "ranges": [
+      { "range": "A1:A2",  "top_left": "A1",  "purpose": "Logo/image placeholder column" },
+      { "range": "B1:D1",  "top_left": "B1",  "purpose": "University name and address block" },
+      { "range": "E1:F1",  "top_left": "E1",  "purpose": "PURCHASE ORDER title" },
+      { "range": "B2:D2",  "top_left": "B2",  "purpose": "University mission statement" },
+      { "range": "E2:F2",  "top_left": "E2",  "purpose": "Form revision code" },
+      { "range": "C4:D4",  "top_left": "C4",  "purpose": "Supplier name value" },
+      { "range": "C5:D5",  "top_left": "C5",  "purpose": "Supplier address value" },
+      { "range": "C6:D6",  "top_left": "C6",  "purpose": "Supplier telephone value" },
+      { "range": "C7:D7",  "top_left": "C7",  "purpose": "Supplier TIN value" },
+      { "range": "B9:E9",  "top_left": "B9",  "purpose": "Instruction paragraph" },
+      { "range": "C10:D10","top_left": "C10", "purpose": "Place of delivery value" },
+      { "range": "C11:D11","top_left": "C11", "purpose": "Date of delivery value" },
+      { "range": "A41:F41","top_left": "A41", "purpose": "Penalty clause — full-width static text (row shifts with item count)" }
+    ]
+  },
+
+  "constraints": {
+    "critical_rules": [
+      "NEVER call $sheet->mergeCells() in code. All merges are pre-defined in the template. Calling mergeCells() will throw an exception.",
+      "NEVER write to any cell inside a merged range other than the TOP-LEFT cell. Refer to merged_cells_registry for all top-left cells.",
+      "NEVER call getStyle()->applyFromArray() or any formatting method on dynamic cells. All cell styles, borders, fonts, and number formats are pre-applied in the template. Writing values must use setCellValue() only.",
+      "NEVER pass a PHP DateTime object or UNIX timestamp directly to setCellValue() for date fields. PhpSpreadsheet converts these to Excel serial numbers. Always pre-format dates as strings using date('F j, Y', strtotime($value)).",
+      "NEVER hardcode row numbers for any row at or below row 13. All rows from 13 downward are dynamic and depend on item count. Use $currentRow exclusively.",
+      "NEVER write the ₱ currency symbol as part of a string value in column E or F. The number format is already applied in the template. Write raw numeric decimals only.",
+      "NEVER modify the 'Purchase Order with mapping' sheet. It is a reference sheet and must remain untouched.",
+      "ALWAYS load the template using IOFactory::load() — never create a new Spreadsheet() from scratch. Creating from scratch destroys all template styles, merges, and column widths.",
+      "ALWAYS write to the 'Purchase Order' sheet (index 0), never to the mapping reference sheet.",
+      "ALWAYS write an empty string ('') to empty/null optional fields instead of null to avoid PhpSpreadsheet type errors.",
+      "The item table supports a MAXIMUM of 23 items (rows 13–35). If item count exceeds 23, throw a validation exception before attempting to write — do not silently overflow into static template rows below row 35."
+    ],
+    "pdf_export_rules": [
+      "Use PhpSpreadsheet's Mpdf writer for PDF conversion.",
+      "Set page orientation to Portrait and paper size to A4 before rendering.",
+      "Stream the PDF output directly using ob_start() / ob_get_clean() — do not write any temporary files to disk.",
+      "The return type of the export method must be \\Symfony\\Component\\HttpFoundation\\StreamedResponse."
+    ]
+  }
+}
