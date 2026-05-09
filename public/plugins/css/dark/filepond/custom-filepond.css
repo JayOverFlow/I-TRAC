@@ -41,16 +41,16 @@ body.dark .filepond--root .filepond--drop-label, body.dark .filepond--drip, body
   border-radius: 9px;
 }
 body.dark .filepond--file, body.dark .filepond--file-action-button {
-  background-color: #060818 !important;
+  background-color: #0E0F11 !important;
 }
 body.dark .filepond--file-info {
-  background-color: #060818 !important;
+  background-color: #0E0F11 !important;
 }
 body.dark .filepond--file-info .filepond--file-info-main {
-  background-color: #060818 !important;
+  background-color: #0E0F11 !important;
 }
 body.dark .filepond--file .filepond--file-status {
-  background-color: #060818 !important;
+  background-color: #0E0F11 !important;
 }
 body.dark [data-filepond-item-state=processing-complete] .filepond--item-panel {
   background-color: #369763 !important;

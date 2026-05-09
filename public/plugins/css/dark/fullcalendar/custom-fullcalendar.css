@@ -100,7 +100,7 @@ body.dark .event-fc-color {
   cursor: pointer;
 }
 body.dark .event-fc-color:hover {
-  background-color: #060818;
+  background-color: #0E0F11;
 }
 body.dark .fc .fc-daygrid-day.fc-day-today {
   background-color: transparent;
@@ -159,7 +159,7 @@ body.dark .fc-bg-danger .fc-daygrid-event-dot {
   border-color: #e7515a;
 }
 body.dark .fc .fc-list-event:hover td {
-  background-color: #060818;
+  background-color: #0E0F11;
 }
 
 /* Modal CSS */
