@@ -148,5 +148,6 @@ Route::middleware(['auth', 'role:Procurement'])->group(function () {
         Route::get('/create-po/{po_id}', 'showCreatePo')->name('show.create.po');
         Route::post('/create-po/store/{pr_id}', 'createPo')->name('create.po');
         Route::post('/create-po/update/{po_id}', 'updatePo')->name('update.po');
+        Route::get('/create-po/{po_id}/export', 'exportPdf')->name('export.po.pdf');
     });
 });
