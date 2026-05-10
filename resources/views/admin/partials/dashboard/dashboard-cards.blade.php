@@ -4,7 +4,7 @@
             <div class="card">
                 <div class="card-body row p-4">
                     <div class="col-4">
-                        <img src="{{ asset('img/department.png') }}" alt="Offices">
+                        <img src="{{ asset('img/offices.svg') }}" alt="Offices">
                     </div>
                     <div class="col-8 text-end">
                         <h5 class="card-title fw-bold">Offices</h5>
@@ -18,7 +18,7 @@
             <div class="card">
                 <div class="card-body row p-4">
                     <div class="col-4">
-                        <img src="{{ asset('img/department.png') }}" alt="Departments">
+                        <img src="{{ asset('img/departments.svg') }}" alt="Departments">
                     </div>
                     <div class="col-8 text-end">
                         <h5 class="card-title fw-bold">Departments</h5>
@@ -32,7 +32,7 @@
             <div class="card">
                 <div class="card-body row p-4">
                     <div class="col-4">
-                        <img src="{{ asset('img/department.png') }}" alt="Faculty Members">
+                        <img src="{{ asset('img/faculty.svg') }}" alt="Faculty Members">
                     </div>
                     <div class="col-8 text-end">
                         <h5 class="card-title fw-bold">Faculty Members</h5>
@@ -46,7 +46,7 @@
             <div class="card">
                 <div class="card-body row p-4">
                     <div class="col-4">
-                        <img src="{{ asset('img/department.png') }}" alt="Staffs">
+                        <img src="{{ asset('img/staff.svg') }}" alt="Staffs">
                     </div>
                     <div class="col-8 text-end">
                         <h5 class="card-title fw-bold">Staffs</h5>
