@@ -99,8 +99,8 @@ class AdminAuthController extends Controller
             'password.required' => 'Password is required.',
         ]);
 
-        // Find the admin by username
-        $admin = Admin::where('admin_username', $request->username)->first();
+        // Find the admin by username (Case-sensitive)
+        $admin = Admin::whereRaw('BINARY admin_username = ?', [$request->username])->first();
 
         // Check if admin exists and password matches
         if (!$admin || !Hash::check($request->password, $admin->admin_password)) {
