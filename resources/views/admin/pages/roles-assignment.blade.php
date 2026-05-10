@@ -12,9 +12,14 @@
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dt-global_style.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/src/sweetalerts2/sweetalerts2.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/css/light/sweetalerts2/custom-sweetalert.css') }}">
+    
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dark/dt-global_style.css') }}">
+
 
     <!-- CUSTOM css -->
-    <link rel="stylesheet" href="{{ asset('css/admin/custom-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/dashboard/custom-dashboard.css') }}">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
