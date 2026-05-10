@@ -11,8 +11,13 @@
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dt-global_style.css') }}">
 
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dark/dt-global_style.css') }}">
+
+
     <!-- CUSTOM css -->
-    <link rel="stylesheet" href="{{ asset('css/admin/custom-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/dashboard/custom-dashboard.css') }}">
+
 @endpush
 
 @section('content')

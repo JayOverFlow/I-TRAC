@@ -33,3 +33,148 @@
     border: 2px solid transparent;
     background: linear-gradient(#454343, #ABA5A5, #454343);
 }
+
+/* Dark Mode Overrides for All Select Dropdowns (Filters, Modals, etc.) */
+body.dark .form-select {
+    color: #F3F4F6 !important;
+    background-color: #1D2127 !important;
+    border: 1px solid #2A2F38 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23F3F4F6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+}
+
+body.dark .form-select:focus {
+    border-color: #B91C1C !important;
+    box-shadow: 0 0 0 0.25rem rgba(185, 28, 28, 0.25) !important;
+    color: #F3F4F6 !important;
+}
+
+body.dark .form-select option {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Light Red Highlight for "All Departments" or empty placeholders */
+body.dark .form-select option[value=""],
+body.dark #department-filter option[value=""],
+body.dark #department-filter-users option[value=""] {
+    color: #F87171 !important;
+}
+
+/* Ensure all options inherit the correct color */
+body.dark .form-select * {
+    color: #F3F4F6 !important;
+}
+
+/* Remove Shadows from Action Buttons (Global for Admin) */
+#btn-edit-main,
+#btn-add-row,
+#btn-save-all,
+#btn-cancel-edit,
+#btn-edit-users,
+#btn-save-users,
+#btn-cancel-users,
+#btn-update-role-save,
+#btn-update-dept-save {
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+/* Specific fix for the "blue shadow" typically found on btn-primary in this template */
+.btn-primary, .btn-info, .btn-success, .btn-danger {
+    box-shadow: none !important;
+}
+
+/* SweetAlert2 Dark Mode Overrides */
+body.dark .swal2-popup {
+    background-color: #1D2127 !important;
+    border: 1px solid #2A2F38 !important;
+}
+
+body.dark .swal2-title,
+body.dark .swal2-html-container {
+    color: #F3F4F6 !important;
+}
+
+body.dark .swal2-confirm,
+body.dark .swal2-cancel,
+body.dark .swal2-deny {
+    box-shadow: none !important;
+}
+
+/* Ensure icons have better visibility in dark mode */
+body.dark .swal2-icon.swal2-warning {
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+}
+
+/* SweetAlert Review Summary Container (Light/Dark Switch) */
+.swal-review-container {
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #e0e6ed;
+    color: #3b3f5c;
+}
+
+body.dark .swal-review-container {
+    background: #0E0F11 !important;
+    border: 1px solid #2A2F38 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Legibility fix for muted text in dark alerts */
+body.dark .swal2-html-container .text-muted {
+    color: #A1A1AA !important;
+}
+
+/* New Department Inline Interface */
+.new-dept-interface {
+    background-color: #f1f2f3;
+    border: 1px solid #e0e6ed;
+}
+
+body.dark .new-dept-interface {
+    background-color: #1D2127 !important;
+    border: 1px solid #2A2F38 !important;
+}
+
+/* Action Button Color Differentiation */
+#btn-add-row {
+    background-color: #10B981 !important;
+    border-color: #10B981 !important;
+    color: #ffffff !important;
+}
+#btn-add-row:hover {
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+}
+
+#btn-save-all, 
+#btn-save-users, 
+#btn-update-role-save, 
+#btn-update-dept-save {
+    background-color: #3B82F6 !important;
+    border-color: #3B82F6 !important;
+    color: #ffffff !important;
+}
+#btn-save-all:hover, #btn-save-users:hover, #btn-update-role-save:hover, #btn-update-dept-save:hover {
+    background-color: #2563EB !important;
+    border-color: #2563EB !important;
+}
+
+#btn-cancel-edit, 
+#btn-cancel-users {
+    background-color: #E11D48 !important;
+    border-color: #E11D48 !important;
+    color: #ffffff !important;
+}
+#btn-cancel-edit:hover, #btn-cancel-users:hover {
+    background-color: #BE123C !important;
+    border-color: #BE123C !important;
+}

@@ -54,7 +54,8 @@
                 </div>
 
                 {{-- New Dept Interface (Hidden by default) --}}
-                <div class="new-dept-interface d-none mt-1 p-2 border rounded bg-light">
+                <div class="new-dept-interface d-none mt-1 p-2 rounded">
+
                     <div class="d-flex align-items-center gap-2">
                         <div style="flex: 2;">
                             <input type="text" class="form-control form-control-sm input-new-dept-name" placeholder="New Dept Name">
@@ -98,7 +99,8 @@
                         <td>
                             <div class="d-flex justify-content-between align-items-center w-100 h-100">
                                 @if($role->role_id)
-                                    <div class="role-text-val text-dark editable-role-text transition-all flex-grow-1 p-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
+                                    <div class="role-text-val editable-role-text transition-all flex-grow-1 p-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
+
                                 @else
                                     <div class="role-text-val text-muted fst-italic flex-grow-1 p-2 rounded">No Role Assigned</div>
                                 @endif

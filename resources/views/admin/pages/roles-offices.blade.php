@@ -10,12 +10,16 @@
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dash_1.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dt-global_style.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/admin/dashboard/page-specific/dark/dt-global_style.css') }}">
+
     <style>
         /* Highlight clickable text during edit mode */
         #roles-table.table-edit-mode .editable-role-text:hover,
         #roles-table.table-edit-mode .editable-dept-text:hover {
             cursor: pointer;
-            background-color: #f1f3f5;
+            background-color: rgba(185, 28, 28, 0.1) !important;
         }
 
         /* Fix: prevent overflow clipping that forces dropdowns to open upward */
@@ -32,7 +36,8 @@
     </style>
 
     <!-- CUSTOM css -->
-    <link rel="stylesheet" href="{{ asset('css/admin/custom-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/dashboard/custom-dashboard.css') }}">
+
     <link rel="stylesheet" href="{{ asset('plugins/src/sweetalerts2/sweetalerts2.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/css/light/sweetalerts2/custom-sweetalert.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -46,19 +51,22 @@
     {{-- Edit Role Modal --}}
     <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content shadow-lg border-0 bg-white">
-                <div class="modal-header border-bottom bg-light">
-                    <h5 class="modal-title font-weight-bolder text-dark" id="editRoleModalLabel">Edit Role</h5>
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title font-weight-bolder" id="editRoleModalLabel">Edit Role</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-dark">
+                <div class="modal-body">
+
                     <input type="hidden" id="edit-role-id">
                     <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">Role Name</label>
+                        <label class="form-label fw-bold">Role Name</label>
+
                         <input type="text" class="form-control" id="edit-role-name-input">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">Assign to Department | Office</label>
+                        <label class="form-label fw-bold">Assign to Department | Office</label>
+
                         <select class="form-select" id="edit-role-dept-select">
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->dep_id }}">{{ $dept->dep_name }}</option>
@@ -66,7 +74,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer bg-light border-top">
+                <div class="modal-footer border-top">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="btn-update-role-save">Save changes</button>
                 </div>
@@ -77,26 +85,28 @@
     {{-- Edit Department Modal --}}
     <div class="modal fade" id="editDeptModal" tabindex="-1" aria-labelledby="editDeptModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content shadow-lg border-0 bg-white">
-                <div class="modal-header border-bottom bg-light">
-                    <h5 class="modal-title font-weight-bolder text-dark" id="editDeptModalLabel">Edit Department</h5>
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title font-weight-bolder" id="editDeptModalLabel">Edit Department</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-dark">
+                <div class="modal-body">
+
                     <input type="hidden" id="edit-dept-id">
                     <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">Department Name</label>
-                        <input type="text" class="form-control text-dark" id="edit-dept-name-input">
+                        <label class="form-label fw-bold">Department Name</label>
+                        <input type="text" class="form-control" id="edit-dept-name-input">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">Type</label>
-                        <select class="form-select text-dark" id="edit-dept-type-select">
+                        <label class="form-label fw-bold">Type</label>
+                        <select class="form-select" id="edit-dept-type-select">
+
                             <option value="academic">Academic</option>
                             <option value="administrative">Administrative</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer bg-light border-top">
+                <div class="modal-footer border-top">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="btn-update-dept-save">Save changes</button>
                 </div>
@@ -591,7 +601,8 @@
                     }
 
                     var modalHtml = `
-                        <div style="max-height: 200px; overflow-y: auto; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #e0e6ed;">
+                        <div class="swal-review-container">
+
                             <ul style="margin-bottom: 0; padding-left: 20px; font-size: 0.95em;">
                                 ${summaryList.join('')}
                             </ul>
