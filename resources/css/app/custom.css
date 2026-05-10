@@ -44,6 +44,57 @@ body {
     background-color: var(--red-2);
 }
 
+/* Global Navigation Bar Styling (Phase 1: Globalizing) */
+#sidebar ul.menu-categories li.menu > a,
+#sidebar ul.menu-categories li.menu > a span,
+#sidebar ul.menu-categories li.menu > a svg {
+    color: #F87171 !important; /* Inactive: Light Red */
+}
+
+#sidebar ul.menu-categories li.menu.active > a,
+#sidebar ul.menu-categories li.menu.active > a span,
+#sidebar ul.menu-categories li.menu.active > a svg,
+#sidebar ul.menu-categories li.menu > a:hover,
+#sidebar ul.menu-categories li.menu > a:hover span,
+#sidebar ul.menu-categories li.menu > a:hover svg {
+    color: #ffffff !important; /* Active & Hover: White */
+}
+
+/* Sidebar Toggle (Chevron) Hover Fix */
+.sidebar-wrapper.sidebar-theme .theme-brand .sidebar-toggle .btn-toggle svg:hover {
+    color: #F87171 !important;
+}
+
+
+/* Vertical Divider Theme Fix */
+#sidebar ul.menu-categories li.menu > .dropdown-toggle {
+    border-right: 1px solid rgba(248, 113, 113, 0.3) !important;
+}
+
+#sidebar ul.menu-categories li.menu:last-child > .dropdown-toggle {
+    border-right: none !important;
+}
+
+/* Dark Mode Navigation Fixes */
+body.dark #sidebar ul.menu-categories li.menu > a,
+body.dark #sidebar ul.menu-categories li.menu > a span {
+    color: #F87171 !important;
+}
+
+body.dark #sidebar ul.menu-categories li.menu.active > a,
+body.dark #sidebar ul.menu-categories li.menu.active > a span {
+    color: #ffffff !important;
+}
+
+body.dark #sidebar ul.menu-categories li.menu > a:hover,
+body.dark #sidebar ul.menu-categories li.menu > a:hover span,
+body.dark #sidebar ul.menu-categories li.menu > a:hover svg {
+    color: #ffffff !important;
+}
+
+
+
+
 .black-text {
     color: var(--black-text) !important;
 }

@@ -133,23 +133,69 @@
 
                     // Save all user assignments
                     $(document).on('click', '#btn-save-users', function() {
+                        var summaryList = [];
+                        var assignments = [];
+
+                        usersApi.$('tr').each(function() {
+                            var $row = $(this);
+                            var $roleSelect = $row.find('.role-assignment-select');
+                            var $deptSelect = $row.find('.dept-assignment-select');
+                            
+                            var currentRoleId = $roleSelect.val();
+                            var originalRoleId = $roleSelect.data('original-role-id');
+                            var currentDepId = $deptSelect.val();
+                            var originalDepId = $deptSelect.data('original-dep-id');
+                            var userId = $row.data('user-id');
+
+                            // Only add to summary if changed
+                            if (currentRoleId != originalRoleId || currentDepId != originalDepId) {
+                                var firstName = $row.find('td:eq(0)').text().trim();
+                                var lastName = $row.find('td:eq(1)').text().trim();
+                                var roleName = $roleSelect.find('option:selected').text().trim() || '—';
+                                var deptName = $deptSelect.find('option:selected').text().trim() || '—';
+                                
+                                var changeDesc = "";
+                                if (currentDepId != originalDepId && currentRoleId != originalRoleId) {
+                                    changeDesc = `Moving to <b>${deptName}</b> as <b>${roleName}</b>`;
+                                } else if (currentDepId != originalDepId) {
+                                    changeDesc = `Moving to <b>${deptName}</b>`;
+                                } else {
+                                    changeDesc = `Assigned to <b>${roleName}</b>`;
+                                }
+
+                                summaryList.push(`<li style="margin-bottom: 5px;"><b>${firstName} ${lastName}:</b> ${changeDesc}</li>`);
+                            }
+
+                            if (userId !== undefined) {
+                                assignments.push({ user_id: userId, role_id: currentRoleId || null });
+                            }
+                        });
+
+
+                        if (summaryList.length === 0) {
+                            Swal.fire('No Changes', 'No assignment changes were detected.', 'info');
+                            return;
+                        }
+
+                        var modalHtml = `
+                            <div class="swal-review-container">
+                                <ul style="margin-bottom: 0; padding-left: 20px; font-size: 0.95em;">
+                                    ${summaryList.join('')}
+                                </ul>
+                            </div>
+                            <p class="mt-3 text-muted" style="font-size: 0.85em;">Are you sure you want to proceed?</p>
+                        `;
+
                         Swal.fire({
-                            title: 'Are you sure?',
-                            text: 'Save all changed user assignments?',
+                            title: 'Review Changes',
+                            html: modalHtml,
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonText: 'Yes, save!'
+                            confirmButtonText: 'Yes, save changes!',
+                            cancelButtonText: 'Cancel',
+                            width: '500px'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                var assignments = [];
-                                usersApi.$('tr').each(function() {
-                                    var userId = $(this).data('user-id');
-                                    var roleId = $(this).find('.role-assignment-select').val();
-                                    if (userId !== undefined) {
-                                        assignments.push({ user_id: userId, role_id: roleId || null });
-                                    }
-                                });
-
                                 $.ajax({
                                     url: '{{ route("admin.roles-assignment.update-users") }}',
                                     method: 'POST',
@@ -169,6 +215,7 @@
                             }
                         });
                     });
+
                 }
             });
 
@@ -230,21 +277,49 @@
                     $(document).on('click', '#btn-cancel-edit', function() { toggleEditMode(false); });
 
                     $(document).on('click', '#btn-save-all', function() {
+                        var summaryList = [];
+                        var assignments = [];
+
+                        table.$('tr').each(function() {
+                            var $row = $(this);
+                            var $userSelect = $row.find('.user-assignment-select');
+                            var currentUserId = $userSelect.val();
+                            var originalUserId = $userSelect.data('original-value');
+                            var roleId = $row.data('role-id');
+
+                            if (currentUserId != originalUserId) {
+                                var roleName = $row.find('td:eq(0)').text().trim();
+                                var userName = $userSelect.find('option:selected').text().trim();
+                                summaryList.push(`<li style="margin-bottom: 5px;"><b>${roleName}:</b> Assigned to ${userName}</li>`);
+                            }
+
+                            if (roleId) assignments.push({ role_id: roleId, user_id: currentUserId || null });
+                        });
+
+                        if (summaryList.length === 0) {
+                            Swal.fire('No Changes', 'No assignment changes were detected.', 'info');
+                            return;
+                        }
+
+                        var modalHtml = `
+                            <div class="swal-review-container">
+                                <ul style="margin-bottom: 0; padding-left: 20px; font-size: 0.95em;">
+                                    ${summaryList.join('')}
+                                </ul>
+                            </div>
+                            <p class="mt-3 text-muted" style="font-size: 0.85em;">Are you sure you want to proceed?</p>
+                        `;
+
                         Swal.fire({
-                            title: 'Are you sure?',
-                            text: "Save all changed assignments?",
+                            title: 'Review Changes',
+                            html: modalHtml,
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonText: 'Yes, save!'
+                            confirmButtonText: 'Yes, save changes!',
+                            cancelButtonText: 'Cancel',
+                            width: '500px'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                var assignments = [];
-                                table.$('tr').each(function() {
-                                    var roleId = $(this).data('role-id');
-                                    var userId = $(this).find('.user-assignment-select').val();
-                                    if (roleId) assignments.push({ role_id: roleId, user_id: userId || null });
-                                });
-
                                 $.ajax({
                                     url: "{{ route('admin.roles-assignment.update') }}",
                                     method: 'POST',
@@ -258,6 +333,7 @@
                             }
                         });
                     });
+
                 }
             });
 
