@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CreatePoController extends Controller
@@ -198,18 +199,40 @@ class CreatePoController extends Controller
 
         // End of items marker
         $sheet->setCellValue('C' . $currentRow, '*** Nothing follows ***');
+        $sheet->getStyle('C' . $currentRow)->getFont()->setBold(true);
+        $sheet->getStyle('C' . $currentRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $currentRow++;
 
-        // Summary fields
-        $itemCount = $po->poItems->count();
-        $summaryRowOffset1 = 13 + $itemCount + 2;
-        $summaryRowOffset2 = 13 + $itemCount + 3;
-
-        $sheet->setCellValue('C' . $summaryRowOffset1, 'Procurement of Consumables for Various Offices');
+        // Summary fields (fixed rows as requested)
+        $sheet->setCellValue('C38', $po->po_title ?? '');
         
         $amountInWords = $this->convertNumberToWords($po->po_total_amount) . ' PESOS ONLY';
-        $sheet->setCellValue('C' . $summaryRowOffset2, $amountInWords);
-        $sheet->setCellValue('F' . $summaryRowOffset2, $po->po_total_amount ?? 0);
+        $sheet->setCellValue('C39', $amountInWords);
+        $sheet->setCellValue('F39', $po->po_total_amount ?? 0);
+
+        // Page setup for PDF (center horizontally and scale to fit width)
+        $sheet->getPageSetup()->setHorizontalCentered(true);
+        $sheet->getPageSetup()->setFitToPage(true);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(1);
+        $sheet->getPageMargins()->setLeft(0.8);
+        $sheet->getPageMargins()->setRight(0.8);
+        $sheet->getPageMargins()->setTop(0.2);
+        $sheet->getPageMargins()->setBottom(0.2);
+
+        // Manually inject logo
+        $logoPath = public_path('img/tup-logo.png');
+        if (file_exists($logoPath)) {
+            $drawing = new Drawing();
+            $drawing->setName('TUP Logo');
+            $drawing->setDescription('TUP Logo');
+            $drawing->setPath($logoPath);
+            $drawing->setCoordinates('A1');
+            $drawing->setHeight(70);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(5);
+            $drawing->setWorksheet($sheet);
+        }
 
         // Export to PDF
         $writer = new Mpdf($spreadsheet);
