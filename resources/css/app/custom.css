@@ -150,6 +150,7 @@ body.dark #sidebar ul.menu-categories li.menu > a:hover svg {
 /* Theme Toggle Icons */
 .theme-toggle svg.feather-moon, .theme-toggle svg.feather-sun {
     cursor: pointer;
+    stroke-width: 1.5 !important;
 }
 body:not(.dark) .theme-toggle svg.feather-sun {
     display: none;
@@ -163,7 +164,7 @@ body.dark .theme-toggle svg.feather-sun {
 }
 body:not(.dark) .theme-toggle svg.feather-moon {
     display: block;
-    color: #6B7280;
+    color: #000000;
 }
 
 /* Dark Mode Overrides for Custom Classes */
