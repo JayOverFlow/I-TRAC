@@ -130,7 +130,7 @@
         <li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
             <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
-                    <div class="avatar avatar-sm avatar-indicators avatar-online">
+                    <div class="avatar avatar-sm">
                         <img alt="avatar" src="{{ asset('img/profile-30.png') }}" class="rounded-circle supply-avatar">
                     </div>
                 </div>

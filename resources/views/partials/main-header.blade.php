@@ -218,7 +218,7 @@
             <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
-                    <div class="avatar avatar-sm avatar-indicators avatar-online">
+                    <div class="avatar avatar-sm">
                         <img alt="avatar" src="{{ asset('img/profile-30.png') }}"
                             class="rounded-circle head-avatar">
                     </div>
