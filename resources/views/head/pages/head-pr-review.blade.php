@@ -63,7 +63,6 @@
                             <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                             <span> Export as PDF</span>
                         </a>
-
                     @endif
                 </div>
             </div>
@@ -185,9 +184,9 @@
                                         @php
                                             $amount = $item->pr_items_quantity * $item->pr_items_cost;
                                             $catMap = [
-                                                'consumable' => 'Consumable',
+                                                'supply_and_materials' => 'Supply and Materials',
+                                                'semi-expendable' => 'Semi-expendable',
                                                 'equipment' => 'Equipment',
-                                                'equipment_50k' => 'Equipment (50k & ↑)',
                                             ];
                                         @endphp
                                         <tr class="pr-item-row">
