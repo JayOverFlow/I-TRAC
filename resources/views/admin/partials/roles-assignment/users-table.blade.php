@@ -70,8 +70,8 @@
                             <span class="readonly-data">{{ $user->role_name ?? '—' }}</span>
 
                             {{-- Edit state: Role dropdown (populated dynamically by JS) --}}
-                            <div class="edit-data d-none position-absolute" style="top:50%; transform:translateY(-50%); left:10px; z-index:10; min-width:220px;">
-                                <select class="form-select form-select-sm role-assignment-select shadow-sm"
+                            <div class="edit-data d-none position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; z-index:10;">
+                                <select class="form-select form-select-sm role-assignment-select shadow-sm table-edit-select"
                                     data-user-id="{{ $user->user_id }}"
                                     data-original-role-id="{{ $user->role_id ?? '' }}"
                                     style="font-size:0.85rem;">
@@ -86,8 +86,8 @@
                             <span class="readonly-data">{{ $user->dep_name ?? '—' }}</span>
 
                             {{-- Edit state: Department dropdown --}}
-                            <div class="edit-data d-none position-absolute" style="top:50%; transform:translateY(-50%); left:10px; z-index:10; min-width:220px;">
-                                <select class="form-select form-select-sm dept-assignment-select shadow-sm"
+                            <div class="edit-data d-none position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; z-index:10;">
+                                <select class="form-select form-select-sm dept-assignment-select shadow-sm table-edit-select"
                                     data-original-dep-id="{{ $user->dep_id ?? '' }}"
                                     style="font-size:0.85rem;">
                                     <option value="">— No Department —</option>

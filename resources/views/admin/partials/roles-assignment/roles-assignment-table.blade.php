@@ -66,8 +66,8 @@
                             <span class="readonly-data">{{ $role->user_lastname ?? '—' }}</span>
                             
                             {{-- Editing State: User Dropdown occupies the space when editing --}}
-                            <div class="edit-data d-none position-absolute" style="top:50%; transform:translateY(-50%); left:10px; z-index: 10; min-width: 300px;">
-                                <select class="form-select form-select-sm user-assignment-select shadow-sm" data-role-id="{{ $role->role_id }}" data-original-value="{{ $role->user_id ?? '' }}" style="font-size: 0.85rem;">
+                            <div class="edit-data d-none position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; z-index: 10;">
+                                <select class="form-select form-select-sm user-assignment-select shadow-sm table-edit-select" data-role-id="{{ $role->role_id }}" data-original-value="{{ $role->user_id ?? '' }}" style="font-size: 0.85rem;">
                                     <option value="">-- Unassigned --</option>
                                     @foreach($allUsers as $user)
                                         <option value="{{ $user->user_id }}" {{ $role->user_id == $user->user_id ? 'selected' : '' }}>
