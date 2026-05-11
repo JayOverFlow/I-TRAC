@@ -167,7 +167,12 @@
                             }
 
                             if (userId !== undefined) {
-                                assignments.push({ user_id: userId, role_id: currentRoleId || null });
+                                assignments.push({ 
+                                    user_id: userId, 
+                                    role_id: currentRoleId || null,
+                                    dep_id: currentDepId || null,
+                                    original_dep_id: originalDepId || null
+                                });
                             }
                         });
 
