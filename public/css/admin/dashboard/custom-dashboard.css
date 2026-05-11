@@ -179,4 +179,16 @@ body.dark .new-dept-interface {
     border-color: #BE123C !important;
 }
 
+
+/* Table Inline Editing Styles */
+.table-edit-container {
+    width: 350px !important;
+    max-width: 350px !important;
+}
+
+.table-edit-select {
+    width: 100% !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
 }
