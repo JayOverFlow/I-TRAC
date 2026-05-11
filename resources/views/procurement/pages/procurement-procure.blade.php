@@ -16,7 +16,7 @@
 @endpush
 
 @section('content')
-    <div class="account-settings-container layout-top-spacing">
+    <div class="procure-container layout-top-spacing">
 
         <div class="account-content">
             <div class="row mb-3">

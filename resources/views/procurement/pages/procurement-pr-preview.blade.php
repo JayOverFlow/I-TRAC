@@ -290,7 +290,7 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 py-0">
-                    <button type="button" class="btn btn-light border fw-bold black-text px-4"
+                    <button type="button" class="btn btn-light fw-bold black-text px-4"
                         data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" id="confirmCreatePoBtn" class="btn btn-dark-red px-4" disabled>Create
                         PO</button>
