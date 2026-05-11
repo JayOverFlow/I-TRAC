@@ -46,7 +46,7 @@
 }
 
 .card-pad,.card-body{
-    padding: 25px 30px !important;
+    padding: 25px 30px;
 }
 
 .rounded-circle {

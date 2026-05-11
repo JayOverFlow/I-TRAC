@@ -16,6 +16,7 @@ use App\Http\Controllers\PrReviewController;
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
+use App\Http\Controllers\ProcureController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -149,5 +150,9 @@ Route::middleware(['auth', 'role:Procurement'])->group(function () {
         Route::post('/create-po/store/{pr_id}', 'createPo')->name('create.po');
         Route::post('/create-po/update/{po_id}', 'updatePo')->name('update.po');
         Route::get('/create-po/{po_id}/export', 'exportPdf')->name('export.po.pdf');
+    });
+
+    Route::controller(ProcureController::class)->group(function () {
+        Route::get('/procure', 'showProcure')->name('show.procure');
     });
 });
