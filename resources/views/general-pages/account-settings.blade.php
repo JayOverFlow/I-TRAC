@@ -30,9 +30,9 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link red-text-2" id="animated-underline-inbox-tab" data-bs-toggle="tab"
-                                href="#pane-animated-underline-inbox" role="tab" aria-controls="animated-underline-inbox"
-                                aria-selected="false" tabindex="-1"><img src="{{ asset('img/Inbox.svg') }}" width="20"
-                                    height="20"> Inbox</button>
+                                href="#pane-animated-underline-inbox" role="tab"
+                                aria-controls="animated-underline-inbox" aria-selected="false" tabindex="-1"><img
+                                    src="{{ asset('img/Inbox.svg') }}" width="20" height="20"> Inbox</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link red-text-2" id="animated-underline-settings-tab" data-bs-toggle="tab"
@@ -46,36 +46,20 @@
                         @if (auth()->user()->roles()->first()->gen_role === 'Head')
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
-                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan" role="tab"
-                                    aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
-                                    tabindex="-1">
+                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan"
+                                    role="tab" aria-controls="animated-underline-annual-procurement-plan"
+                                    aria-selected="false" tabindex="-1">
                                     <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
                                     Annual Procurement Plan</button>
                             </li>
                         @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
-                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan" role="tab"
-                                    aria-controls="animated-underline-annual-procurement-plan" aria-selected="false"
-                                    tabindex="-1">
+                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan"
+                                    role="tab" aria-controls="animated-underline-annual-procurement-plan"
+                                    aria-selected="false" tabindex="-1">
                                     <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
                                     Annual Procurement Plan</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link red-text-2" id="animated-underline-purchase-request-tab"
-                                    data-bs-toggle="tab" href="#pane-animated-underline-purchase-request" role="tab"
-                                    aria-controls="animated-underline-purchase-request" aria-selected="false"
-                                    tabindex="-1">
-                                    <img src="{{ asset('img/PR.svg') }}" width="20" height="20">
-                                    Purchase Request</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link red-text-2" id="animated-underline-purchase-order-tab"
-                                    data-bs-toggle="tab" href="#pane-animated-underline-purchase-order" role="tab"
-                                    aria-controls="animated-underline-purchase-order" aria-selected="false"
-                                    tabindex="-1">
-                                    <img src="{{ asset('img/PO.svg') }}" width="20" height="20">
-                                    Purchase Order</button>
                             </li>
                         @endif
                     </ul>
@@ -91,12 +75,8 @@
                 @include('general-pages.account-settings-partials._settings')
                 {{-- End Settings Tab --}}
 
-                @if (auth()->user()->roles()->first()->gen_role === 'Head')
+                @if (in_array(auth()->user()->roles->first()->gen_role, ['Head', 'Procurement']))
                     @include('general-pages.account-settings-partials._annual-procurement-plan')
-                @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
-                    @include('general-pages.account-settings-partials._annual-procurement-plan')
-                    @include('general-pages.account-settings-partials._purchase-request')
-                    @include('general-pages.account-settings-partials._purchase-order')
                 @endif
             </div>
 
@@ -128,11 +108,11 @@
                     // Try to find a button whose ID matches [hash]-tab
                     var tabButtonId = hash.substring(1) + '-tab';
                     var tabTriggerEl = document.getElementById(tabButtonId);
-                    
+
                     if (tabTriggerEl) {
                         var tab = new bootstrap.Tab(tabTriggerEl);
                         tab.show();
-                        
+
                         // Force scroll to top as an extra precaution
                         window.scrollTo(0, 0);
                     }

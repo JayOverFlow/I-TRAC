@@ -24,7 +24,7 @@
                         <td class="text-center">
                             {{ $po->created_at ? $po->created_at->format('Y-m-d') : 'N/A' }}</td>
                         <td class="text-center">
-                            <span class="badge {{ $po->po_status == 'Draft' ? 'bg-warning' : 'bg-info' }} p-2 px-3">
+                            <span class="badge {{ $po->po_status == 'Draft' ? 'bg-warning' : 'bg-info' }}">
                                 {{ $po->po_status }}
                             </span>
                         </td>
@@ -65,6 +65,13 @@
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
             "pageLength": 5
+        });
+
+        // Handle row click for PO preview
+        $('#po-table tbody').on('click', 'tr.clickable-row', function() {
+            var poId = $(this).data('id');
+            var url = "{{ route('show.create.po', ':id') }}".replace(':id', poId);
+            window.location.href = url;
         });
     </script>
 @endpush
