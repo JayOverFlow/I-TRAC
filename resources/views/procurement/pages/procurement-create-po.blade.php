@@ -27,8 +27,7 @@
                 <div class="d-flex flex-column">
                     <h5 class="fw-bold red-text-2">PURCHASE ORDER</h5>
                     @if ($isSubmitted)
-                        <h5 class="badge bg-success p-2 px-3 text-uppercase"
-                        style="font-size: 0.85rem;">Submitted</h5>
+                        <h5 class="badge bg-success p-2 px-3 text-uppercase" style="font-size: 0.85rem;">Submitted</h5>
                     @endif
                 </div>
                 <div>
@@ -192,34 +191,35 @@
 
                 </div>
             </div>
-            <h5 class="black-text fw-bold ms-4 ps-1">Add Items</h5>
-            <div class="table-responsive mx-3">
-                <table class="table table-sm table-borderless align-middle po-table">
-                    <thead class="bg-transparent">
-                        <tr>
-                            <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                            <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                            <th class="black-text fw-bold">Item Description</th>
-                            <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                            <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                            <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                            <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
-                            <th class="text-start px-0" style="width: 30px"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-add-items">
-                        @foreach ($otherItems as $index => $item)
-                            @include('procurement.partials.po-item-row', [
-                                'item' => $item,
-                                'index' => 'other_' . $index,
-                                'isSubmitted' => $isSubmitted,
-                            ])
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <hr class="m-0 p-0">
+
             @if (!$isSubmitted)
+                <h5 class="black-text fw-bold ms-4 ps-1">Add Items</h5>
+                <div class="table-responsive mx-3">
+                    <table class="table table-sm table-borderless align-middle po-table">
+                        <thead class="bg-transparent">
+                            <tr>
+                                <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
+                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
+                                <th class="black-text fw-bold">Item Description</th>
+                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
+                                <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
+                                <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
+                                <th class="text-start px-0" style="width: 30px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-add-items">
+                            @foreach ($otherItems as $index => $item)
+                                @include('procurement.partials.po-item-row', [
+                                    'item' => $item,
+                                    'index' => 'other_' . $index,
+                                    'isSubmitted' => $isSubmitted,
+                                ])
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="m-0 p-0">
                 <div class="text-center my-2">
                     <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
                         Item</button>

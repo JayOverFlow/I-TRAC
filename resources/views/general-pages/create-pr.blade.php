@@ -317,9 +317,9 @@
                                             {{-- Category --}}
                                             @php
                                                 $catMap = [
-                                                    'consumable' => 'Consumable',
+                                                    'supply_and_materials' => 'Supply and Materials',
+                                                    'semi-expendable' => 'Semi-expendable',
                                                     'equipment' => 'Equipment',
-                                                    'equipment_50k' => 'Equipment (50k & ↑)',
                                                 ];
                                                 $savedCat = $saved ? $catMap[$saved->pr_items_category] ?? '' : '';
                                             @endphp
@@ -330,15 +330,15 @@
                                                     <option value=""
                                                         {{ !$saved || !$saved?->pr_items_category ? 'selected' : '' }}
                                                         disabled>Select</option>
-                                                    <option value="Consumable"
-                                                        {{ $savedCat === 'Consumable' ? 'selected' : '' }}>Consumable
+                                                    <option value="Supply and Materials"
+                                                        {{ $savedCat === 'Supply and Materials' ? 'selected' : '' }}>Supply and Materials
+                                                    </option>
+                                                    <option value="Semi-expendable"
+                                                        {{ $savedCat === 'Semi-expendable' ? 'selected' : '' }}>Semi-expendable
                                                     </option>
                                                     <option value="Equipment"
-                                                        {{ $savedCat === 'Equipment' ? 'selected' : '' }}>Equipment
-                                                    </option>
-                                                    <option value="Equipment (50k & ↑)"
-                                                        {{ $savedCat === 'Equipment (50k & ↑)' ? 'selected' : '' }}>
-                                                        Equipment (50k & ↑)</option>
+                                                        {{ $savedCat === 'Equipment' ? 'selected' : '' }}>
+                                                        Equipment</option>
                                                 </select>
                                             </td>
                                             <td class="text-start px-0">

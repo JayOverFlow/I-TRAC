@@ -36,9 +36,9 @@ class PrReviewController extends Controller
 
         // Category display order
         $categoryOrder = [
-            'consumable'    => 'Consumables',
-            'equipment'     => 'Equipment',
-            'equipment_50k' => 'Equipment (50k & ↑)',
+            'supply_and_materials' => 'Supply and Materials',
+            'semi-expendable'      => 'Semi-expendable',
+            'equipment'            => 'Equipment',
         ];
 
         // Group items by project title, then by category within each project
@@ -129,9 +129,9 @@ class PrReviewController extends Controller
                     }
 
                     $categoryMap = [
-                        'Consumable'          => 'consumable',
-                        'Equipment'           => 'equipment',
-                        'Equipment (50k & ↑)' => 'equipment_50k',
+                        'Supply and Materials' => 'supply_and_materials',
+                        'Semi-expendable'      => 'semi-expendable',
+                        'Equipment'            => 'equipment',
                     ];
                     $category = $categoryMap[$row['category'] ?? ''] ?? null;
 
