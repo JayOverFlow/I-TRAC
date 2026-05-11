@@ -87,8 +87,7 @@ class AdminRolesAssignmentController extends Controller
 
     /**
      * Update role assignments from the USERS VIEW (user-centric).
-     * Expects: [['user_id' => X, 'role_id' => Y], ...]
-     * A user can only have one role, so we update/insert on user_id_fk.
+     * Expects: [['user_id' => X, 'role_id' => Y, 'dep_id' => Z, 'original_dep_id' => W], ...]
      */
     public function updateUserAssignments(Request $request)
     {
@@ -99,18 +98,62 @@ class AdminRolesAssignmentController extends Controller
                 foreach ($assignments as $assignment) {
                     $userId = $assignment['user_id'];
                     $roleId = $assignment['role_id'];
+                    $depId  = $assignment['dep_id'];
+                    $origDepId = $assignment['original_dep_id'];
 
-                    if (empty($roleId)) {
-                        // Unassign: remove all roles for this user
-                        DB::table('user_roles_tbl')
+                    // 1. Handle Department Association Update
+                    if (!empty($origDepId) && !empty($depId) && $origDepId != $depId) {
+                        // Move user from one department to another
+                        DB::table('user_departments_tbl')
                             ->where('user_id_fk', $userId)
-                            ->delete();
-                    } else {
-                        // Assign / Reassign
-                        DB::table('user_roles_tbl')->updateOrInsert(
-                            ['user_id_fk' => $userId],
-                            ['role_id_fk' => $roleId]
+                            ->where('department_id_fk', $origDepId)
+                            ->update(['department_id_fk' => $depId]);
+                    } elseif (empty($origDepId) && !empty($depId)) {
+                        // New department association for the user
+                        DB::table('user_departments_tbl')->updateOrInsert(
+                            ['user_id_fk' => $userId, 'department_id_fk' => $depId],
+                            []
                         );
+                    }
+
+                    // 2. Handle Role Assignment within this specific department
+                    // We only manage roles that belong to the targeted department
+                    $targetDepId = !empty($depId) ? $depId : $origDepId;
+
+                    if ($targetDepId) {
+                        // Find any existing role the user has in THIS department
+                        $currentRole = DB::table('user_roles_tbl as ur')
+                            ->join('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
+                            ->where('ur.user_id_fk', $userId)
+                            ->where('r.role_dep_id_fk', $targetDepId)
+                            ->select('ur.role_id_fk')
+                            ->first();
+
+                        if (empty($roleId)) {
+                            // Unassign: remove role for this specific department
+                            if ($currentRole) {
+                                DB::table('user_roles_tbl')
+                                    ->where('user_id_fk', $userId)
+                                    ->where('role_id_fk', $currentRole->role_id_fk)
+                                    ->delete();
+                            }
+                        } else {
+                            // Assign / Update role for this specific department
+                            if ($currentRole) {
+                                if ($currentRole->role_id_fk != $roleId) {
+                                    DB::table('user_roles_tbl')
+                                        ->where('user_id_fk', $userId)
+                                        ->where('role_id_fk', $currentRole->role_id_fk)
+                                        ->update(['role_id_fk' => $roleId]);
+                                }
+                            } else {
+                                // New role in this department
+                                DB::table('user_roles_tbl')->insert([
+                                    'user_id_fk' => $userId,
+                                    'role_id_fk' => $roleId
+                                ]);
+                            }
+                        }
                     }
                 }
             });
@@ -134,10 +177,15 @@ class AdminRolesAssignmentController extends Controller
         $staffCount   = User::where('user_type', 'Staff')->count();
 
         // Table: users with their role, role_id, dep_id, and department via joins
+        // Inspired by view_user_roles_departments logic to support multiple departments per user
         $users = DB::table('users as u')
-            ->leftJoin('user_roles_tbl as ur', 'ur.user_id_fk', '=', 'u.user_id')
-            ->leftJoin('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
-            ->leftJoin('departments_tbl as d', 'd.dep_id', '=', 'r.role_dep_id_fk')
+            ->leftJoin('user_roles_tbl as ur', 'u.user_id', '=', 'ur.user_id_fk')
+            ->leftJoin('roles_tbl as r', 'ur.role_id_fk', '=', 'r.role_id')
+            ->leftJoin('user_departments_tbl as ud', 'u.user_id', '=', 'ud.user_id_fk')
+            ->leftJoin('departments_tbl as d', function($join) {
+                $join->on('d.dep_id', '=', 'ud.department_id_fk')
+                     ->orOn('d.dep_id', '=', 'r.role_dep_id_fk');
+            })
             ->select(
                 'u.user_id',
                 'u.user_tupid',
@@ -145,13 +193,15 @@ class AdminRolesAssignmentController extends Controller
                 'u.user_lastname',
                 'u.user_email',
                 'u.user_type',
-                'r.role_id',
-                'r.role_name',
                 'd.dep_id',
-                'd.dep_name'
+                'd.dep_name',
+                DB::raw("CASE WHEN r.role_dep_id_fk = d.dep_id THEN r.role_id ELSE NULL END as role_id"),
+                DB::raw("CASE WHEN r.role_dep_id_fk = d.dep_id THEN r.role_name ELSE NULL END as role_name"),
+                DB::raw("CASE WHEN r.role_dep_id_fk = d.dep_id THEN 0 ELSE 1 END as has_role")
             )
-            ->orderByRaw('r.role_id IS NULL ASC') // Show users WITH roles first
-            ->orderBy('u.user_lastname', 'ASC')   // Then alphabetically by lastname
+            ->distinct()
+            ->orderBy('has_role', 'ASC')
+            ->orderBy('u.user_lastname', 'ASC')
             ->orderBy('u.user_firstname', 'ASC')
             ->get();
 

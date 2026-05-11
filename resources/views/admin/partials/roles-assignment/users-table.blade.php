@@ -61,7 +61,7 @@
                 </thead>
                 <tbody>
                     @forelse($users as $user)
-                    <tr data-user-id="{{ $user->user_id }}">
+                    <tr data-user-id="{{ $user->user_id }}" data-dep-id="{{ $user->dep_id }}">
                         <td>{{ $user->user_firstname }}</td>
                         <td>{{ $user->user_lastname }}</td>
 
