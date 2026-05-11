@@ -124,7 +124,7 @@
     {{-- Container for PR Items --}}
     <div id="pr-items-container" class="px-0">
 
-        @foreach ($groupedItems as $projectTitle => $categoryGroups)
+        @forelse ($groupedItems as $projectTitle => $categoryGroups)
             <div class="card shadow-sm border-0 mb-3 px-0 pr-card">
                 <div class="card-body px-0 pb-0">
                     <div class="d-flex justify-content-between ms-4 mb-1">
@@ -152,8 +152,10 @@
                     <div class="pr-collapse-area" id="collapseCard{{ $loop->iteration }}">
                         @foreach ($categoryGroups as $categoryKey => $items)
                             <hr class="m-0 p-0">
-                            <h5 class="ms-4 mt-4 fw-bold black-text">{{ $categoryOrder[$categoryKey] ?? $categoryKey }}
-                            </h5>
+                            @php
+                                $categoryLabel = $categoryOrder[$categoryKey] ?? (ucfirst(str_replace(['_', '-'], ' ', $categoryKey)));
+                            @endphp
+                            <h5 class="ms-4 mt-4 fw-bold black-text">{{ $categoryLabel }}</h5>
                             <div class="table-responsive mx-3">
                                 <table class="table table-sm table-borderless align-middle pr-table">
                                     <thead class="bg-transparent">
@@ -171,9 +173,9 @@
                                             @php
                                                 $amount = $item->pr_items_quantity * $item->pr_items_cost;
                                                 $catMap = [
-                                                    'consumable' => 'Consumable',
+                                                    'supply_and_materials' => 'Supply and Materials',
+                                                    'semi-expendable' => 'Semi-expendable',
                                                     'equipment' => 'Equipment',
-                                                    'equipment_50k' => 'Equipment (50k & ↑)',
                                                 ];
                                             @endphp
                                             <tr class="pr-item-row">
@@ -184,7 +186,7 @@
                                                     {{ number_format($item->pr_items_cost, 2) }}</td>
                                                 <td class="px-1 text-center">₱ {{ number_format($amount, 2) }}</td>
                                                 <td class="px-1 text-center">
-                                                    {{ $catMap[$item->pr_items_category] ?? '' }}</td>
+                                                    {{ $catMap[$item->pr_items_category] ?? ucfirst(str_replace(['_', '-'], ' ', $item->pr_items_category)) }}</td>
                                             </tr>
                                             {{-- Specifications --}}
                                             @foreach ($item->prSpecs as $spec)
@@ -204,7 +206,14 @@
                     </div>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body text-center py-5 text-muted">
+                    <img src="{{ asset('img/no-data.svg') }}" width="60" class="mb-2 opacity-50" onerror="this.style.display='none'">
+                    <p class="mb-0">No items found for this Purchase Request.</p>
+                </div>
+            </div>
+        @endforelse
 
         <div class="d-flex justify-content-end align-items-center mb-3 mt-3">
             <h5 class="fw-bold ps-2 pe-5">Total Amount</h5>

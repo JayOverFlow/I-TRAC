@@ -226,9 +226,9 @@ class CreatePrController extends Controller
             }
 
             $categoryMap = [
-                'Consumable'          => 'consumable',
-                'Equipment'           => 'equipment',
-                'Equipment (50k & ↑)' => 'equipment_50k',
+                'Supply and Materials' => 'supply_and_materials',
+                'Semi-expendable'      => 'semi-expendable',
+                'Equipment'            => 'equipment',
             ];
             $category = $categoryMap[$row['category'] ?? ''] ?? null;
 
