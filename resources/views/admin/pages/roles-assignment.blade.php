@@ -78,13 +78,20 @@
 
                     // Department table filter
                     $(document).on('change', '#department-filter-users', function() {
-                        usersTable.column(3).search(this.value).draw();
+                        usersApi.column(3).search(this.value).draw();
                     });
 
                     // ---- EDIT MODE LOGIC ----
                     function populateRoleDropdown($roleSelect, depId, selectedRoleId) {
                         $roleSelect.empty().append('<option value="">— Unassigned —</option>');
-                        if (!depId) return;
+                        if (!depId) {
+                            // If it's a new row, show a more helpful placeholder
+                            if ($roleSelect.closest('tr').hasClass('new-row-pending')) {
+                                $roleSelect.prop('disabled', true).append('<option value="" disabled selected>— Select a Department First —</option>');
+                            }
+                            return;
+                        }
+                        $roleSelect.prop('disabled', false);
                         $.each(allRolesData, function(i, role) {
                             if (role.role_dep_id_fk == depId) {
                                 var selected = (role.role_id == selectedRoleId) ? 'selected' : '';
@@ -93,7 +100,9 @@
                         });
                     }
 
+                    var isUserEditMode = false;
                     function toggleUserEditMode(enable) {
+                        isUserEditMode = enable;
                         if (enable) {
                             $('#edit-mode-btns-users').addClass('d-none');
                             $('#manage-mode-btns-users').removeClass('d-none');
@@ -118,8 +127,25 @@
 
                             usersApi.$('.readonly-data').removeClass('d-none');
                             usersApi.$('.edit-data').addClass('d-none');
+                            $('.new-row-pending').remove(); // Clear pending rows
                         }
                     }
+
+                    // Add Row Functionality
+                    $(document).on('click', '#btn-add-row-users', function() {
+                        var template = document.getElementById('new-user-row-template').content.cloneNode(true);
+                        $('#users-table tbody').prepend(template);
+                    });
+
+                    // Ensure pending rows stay at the top on table redraw
+                    usersApi.on('draw', function() {
+                        if (isUserEditMode) {
+                            var $pending = $('.new-row-pending');
+                            if ($pending.length > 0) {
+                                $('#users-table tbody').prepend($pending);
+                            }
+                        }
+                    });
 
                     // Department change → repopulate roles
                     $(document).on('change', '.dept-assignment-select', function() {
@@ -131,27 +157,60 @@
                     $(document).on('click', '#btn-edit-users', function() { toggleUserEditMode(true); });
                     $(document).on('click', '#btn-cancel-users', function() { toggleUserEditMode(false); });
 
+                    // Remove newly added row
+                    $(document).on('click', '.btn-remove-new-row', function() {
+                        $(this).closest('tr').remove();
+                    });
+
                     // Save all user assignments
                     $(document).on('click', '#btn-save-users', function() {
                         var summaryList = [];
                         var assignments = [];
+                        // Collect all rows managed by DataTables + any new pending rows in the DOM
+                        var $allRows = usersApi.$('tr').add($('.new-row-pending'));
 
-                        usersApi.$('tr').each(function() {
+                        $allRows.each(function() {
                             var $row = $(this);
+                            var isNewRow = $row.hasClass('new-row-pending');
+                            
                             var $roleSelect = $row.find('.role-assignment-select');
                             var $deptSelect = $row.find('.dept-assignment-select');
                             
-                            var currentRoleId = $roleSelect.val();
-                            var originalRoleId = $roleSelect.data('original-role-id');
+                            var userId = isNewRow ? $row.find('.select-user-new').val() : $row.data('user-id');
                             var currentDepId = $deptSelect.val();
-                            var originalDepId = $deptSelect.data('original-dep-id');
-                            var userId = $row.data('user-id');
+                            var currentRoleId = $roleSelect.val();
+                            
+                            var originalDepId = isNewRow ? null : $deptSelect.data('original-dep-id');
+                            var originalRoleId = isNewRow ? null : $roleSelect.data('original-role-id');
 
-                            // Only add to summary if changed
-                            if (currentRoleId != originalRoleId || currentDepId != originalDepId) {
-                                var firstName = $row.find('td:eq(0)').text().trim();
-                                var lastName = $row.find('td:eq(1)').text().trim();
-                                var roleName = $roleSelect.find('option:selected').text().trim() || '—';
+                            // Validation for new rows
+                            if (isNewRow) {
+                                if (!userId || !currentDepId) {
+                                    // If row is partially filled, we should warn or skip. 
+                                    // For now, if any field is selected, we expect all.
+                                    if (userId || currentDepId || currentRoleId) {
+                                        Swal.fire('Validation Error', 'Please complete all fields for the new assignment.', 'error');
+                                        assignments = []; // Reset
+                                        return false; // Break
+                                    }
+                                    return true; // Skip empty new rows
+                                }
+                            }
+
+                            if (currentDepId != originalDepId || currentRoleId != originalRoleId) {
+                                var firstName = "";
+                                var lastName = "";
+                                
+                                if (isNewRow) {
+                                    var fullName = $row.find('.select-user-new option:selected').text().split(',');
+                                    lastName = fullName[0].trim();
+                                    firstName = fullName[1] ? fullName[1].trim() : "";
+                                } else {
+                                    firstName = $row.find('td:eq(0)').text().trim();
+                                    lastName = $row.find('td:eq(1)').text().trim();
+                                }
+                                
+                                var roleName = $roleSelect.find('option:selected').text().trim() || 'Unassigned';
                                 var deptName = $deptSelect.find('option:selected').text().trim() || '—';
                                 
                                 var changeDesc = "";

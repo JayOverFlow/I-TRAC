@@ -96,19 +96,18 @@
                 <tbody>
                     @forelse($roles ?? [] as $role)
                     <tr data-role-id="{{ $role->role_id }}" data-dep-id="{{ $role->dep_id }}" data-dep-type="{{ $role->dep_type }}">
-                        <td>
+                        <td class="align-middle py-2">
                             <div class="d-flex justify-content-between align-items-center w-100 h-100">
                                 @if($role->role_id)
-                                    <div class="role-text-val editable-role-text transition-all flex-grow-1 p-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
-
+                                    <div class="role-text-val editable-role-text transition-all flex-grow-1 py-1 px-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
                                 @else
-                                    <div class="role-text-val text-muted fst-italic flex-grow-1 p-2 rounded">No Role Assigned</div>
+                                    <div class="role-text-val text-muted fst-italic flex-grow-1 py-1 px-2 rounded">No Role Assigned</div>
                                 @endif
                             </div>
                         </td>
-                        <td>
+                        <td class="align-middle py-2">
                             <div class="d-flex justify-content-between align-items-center w-100 h-100">
-                                <div class="dep-text-val editable-dept-text transition-all flex-grow-1 p-2 rounded" data-dep-id="{{ $role->dep_id }}">{{ $role->dep_name }}</div>
+                                <div class="dep-text-val editable-dept-text transition-all flex-grow-1 py-1 px-2 rounded" data-dep-id="{{ $role->dep_id }}">{{ $role->dep_name }}</div>
                                 
                                 <div class="px-2">
                                     @if($role->role_id)
