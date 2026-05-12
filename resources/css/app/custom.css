@@ -250,6 +250,37 @@ body.dark .card-title {
     color: #B91C1C !important;
 }
 
+/* Modal Transitions */
+.modal-content {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-Aware Modals */
+body:not(.dark) .modal-content {
+    background-color: #ffffff !important;
+    border: 1px solid #e0e6ed !important;
+}
+
+body:not(.dark) .modal-header {
+    border-bottom: 1px solid #ebedf2 !important;
+}
+
+body:not(.dark) .modal-footer {
+    border-top: 1px solid #ebedf2 !important;
+}
+
+body:not(.dark) .modal-title {
+    color: #3b3f5c !important;
+}
+
+body:not(.dark) .modal-body {
+    color: #515365 !important;
+}
+
+body:not(.dark) .modal-content label {
+    color: #0e1726 !important;
+}
+
 /* Dark Mode Modals */
 body.dark .modal-content {
     background-color: #15181D !important;
@@ -272,12 +303,30 @@ body.dark .modal-body {
     color: #A1A1AA !important;
 }
 
+body.dark .modal-content label {
+    color: #F3F4F6 !important;
+}
+
 body.dark .modal-content hr {
     border-top: 1px solid #2A2F38 !important;
 }
 
 body.dark .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Modal Form Controls in Dark Mode */
+body.dark .modal-content .form-control,
+body.dark .modal-content .form-select {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+    border: 1px solid #2A2F38 !important;
+}
+
+body.dark .modal-content .form-control:focus,
+body.dark .modal-content .form-select:focus {
+    border-color: #B91C1C !important;
+    box-shadow: 0 0 0 0.25rem rgba(185, 28, 28, 0.25) !important;
 }
 
 /* Header User Name Fix */

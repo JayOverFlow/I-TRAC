@@ -176,6 +176,13 @@ class AdminRolesAssignmentController extends Controller
         $facultyCount = User::where('user_type', 'Faculty')->count();
         $staffCount   = User::where('user_type', 'Staff')->count();
 
+        // For the "Add New User" dropdown in the assignment table
+        $allUsers = User::orderBy('user_lastname', 'asc')
+            ->orderBy('user_firstname', 'asc')
+            ->get();
+
+        $allRoles = DB::table('roles_tbl')->get();
+
         // Table: users with their role, role_id, dep_id, and department via joins
         // Inspired by view_user_roles_departments logic to support multiple departments per user
         $users = DB::table('users as u')
@@ -211,7 +218,9 @@ class AdminRolesAssignmentController extends Controller
             'deptsCount'   => $deptsCount,
             'facultyCount' => $facultyCount,
             'staffCount'   => $staffCount,
-            'users'        => $users
+            'users'        => $users,
+            'allUsers'     => $allUsers,
+            'allRoles'     => $allRoles
         ];
     }
 }
