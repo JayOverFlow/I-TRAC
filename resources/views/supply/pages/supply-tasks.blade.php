@@ -1,7 +1,7 @@
 {{-- Extend the main layout that you want to use --}}
-@extends('layouts.head-layout')
+@extends('layouts.supply-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'MR | I-TRAC')
+@section('title', 'Tasks | I-TRAC')
 
-@include('general-pages.mr')
+@include('general-pages.tasks')

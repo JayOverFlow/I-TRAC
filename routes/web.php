@@ -28,7 +28,7 @@ Route::get('/sample', function () {
     return view('sample-content');
 })->middleware('auth');
 
-Route::middleware(['auth', 'role:Head,Procurement'])->group(function () {
+Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
     });

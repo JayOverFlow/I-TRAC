@@ -22,6 +22,7 @@ class MrController extends Controller
             'Head'        => view('head/pages/head-mr', compact('data')),
             null          => view('unassigned/pages/unassigned-mr', compact('data')), // Unassinged (No role) users
             'Procurement' => view('procurement/pages/procurement-mr', compact('data')),
+            'Supply' => view('supply/pages/supply-mr', compact('data')),
             default       => view('errors.403'),
         };
     }

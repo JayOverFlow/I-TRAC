@@ -18,7 +18,7 @@
                         <td class="text-center">
                             {{ $po->po_id }}</td>
                         <td class="text-center">
-                            {{ $po->pr_id_fk }}</td> {{-- Render pr_unique_code it derived from --}}
+                            {{ $po->purchaseRequest?->pr_unique_code ?? 'N/A' }}</td>
                         <td>
                             {{ $po->po_title }}</td>
                         <td class="text-center">
