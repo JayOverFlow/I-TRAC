@@ -41,6 +41,7 @@ class PoParent extends Model
         'saved_by_user_id_fk',
         'po_unique_code',
         'po_status',
+        'retrieved_by',
     ];
 
     protected $casts = [
@@ -60,5 +61,10 @@ class PoParent extends Model
     public function poItems()
     {
         return $this->hasMany(PoItem::class, 'po_id_fk', 'po_id');
+    }
+
+    public function retriever()
+    {
+        return $this->belongsTo(User::class, 'retrieved_by', 'user_id');
     }
 }

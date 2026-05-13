@@ -105,6 +105,11 @@ class User extends Authenticatable
         return $this->hasMany(PrParent::class, 'retrieved_by', 'user_id');
     }
 
+    public function retrievedPos()
+    {
+        return $this->hasMany(PoParent::class, 'retrieved_by', 'user_id');
+    }
+
     public function sentMessages()
     {
         return $this->hasMany(Message::class, 'sender_id', 'user_id');

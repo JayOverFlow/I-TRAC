@@ -91,7 +91,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/account-settings/update-password', 'updatePassword')->name('account.settings.update.password');
         Route::post('/account-settings/update-avatar', 'updateAvatar')->name('account.settings.update.avatar');
         Route::delete('/account-settings/delete-avatar', 'deleteAvatar')->name('account.settings.delete.avatar');
-        Route::post('/account-settings/retrieve-pr', 'retrievePr')->name('account.settings.retrieve.pr');
     });
 
     // Chat System
@@ -151,8 +150,12 @@ Route::middleware(['auth', 'role:Procurement'])->group(function () {
         Route::post('/create-po/update/{po_id}', 'updatePo')->name('update.po');
         Route::get('/create-po/{po_id}/export', 'exportPdf')->name('export.po.pdf');
     });
+});
 
+Route::middleware(['auth', 'role:Procurement,Supply'])->group(function () {
     Route::controller(ProcureController::class)->group(function () {
         Route::get('/procure', 'showProcure')->name('show.procure');
+        Route::post('/procure/retrieve-pr', 'retrievePr')->name('procure.retrieve.pr');
+        Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
     });
 });

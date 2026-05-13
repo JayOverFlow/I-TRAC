@@ -152,38 +152,4 @@ class AccountSettingsController extends Controller
             'message' => 'Profile photo removed.',
         ]);
     }
-
-    /**
-     * Retrieve an Approved Purchase Request by its unique code.
-     */
-    public function retrievePr(Request $request)
-    {
-        $request->validate([
-            'pr_unique_code' => ['required', 'string', 'max:50'],
-        ]);
-
-        $prCode = $request->pr_unique_code;
-
-        // Find the PR with the given unique code that is 'Approved'
-        $pr = \App\Models\PrParent::where('pr_unique_code', $prCode)
-            ->where('pr_status', 'Approved')
-            ->first();
-
-        if (!$pr) {
-            return redirect(url()->previous() . '#animated-underline-purchase-request')->with('error', "Purchase Request '$prCode' not found or not yet approved.");
-        }
-
-        // Check if it's already retrieved
-        if ($pr->retrieved_by) {
-            if ($pr->retrieved_by === Auth::id()) {
-                return redirect(url()->previous() . '#animated-underline-purchase-request')->with('success', "Purchase Request '$prCode' is already in your list.");
-            }
-            return redirect(url()->previous() . '#animated-underline-purchase-request')->with('error', "Purchase Request '$prCode' has already been retrieved by another procurement user.");
-        }
-
-        // Assign retrieval to current user
-        $pr->update(['retrieved_by' => Auth::id()]);
-
-        return redirect(route('account.settings') . '#animated-underline-purchase-request')->with('success', "Purchase Request '$prCode' successfully retrieved.");
-    }
 }
