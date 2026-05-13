@@ -27,6 +27,7 @@ class TaskController extends Controller
             'Head'        => view('head/pages/head-tasks', compact('tasks')), // Fix this
             null          => view('unassigned/pages/unassigned-tasks', compact('tasks')), // Unassinged (No role) users
             'Procurement' => view('procurement/pages/procurement-tasks', compact('tasks')),
+            'Supply'      => view('supply/pages/supply-tasks', compact('tasks')),
             default       => view('errors.403'),
         };
     }

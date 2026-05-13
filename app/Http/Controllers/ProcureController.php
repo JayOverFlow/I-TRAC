@@ -17,7 +17,7 @@ class ProcureController extends Controller
         $retrievedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
 
         // 2. Fetch Created Purchase Orders
-        $pos = PoParent::where('saved_by_user_id_fk', $user->user_id)->get();
+        $pos = PoParent::with('purchaseRequest')->where('saved_by_user_id_fk', $user->user_id)->get();
 
         // 3. Check if user gen_role is Procurement 
         // if ($userRole != 'Procurement') {

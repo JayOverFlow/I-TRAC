@@ -104,7 +104,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="text-center text-muted">No tasks for you.</td>
+                        <td colspan="4" class="text-center text-muted">No tasks for you.</td>
                     </tr>
                 @endforelse
             </tbody>

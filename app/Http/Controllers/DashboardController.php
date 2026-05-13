@@ -21,7 +21,7 @@ class DashboardController extends Controller
         return match ($userRole) {
             'Head'        => view('head/pages/head-dashboard', compact('data')),
             'Procurement' => view('procurement/pages/procurement-dashboard', compact('data')),
-            // 'Supply'      => view('supply.dashboard'),
+            'Supply'      => view('supply/pages/supply-dashboard', compact('data')),
             default       => view('errors.403'),
         };
     }
