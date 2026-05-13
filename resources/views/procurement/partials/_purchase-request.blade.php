@@ -3,7 +3,7 @@
     aria-labelledby="animated-underline-purchase-request-tab">
     <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
         <table id="pr-table" class="table table-striped dt-table-hover" style="width:100%"
-            data-route="{{ route('account.settings.retrieve.pr') }}">
+            data-route="{{ route('procure.retrieve.pr') }}">
             <thead>
                 <tr>
                     <th class="fw-bold black-text text-nowrap text-center" style="width: 15%">PR-ID</th>
