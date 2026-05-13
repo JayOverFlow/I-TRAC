@@ -14,7 +14,7 @@
 
 @section('content')
     @php
-        $isSubmitted = $po->po_status == 'Submitted';
+        $isDone = $po->po_status == 'Done';
     @endphp
 
     <form method="POST" action="{{ route('update.po', ['po_id' => $po->po_id]) }}" id="po-form">
@@ -26,15 +26,15 @@
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
                 <div class="d-flex flex-column">
                     <h5 class="fw-bold red-text-2">PURCHASE ORDER</h5>
-                    @if ($isSubmitted)
-                        <h5 class="badge bg-success p-2 px-3 text-uppercase" style="font-size: 0.85rem;">Submitted</h5>
+                    @if ($isDone)
+                        <h5 class="badge bg-success p-2 px-3 text-uppercase" style="font-size: 0.85rem;">Done</h5>
                     @endif
                 </div>
                 <div>
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
 
                     <div class="text-end">
-                        @if ($isSubmitted)
+                        @if ($isDone)
                             <a href="{{ route('export.po.pdf', ['po_id' => $po->po_id]) }}"
                                 class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                                 <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
@@ -70,7 +70,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_supplier" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_supplier }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_supplier }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -80,7 +80,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_address" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_address }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_address }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_tele" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_tele }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_tele }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -100,7 +100,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_tin" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_tin }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_tin }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -110,7 +110,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_place_delivery" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_place_delivery }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_place_delivery }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -121,7 +121,7 @@
                             <div class="col-8">
                                 <input type="text" name="po_date_delivery"
                                     class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date"
-                                    value="{{ $po->po_date_delivery }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_date_delivery }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_no" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_no }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_no }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -144,7 +144,7 @@
                             <div class="col-8">
                                 <input type="text" name="po_date"
                                     class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date"
-                                    value="{{ $po->po_date }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_date }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -154,7 +154,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_mode" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_mode }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_mode }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -164,7 +164,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_tuptin" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_tuptin }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_tuptin }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -174,7 +174,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_delivery_term" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_delivery_term }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_delivery_term }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
 
@@ -184,7 +184,7 @@
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_payment_term" class="form-control form-control-sm w-100"
-                                    value="{{ $po->po_payment_term }}" {{ $isSubmitted ? 'disabled' : '' }}>
+                                    value="{{ $po->po_payment_term }}" {{ $isDone ? 'disabled' : '' }}>
                             </div>
                         </div>
                     </div>
@@ -192,7 +192,7 @@
                 </div>
             </div>
 
-            @if (!$isSubmitted)
+            @if (!$isDone)
                 <h5 class="black-text fw-bold ms-4 ps-1">Add Items</h5>
                 <div class="table-responsive mx-3">
                     <table class="table table-sm table-borderless align-middle po-table">
@@ -213,7 +213,7 @@
                                 @include('procurement.partials.po-item-row', [
                                     'item' => $item,
                                     'index' => 'other_' . $index,
-                                    'isSubmitted' => $isSubmitted,
+                                    'isDone' => $isDone,
                                 ])
                             @endforeach
                         </tbody>
@@ -267,7 +267,7 @@
                                     @include('procurement.partials.po-item-row', [
                                         'item' => $item,
                                         'index' => 'supply_' . $index,
-                                        'isSubmitted' => $isSubmitted,
+                                        'isDone' => $isDone,
                                     ])
                                 @endforeach
                             </tbody>
@@ -317,7 +317,7 @@
                                     @include('procurement.partials.po-item-row', [
                                         'item' => $item,
                                         'index' => 'semi_' . $index,
-                                        'isSubmitted' => $isSubmitted,
+                                        'isDone' => $isDone,
                                     ])
                                 @endforeach
                             </tbody>
@@ -367,7 +367,7 @@
                                     @include('procurement.partials.po-item-row', [
                                         'item' => $item,
                                         'index' => 'equip_' . $index,
-                                        'isSubmitted' => $isSubmitted,
+                                        'isDone' => $isDone,
                                     ])
                                 @endforeach
                             </tbody>
