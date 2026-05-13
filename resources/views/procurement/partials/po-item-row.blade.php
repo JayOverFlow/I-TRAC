@@ -8,10 +8,10 @@
         <input type="text" class="form-control form-control-sm text-center stock-input" 
             name="items[{{ $index }}][stock]" value="{{ $item->po_items_stockno }}" 
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-            {{ $isSubmitted ? 'disabled' : '' }}>
+            {{ $isDone ? 'disabled' : '' }}>
     </td>
     <td class="px-1">
-        <select class="form-select form-control-sm unit-select" name="items[{{ $index }}][unit]" {{ $isSubmitted ? 'disabled' : '' }}>
+        <select class="form-select form-control-sm unit-select" name="items[{{ $index }}][unit]" {{ $isDone ? 'disabled' : '' }}>
             <option value="" selected disabled>Select</option>
             @foreach(['Piece', 'Lot', 'Set', 'Box', 'Pack', 'Ream', 'Dozen', 'Carton', 'Liter', 'Milliliter', 'Kilogram', 'Gram', 'Meter', 'Roll', 'Square meter'] as $unit)
                 <option value="{{ $unit }}" {{ $item->po_items_unit == $unit ? 'selected' : '' }}>{{ $unit }}</option>
@@ -22,8 +22,8 @@
         <div class="input-group input-group-sm">
             <input type="text" class="form-control description-input"
                 name="items[{{ $index }}][description]" value="{{ $item->po_items_descrip }}"
-                {{ $isSubmitted ? 'disabled' : '' }}>
-            @if (!$isSubmitted)
+                {{ $isDone ? 'disabled' : '' }}>
+            @if (!$isDone)
                 <span class="input-group-text bg-white border-start-0 add-specification-btn"
                     title="Add Specifications" style="cursor: pointer;">
                     <img src="{{ asset('img/add-description-btn.png') }}" alt="Add"
@@ -36,19 +36,19 @@
         <input type="text" class="form-control form-control-sm text-center qty-input" 
             name="items[{{ $index }}][quantity]" value="{{ $item->po_items_quantity }}" 
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-            {{ $isSubmitted ? 'disabled' : '' }}>
+            {{ $isDone ? 'disabled' : '' }}>
     </td>
     <td class="px-1">
         <input type="text" class="form-control form-control-sm text-center cost-input" 
             name="items[{{ $index }}][cost]" value="{{ $item->po_items_cost }}" 
             oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
-            {{ $isSubmitted ? 'disabled' : '' }}>
+            {{ $isDone ? 'disabled' : '' }}>
     </td>
     <td class="px-1 text-center">
         <span class="amount-display fw-bold" data-amount="{{ $amount }}">₱ {{ number_format($amount, 2) }}</span>
     </td>
     <td class="px-1">
-        <select class="form-select form-control-sm category-select" name="items[{{ $index }}][category]" {{ $isSubmitted ? 'disabled' : '' }}>
+        <select class="form-select form-control-sm category-select" name="items[{{ $index }}][category]" {{ $isDone ? 'disabled' : '' }}>
             <option value="" selected disabled>Select</option>
             @php
                 $categories = [
@@ -63,7 +63,7 @@
         </select>
     </td>
     <td class="text-start px-0">
-        @if (!$isSubmitted)
+        @if (!$isDone)
             <button type="button" class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
                 style="{{ str_contains($index, 'other') && $loop->first ? 'visibility: hidden;' : 'visibility: visible;' }}">
                 <img src="{{ asset('img/remove.svg') }}" alt="Remove">
@@ -81,7 +81,7 @@
                 <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
                     Specification</div>
                 <div class="d-flex align-items-center pe-3">
-                    @if (!$isSubmitted)
+                    @if (!$isDone)
                         <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
                             aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
                     @endif
@@ -98,7 +98,7 @@
                 <textarea class="form-control form-control-sm border-0 shadow-none px-2" 
                     name="items[{{ $index }}][specification]"
                     rows="2" placeholder="Enter specification details."
-                    {{ $isSubmitted ? 'disabled' : '' }}>{{ $item->poSpecs->first()->po_spec_description ?? '' }}</textarea>
+                    {{ $isDone ? 'disabled' : '' }}>{{ $item->poSpecs->first()->po_spec_description ?? '' }}</textarea>
             </div>
         </div>
     </td>
