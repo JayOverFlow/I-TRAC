@@ -161,13 +161,21 @@
                         $('#manage-mode-btns').removeClass('d-none');
                         $('#dept-filter-container').hide(); // Instant hide
                         $('#roles-table').addClass('table-edit-mode');
-                        $('.inline-delete-btn, .inline-delete-dept-only-btn').removeClass('d-none');
+                        $('.inline-delete-btn, .inline-delete-dept-only-btn, .btn-inline-add-role').removeClass('d-none');
+                        $('.static-no-role-text').addClass('d-none');
                     } else {
                         $('#manage-mode-btns').addClass('d-none');
                         $('#edit-mode-btns').removeClass('d-none');
                         $('#dept-filter-container').show(); // Instant show
                         $('#roles-table').removeClass('table-edit-mode');
-                        $('.inline-delete-btn, .inline-delete-dept-only-btn').addClass('d-none');
+                        $('.inline-delete-btn, .inline-delete-dept-only-btn, .btn-inline-add-role').addClass('d-none');
+                        $('.static-no-role-text').removeClass('d-none');
+                        
+                        // Restore any open inline inputs
+                        $('.inline-role-add-container').addClass('d-none');
+                        $('.no-role-assigned-wrapper').removeClass('d-none');
+                        $('.inline-role-input').val('');
+
                         $('.new-row-pending').remove(); // Clear pending rows on cancel
                     }
                 }
@@ -212,7 +220,8 @@
                 table.on('draw', function() {
                     if (isEditMode) {
                         $('#roles-table').addClass('table-edit-mode');
-                        $('.inline-delete-btn, .inline-delete-dept-only-btn').removeClass('d-none');
+                        $('.inline-delete-btn, .inline-delete-dept-only-btn, .btn-inline-add-role').removeClass('d-none');
+                        $('.static-no-role-text').addClass('d-none');
                         
                         // If we have pending rows, move them back to the top of the current view
                         var $pending = $('.new-row-pending');
@@ -221,7 +230,8 @@
                         }
                     } else {
                         $('#roles-table').removeClass('table-edit-mode');
-                        $('.inline-delete-btn, .inline-delete-dept-only-btn').addClass('d-none');
+                        $('.inline-delete-btn, .inline-delete-dept-only-btn, .btn-inline-add-role').addClass('d-none');
+                        $('.static-no-role-text').removeClass('d-none');
                     }
                 });
 
@@ -285,9 +295,20 @@
                                     
                                     // Update Role Column Text
                                     var $roleCell = $row.find('td:first-child .d-flex');
-                                    $roleCell.html('<span class="role-text-val fw-regular text-muted fst-italic">No Role Assigned</span>');
-
-                                    // Update Button in Dept Column
+                                    
+                                    // Inject exact same structure as Blade
+                                    $roleCell.html(`
+                                        <div class="role-text-val flex-grow-1 py-1 px-2 rounded no-role-assigned-wrapper">
+                                            <span class="static-no-role-text text-muted fst-italic ${isEditMode ? 'd-none' : ''}">No Role Assigned</span>
+                                            <a href="javascript:void(0);" class="btn-inline-add-role ${isEditMode ? '' : 'd-none'} text-primary fst-italic" style="text-decoration: underline;">Add a Role</a>
+                                        </div>
+                                        <div class="inline-role-add-container d-none flex-grow-1 d-flex align-items-center gap-2 px-2">
+                                            <input type="text" class="form-control form-control-sm inline-role-input" placeholder="Enter Role Name">
+                                            <button type="button" class="btn btn-sm btn-cancel-inline-role p-1 border-0 shadow-none bg-transparent" title="Cancel">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x text-danger"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            </button>
+                                        </div>
+                                    `);
                                     var $btnCell = $row.find('td:last-child .d-flex');
                                     var deptId = $row.data('dep-id');
                                     
@@ -318,6 +339,23 @@
                         }
                     });
                 }
+
+                // Inline Add Role Handlers
+                $(document).on('click', '.btn-inline-add-role', function() {
+                    var $wrapper = $(this).closest('.no-role-assigned-wrapper');
+                    var $container = $wrapper.siblings('.inline-role-add-container');
+                    $wrapper.addClass('d-none');
+                    $container.removeClass('d-none');
+                    $container.find('input').focus();
+                });
+
+                $(document).on('click', '.btn-cancel-inline-role', function() {
+                    var $container = $(this).closest('.inline-role-add-container');
+                    var $wrapper = $container.siblings('.no-role-assigned-wrapper');
+                    $container.addClass('d-none');
+                    $wrapper.removeClass('d-none');
+                    $container.find('input').val(''); // Clear input
+                });
 
                 // Edit Role UI Logic
                 $(document).on('click', '.editable-role-text', function() {
@@ -578,6 +616,25 @@
                             new_department_name: newDeptName.trim(),
                             new_department_type: newDeptType
                         });
+                    });
+                    
+                    // 2. Collect inline added roles in existing rows
+                    $('#roles-table tbody .inline-role-input').each(function() {
+                        var roleName = $(this).val() || "";
+                        if (roleName.trim() !== "") {
+                            var $row = $(this).closest('tr');
+                            var deptId = $row.data('dep-id');
+                            var deptName = $row.find('.dep-text-val').text().trim();
+
+                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in: ${deptName}</small></li>`);
+                            
+                            newRoles.push({
+                                role_name: roleName.trim(),
+                                department_id: deptId,
+                                new_department_name: '',
+                                new_department_type: ''
+                            });
+                        }
                     });
 
                     if(hasErrors) return; // Prevent Ajax call if validation failed

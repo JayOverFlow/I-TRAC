@@ -97,13 +97,7 @@
                     @forelse($roles ?? [] as $role)
                     <tr data-role-id="{{ $role->role_id }}" data-dep-id="{{ $role->dep_id }}" data-dep-type="{{ $role->dep_type }}">
                         <td class="align-middle py-2">
-                            <div class="d-flex justify-content-between align-items-center w-100 h-100">
-                                @if($role->role_id)
-                                    <div class="role-text-val editable-role-text transition-all flex-grow-1 py-1 px-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
-                                @else
-                                    <div class="role-text-val text-muted fst-italic flex-grow-1 py-1 px-2 rounded">No Role Assigned</div>
-                                @endif
-                            </div>
+                            <div class="d-flex align-items-center w-100 h-100">@if($role->role_id)<div class="role-text-val editable-role-text transition-all flex-grow-1 py-1 px-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>@else<div class="role-text-val flex-grow-1 py-1 px-2 rounded no-role-assigned-wrapper"><span class="static-no-role-text text-muted fst-italic">No Role Assigned</span><a href="javascript:void(0);" class="btn-inline-add-role d-none text-primary fst-italic" style="text-decoration: underline;">Add a Role</a></div><div class="inline-role-add-container d-none flex-grow-1 d-flex align-items-center gap-2 px-2"><input type="text" class="form-control form-control-sm inline-role-input" placeholder="Enter Role Name"><button type="button" class="btn btn-sm btn-cancel-inline-role p-1 border-0 shadow-none bg-transparent" title="Cancel"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x text-danger"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>@endif</div>
                         </td>
                         <td class="align-middle py-2">
                             <div class="d-flex justify-content-between align-items-center w-100 h-100">

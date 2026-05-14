@@ -127,7 +127,12 @@
                                 <select class="form-select form-select-sm dept-assignment-select shadow-sm table-edit-select"
                                     data-original-dep-id="{{ $user->dep_id ?? '' }}"
                                     style="width: 100%; font-size:0.85rem;">
-                                    <option value="">— No Department —</option>
+                                    {{-- Only show remove option if they have more than 1 membership --}}
+                                    @if($user->dep_count > 1)
+                                        <option value="REMOVE" class="text-danger fw-bold">Remove from this department</option>
+                                    @elseif(empty($user->dep_id))
+                                        <option value="" disabled selected>— Select Department —</option>
+                                    @endif
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->dep_id }}" {{ $user->dep_id == $dept->dep_id ? 'selected' : '' }}>
                                             {{ $dept->dep_name }}

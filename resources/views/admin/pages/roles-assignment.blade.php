@@ -177,11 +177,11 @@
                             var $deptSelect = $row.find('.dept-assignment-select');
                             
                             var userId = isNewRow ? $row.find('.select-user-new').val() : $row.data('user-id');
-                            var currentDepId = $deptSelect.val();
-                            var currentRoleId = $roleSelect.val();
+                            var currentDepId = $deptSelect.val() || "";
+                            var currentRoleId = $roleSelect.val() || "";
                             
-                            var originalDepId = isNewRow ? null : $deptSelect.data('original-dep-id');
-                            var originalRoleId = isNewRow ? null : $roleSelect.data('original-role-id');
+                            var originalDepId = String(isNewRow ? "" : ($deptSelect.data('original-dep-id') || ""));
+                            var originalRoleId = String(isNewRow ? "" : ($roleSelect.data('original-role-id') || ""));
 
                             // Validation for new rows
                             if (isNewRow) {
@@ -214,7 +214,10 @@
                                 var deptName = $deptSelect.find('option:selected').text().trim() || '—';
                                 
                                 var changeDesc = "";
-                                if (currentDepId != originalDepId && currentRoleId != originalRoleId) {
+                                if (currentDepId === 'REMOVE') {
+                                    var originalDeptName = $deptSelect.find('option[value="' + originalDepId + '"]').text().trim();
+                                    changeDesc = `<span class="text-danger">Removing from <b>${originalDeptName}</b></span>`;
+                                } else if (currentDepId != originalDepId && currentRoleId != originalRoleId) {
                                     changeDesc = `Moving to <b>${deptName}</b> as <b>${roleName}</b>`;
                                 } else if (currentDepId != originalDepId) {
                                     changeDesc = `Moving to <b>${deptName}</b>`;

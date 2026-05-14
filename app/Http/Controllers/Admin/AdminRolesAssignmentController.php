@@ -140,7 +140,43 @@ class AdminRolesAssignmentController extends Controller
                         $role = DB::table('roles_tbl')->where('role_id', $roleId)->first();
                         $roleName = $role ? $role->role_name : 'No Role';
 
-                        // 1. Handle Department Association Update
+                        // 1. Handle Department Association Update or Removal
+                        if ($depId === 'REMOVE') {
+                            if (!empty($origDepId)) {
+                                // Safety check: ensure user has at least one other department
+                                $count = DB::table('user_departments_tbl')->where('user_id_fk', $userId)->count();
+                                if ($count > 1) {
+                                    // 1. Delete Role in that specific department
+                                    $currentRoleEntry = DB::table('user_roles_tbl as ur')
+                                        ->join('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
+                                        ->where('ur.user_id_fk', $userId)
+                                        ->where('r.role_dep_id_fk', $origDepId)
+                                        ->select('ur.role_id_fk', 'r.role_name')
+                                        ->first();
+
+                                    if ($currentRoleEntry) {
+                                        DB::table('user_roles_tbl')
+                                            ->where('user_id_fk', $userId)
+                                            ->where('role_id_fk', $currentRoleEntry->role_id_fk)
+                                            ->delete();
+                                    }
+
+                                    // 2. Delete Department Association
+                                    DB::table('user_departments_tbl')
+                                        ->where('user_id_fk', $userId)
+                                        ->where('department_id_fk', $origDepId)
+                                        ->delete();
+
+                                    ActivityLog::log(
+                                        'DEPT_REMOVED',
+                                        "$userName removed from $origDeptName",
+                                        "Removed $userName from department: $origDeptName and cleared associated role: " . ($currentRoleEntry ? $currentRoleEntry->role_name : 'None')
+                                    );
+                                }
+                            }
+                            continue; // Skip further role logic for this row
+                        }
+
                         if (!empty($origDepId) && !empty($depId) && $origDepId != $depId) {
                             // Move user from one department to another
                             DB::table('user_departments_tbl')
@@ -251,14 +287,15 @@ class AdminRolesAssignmentController extends Controller
         $allRoles = DB::table('roles_tbl')->get();
 
         // Table: users with their role, role_id, dep_id, and department via joins
-        // Inspired by view_user_roles_departments logic to support multiple departments per user
+        // Refactored to use groupBy to prevent Cartesian product (duplicate rows)
+        // when a user belongs to multiple departments and has multiple roles.
         $users = DB::table('users as u')
-            ->leftJoin('user_roles_tbl as ur', 'u.user_id', '=', 'ur.user_id_fk')
-            ->leftJoin('roles_tbl as r', 'ur.role_id_fk', '=', 'r.role_id')
             ->leftJoin('user_departments_tbl as ud', 'u.user_id', '=', 'ud.user_id_fk')
-            ->leftJoin('departments_tbl as d', function($join) {
-                $join->on('d.dep_id', '=', 'ud.department_id_fk')
-                     ->orOn('d.dep_id', '=', 'r.role_dep_id_fk');
+            ->leftJoin('departments_tbl as d', 'd.dep_id', '=', 'ud.department_id_fk')
+            ->leftJoin('user_roles_tbl as ur', 'u.user_id', '=', 'ur.user_id_fk')
+            ->leftJoin('roles_tbl as r', function($join) {
+                $join->on('r.role_id', '=', 'ur.role_id_fk')
+                     ->on('r.role_dep_id_fk', '=', 'd.dep_id'); // Match role to the specific department row
             })
             ->select(
                 'u.user_id',
@@ -269,11 +306,22 @@ class AdminRolesAssignmentController extends Controller
                 'u.user_type',
                 'd.dep_id',
                 'd.dep_name',
-                DB::raw("CASE WHEN r.role_dep_id_fk = d.dep_id THEN r.role_id ELSE NULL END as role_id"),
-                DB::raw("CASE WHEN r.role_dep_id_fk = d.dep_id THEN r.role_name ELSE NULL END as role_name"),
-                DB::raw("CASE WHEN r.role_dep_id_fk = d.dep_id THEN 0 ELSE 1 END as has_role")
+                DB::raw('(SELECT COUNT(*) FROM user_departments_tbl WHERE user_id_fk = u.user_id) as dep_count'),
+                DB::raw('MAX(r.role_id) as role_id'),
+                DB::raw('MAX(r.role_name) as role_name'),
+                DB::raw("CASE WHEN MAX(r.role_id) IS NOT NULL THEN 0 ELSE 1 END as has_role")
             )
-            ->distinct()
+            ->groupBy(
+                'u.user_id',
+                'u.user_tupid',
+                'u.user_firstname',
+                'u.user_lastname',
+                'u.user_email',
+                'u.user_type',
+                'd.dep_id',
+                'd.dep_name',
+                'dep_count'
+            )
             ->orderBy('has_role', 'ASC')
             ->orderBy('u.user_lastname', 'ASC')
             ->orderBy('u.user_firstname', 'ASC')
