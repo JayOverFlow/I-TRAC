@@ -14,6 +14,7 @@ use App\Http\Controllers\CreatePrController;
 use App\Http\Controllers\CreatePoController;
 use App\Http\Controllers\PrReviewController;
 use App\Http\Controllers\PrPreviewController;
+use App\Http\Controllers\PoReviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use App\Http\Controllers\ProcureController;
@@ -28,6 +29,7 @@ Route::get('/sample', function () {
     return view('sample-content');
 })->middleware('auth');
 
+// Head user
 Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
@@ -49,6 +51,40 @@ Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
     Route::controller(CreateAppController::class)->group(function () {
         Route::get('/create-app', 'showCreateApp')->name('show.create-app');
         Route::post('/create-app', 'createApp')->name('create.app');
+    });
+});
+
+// Procurement user
+Route::middleware(['auth', 'role:Procurement'])->group(function () {
+    Route::controller(CreatePoController::class)->group(function () {
+        Route::get('/create-po/{po_id}', 'showCreatePo')->name('show.create.po');
+        Route::post('/create-po/store/{pr_id}', 'createPo')->name('create.po');
+        Route::post('/create-po/update/{po_id}', 'updatePo')->name('update.po');
+        Route::get('/create-po/{po_id}/export', 'exportPdf')->name('export.po.pdf');
+    });
+
+    Route::controller(ProcureController::class)->group(function () {
+        Route::post('/procure/retrieve-pr', 'retrievePr')->name('procure.retrieve.pr');
+    });
+});
+
+// Supply user
+Route::middleware(['auth', 'role:Supply'])->group(function () {
+    Route::controller(ProcureController::class)->group(function () {
+        Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
+    });
+
+    Route::controller(PoReviewController::class)->group(function () {
+        // Route::get('/po-review/{po_id}', 'showPoReview')->name('show.po.review');
+        Route::get('/po-review', 'showPoReview')->name('show.po.review');
+        // Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
+    });
+});
+
+// Procurement & Supply user
+Route::middleware(['auth', 'role:Procurement,Supply'])->group(function () {
+    Route::controller(ProcureController::class)->group(function () {
+        Route::get('/procure', 'showProcure')->name('show.procure');
     });
 });
 
@@ -143,19 +179,4 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
     Route::post('/roles-assignment/update-users', [AdminRolesAssignmentController::class, 'updateUserAssignments'])->name('admin.roles-assignment.update-users');
 });
 
-Route::middleware(['auth', 'role:Procurement'])->group(function () {
-    Route::controller(CreatePoController::class)->group(function () {
-        Route::get('/create-po/{po_id}', 'showCreatePo')->name('show.create.po');
-        Route::post('/create-po/store/{pr_id}', 'createPo')->name('create.po');
-        Route::post('/create-po/update/{po_id}', 'updatePo')->name('update.po');
-        Route::get('/create-po/{po_id}/export', 'exportPdf')->name('export.po.pdf');
-    });
-});
 
-Route::middleware(['auth', 'role:Procurement,Supply'])->group(function () {
-    Route::controller(ProcureController::class)->group(function () {
-        Route::get('/procure', 'showProcure')->name('show.procure');
-        Route::post('/procure/retrieve-pr', 'retrievePr')->name('procure.retrieve.pr');
-        Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
-    });
-});
