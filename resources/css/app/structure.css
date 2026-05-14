@@ -475,6 +475,7 @@ body:not(.dark) .navbar .dark-mode {
 
 .navbar .navbar-item .nav-item.notification-dropdown .dropdown-menu .notification-scroll {
   height: 375px;
+  margin-bottom: 0;
   position: relative;
 }
 
@@ -483,6 +484,15 @@ body:not(.dark) .navbar .dark-mode {
   border-bottom: 1px solid #F3F4F6;
   border-top: 1px solid #F3F4F6;
   margin-bottom: 10px;
+}
+
+.navbar .navbar-item .nav-item.notification-dropdown .dropdown-menu .drodpown-title .header-log-title {
+  color: #0e1726;
+  font-weight: 400;
+}
+
+body.dark .navbar .navbar-item .nav-item.notification-dropdown .dropdown-menu .drodpown-title .header-log-title {
+  color: #F3F4F6;
 }
 
 .navbar .navbar-item .nav-item.notification-dropdown .dropdown-menu .drodpown-title.message {
