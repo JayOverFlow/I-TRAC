@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -68,19 +70,47 @@ class AdminRolesAssignmentController extends Controller
                     $roleId = $assignment['role_id'];
                     $userId = $assignment['user_id'];
 
+                    $role = DB::table('roles_tbl')->where('role_id', $roleId)->first();
+                    $roleName = $role ? $role->role_name : 'Unknown Role';
+
+                    // Get OLD user for this role to track the change
+                    $oldUserRole = DB::table('user_roles_tbl')->where('role_id_fk', $roleId)->first();
+                    $oldUser = $oldUserRole ? User::find($oldUserRole->user_id_fk) : null;
+                    $oldUserName = $oldUser ? "{$oldUser->user_firstname} {$oldUser->user_lastname}" : 'Vacant';
+
                     if (empty($userId)) {
                         DB::table('user_roles_tbl')
                             ->where('role_id_fk', $roleId)
                             ->delete();
+                        
+                        if ($oldUser) {
+                            ActivityLog::log(
+                                'ROLE_UNASSIGN',
+                                "Unassigned $oldUserName",
+                                "Unassigned user $oldUserName from the role of '$roleName'"
+                            );
+                        }
                     } else {
                         DB::table('user_roles_tbl')->updateOrInsert(
                             ['role_id_fk' => $roleId],
                             ['user_id_fk' => $userId]
                         );
+
+                        $newUser = User::find($userId);
+                        $newUserName = $newUser ? "{$newUser->user_firstname} {$newUser->user_lastname}" : 'Unknown';
+
+                        if (!$oldUser || $oldUser->user_id != $userId) {
+                            ActivityLog::log(
+                                'ROLE_ASSIGN',
+                                "$newUserName is now $roleName",
+                                "Assigned $newUserName to '$roleName' (Previously: $oldUserName)"
+                            );
+                        }
                     }
                 }
             });
         }
+        
 
         return response()->json(['success' => true, 'message' => 'Role assignments updated successfully.']);
     }
@@ -96,65 +126,102 @@ class AdminRolesAssignmentController extends Controller
         if (!empty($assignments)) {
             DB::transaction(function () use ($assignments) {
                 foreach ($assignments as $assignment) {
-                    $userId = $assignment['user_id'];
-                    $roleId = $assignment['role_id'];
-                    $depId  = $assignment['dep_id'];
-                    $origDepId = $assignment['original_dep_id'];
+                        $userId = $assignment['user_id'];
+                        $roleId = $assignment['role_id'];
+                        $depId  = $assignment['dep_id'];
+                        $origDepId = $assignment['original_dep_id'];
 
-                    // 1. Handle Department Association Update
-                    if (!empty($origDepId) && !empty($depId) && $origDepId != $depId) {
-                        // Move user from one department to another
-                        DB::table('user_departments_tbl')
-                            ->where('user_id_fk', $userId)
-                            ->where('department_id_fk', $origDepId)
-                            ->update(['department_id_fk' => $depId]);
-                    } elseif (empty($origDepId) && !empty($depId)) {
-                        // New department association for the user
-                        DB::table('user_departments_tbl')->updateOrInsert(
-                            ['user_id_fk' => $userId, 'department_id_fk' => $depId],
-                            []
-                        );
-                    }
+                        $user = User::find($userId);
+                        $userName = $user ? "{$user->user_firstname} {$user->user_lastname}" : 'Unknown';
+                        $dept = Department::find($depId);
+                        $deptName = $dept ? $dept->dep_name : 'Unknown';
+                        $origDept = Department::find($origDepId);
+                        $origDeptName = $origDept ? $origDept->dep_name : 'None';
+                        $role = DB::table('roles_tbl')->where('role_id', $roleId)->first();
+                        $roleName = $role ? $role->role_name : 'No Role';
 
-                    // 2. Handle Role Assignment within this specific department
-                    // We only manage roles that belong to the targeted department
-                    $targetDepId = !empty($depId) ? $depId : $origDepId;
+                        // 1. Handle Department Association Update
+                        if (!empty($origDepId) && !empty($depId) && $origDepId != $depId) {
+                            // Move user from one department to another
+                            DB::table('user_departments_tbl')
+                                ->where('user_id_fk', $userId)
+                                ->where('department_id_fk', $origDepId)
+                                ->update(['department_id_fk' => $depId]);
 
-                    if ($targetDepId) {
-                        // Find any existing role the user has in THIS department
-                        $currentRole = DB::table('user_roles_tbl as ur')
-                            ->join('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
-                            ->where('ur.user_id_fk', $userId)
-                            ->where('r.role_dep_id_fk', $targetDepId)
-                            ->select('ur.role_id_fk')
-                            ->first();
+                            ActivityLog::log(
+                                'DEPT_TRANSFER',
+                                "$userName moved to $deptName",
+                                "Transferred $userName from $origDeptName to $deptName as '$roleName'"
+                            );
+                        } elseif (empty($origDepId) && !empty($depId)) {
+                            // New department association for the user
+                            DB::table('user_departments_tbl')->updateOrInsert(
+                                ['user_id_fk' => $userId, 'department_id_fk' => $depId],
+                                []
+                            );
 
-                        if (empty($roleId)) {
-                            // Unassign: remove role for this specific department
-                            if ($currentRole) {
-                                DB::table('user_roles_tbl')
-                                    ->where('user_id_fk', $userId)
-                                    ->where('role_id_fk', $currentRole->role_id_fk)
-                                    ->delete();
-                            }
-                        } else {
-                            // Assign / Update role for this specific department
-                            if ($currentRole) {
-                                if ($currentRole->role_id_fk != $roleId) {
+                            ActivityLog::log(
+                                'DEPT_ADD',
+                                "$userName added to $deptName",
+                                "Added $userName to additional department: '$deptName' as '$roleName'"
+                            );
+                        }
+
+                        // 2. Handle Role Assignment within this specific department
+                        $targetDepId = !empty($depId) ? $depId : $origDepId;
+
+                        if ($targetDepId) {
+                            $currentRoleEntry = DB::table('user_roles_tbl as ur')
+                                ->join('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
+                                ->where('ur.user_id_fk', $userId)
+                                ->where('r.role_dep_id_fk', $targetDepId)
+                                ->select('ur.role_id_fk', 'r.role_name')
+                                ->first();
+
+                            if (empty($roleId)) {
+                                if ($currentRoleEntry) {
                                     DB::table('user_roles_tbl')
                                         ->where('user_id_fk', $userId)
-                                        ->where('role_id_fk', $currentRole->role_id_fk)
-                                        ->update(['role_id_fk' => $roleId]);
+                                        ->where('role_id_fk', $currentRoleEntry->role_id_fk)
+                                        ->delete();
+                                    
+                                    ActivityLog::log(
+                                        'ROLE_REMOVED',
+                                        "Role removed: {$currentRoleEntry->role_name}",
+                                        "Removed $userName from the role of '{$currentRoleEntry->role_name}' in $deptName"
+                                    );
                                 }
                             } else {
-                                // New role in this department
-                                DB::table('user_roles_tbl')->insert([
-                                    'user_id_fk' => $userId,
-                                    'role_id_fk' => $roleId
-                                ]);
+                                if ($currentRoleEntry) {
+                                    if ($currentRoleEntry->role_id_fk != $roleId) {
+                                        DB::table('user_roles_tbl')
+                                            ->where('user_id_fk', $userId)
+                                            ->where('role_id_fk', $currentRoleEntry->role_id_fk)
+                                            ->update(['role_id_fk' => $roleId]);
+
+                                        ActivityLog::log(
+                                            'ROLE_CHANGE',
+                                            "$userName updated in $deptName",
+                                            "Changed $userName's role in $deptName from '{$currentRoleEntry->role_name}' to '$roleName'"
+                                        );
+                                    }
+                                } else {
+                                    DB::table('user_roles_tbl')->insert([
+                                        'user_id_fk' => $userId,
+                                        'role_id_fk' => $roleId
+                                    ]);
+
+                                    // If we didn't log a transfer or add above, log this as a new role in existing dept
+                                    if ($origDepId == $depId || empty($origDepId)) {
+                                        ActivityLog::log(
+                                            'ROLE_ASSIGN',
+                                            "$userName is now $roleName",
+                                            "Assigned $userName to '$roleName' in $deptName"
+                                        );
+                                    }
+                                }
                             }
                         }
-                    }
                 }
             });
         }

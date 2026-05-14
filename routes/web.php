@@ -16,6 +16,7 @@ use App\Http\Controllers\PrReviewController;
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
+use App\Http\Controllers\Admin\AdminActivityLogController;
 use App\Http\Controllers\ProcureController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -141,6 +142,9 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
     Route::get('/roles-assignment', [AdminRolesAssignmentController::class, 'index'])->name('admin.roles-assignment');
     Route::post('/roles-assignment/update', [AdminRolesAssignmentController::class, 'updateRoleAssignments'])->name('admin.roles-assignment.update');
     Route::post('/roles-assignment/update-users', [AdminRolesAssignmentController::class, 'updateUserAssignments'])->name('admin.roles-assignment.update-users');
+
+    Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('admin.activity-logs');
+    Route::get('/activity-logs/latest', [AdminActivityLogController::class, 'getLatestLogs'])->name('admin.activity-logs.latest');
 });
 
 Route::middleware(['auth', 'role:Procurement'])->group(function () {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -84,6 +85,21 @@ class AdminRolesOfficesController extends Controller
                         'role_name' => $roleName,
                         'role_dep_id_fk' => $departmentId,
                     ]);
+
+                    // Log the creation of a new role
+                    $dept = Department::find($departmentId);
+                    ActivityLog::log(
+                        'ROLE_CREATE',
+                        "New role: $roleName",
+                        "Added new role '$roleName' under department '" . ($dept ? $dept->dep_name : 'Unknown') . "'"
+                    );
+                } else if ($departmentId !== 'NEW' && !empty($newDeptName)) {
+                    // Log only department creation if no role was provided
+                    ActivityLog::log(
+                        'DEPT_CREATE',
+                        "New Dept: $formattedDeptName",
+                        "Added new department '$formattedDeptName' without any roles yet"
+                    );
                 }
             }
 
@@ -112,7 +128,10 @@ class AdminRolesOfficesController extends Controller
                 return response()->json(['success' => false, 'message' => 'Role not found.'], 404);
             }
 
-            $departmentId = $role->role_dep_id_fk;
+            $roleName = $role->role_name;
+            $departmentId = $role->role_dep_id_fk; // Define departmentId from the role
+            $dept = Department::find($departmentId);
+            $deptName = $dept ? $dept->dep_name : 'Unknown';
 
             // Delete the mapped role using the model primary key
             $role->delete();
@@ -128,6 +147,18 @@ class AdminRolesOfficesController extends Controller
                 }
 
                 Department::where('dep_id', $departmentId)->delete();
+
+                ActivityLog::log(
+                    'ROLE_DEPT_DELETE',
+                    "Dept & Role deleted",
+                    "Permanently deleted role '$roleName' and its parent department '$deptName'"
+                );
+            } else {
+                ActivityLog::log(
+                    'ROLE_DELETE',
+                    "Role deleted: $roleName",
+                    "Removed role '$roleName' from department '$deptName'"
+                );
             }
 
             DB::commit();
@@ -184,9 +215,33 @@ class AdminRolesOfficesController extends Controller
             ]);
 
             $role = Role::findOrFail($id);
+            $oldName = $role->role_name;
+            $oldDepId = $role->role_dep_id_fk;
+            $oldDept = Department::find($oldDepId);
+
             $role->role_name = $request->role_name;
             $role->role_dep_id_fk = $request->department_id;
             $role->save();
+
+            $newDept = Department::find($request->department_id);
+
+            // Log if name changed
+            if ($oldName !== $request->role_name) {
+                ActivityLog::log(
+                    'ROLE_RENAME',
+                    "Renamed Role: {$request->role_name}",
+                    "Updated role name from '$oldName' to '{$request->role_name}'"
+                );
+            }
+
+            // Log if department changed (Reassignment)
+            if ($oldDepId != $request->department_id) {
+                ActivityLog::log(
+                    'ROLE_REASSIGN',
+                    "{$request->role_name} moved to " . ($newDept ? $newDept->dep_name : 'Unknown'),
+                    "Reassigned role '{$request->role_name}' from '" . ($oldDept ? $oldDept->dep_name : 'Unknown') . "' to '" . ($newDept ? $newDept->dep_name : 'Unknown') . "'"
+                );
+            }
 
             return response()->json([
                 'success' => true,
@@ -210,9 +265,32 @@ class AdminRolesOfficesController extends Controller
             ]);
 
             $dept = Department::findOrFail($id);
-            $dept->dep_name = collect(explode(' ', $request->dep_name))->map(fn($word) => ucfirst(strtolower($word)))->join(' ');
+            $oldName = $dept->dep_name;
+            $oldType = $dept->dep_type;
+
+            $formattedName = collect(explode(' ', $request->dep_name))->map(fn($word) => ucfirst(strtolower($word)))->join(' ');
+            
+            $dept->dep_name = $formattedName;
             $dept->dep_type = strtolower($request->dep_type);
             $dept->save();
+
+            // Log if name changed
+            if ($oldName !== $formattedName) {
+                ActivityLog::log(
+                    'DEPT_RENAME',
+                    "Renamed Dept: $formattedName",
+                    "Updated department name from '$oldName' to '$formattedName'"
+                );
+            }
+
+            // Log if type changed
+            if ($oldType !== strtolower($request->dep_type)) {
+                ActivityLog::log(
+                    'DEPT_TYPE_CHANGE',
+                    "$formattedName is now " . ucfirst($request->dep_type),
+                    "Changed department '$formattedName' type from '$oldType' to '" . strtolower($request->dep_type) . "'"
+                );
+            }
 
             return response()->json([
                 'success' => true,
