@@ -19,18 +19,14 @@ class CreatePoController extends Controller
     public function showCreatePo($po_id) {
         $po = PoParent::with(['poItems.poSpecs'])->findOrFail($po_id);
 
-        // Group items by category for structured rendering in Blade
-        $supplyItems = $po->poItems->where('po_items_category', 'supply_and_materials');
-        $semiItems = $po->poItems->where('po_items_category', 'semi-expendable');
-        $equipItems = $po->poItems->where('po_items_category', 'equipment');
-        $otherItems = $po->poItems->whereNotIn('po_items_category', ['supply_and_materials', 'semi-expendable', 'equipment']);
+        $poItems = $po->poItems;
 
         // Ensure the staging area ('Add Items' card) always has at least one row for interactivity
-        if ($otherItems->isEmpty()) {
-            $otherItems = collect([new PoItem()]);
+        if ($poItems->isEmpty()) {
+            $poItems = collect([new PoItem()]);
         }
 
-        return view('procurement/pages/procurement-create-po', compact('po', 'supplyItems', 'semiItems', 'equipItems', 'otherItems'));
+        return view('procurement/pages/procurement-create-po', compact('po', 'poItems'));
     }
 
     public function createPo(Request $request, $pr_id) {
@@ -90,11 +86,6 @@ class CreatePoController extends Controller
 
             if ($request->has('items')) {
                 foreach ($request->items as $itemData) {
-                    // Ignore and do not store/save item/row that do not have category selected
-                    if (empty($itemData['category'])) {
-                        continue;
-                    }
-
                     $item = $po->poItems()->create([
                         'po_items_stockno' => $itemData['stock'] ?? null,
                         'po_items_unit' => $itemData['unit'] ?? null,
@@ -102,7 +93,6 @@ class CreatePoController extends Controller
                         'po_items_quantity' => $itemData['quantity'] ?? 0,
                         'po_items_cost' => $itemData['cost'] ?? 0,
                         'po_items_total' => ($itemData['quantity'] ?? 0) * ($itemData['cost'] ?? 0),
-                        'po_items_category' => $itemData['category'],
                     ]);
 
                     // Add Specification if present

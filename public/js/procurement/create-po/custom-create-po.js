@@ -51,10 +51,10 @@ $(document).ready(function() {
         });
     });
 
-    // Add Item (Specifically for Add Items card)
+    // Add Item
     $(document).on('click', '.add-item-btn', function(e) {
         e.preventDefault();
-        var tbody = $('#tbody-add-items');
+        var tbody = $('#tbody-po-items');
         var firstRow = tbody.find('tr.po-item-row').first();
         var firstDescRow = tbody.find('tr.po-specification-row').first();
         
@@ -98,51 +98,6 @@ $(document).ready(function() {
         updateTotals();
     });
 
-    // Dynamic Category Sorting
-    $(document).on('change', '.category-select', function() {
-        const category = $(this).val();
-        const row = $(this).closest('tr.po-item-row');
-        
-        // Validation: Stock, Unit, Description, Qty must not be empty
-        const stock = row.find('.stock-input').val()?.trim();
-        const unit = row.find('.unit-select').val();
-        const description = row.find('.description-input').val()?.trim();
-        const qty = row.find('.qty-input').val()?.trim();
-
-        if (category && category !== "" && (!stock || !unit || !description || !qty)) {
-            showJsToast("Please fill in Stock, Unit, Item Description, and Qty before selecting a category.");
-            $(this).val(""); // Reset to "Select"
-            return;
-        }
-
-        const specRow = row.next('.po-specification-row');
-        const isInAddItems = row.closest('tbody').attr('id') === 'tbody-add-items';
-        const isOnlyRowInAddItems = $('#tbody-add-items tr.po-item-row').length === 1;
-
-        let targetTbody = '';
-        if (category === "supply_and_materials") targetTbody = '#tbody-supply';
-        else if (category === "semi-expendable") targetTbody = '#tbody-semi-expendable';
-        else if (category === "equipment") targetTbody = '#tbody-equipment';
-        else targetTbody = '#tbody-add-items';
-
-        if (targetTbody) {
-            // If it's the only row in Add Items, clone it BEFORE moving it
-            if (isInAddItems && isOnlyRowInAddItems && targetTbody !== '#tbody-add-items') {
-                $('.add-item-btn').first().click();
-            }
-
-            // Move the row and its specification to the target table
-            $(targetTbody).append(row).append(specRow);
-            
-            // If it moved to a categorized card, always show the remove button
-            if (targetTbody !== '#tbody-add-items') {
-                row.find('.remove-row-btn').css('visibility', 'visible');
-            }
-            
-            manageAddItemsButtons();
-            updateTotals();
-        }
-    });
 
     // Remove Row
     $(document).on('click', '.remove-row-btn', function() {
@@ -153,8 +108,8 @@ $(document).ready(function() {
         row.remove();
         specificationRow.remove();
 
-        // If it was the last row in Add Items, add a fresh one
-        if (tbodyId === 'tbody-add-items' && $('#tbody-add-items tr.po-item-row').length === 0) {
+        // If it was the last row, add a fresh one
+        if (tbodyId === 'tbody-po-items' && $('#tbody-po-items tr.po-item-row').length === 0) {
             $('.add-item-btn').first().click();
         }
 
@@ -162,9 +117,9 @@ $(document).ready(function() {
         updateTotals();
     });
 
-    // Manage visibility of remove buttons in Add Items card
+    // Manage visibility of remove buttons
     function manageAddItemsButtons() {
-        var addItemsRows = $('#tbody-add-items tr.po-item-row');
+        var addItemsRows = $('#tbody-po-items tr.po-item-row');
         if (addItemsRows.length === 1) {
             addItemsRows.find('.remove-row-btn').css('visibility', 'hidden');
         } else {

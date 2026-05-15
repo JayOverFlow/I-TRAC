@@ -225,13 +225,6 @@ class CreatePrController extends Controller
                 continue;
             }
 
-            $categoryMap = [
-                'Supply and Materials' => 'supply_and_materials',
-                'Semi-expendable'      => 'semi-expendable',
-                'Equipment'            => 'equipment',
-            ];
-            $category = $categoryMap[$row['category'] ?? ''] ?? null;
-
             $qty  = (int)   ($row['quantity'] ?? 0);
             $cost = (float) ($row['cost']     ?? 0);
 
@@ -242,7 +235,6 @@ class CreatePrController extends Controller
                 'pr_items_unit'       => $row['unit']         ?? null,
                 'pr_items_quantity'   => $qty,
                 'pr_items_cost'       => $cost,
-                'pr_items_category'   => $category,
             ]);
 
             if (!empty($row['specification'])) {

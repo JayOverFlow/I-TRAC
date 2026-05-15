@@ -197,7 +197,6 @@
                                     <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
                                     <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost</th>
                                     <th class="text-center black-text fw-bold" style="width: 14%">Amount</th>
-                                    <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
                                     <th class="text-start px-0" style="width: 30px"></th>
                                     <!-- Fixed strict pixel width -->
                                 </tr>
@@ -314,33 +313,7 @@
                                                     data-amount="{{ $amount }}">₱
                                                     {{ number_format($amount, 2) }}</span>
                                             </td>
-                                            {{-- Category --}}
-                                            @php
-                                                $catMap = [
-                                                    'supply_and_materials' => 'Supply and Materials',
-                                                    'semi-expendable' => 'Semi-expendable',
-                                                    'equipment' => 'Equipment',
-                                                ];
-                                                $savedCat = $saved ? $catMap[$saved->pr_items_category] ?? '' : '';
-                                            @endphp
-                                            <td class="px-1">
-                                                <select class="form-select form-control-sm"
-                                                    name="items[{{ $rowIndex }}][category]"
-                                                    {{ $isReadOnly ? 'disabled' : '' }}>
-                                                    <option value=""
-                                                        {{ !$saved || !$saved?->pr_items_category ? 'selected' : '' }}
-                                                        disabled>Select</option>
-                                                    <option value="Supply and Materials"
-                                                        {{ $savedCat === 'Supply and Materials' ? 'selected' : '' }}>Supply and Materials
-                                                    </option>
-                                                    <option value="Semi-expendable"
-                                                        {{ $savedCat === 'Semi-expendable' ? 'selected' : '' }}>Semi-expendable
-                                                    </option>
-                                                    <option value="Equipment"
-                                                        {{ $savedCat === 'Equipment' ? 'selected' : '' }}>
-                                                        Equipment</option>
-                                                </select>
-                                            </td>
+
                                             <td class="text-start px-0">
                                                 @if (!$isReadOnly)
                                                     <button type="button"
@@ -388,7 +361,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td colspan="5"></td>
+                                            <td colspan="4"></td>
                                         </tr>
                                         @php $rowIndex++; @endphp
                                     @endforeach

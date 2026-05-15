@@ -192,48 +192,15 @@
                 </div>
             </div>
 
-            @if (!$isDone)
-                <h5 class="black-text fw-bold ms-4 ps-1">Add Items</h5>
-                <div class="table-responsive mx-3">
-                    <table class="table table-sm table-borderless align-middle po-table">
-                        <thead class="bg-transparent">
-                            <tr>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                <th class="black-text fw-bold">Item Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
-                                <th class="text-start px-0" style="width: 30px"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-add-items">
-                            @foreach ($otherItems as $index => $item)
-                                @include('procurement.partials.po-item-row', [
-                                    'item' => $item,
-                                    'index' => 'other_' . $index,
-                                    'isDone' => $isDone,
-                                ])
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <hr class="m-0 p-0">
-                <div class="text-center my-2">
-                    <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
-                        Item</button>
-                </div>
-            @endif
         </div>
 
-        <!-- Supply and Materials -->
+        <!-- Purchase Order Items -->
         <div class="card shadow-sm border-0 mb-3 px-0 po-card">
             <div class="card-body px-0 pb-0">
                 <div class="d-flex justify-content-between ms-4 mb-1">
                     <div class="d-flex align-items-baseline gap-2">
-                        <h5 class="red-text fw-bold">Supply and Materials</h5>
-                        <small class="black-text item-count">0 Item/s</small>
+                        <h5 class="red-text fw-bold">Purchase Order Items</h5>
+                        <small class="black-text item-count">{{ $poItems->count() }} Item/s</small>
                     </div>
                     <div class="d-flex align-items-baseline gap-2 me-4">
                         <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
@@ -246,9 +213,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="po-collapse-area" id="collapseCardSupply">
+                <div class="po-collapse-area" id="collapseCardPoItems">
                     <hr class="m-0 p-0">
-                    <div class="table-responsive mx-3">
+                    <div class="table-responsive mx-3 mt-3">
                         <table class="table table-sm table-borderless align-middle po-table">
                             <thead class="bg-transparent">
                                 <tr>
@@ -256,123 +223,28 @@
                                     <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
                                     <th class="black-text fw-bold">Item Description</th>
                                     <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                    <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Amount</th>
                                     <th class="text-start px-0" style="width: 30px"></th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody-supply">
-                                @foreach ($supplyItems as $index => $item)
+                            <tbody id="tbody-po-items">
+                                @foreach ($poItems as $index => $item)
                                     @include('procurement.partials.po-item-row', [
                                         'item' => $item,
-                                        'index' => 'supply_' . $index,
+                                        'index' => 'item_' . $index,
                                         'isDone' => $isDone,
                                     ])
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Semi-Expendable -->
-        <div class="card shadow-sm border-0 mb-3 px-0 po-card">
-            <div class="card-body px-0 pb-0">
-                <div class="d-flex justify-content-between ms-4 mb-1">
-                    <div class="d-flex align-items-baseline gap-2">
-                        <h5 class="red-text fw-bold">Semi-Expendable</h5>
-                        <small class="black-text item-count">0 Item/s</small>
-                    </div>
-                    <div class="d-flex align-items-baseline gap-2 me-4">
-                        <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
-                        <button type="button" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
-                            style="text-decoration: none; box-shadow: none;">
-                            <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="18 15 12 9 6 15"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="po-collapse-area" id="collapseCardSemi">
-                    <hr class="m-0 p-0">
-                    <div class="table-responsive mx-3">
-                        <table class="table table-sm table-borderless align-middle po-table">
-                            <thead class="bg-transparent">
-                                <tr>
-                                    <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                    <th class="black-text fw-bold">Item Description</th>
-                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                    <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
-                                    <th class="text-start px-0" style="width: 30px"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody-semi-expendable">
-                                @foreach ($semiItems as $index => $item)
-                                    @include('procurement.partials.po-item-row', [
-                                        'item' => $item,
-                                        'index' => 'semi_' . $index,
-                                        'isDone' => $isDone,
-                                    ])
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Equipment -->
-        <div class="card shadow-sm border-0 mb-3 px-0 po-card">
-            <div class="card-body px-0 pb-0">
-                <div class="d-flex justify-content-between ms-4 mb-1">
-                    <div class="d-flex align-items-baseline gap-2">
-                        <h5 class="red-text fw-bold">Equipment</h5>
-                        <small class="black-text item-count">0 Item/s</small>
-                    </div>
-                    <div class="d-flex align-items-baseline gap-2 me-4">
-                        <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
-                        <button type="button" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
-                            style="text-decoration: none; box-shadow: none;">
-                            <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="18 15 12 9 6 15"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="po-collapse-area" id="collapseCardEquip">
-                    <hr class="m-0 p-0">
-                    <div class="table-responsive mx-3">
-                        <table class="table table-sm table-borderless align-middle po-table">
-                            <thead class="bg-transparent">
-                                <tr>
-                                    <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                    <th class="black-text fw-bold">Item Description</th>
-                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                    <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
-                                    <th class="text-start px-0" style="width: 30px"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody-equipment">
-                                @foreach ($equipItems as $index => $item)
-                                    @include('procurement.partials.po-item-row', [
-                                        'item' => $item,
-                                        'index' => 'equip_' . $index,
-                                        'isDone' => $isDone,
-                                    ])
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    @if (!$isDone)
+                        <hr class="m-0 p-0">
+                        <div class="text-center my-2">
+                            <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add Item</button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
