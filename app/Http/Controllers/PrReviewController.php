@@ -34,29 +34,10 @@ class PrReviewController extends Controller
         $pr = PrParent::with(['prItems.prSpecs', 'prItems.appItem', 'department', 'requestor'])
             ->findOrFail($task->pr_id_fk);
 
-        // Category display order
-        $categoryOrder = [
-            'supply_and_materials' => 'Supply and Materials',
-            'semi-expendable'      => 'Semi-expendable',
-            'equipment'            => 'Equipment',
-        ];
+        // Group items by project title
+        $groupedItems = $pr->prItems->groupBy(fn($item) => $item->appItem->app_item_proj_title ?? 'Untitled Project');
 
-        // Group items by project title, then by category within each project
-        $groupedItems = $pr->prItems
-            ->groupBy(fn($item) => $item->appItem->app_item_proj_title ?? 'Untitled Project')
-            ->map(function ($items) use ($categoryOrder) {
-                // Group by category within this project, ordered by $categoryOrder
-                $byCategory = $items->groupBy('pr_items_category');
-                $sorted = collect();
-                foreach ($categoryOrder as $key => $label) {
-                    if ($byCategory->has($key)) {
-                        $sorted->put($key, $byCategory->get($key));
-                    }
-                }
-                return $sorted;
-            });
-
-        return view('head.pages.head-pr-review', compact('task', 'pr', 'groupedItems', 'categoryOrder'));
+        return view('head.pages.head-pr-review', compact('task', 'pr', 'groupedItems'));
     }
 
     /**
@@ -128,13 +109,6 @@ class PrReviewController extends Controller
                         continue;
                     }
 
-                    $categoryMap = [
-                        'Supply and Materials' => 'supply_and_materials',
-                        'Semi-expendable'      => 'semi-expendable',
-                        'Equipment'            => 'equipment',
-                    ];
-                    $category = $categoryMap[$row['category'] ?? ''] ?? null;
-
                     $qty  = (int)   ($row['quantity'] ?? 0);
                     $cost = (float) ($row['cost']     ?? 0);
 
@@ -145,7 +119,6 @@ class PrReviewController extends Controller
                         'pr_items_unit'       => $row['unit']         ?? null,
                         'pr_items_quantity'   => $qty,
                         'pr_items_cost'       => $cost,
-                        'pr_items_category'   => $category,
                     ]);
 
                     if (!empty($row['specification'])) {

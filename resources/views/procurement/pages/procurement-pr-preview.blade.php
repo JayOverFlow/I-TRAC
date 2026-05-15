@@ -124,18 +124,18 @@
     {{-- Container for PR Items --}}
     <div id="pr-items-container" class="px-0">
 
-        @forelse ($groupedItems as $projectTitle => $categoryGroups)
+        @forelse ($groupedItems as $projectTitle => $items)
             <div class="card shadow-sm border-0 mb-3 px-0 pr-card">
                 <div class="card-body px-0 pb-0">
                     <div class="d-flex justify-content-between ms-4 mb-1">
                         <div class="d-flex align-items-baseline gap-2">
                             <h5 class="red-text fw-bold">Project Title: {{ $projectTitle }}</h5>
-                            <small class="black-text item-count">{{ $categoryGroups->flatten()->count() }}
+                            <small class="black-text item-count">{{ $items->count() }}
                                 Item/s</small>
                         </div>
                         <div class="d-flex align-items-baseline gap-2 me-4">
                             @php
-                                $projectTotal = $categoryGroups->flatten()->sum('pr_items_total_cost');
+                                $projectTotal = $items->sum('pr_items_total_cost');
                             @endphp
                             <p class="project-total-amount mb-0 fw-bold">₱
                                 {{ number_format($projectTotal, 2) }}</p>
@@ -150,59 +150,45 @@
                     </div>
 
                     <div class="pr-collapse-area" id="collapseCard{{ $loop->iteration }}">
-                        @foreach ($categoryGroups as $categoryKey => $items)
-                            <hr class="m-0 p-0">
-                            @php
-                                $categoryLabel = $categoryOrder[$categoryKey] ?? (ucfirst(str_replace(['_', '-'], ' ', $categoryKey)));
-                            @endphp
-                            <h5 class="ms-4 mt-4 fw-bold black-text">{{ $categoryLabel }}</h5>
-                            <div class="table-responsive mx-3">
-                                <table class="table table-sm table-borderless align-middle pr-table">
-                                    <thead class="bg-transparent">
-                                        <tr>
-                                            <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                            <th class="black-text fw-bold" style="width: 33%">Item Description</th>
-                                            <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                            <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost</th>
-                                            <th class="text-center black-text fw-bold" style="width: 14%">Amount</th>
-                                            <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
+                        <hr class="m-0 p-0">
+                        <div class="table-responsive mx-3 mt-3">
+                            <table class="table table-sm table-borderless align-middle pr-table">
+                                <thead class="bg-transparent">
+                                    <tr>
+                                        <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
+                                        <th class="black-text fw-bold" style="width: 33%">Item Description</th>
+                                        <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                        <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost</th>
+                                        <th class="text-center black-text fw-bold" style="width: 14%">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($items as $item)
+                                        @php
+                                            $amount = $item->pr_items_quantity * $item->pr_items_cost;
+                                        @endphp
+                                        <tr class="pr-item-row">
+                                            <td class="px-1 text-center">{{ $item->pr_items_unit }}</td>
+                                            <td class="px-1">{{ $item->pr_items_descrip }}</td>
+                                            <td class="px-1 text-center">{{ $item->pr_items_quantity }}</td>
+                                            <td class="px-1 text-center">₱
+                                                {{ number_format($item->pr_items_cost, 2) }}</td>
+                                            <td class="px-1 text-center">₱ {{ number_format($amount, 2) }}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($items as $item)
-                                            @php
-                                                $amount = $item->pr_items_quantity * $item->pr_items_cost;
-                                                $catMap = [
-                                                    'supply_and_materials' => 'Supply and Materials',
-                                                    'semi-expendable' => 'Semi-expendable',
-                                                    'equipment' => 'Equipment',
-                                                ];
-                                            @endphp
-                                            <tr class="pr-item-row">
-                                                <td class="px-1 text-center">{{ $item->pr_items_unit }}</td>
-                                                <td class="px-1">{{ $item->pr_items_descrip }}</td>
-                                                <td class="px-1 text-center">{{ $item->pr_items_quantity }}</td>
-                                                <td class="px-1 text-center">₱
-                                                    {{ number_format($item->pr_items_cost, 2) }}</td>
-                                                <td class="px-1 text-center">₱ {{ number_format($amount, 2) }}</td>
-                                                <td class="px-1 text-center">
-                                                    {{ $catMap[$item->pr_items_category] ?? ucfirst(str_replace(['_', '-'], ' ', $item->pr_items_category)) }}</td>
+                                        {{-- Specifications --}}
+                                        @foreach ($item->prSpecs as $spec)
+                                            <tr class="pr-specification-row">
+                                                <td colspan="1"></td>
+                                                <td class="px-1 text-muted" style="font-size: 0.85rem;">
+                                                    {{ $spec->pr_spec_spec }}
+                                                </td>
+                                                <td colspan="3"></td>
                                             </tr>
-                                            {{-- Specifications --}}
-                                            @foreach ($item->prSpecs as $spec)
-                                                <tr class="pr-specification-row">
-                                                    <td colspan="1"></td>
-                                                    <td class="px-1 text-muted" style="font-size: 0.85rem;">
-                                                        {{ $spec->pr_spec_spec }}
-                                                    </td>
-                                                    <td colspan="4"></td>
-                                                </tr>
-                                            @endforeach
                                         @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

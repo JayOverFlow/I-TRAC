@@ -47,21 +47,7 @@
     <td class="px-1 text-center">
         <span class="amount-display fw-bold" data-amount="{{ $amount }}">₱ {{ number_format($amount, 2) }}</span>
     </td>
-    <td class="px-1">
-        <select class="form-select form-control-sm category-select" name="items[{{ $index }}][category]" {{ $isDone ? 'disabled' : '' }}>
-            <option value="" selected disabled>Select</option>
-            @php
-                $categories = [
-                    'supply_and_materials' => 'Supply and Materials',
-                    'semi-expendable' => 'Semi-Expendable',
-                    'equipment' => 'Equipment'
-                ];
-            @endphp
-            @foreach($categories as $value => $label)
-                <option value="{{ $value }}" {{ $item->po_items_category == $value ? 'selected' : '' }}>{{ $label }}</option>
-            @endforeach
-        </select>
-    </td>
+
     <td class="text-start px-0">
         @if (!$isDone)
             <button type="button" class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
@@ -102,5 +88,5 @@
             </div>
         </div>
     </td>
-    <td colspan="5"></td>
+    <td colspan="4"></td>
 </tr>
