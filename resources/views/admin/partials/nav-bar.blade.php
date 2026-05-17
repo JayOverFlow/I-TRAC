@@ -25,13 +25,13 @@
 
         <li class="menu {{ request()->routeIs('admin.roles-offices') ? 'active' : '' }}">
             <a href="{{ route('admin.roles-offices') }}" class="dropdown-toggle d-flex align-items-center gap-2">
-                <span>Roles and Offices</span>
+                <span>Offices</span>
             </a>
         </li>
 
         <li class="menu {{ request()->routeIs('admin.roles-assignment') ? 'active' : '' }}">
             <a href="{{ route('admin.roles-assignment') }}" class="dropdown-toggle d-flex align-items-center gap-2">
-                <span>Roles Assignment</span>
+                <span>Roles</span>
             </a>
         </li>
 

@@ -2,7 +2,7 @@
 @extends('admin.layout.admin-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'Roles and Offices | I-TRAC')
+@section('title', 'Offices | I-TRAC')
 
 @push('css')
     <!-- Page SPECIFIC css -->

@@ -133,4 +133,16 @@ class User extends Authenticatable
             $this->user_suffix,
         ])));
     }
+
+    /**
+     * Get the user's full name without the middle name.
+     */
+    public function getUserFullnameNoMiddleAttribute(): string
+    {
+        return trim(implode(' ', array_filter([
+            $this->user_firstname,
+            $this->user_lastname,
+            $this->user_suffix,
+        ])));
+    }
 }
