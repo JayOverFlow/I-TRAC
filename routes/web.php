@@ -76,8 +76,7 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
     });
 
     Route::controller(PoReviewController::class)->group(function () {
-        // Route::get('/po-review/{po_id}', 'showPoReview')->name('show.po.review');
-        Route::get('/po-review', 'showPoReview')->name('show.po.review');
+        Route::get('/po-review/{po_id}', 'showPoReview')->name('show.po.review');
         // Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
     });
 });

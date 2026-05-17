@@ -32,7 +32,7 @@
                     </thead>
                     <tbody>
                         @foreach ($pos as $po)
-                            <tr class="clickable-row" data-id="{{ $po->po_id }}">
+                            <tr class="clickable-row" data-id="{{ $po->po_id }}" data-review-route="{{ route('show.po.review', $po->po_id) }}" style="cursor: pointer;">
                                 <td class="text-center">{{ $po->po_id }}</td>
                                 <td>{{ $po->po_title }}</td>
                                 <td class="text-center">{{ $po->created_at ? $po->created_at->format('Y-m-d') : 'N/A' }}

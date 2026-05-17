@@ -63,4 +63,12 @@ $(document).ready(function() {
 
     // Initialize table for PO
     initTable('#po-table', 'po-search-box', 'po_unique_code', 'retrieve-po-btn', /^PO\d+$/);
+
+    // Handle PO review redirection
+    $(document).on('click', '.clickable-row', function() {
+        const route = $(this).data('review-route');
+        if (route) {
+            window.location.href = route;
+        }
+    });
 });
