@@ -1,0 +1,5 @@
+/* Override any background color on table headers */
+.po-table thead th {
+    background-color: transparent !important;
+    background: transparent !important;
+}

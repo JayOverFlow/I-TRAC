@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\PoParent;
 
 class PoReviewController extends Controller
 {
-    public function showPoReview() { // Pass the po_id
+    public function showPoReview($po_id) { 
         // 1. Fetch retrieved Purchase Order (po_tbl, po_items_tbl, and po_items_specs_tbl) by user
-        // 2. Return suppl-po-review
-
-        return view('supply.pages.supply-po-review');
+        $po = PoParent::with(['poItems.poSpecs', 'savedBy'])->findOrFail($po_id);
+        
+        // 2. Return supply-po-review
+        return view('supply.pages.supply-po-review', compact('po'));
     }
 }
