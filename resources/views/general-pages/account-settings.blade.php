@@ -34,25 +34,9 @@
                                 aria-controls="animated-underline-inbox" aria-selected="false" tabindex="-1"><img
                                     src="{{ asset('img/Inbox.svg') }}" width="20" height="20"> Inbox</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link red-text-2" id="animated-underline-settings-tab" data-bs-toggle="tab"
-                                href="#pane-animated-underline-settings" role="tab"
-                                aria-controls="animated-underline-settings" aria-selected="false" tabindex="-1">
-                                <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
-                                Settings</button>
-                        </li>
 
 
-                        @if (auth()->user()->roles()->first()->gen_role === 'Head')
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
-                                    data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan"
-                                    role="tab" aria-controls="animated-underline-annual-procurement-plan"
-                                    aria-selected="false" tabindex="-1">
-                                    <img src="{{ asset('img/APP.svg') }}" width="20" height="20">
-                                    Annual Procurement Plan</button>
-                            </li>
-                        @elseif (auth()->user()->roles()->first()->gen_role === 'Procurement')
+                        @if (in_array(auth()->user()->roles()->first()?->gen_role, ['Head', 'Procurement', 'Supply']))
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link red-text-2" id="animated-underline-annual-procurement-plan-tab"
                                     data-bs-toggle="tab" href="#pane-animated-underline-annual-procurement-plan"
@@ -62,6 +46,15 @@
                                     Annual Procurement Plan</button>
                             </li>
                         @endif
+
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link red-text-2" id="animated-underline-settings-tab" data-bs-toggle="tab"
+                                href="#pane-animated-underline-settings" role="tab"
+                                aria-controls="animated-underline-settings" aria-selected="false" tabindex="-1">
+                                <img src="{{ asset('img/Settings.svg') }}" width="20" height="20">
+                                Settings</button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -72,12 +65,12 @@
 
                 @include('general-pages.account-settings-partials._inbox')
 
-                @include('general-pages.account-settings-partials._settings')
-                {{-- End Settings Tab --}}
-
-                @if (in_array(auth()->user()->roles->first()->gen_role, ['Head', 'Procurement']))
+                @if (in_array(auth()->user()->roles->first()?->gen_role, ['Head', 'Procurement', 'Supply']))
                     @include('general-pages.account-settings-partials._annual-procurement-plan')
                 @endif
+
+                @include('general-pages.account-settings-partials._settings')
+                {{-- End Settings Tab --}}
             </div>
 
         </div>

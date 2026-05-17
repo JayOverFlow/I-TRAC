@@ -16,17 +16,23 @@ class AccountSettingsController extends Controller
         $user = Auth::user();
 
         $userRole = $user->roles()->first();
+        $genRole = $userRole ? $userRole->gen_role : 'Unassigned';
 
-        // Use switch statement to redirect user
-        if ($userRole->gen_role === 'Head') {
+        // Use switch statement or conditional structure to redirect user
+        if ($genRole === 'Head') {
             $apps = $user->appParents;
             return view('head.pages.head-account-settings', compact('user', 'apps'));
-        } elseif ($userRole->gen_role === 'Procurement') {
+        } elseif ($genRole === 'Procurement') {
             $apps = $user->appParents;
             // Fetch PRs retrieved by this user
             $loadedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
             
             return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs'));
+        } elseif ($genRole === 'Supply') {
+            $apps = $user->appParents;
+            return view('supply.pages.supply-account-settings', compact('user', 'apps'));
+        } elseif ($genRole === 'Unassigned') {
+            return view('unassigned.pages.unassigned-account-settings', compact('user'));
         }
 
         abort(404, 'Account settings not available for this role yet.');
