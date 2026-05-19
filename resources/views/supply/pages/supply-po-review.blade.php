@@ -408,7 +408,7 @@
 
         <button type="button" id="generate-btn"
             class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3" disabled>
-            Generate Delivery Attactment/s
+            Generate Delivery Attachment/s
         </button>
     </div>
 @endsection

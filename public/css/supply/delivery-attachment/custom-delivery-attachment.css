@@ -1,0 +1,5 @@
+.a4-card {
+    height: 297mm !important; /* Strict A4 Height */
+    width: 100%;
+    overflow: hidden; /* Prevents empty space from acting weird */
+}
