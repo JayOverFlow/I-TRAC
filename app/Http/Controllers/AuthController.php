@@ -89,7 +89,7 @@ class AuthController extends Controller
             } elseif ($step == 2) { // Step 2 validation
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|string|regex:/^.+@tup\.edu\.ph$/i|unique:users,user_email',
-                    'password' => 'required|string|min:8|max:128|regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/',
+                    'password' => 'required|string|min:8|max:128|regex:/^(?=.*[A-Za-z])(?=.*\d).{8,128}$/',
                     'confirm_password' => 'required|same:password',
                     'user_type' => 'required|in:Faculty,Staff',
                     'department' => 'required|integer|exists:departments_tbl,dep_id|min:1',
