@@ -73,27 +73,27 @@ class AccountSettingsController extends Controller
     {
         $user = Auth::user();
 
-        $request->validate([
-            'current_password'  => ['required', 'string'],
-            'new_password'      => [
-                'required', 
-                'string', 
-                'min:8', 
-                'max:128', 
-                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/'
-            ],
-            'confirm_password'  => ['required', 'string', 'same:new_password'],
-        ], [
-            'new_password.regex' => 'Password must contain at least one letter and one number.',
-        ]);
-
-        // Verify that the provided current password matches the stored hash
-        if (!Hash::check($request->current_password, $user->user_password)) {
+        // 1. Verify that the current password matches the stored hash first
+        if (!$request->filled('current_password') || !Hash::check($request->current_password, $user->user_password)) {
             return response()->json([
                 'success' => false,
                 'errors'  => ['current_password' => ['The current password is incorrect.']],
             ], 422);
         }
+
+        // 2. Then validate strength constraints for the new password
+        $request->validate([
+            'new_password'      => [
+                'required', 
+                'string', 
+                'min:8', 
+                'max:128', 
+                'regex:/^(?=.*[A-Za-z])(?=.*\d).{8,128}$/'
+            ],
+            'confirm_password'  => ['required', 'string', 'same:new_password'],
+        ], [
+            'new_password.regex' => 'Password must contain at least one letter and one number.',
+        ]);
 
         $user->update(['user_password' => $request->new_password]);
 
