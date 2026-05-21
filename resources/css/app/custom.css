@@ -481,3 +481,100 @@ body.dark .fw-bold.black-text {
 body.dark .red-text-2 {
     color: #B91C1C !important;
 }
+
+/* ==========================================
+   SWITCH ACCOUNTS UI STYLING
+   ========================================== */
+
+/* Divider separating standard dropdown items from Switch Accounts */
+.dropdown-divider-switch {
+    border-top: 1px solid #e0e6ed;
+    margin: 8px 0;
+}
+body.dark .dropdown-divider-switch {
+    border-top: 1px solid #2A2F38;
+}
+
+/* Category header/label for Switch Accounts section */
+.switch-accounts-label {
+    font-size: 0.68rem;
+    color: var(--role-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    padding: 6px 16px;
+    pointer-events: none;
+}
+body.dark .switch-accounts-label {
+    color: #888ea8;
+}
+
+/* Container list for roles */
+.switch-accounts-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Switch Account individual item row */
+.switch-account-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.switch-account-item:hover {
+    background-color: var(--white-3);
+}
+body.dark .switch-account-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Role details (e.g. Head - Property and Supply) inside entry (Primary text) */
+.account-role {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--red-text-2);
+}
+body.dark .account-role {
+    color: #B91C1C;
+}
+
+/* Customized HTML Radio Selector for Premium visual appearance */
+.custom-radio-selector {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+body.dark .custom-radio-selector {
+    border-color: #4b5563;
+}
+.custom-radio-selector:checked {
+    border-color: var(--red-text-2);
+}
+.custom-radio-selector:checked::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: var(--red-text-2);
+    border-radius: 50%;
+    display: block;
+}
+body.dark .custom-radio-selector:checked {
+    border-color: #B91C1C;
+}
+body.dark .custom-radio-selector:checked::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #B91C1C;
+    border-radius: 50%;
+    display: block;
+}

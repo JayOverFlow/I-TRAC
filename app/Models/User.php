@@ -77,7 +77,10 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'user_roles_tbl', 'user_id_fk', 'role_id_fk');
+        // Query roles directly via the consolidated user_departments_tbl pivot table.
+        // Filters out null values to only return entries with assigned roles.
+        return $this->belongsToMany(Role::class, 'user_departments_tbl', 'user_id_fk', 'role_id_fk')
+            ->whereNotNull('user_departments_tbl.role_id_fk');
     }
 
     public function userDepartment()

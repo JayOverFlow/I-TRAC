@@ -96,6 +96,9 @@ Route::middleware(['auth', 'role:Procurement,Supply'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // Account / Department Switching
+    Route::post('/switch-account', [AuthController::class, 'switchAccount'])->name('switch.account');
+
     Route::get('/supply/dashboard', function () {
         return view('supply/pages/dashboard');
     });
@@ -184,6 +187,7 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
     Route::get('/roles-assignment', [AdminRolesAssignmentController::class, 'index'])->name('admin.roles-assignment');
     Route::post('/roles-assignment/update', [AdminRolesAssignmentController::class, 'updateRoleAssignments'])->name('admin.roles-assignment.update');
     Route::post('/roles-assignment/update-users', [AdminRolesAssignmentController::class, 'updateUserAssignments'])->name('admin.roles-assignment.update-users');
+    Route::delete('/roles-assignment/user-department', [AdminRolesAssignmentController::class, 'deleteUserDepartment'])->name('admin.roles-assignment.delete-user-dept');
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('admin.activity-logs');
     Route::get('/activity-logs/latest', [AdminActivityLogController::class, 'getLatestLogs'])->name('admin.activity-logs.latest');

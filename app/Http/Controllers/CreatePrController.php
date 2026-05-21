@@ -19,7 +19,11 @@ class CreatePrController extends Controller
     public function showCreatePr($task_id)
     {
         $user = Auth::user();
-        $userRole = $user->roles->first()?->gen_role;
+        
+        // Resolve active role dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
 
         $task = Task::with('appItems')->findOrFail($task_id);
 
@@ -123,8 +127,10 @@ class CreatePrController extends Controller
                 // Mark the original task as Submitted
                 $task->update(['task_status' => 'Submitted']);
 
-                // Find the department head of the user's department
-                $departmentId = $user->departments->first()?->dep_id;
+                // Find the active role & active department dynamically based on active session context
+                $activeRoleId = session('active_role_id');
+                $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+                $departmentId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments->first()?->dep_id);
 
                 if ($departmentId) {
                     // Find the Head role for this department
@@ -176,7 +182,10 @@ class CreatePrController extends Controller
      */
     private function saveOrUpdatePr(Request $request, $user, Task $task, string $status): PrParent
     {
-        $departmentId = $user->departments->first()?->dep_id;
+        // Resolve the active department ID based on the active role's department context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $departmentId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments->first()?->dep_id);
 
         // Check if a PR already exists for this task
         $pr = $task->pr_id_fk ? PrParent::find($task->pr_id_fk) : null;

@@ -11,7 +11,10 @@ class ProcureController extends Controller
 {
     public function showProcure() {
         $user = Auth::user();
-        $userRole = $user->roles()->first()?->gen_role;
+        // Resolve active role dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
         
         if ($userRole === 'Procurement') {
             // Fetch Retrieved Purchase Requests and Created Purchase Orders

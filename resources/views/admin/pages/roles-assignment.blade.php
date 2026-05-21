@@ -82,7 +82,22 @@
                     });
 
                     // ---- EDIT MODE LOGIC ----
-                    function populateRoleDropdown($roleSelect, depId, selectedRoleId) {
+                    /**
+                     * Populates the roles select dropdown for a specific department.
+                     * 
+                     * @param {jQuery} $roleSelect - The target <select> dropdown element for role assignment
+                     * @param {number|string} depId - The target department ID selected
+                     * @param {number|string|null} selectedRoleId - The user's currently assigned role ID (if any)
+                     * @param {number|string|null} currentUserId - The user ID of the row currently being edited
+                     * 
+                     * Behavior:
+                     * 1. Filters all roles to show only those belonging to the selected department.
+                     * 2. Evaluates the active database assignment for each role.
+                     * 3. If a role is already occupied by a different user (`role.assigned_user_id` is set and does not match `currentUserId`),
+                     *    the role option is automatically marked as 'disabled' and labeled with the current occupier's name.
+                     * 4. If the role belongs to the current user being edited, it is left enabled and pre-selected.
+                     */
+                    function populateRoleDropdown($roleSelect, depId, selectedRoleId, currentUserId) {
                         $roleSelect.empty().append('<option value="">— Unassigned —</option>');
                         if (!depId) {
                             // If it's a new row, show a more helpful placeholder
@@ -95,7 +110,16 @@
                         $.each(allRolesData, function(i, role) {
                             if (role.role_dep_id_fk == depId) {
                                 var selected = (role.role_id == selectedRoleId) ? 'selected' : '';
-                                $roleSelect.append('<option value="' + role.role_id + '" ' + selected + '>' + role.role_name + '</option>');
+                                var disabled = '';
+                                var labelSuffix = '';
+                                
+                                // Disable role if occupied by another user
+                                if (role.assigned_user_id && role.assigned_user_id != currentUserId) {
+                                    disabled = 'disabled';
+                                    labelSuffix = ' (Occupied by: ' + role.assigned_user_name + ')';
+                                }
+                                
+                                $roleSelect.append('<option value="' + role.role_id + '" ' + selected + ' ' + disabled + '>' + role.role_name + labelSuffix + '</option>');
                             }
                         });
                     }
@@ -117,8 +141,9 @@
                                 var $roleSelect = $(this).find('.role-assignment-select');
                                 var originalDepId = $deptSelect.data('original-dep-id');
                                 var originalRoleId = $roleSelect.data('original-role-id');
+                                var userId = $roleSelect.data('user-id');
                                 $deptSelect.val(originalDepId || '');
-                                populateRoleDropdown($roleSelect, originalDepId, originalRoleId);
+                                populateRoleDropdown($roleSelect, originalDepId, originalRoleId, userId);
                             });
                         } else {
                             $('#manage-mode-btns-users').addClass('d-none');
@@ -137,21 +162,93 @@
                         $('#users-table tbody').prepend(template);
                     });
 
-                    // Ensure pending rows stay at the top on table redraw
+                    // Ensure pending rows stay at the top on table redraw and edit states are preserved
                     usersApi.on('draw', function() {
                         if (isUserEditMode) {
                             var $pending = $('.new-row-pending');
                             if ($pending.length > 0) {
                                 $('#users-table tbody').prepend($pending);
                             }
+                            usersApi.$('.readonly-data').addClass('d-none');
+                            usersApi.$('.edit-data').removeClass('d-none');
+                        } else {
+                            usersApi.$('.readonly-data').removeClass('d-none');
+                            usersApi.$('.edit-data').addClass('d-none');
                         }
                     });
 
                     // Department change → repopulate roles
                     $(document).on('change', '.dept-assignment-select', function() {
                         var depId = $(this).val();
-                        var $roleSelect = $(this).closest('tr').find('.role-assignment-select');
-                        populateRoleDropdown($roleSelect, depId, null);
+                        var $row = $(this).closest('tr');
+                        var $roleSelect = $row.find('.role-assignment-select');
+                        var isNewRow = $row.hasClass('new-row-pending');
+                        var userId = isNewRow ? $row.find('.select-user-new').val() : $roleSelect.data('user-id');
+                        populateRoleDropdown($roleSelect, depId, null, userId);
+                    });
+
+                    // New user selection → repopulate roles in new rows
+                    $(document).on('change', '.select-user-new', function() {
+                        var $row = $(this).closest('tr');
+                        var depId = $row.find('.dept-assignment-select').val();
+                        var $roleSelect = $row.find('.role-assignment-select');
+                        var userId = $(this).val();
+                        if (depId) {
+                            populateRoleDropdown($roleSelect, depId, null, userId);
+                        }
+                    });
+
+                    // Delete User Department immediately (Option B)
+                    $(document).on('click', '.inline-delete-user-dept-btn', function() {
+                        var userId = $(this).data('user-id');
+                        var depId = $(this).data('dep-id');
+                        var userName = $(this).data('user-name');
+                        var depName = $(this).data('dep-name');
+                        var $row = $(this).closest('tr');
+
+                        Swal.fire({
+                            title: 'Remove from department?',
+                            text: 'Are you sure you want to remove ' + userName + ' from the department: ' + depName + '? This action is immediate.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#e7515a',
+                            cancelButtonColor: '#888ea8',
+                            confirmButtonText: 'Yes, remove it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "{{ route('admin.roles-assignment.delete-user-dept') }}",
+                                    method: 'DELETE',
+                                    data: {
+                                        _token: $('meta[name="csrf-token"]').attr('content'),
+                                        user_id: userId,
+                                        dep_id: depId
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Removed!',
+                                                text: response.message,
+                                                timer: 1500,
+                                                showConfirmButton: false
+                                            });
+                                            // Remove row dynamically from DataTables
+                                            usersApi.row($row).remove().draw(false);
+                                        } else {
+                                            Swal.fire('Error', response.message, 'error');
+                                        }
+                                    },
+                                    error: function(xhr) {
+                                        var errMsg = 'Failed to remove user from department.';
+                                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                                            errMsg = xhr.responseJSON.message;
+                                        }
+                                        Swal.fire('Error', errMsg, 'error');
+                                    }
+                                });
+                            }
+                        });
                     });
 
                     $(document).on('click', '#btn-edit-users', function() { toggleUserEditMode(true); });
@@ -226,15 +323,15 @@
                                 }
 
                                 summaryList.push(`<li style="margin-bottom: 5px;"><b>${firstName} ${lastName}:</b> ${changeDesc}</li>`);
-                            }
 
-                            if (userId !== undefined) {
-                                assignments.push({ 
-                                    user_id: userId, 
-                                    role_id: currentRoleId || null,
-                                    dep_id: currentDepId || null,
-                                    original_dep_id: originalDepId || null
-                                });
+                                if (userId !== undefined) {
+                                    assignments.push({ 
+                                        user_id: userId, 
+                                        role_id: currentRoleId || null,
+                                        dep_id: currentDepId || null,
+                                        original_dep_id: originalDepId || null
+                                    });
+                                }
                             }
                         });
 

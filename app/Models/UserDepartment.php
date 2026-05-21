@@ -13,10 +13,16 @@ class UserDepartment extends Model
     protected $fillable = [
         'user_id_fk',
         'department_id_fk',
+        'role_id_fk',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id_fk', 'user_id');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id_fk', 'role_id');
     }
 }

@@ -48,7 +48,14 @@ class AuthController extends Controller
 
             // Get user gen_role
             $user = Auth::user();
-            $gen_role = $user->roles->first()?->gen_role;
+            $firstRole = $user->roles->first();
+            
+            // Initialize active_role_id in session on first login fallback
+            if ($firstRole) {
+                session(['active_role_id' => $firstRole->role_id]);
+            }
+            
+            $gen_role = $firstRole?->gen_role;
 
             switch ($gen_role) {
                 case 'Head':
@@ -203,5 +210,37 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    /**
+     * Switch active role / department in session context.
+     * Accessible by authenticated users to switch between their assigned department workflows.
+     */
+    public function switchAccount(Request $request)
+    {
+        // Validate that role_id is provided and exists in roles table
+        $request->validate([
+            'role_id' => 'required|integer|exists:roles_tbl,role_id',
+        ]);
+
+        $roleId = $request->input('role_id');
+        $user = Auth::user();
+
+        // Verify that the logged-in user actually owns this role
+        $hasRole = $user->roles()->where('roles_tbl.role_id', $roleId)->exists();
+        if (!$hasRole) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized role switch.'
+            ], 403);
+        }
+
+        // Store the selected role ID as active_role_id in the session
+        session(['active_role_id' => $roleId]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Account switched successfully!'
+        ]);
     }
 }
