@@ -10,31 +10,90 @@ use App\Models\AppItem;
 
 class CreateAppController extends Controller
 {
-    public function showCreateApp() {
+    public function showCreateApp()
+    {
         return view('head/pages/head-create-app');
     }
 
     public function createApp(Request $request)
     {
-        // Simple validation — all fields nullable, esti_budget must be numeric if present
-        $validator = Validator::make($request->all(), [
-            'items' => 'nullable|array',
-            'items.*.proj_title' => 'nullable|string|max:100',
-            'items.*.end_user' => 'nullable|string|max:100',
-            'items.*.gen_desc' => 'nullable|string|max:50',
-            'items.*.mode' => 'nullable|string|max:100',
-            'items.*.criteria' => 'nullable|string|max:45',
-            'items.*.covered' => 'nullable|string|max:10',
-            'items.*.start' => 'nullable|date',
-            'items.*.end' => 'nullable|string|max:45',
-            'items.*.source' => 'nullable|string|max:45',
-            'items.*.esti_budget' => 'nullable|numeric',
-            'items.*.tools' => 'nullable|string|max:45',
-            'items.*.remarks' => 'nullable|string|max:50',
-        ]);
+        $intent = $request->input('_intent', 'done'); // 'done' or 'draft'
+
+        // --- Build validation rules based on intent ---
+        if ($intent === 'done') {
+            // Strict: enforce all required fields from app_form.json
+            $rules = [
+                'items'                  => 'required|array|min:1',
+                'items.*.proj_title'     => 'required|string|min:5|max:100',
+                'items.*.end_user'       => 'nullable|string|min:5|max:100',
+                'items.*.gen_desc'       => 'nullable|string|min:5|max:50',
+                'items.*.mode'           => 'nullable|string|min:5|max:100',
+                'items.*.criteria'       => 'nullable|string|min:2|max:45',
+                'items.*.covered'        => 'required|in:Yes,No',
+                'items.*.start'          => 'required|date',
+                'items.*.end'            => 'required|date',
+                'items.*.source'         => 'nullable|string|min:2|max:45',
+                'items.*.esti_budget'    => 'nullable|numeric|min:1|max:9999999999',
+                'items.*.tools'          => 'nullable|string|min:5|max:45',
+                'items.*.remarks'        => 'nullable|string|min:5|max:50',
+            ];
+        } else {
+            // Lenient: only proj_title required per item
+            $rules = [
+                'items'                  => 'required|array|min:1',
+                'items.*.proj_title'     => 'required|string|min:5|max:100',
+                'items.*.end_user'       => 'nullable|string|min:5|max:100',
+                'items.*.gen_desc'       => 'nullable|string|min:5|max:50',
+                'items.*.mode'           => 'nullable|string|min:5|max:100',
+                'items.*.criteria'       => 'nullable|string|min:2|max:45',
+                'items.*.covered'        => 'nullable|in:Yes,No',
+                'items.*.start'          => 'nullable|date',
+                'items.*.end'            => 'nullable|date',
+                'items.*.source'         => 'nullable|string|min:2|max:45',
+                'items.*.esti_budget'    => 'nullable|numeric|min:1|max:9999999999',
+                'items.*.tools'          => 'nullable|string|min:5|max:45',
+                'items.*.remarks'        => 'nullable|string|min:5|max:50',
+            ];
+        }
+
+        // Short, descriptive custom messages
+        $messages = [
+            'items.required'                  => 'At least one project item is required.',
+            'items.*.proj_title.required'     => 'Project title is required.',
+            'items.*.proj_title.min'          => 'Title must be at least 5 characters.',
+            'items.*.proj_title.max'          => 'Title must not exceed 100 characters.',
+            'items.*.end_user.min'            => 'End-user must be at least 5 characters.',
+            'items.*.end_user.max'            => 'End-user must not exceed 100 characters.',
+            'items.*.gen_desc.min'            => 'Description must be at least 5 characters.',
+            'items.*.gen_desc.max'            => 'Description must not exceed 50 characters.',
+            'items.*.mode.min'                => 'Mode must be at least 5 characters.',
+            'items.*.mode.max'                => 'Mode must not exceed 100 characters.',
+            'items.*.criteria.min'            => 'Criteria must be at least 2 characters.',
+            'items.*.criteria.max'            => 'Criteria must not exceed 45 characters.',
+            'items.*.covered.required'        => 'Please select Yes or No.',
+            'items.*.covered.in'              => 'Invalid value for Early Procurement.',
+            'items.*.start.required'          => 'Start date is required.',
+            'items.*.start.date'              => 'Start date must be a valid date.',
+            'items.*.end.required'            => 'End date is required.',
+            'items.*.end.date'                => 'End date must be a valid date.',
+            'items.*.source.min'              => 'Source must be at least 2 characters.',
+            'items.*.source.max'              => 'Source must not exceed 45 characters.',
+            'items.*.esti_budget.numeric'     => 'Budget must be a number.',
+            'items.*.esti_budget.min'         => 'Budget must be at least 1.',
+            'items.*.esti_budget.max'         => 'Budget value is too large.',
+            'items.*.tools.min'               => 'Tools must be at least 5 characters.',
+            'items.*.tools.max'               => 'Tools must not exceed 45 characters.',
+            'items.*.remarks.min'             => 'Remarks must be at least 5 characters.',
+            'items.*.remarks.max'             => 'Remarks must not exceed 50 characters.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
         }
 
         // Get the authenticated user
@@ -46,39 +105,39 @@ class CreateAppController extends Controller
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $depId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments()->first()?->dep_id);
 
-        // Create the parent APP record
         $app = AppParent::create([
             'saved_by_user_id_fk' => $user->user_id,
-            'app_dep_id_fk' => $depId,
-            // Leave these columns null for now
-            'app_prepared_by_name' => null,
-            'app_prepared_by_designation' => null,
-            'app_recommending_by_name' => null,
-            'app_recommending_by_designation' => null,
-            'app_approved_by_name' => null,
-            'app_approved_by_designation' => null,
+            'app_dep_id_fk'       => $depId,
         ]);
 
-        // Create child APP items
-        $items = $request->input('items', []);
-        foreach ($items as $item) {
+        foreach ($request->input('items', []) as $item) {
             AppItem::create([
-                'app_id_fk' => $app->app_id,
-                'app_item_proj_title' => $item['proj_title'] ?? null,
-                'app_items_end_user' => $item['end_user'] ?? null,
-                'app_items_gen_desc' => $item['gen_desc'] ?? null,
-                'app_items_mode' => $item['mode'] ?? null,
-                'app_items_criteria' => $item['criteria'] ?? null,
-                'app_items_covered' => $item['covered'] ?? null,
-                'app_items_start' => $item['start'] ?? null,
-                'app_items_end' => $item['end'] ?? null,
-                'app_items_source' => $item['source'] ?? null,
-                'app_items_esti_budget' => $item['esti_budget'] ?? null,
-                'app_items_tools' => $item['tools'] ?? null,
-                'app_items_remarks' => $item['remarks'] ?? null,
+                'app_id_fk'              => $app->app_id,
+                'app_item_proj_title'    => $item['proj_title']   ?? null,
+                'app_items_end_user'     => $item['end_user']     ?? null,
+                'app_items_gen_desc'     => $item['gen_desc']     ?? null,
+                'app_items_mode'         => $item['mode']         ?? null,
+                'app_items_criteria'     => $item['criteria']     ?? null,
+                'app_items_covered'      => $item['covered']      ?? null,
+                'app_items_start'        => $item['start']        ?? null,
+                'app_items_end'          => $item['end']          ?? null,
+                'app_items_source'       => $item['source']       ?? null,
+                'app_items_esti_budget'  => $item['esti_budget']  ?? null,
+                'app_items_tools'        => $item['tools']        ?? null,
+                'app_items_remarks'      => $item['remarks']      ?? null,
             ]);
         }
 
-        return redirect()->route('show.create-app')->with('success', 'Annual Procurement Plan created successfully!');
+        $message = $intent === 'done'
+            ? 'Annual Procurement Plan submitted successfully!'
+            : 'Draft saved successfully!';
+
+        session()->flash('success', $message);
+
+        return response()->json([
+            'success'  => true,
+            'message'  => $message,
+            'redirect' => route('show.create-app'),
+        ]);
     }
 }

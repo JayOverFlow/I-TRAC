@@ -1,17 +1,41 @@
-/* .allocated-budget-card {
-    background: linear-gradient(135deg, #C60202 0%, #930000 100%) !important;
-} */
+/* =====================================================
+   Error state styling for APP form fields
+   ===================================================== */
 
+/* Inline error message under each field */
+.field-error {
+    font-size: 0.78rem;
+    color: #dc3545;
+    margin-top: 3px;
+    display: block;           /* always in flow so layout doesn't jump */
+    min-height: 1.1rem;       /* reserves space to prevent layout shift */
+}
 
-#covered-yes:checked, #covered-no:checked {
-    /* Changes the background color of the circle */
-    background-color: var(--red-btn); 
-    /* Changes the border color */
+/* Red border on invalid inputs */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: none;   /* remove Bootstrap's validation icon */
+}
+
+/* Radio group wrapper highlight when invalid */
+[data-field="covered"].is-invalid ~ .field-error,
+.covered-error-wrap .field-error {
+    display: block;
+}
+
+/* =====================================================
+   Covered (Early Procurement) radio buttons
+   ===================================================== */
+
+/* Target all covered radio IDs dynamically via attribute selector */
+input[id^="covered-yes"]:checked,
+input[id^="covered-no"]:checked {
+    background-color: var(--red-btn);
     border-color: var(--red-btn);
 }
 
-#covered-yes:focus, #covered-no:focus {
-    /* Changes the glow/outline when clicked or tabbed to */
+input[id^="covered-yes"]:focus,
+input[id^="covered-no"]:focus {
     border-color: var(--red-btn);
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
 }
