@@ -1,0 +1,86 @@
+Unit Testing Plan: head-create-app.blade.php
+
+Goal: Unit Testing for @[resources/views/head/pages/head-create-app.blade.php]
+
+Overview:
+This plan outlines the unit test scenarios required to validate the Create Annual Procurement Plan (APP) form. The testing focuses on ensuring robust frontend validation and seamless user experience without full page reloads, while confirming data integrity.
+
+---
+
+### Constraints Testing
+
+#### 1. Empty Submissions
+* Scenario 1.1: Submit the form completely empty (no fields filled).
+  * Action: Click "Done" or "Save as Draft" without entering data.
+  * Expected Output: 
+    - Form submission is blocked.
+    - Error messages are displayed under all required fields (e.g., Project Title, End-User, Budget, Dates).
+    - No page refresh occurs.
+* Scenario 1.2: Submit the form with partially empty fields.
+  * Action: Fill in `proj_title` but leave `esti_budget`, `start`, and `end` empty.
+  * Expected Output: 
+    - Validation errors show only on the skipped required fields.
+    - No page refresh occurs.
+
+#### 2. Data Type Mismatches
+* Scenario 2.1: Input non-numeric characters in a numeric field.
+  * Action: Type letters (e.g., "abc") or symbols into the "Estimated Budget/Approved Budget" (`esti_budget`) field.
+  * Expected Output: 
+    - The browser/form blocks the input, or validation flags the field as invalid.
+    - Error message indicates a valid number is required.
+* Scenario 2.2: Invalid date format in date fields.
+  * Action: Try to manually type "2026-99-99" or "invalid_date" into `start` or `end` fields.
+  * Expected Output: 
+    - Flatpickr restricts input to valid dates only; if bypassed, validation rejects the input.
+
+#### 3. Boundary Limits (Min/Max Length)
+* Scenario 3.1: Exceed maximum character length for text fields.
+  * Action: Enter a string with >255 characters into the `proj_title` or `gen_desc` fields.
+  * Expected Output: 
+    - Form flags the fields for exceeding the maximum allowed length.
+* Scenario 3.2: Minimum character length not met (if applicable).
+  * Action: Enter a single character in the `proj_title` field.
+  * Expected Output: 
+    - Validation flags the input if a minimum length (e.g., 3 characters) is required.
+
+#### 4. Value Ranges (Numeric)
+* Scenario 4.1: Enter a negative budget amount.
+  * Action: Enter "-500" into the `esti_budget` field.
+  * Expected Output: 
+    - Input is flagged or blocked (field has `min="0"`).
+* Scenario 4.2: Budget amount exceeds allocated budget.
+  * Action: Enter an `esti_budget` that is higher than the total Allocated Budget (PHP 12,345.00).
+  * Expected Output: 
+    - Form displays an error indicating the budget limit is exceeded.
+
+---
+
+### Output Validations
+
+#### 1. No Page Refresh
+* Scenario 1.1: Trigger validation errors.
+  * Action: Submit an invalid form.
+  * Expected Output: Errors appear dynamically without the page reloading. User data in valid fields is retained.
+* Scenario 1.2: Successful submission.
+  * Action: Submit a valid form.
+  * Expected Output: AJAX handles the request. A success toast or redirect happens seamlessly without a raw page refresh during the submission process.
+
+#### 2. Error Clearing
+* Scenario 2.1: Correcting an invalid field.
+  * Action: Trigger an empty field error on `proj_title`. Then, type a valid title.
+  * Expected Output: The error message under `proj_title` disappears dynamically as the user types or when the field loses focus.
+* Scenario 2.2: Re-submitting corrected form.
+  * Action: Fix all errors and click "Done" again.
+  * Expected Output: All previous error states are cleared, and the submission proceeds.
+
+#### 3. Database Confirmation
+* Scenario 3.1: Verify "Done" submission data.
+  * Action: Successfully submit a completed form as "Done".
+  * Expected Output: 
+    - Database reflects a new APP record with the status set to "done".
+    - All item details (title, dates, budget) match the user input exactly.
+* Scenario 3.2: Verify "Save as Draft" submission data.
+  * Action: Successfully submit a partially or fully completed form using "Save as Draft".
+  * Expected Output: 
+    - Database reflects a new APP record with the status set to "draft".
+    - Data is saved correctly for later retrieval.

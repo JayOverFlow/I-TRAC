@@ -25,7 +25,6 @@ class AppItem extends Model
         'app_items_esti_budget',
         'app_items_tools',
         'app_items_remarks',
-        'app_items_total',
         'app_items_assigned_to',
     ];
 
