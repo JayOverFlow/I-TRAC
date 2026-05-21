@@ -145,8 +145,8 @@
 
         <div class="row g-3">
             {{-- Treeview --}}
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0 mb-3 h-100">
+            <div class="col-md-3 pe-0">
+                <div class="card shadow-sm border-0 mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Delivery Attachments</h5>
                         <ul class="treeview folder-structure" id="treeviewFolderStructureEx">
@@ -377,7 +377,7 @@
             </div>
 
             {{-- View File Area --}}
-            <div class="col-md-8">
+            {{-- <div class="col-md-9">
                 <div class="card shadow-sm border-0 mb-3 h-100">
                     <div class="card-body d-flex align-items-center justify-content-center text-center">
                         <div>
@@ -386,7 +386,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
+
+            {{-- RIS --}}
+            @include('supply.pages.partials._ris')
         </div>
     </div>
 @endsection
@@ -396,4 +399,5 @@
 
     <!-- CUSTOM css -->
     <script src="{{ asset('js/supply/delivery-attachment/custom-delivery-attachment.js') }}"></script>
+    
 @endpush
