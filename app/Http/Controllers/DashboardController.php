@@ -11,8 +11,10 @@ class DashboardController extends Controller
         // Get the authenticated user
         $user = Auth::user();
 
-        // Get the user role
-        $userRole = $user->roles->first()?->gen_role;
+        // Get the active user role dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
 
         // Get necessary data to render
         $data = null;

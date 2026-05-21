@@ -226,19 +226,39 @@
             </a>
 
             <div class="dropdown-menu position-absolute" aria-labelledby="userProfileDropdown">
+                {{-- Dynamic Active Role Resolver --}}
+                @php
+                    $allRoles = auth()->user()->roles;
+                    $activeRoleId = session('active_role_id') ?? ($allRoles->first()?->role_id ?? null);
+                    $activeRole = $allRoles->where('role_id', $activeRoleId)->first() ?? $allRoles->first();
+                    
+                    // Resolve active role display name, preventing duplicate department suffix if already part of role_name
+                    if ($activeRole) {
+                        $depName = $activeRole->department ? $activeRole->department->dep_name : '';
+                        $roleName = $activeRole->role_name;
+                        if (!empty($depName) && str_contains($roleName, $depName)) {
+                            $activeRoleDisplayName = $roleName;
+                        } else {
+                            $activeRoleDisplayName = $roleName . (!empty($depName) ? ' - ' . $depName : '');
+                        }
+                    } else {
+                        $activeRoleDisplayName = auth()->user()->user_type;
+                    }
+
+                    $userRoleGen = $activeRole?->gen_role ?? auth()->user()->user_type;
+                    $showApp = in_array($userRoleGen, ['Head', 'Procurement', 'Supply']);
+                @endphp
+
                 <div class="user-profile-section">
                     <div class="media mx-auto">
                         <div class="media-body">
                             <small>{{ auth()->user()->user_fullname_no_middle }}</small> <br>
                             <small class="red-text-2">
-                                {{ auth()->user()->roles->first()?->role_name ?? auth()->user()->user_type }}</small>
+                                {{ $activeRoleDisplayName }}</small>
                         </div>
                     </div>
                 </div>
-                @php
-                    $userRole = auth()->user()->roles->first()?->gen_role;
-                    $showApp = in_array($userRole, ['Head', 'Procurement', 'Supply']);
-                @endphp
+
                 <div class="dropdown-item">
                     <a href="{{ route('account.settings') }}#animated-underline-profile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span>Profile</span>
@@ -271,9 +291,99 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             <span>Log Out</span>
                         </a>
-
                     </form>
                 </div>
+
+                {{-- Divider and Switch Accounts Selection --}}
+                <div class="dropdown-divider-switch"></div>
+                <div class="switch-accounts-label">Switch accounts</div>
+                <div class="switch-accounts-list">
+                    @foreach ($allRoles as $role)
+                        @php
+                            $roleDepName = $role->department ? $role->department->dep_name : '';
+                            $roleName = $role->role_name;
+                            
+                            // Prevent duplicate department suffix if already part of role_name
+                            if (!empty($roleDepName) && str_contains($roleName, $roleDepName)) {
+                                $displayRoleName = $roleName;
+                            } else {
+                                $displayRoleName = $roleName . (!empty($roleDepName) ? ' - ' . $roleDepName : '');
+                            }
+                            
+                            $isActive = ($role->role_id == $activeRoleId);
+                        @endphp
+                        <div class="switch-account-item d-flex align-items-center justify-content-between" data-role-id="{{ $role->role_id }}">
+                            <div class="account-info">
+                                <div class="account-role">{{ $displayRoleName }}</div>
+                            </div>
+                            <div class="account-selector">
+                                <input type="radio" name="active_role_selector" value="{{ $role->role_id }}" class="custom-radio-selector" {{ $isActive ? 'checked' : '' }}>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Click Listener to switch active account/department with premium loading transition --}}
+                <script>
+                    document.querySelectorAll('.switch-account-item').forEach(item => {
+                        item.addEventListener('click', function(e) {
+                            const roleId = this.dataset.roleId;
+                            const radio = this.querySelector('.custom-radio-selector');
+                            
+                            // If clicked row is already the active checked row, do nothing
+                            if (radio && radio.checked && e.target.tagName === 'INPUT') {
+                                return;
+                            }
+
+                            // Check the radio visually
+                            if (radio) {
+                                radio.checked = true;
+                            }
+
+                            // 1. Render and inject the fullscreen loader spinner overlay
+                            const loadScreen = document.createElement('div');
+                            loadScreen.id = 'load_screen';
+                            loadScreen.innerHTML = `
+                                <div class="loader">
+                                    <div class="loader-content">
+                                        <div class="spinner-grow align-self-center" style="color: var(--red-text-2) !important;"></div>
+                                    </div>
+                                </div>
+                            `;
+                            document.body.appendChild(loadScreen);
+
+                            // 2. Fire the AJAX POST request to update active role in session
+                            fetch('{{ route("switch.account") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({ role_id: roleId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // 3. Refresh page to dynamically reload dashboard and task filters
+                                    window.location.reload();
+                                } else {
+                                    // Clean up loading overlay on failure
+                                    if (loadScreen.parentNode) {
+                                        document.body.removeChild(loadScreen);
+                                    }
+                                    alert('Failed to switch department: ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error switching account:', error);
+                                if (loadScreen.parentNode) {
+                                    document.body.removeChild(loadScreen);
+                                }
+                                alert('An error occurred. Please try again.');
+                            });
+                        });
+                    });
+                </script>
             </div>
         </li>
     </ul>

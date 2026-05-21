@@ -12,25 +12,37 @@ class AssignPrController extends Controller
 {
     public function showAssignPr($app_id)
     {
+        $user = auth()->user();
+
+        // Resolve active role & active department dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
+
         // Fetch the APP data using app_id (with its items)
         $app_data = AppParent::with('appItems')->findOrFail($app_id);
 
-        // Get the authenticated user's department via their first role
-        $user = auth()->user();
-        $dep_id = $user->roles()->first()?->role_dep_id_fk;
+        // Security Check: Ensure the APP actually belongs to the user's active department.
+        // This prevents manual URL parameter tampering from letting users view APPs of other departments.
+        if ($app_data->app_dep_id_fk !== $dep_id) {
+            abort(403, 'Unauthorized access to this APP record.');
+        }
 
         // Query users in the same department (excluding the authenticated user)
+        // Subordinates are defined as all users who belong to the same department as the Head,
+        // excluding any user that holds the 'Head' role in that specific department.
         $subordinates = collect();
         if ($dep_id) {
-            $subordinates = User::where(function ($query) use ($dep_id) {
-                $query->whereHas('departments', function ($q) use ($dep_id) {
-                    $q->where('department_id_fk', $dep_id);
-                })->orWhereHas('roles', function ($q) use ($dep_id) {
-                    $q->where('role_dep_id_fk', $dep_id);
-                });
+            $subordinates = User::whereHas('userDepartment', function ($q) use ($dep_id) {
+                $q->where('department_id_fk', $dep_id);
             })
-                ->where('user_id', '!=', $user->user_id)
-                ->get();
+            ->whereDoesntHave('roles', function ($q) use ($dep_id) {
+                // Exclude any user who holds a 'Head' role in this department
+                $q->where('role_dep_id_fk', $dep_id)
+                  ->where('gen_role', 'Head');
+            })
+            ->where('user_id', '!=', $user->user_id)
+            ->get();
         }
 
         return view('head/pages/head-assign-pr', compact('app_data', 'subordinates'));

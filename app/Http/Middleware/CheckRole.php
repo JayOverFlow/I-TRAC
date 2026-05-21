@@ -20,13 +20,16 @@ class CheckRole
             return redirect()->route('login');
         }
 
-        // 2. Get all 'gen_role' values for the authenticated user
-        // Using pluck() is a fast way to get an array of just the gen_roles
-        // Use $request instead of auth()
-        $userRoles = $request->user()->roles->pluck('gen_role')->toArray();
+        // 2. Resolve the user's currently active role based on the active session role context
+        $allRoles = $request->user()->roles;
+        $activeRoleId = session('active_role_id') ?? ($allRoles->first()?->role_id ?? null);
+        $activeRole = $allRoles->where('role_id', $activeRoleId)->first() ?? $allRoles->first();
 
-        // 3. Check if the user has AT LEAST ONE of the required roles
-        $hasRole = !empty(array_intersect($roles, $userRoles));
+        // Get the active role type, or fall back to their user type (e.g. Faculty/Staff) if they have no assigned roles
+        $activeRoleGen = $activeRole ? $activeRole->gen_role : $request->user()->user_type;
+
+        // 3. Check if the active role matches at least one of the required roles/permissions
+        $hasRole = in_array($activeRoleGen, $roles);
 
         // 4. If they don't have the role, block them with a 403 Forbidden error
         if (!$hasRole) {

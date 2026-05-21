@@ -96,10 +96,14 @@ class CreateAppController extends Controller
             ], 422);
         }
 
-        // --- Persist records ---
-        $user       = Auth::user();
-        $department = $user->departments()->first();
-        $depId      = $department ? $department->dep_id : null;
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Dynamically resolve the active role & active department from the active session context.
+        // This ensures the APP is created strictly under the department the user is currently working on.
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $depId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments()->first()?->dep_id);
 
         $app = AppParent::create([
             'saved_by_user_id_fk' => $user->user_id,

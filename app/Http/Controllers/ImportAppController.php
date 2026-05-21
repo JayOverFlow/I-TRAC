@@ -28,11 +28,17 @@ class ImportAppController extends Controller
         fgetcsv($handle); // Row 2: sub-header (schedule columns)
 
         $userId = Auth::id();
-        // This should be handled by a model
-        $depId = DB::table('user_roles_tbl')
-            ->join('roles_tbl', 'user_roles_tbl.role_id_fk', '=', 'roles_tbl.role_id')
-            ->where('user_roles_tbl.user_id_fk', $userId)
-            ->value('roles_tbl.role_dep_id_fk');
+        $activeRoleId = session('active_role_id');
+
+        // Resolve active department dynamically based on active session context.
+        // Falls back to the user's first department mapped in user_departments_tbl if no active role is selected.
+        $depId = DB::table('user_departments_tbl')
+            ->leftJoin('roles_tbl', 'user_departments_tbl.role_id_fk', '=', 'roles_tbl.role_id')
+            ->where('user_departments_tbl.user_id_fk', $userId)
+            ->when($activeRoleId, function($q) use ($activeRoleId) {
+                return $q->where('user_departments_tbl.role_id_fk', $activeRoleId);
+            })
+            ->value('roles_tbl.role_dep_id_fk') ?? DB::table('user_departments_tbl')->where('user_id_fk', $userId)->value('department_id_fk');
 
         DB::beginTransaction();
         try {

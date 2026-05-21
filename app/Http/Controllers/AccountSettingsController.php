@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use App\Models\PrParent;
+use App\Models\AppParent;
 
 class AccountSettingsController extends Controller
 {
@@ -15,21 +16,49 @@ class AccountSettingsController extends Controller
     {
         $user = Auth::user();
 
-        $userRole = $user->roles()->first();
+        // Resolve active role dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $userRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $genRole = $userRole ? $userRole->gen_role : 'Unassigned';
+
+        // Resolve the active department ID from the active role context to scope records.
+        $depId = $userRole ? $userRole->role_dep_id_fk : null;
 
         // Use switch statement or conditional structure to redirect user
         if ($genRole === 'Head') {
-            $apps = $user->appParents;
+            // Retrieve only the Annual Procurement Plans (APPs) that belong strictly to the active department context.
+            // This prevents APPs created in another department from leaking/displaying under the current department view.
+            $appsQuery = AppParent::query();
+            if ($depId) {
+                $appsQuery->where('app_dep_id_fk', $depId);
+            } else {
+                $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
+            }
+            $apps = $appsQuery->get();
+
             return view('head.pages.head-account-settings', compact('user', 'apps'));
         } elseif ($genRole === 'Procurement') {
-            $apps = $user->appParents;
+            // Procurement/Supply users can filter their plans by the active department if one exists.
+            $appsQuery = AppParent::query();
+            if ($depId) {
+                $appsQuery->where('app_dep_id_fk', $depId);
+            } else {
+                $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
+            }
+            $apps = $appsQuery->get();
+
             // Fetch PRs retrieved by this user
             $loadedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
             
             return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs'));
         } elseif ($genRole === 'Supply') {
-            $apps = $user->appParents;
+            $appsQuery = AppParent::query();
+            if ($depId) {
+                $appsQuery->where('app_dep_id_fk', $depId);
+            } else {
+                $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
+            }
+            $apps = $appsQuery->get();
             return view('supply.pages.supply-account-settings', compact('user', 'apps'));
         } elseif ($genRole === 'Unassigned') {
             return view('unassigned.pages.unassigned-account-settings', compact('user'));

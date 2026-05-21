@@ -158,7 +158,7 @@ class PrReviewController extends Controller
             $pr->update([
                 'pr_status' => 'Approved',
                 'pr_approved_by' => $user->user_id,
-                'pr_approved_by_designation' => $user->roles->first()?->gen_role ?? 'Department Head',
+                'pr_approved_by_designation' => ($user->roles->where('role_id', session('active_role_id'))->first() ?? $user->roles->first())?->role_name ?? 'Department Head',
             ]);
 
             // Update the Head's PR Review task

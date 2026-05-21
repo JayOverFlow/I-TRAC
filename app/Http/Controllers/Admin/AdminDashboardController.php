@@ -32,9 +32,9 @@ class AdminDashboardController extends Controller
 
         // Table: users with their role and department via joins
         $users = DB::table('users as u')
-            ->leftJoin('user_roles_tbl as ur', 'ur.user_id_fk', '=', 'u.user_id')
-            ->leftJoin('roles_tbl as r', 'r.role_id', '=', 'ur.role_id_fk')
-            ->leftJoin('departments_tbl as d', 'd.dep_id', '=', 'r.role_dep_id_fk')
+            ->leftJoin('user_departments_tbl as ud', 'ud.user_id_fk', '=', 'u.user_id')
+            ->leftJoin('roles_tbl as r', 'r.role_id', '=', 'ud.role_id_fk')
+            ->leftJoin('departments_tbl as d', 'd.dep_id', '=', 'ud.department_id_fk')
             ->select(
                 'u.user_tupid',
                 'u.user_firstname',

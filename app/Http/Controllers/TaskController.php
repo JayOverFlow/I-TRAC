@@ -11,16 +11,32 @@ class TaskController extends Controller
         // Get the authenticated user
         $user = Auth::user();
 
-        // Get the user role
-        $userRole = $user->roles->first()?->gen_role;
+        // Resolve active role and active department dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
+        $depId = $activeRole ? $activeRole->role_dep_id_fk : null;
 
-        // Get all tasks assigned to the logged-in user, with the sender's user info
-        $tasks = Auth::user()
-            ->tasks()
+        // Build the query to fetch tasks assigned to the logged-in user
+        $tasksQuery = $user->tasks()
             ->with('assignedBy')
-            ->where('is_deleted', 0)
-            ->orderByDesc('created_at')
-            ->get();
+            ->where('is_deleted', 0);
+
+        // For Head users, dynamically filter and scope task records strictly to the active department context
+        if ($userRole === 'Head' && $depId) {
+            $tasksQuery->where(function ($query) use ($depId) {
+                // Task has a purchaseRequest submitted in the active department
+                $query->whereHas('purchaseRequest', function ($q) use ($depId) {
+                    $q->where('pr_department', $depId);
+                })
+                // OR task is linked to App items belonging to the active department
+                ->orWhereHas('appItems.app', function ($q) use ($depId) {
+                    $q->where('app_dep_id_fk', $depId);
+                });
+            });
+        }
+
+        $tasks = $tasksQuery->orderByDesc('created_at')->get();
 
         // Redirect user based on role
         return match ($userRole) {
