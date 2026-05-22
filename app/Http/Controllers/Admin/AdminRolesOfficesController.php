@@ -19,7 +19,7 @@ class AdminRolesOfficesController extends Controller
         // Fetch Roles and their Departments (Right join to ensure all Departments show, even if they have no Roles)
         $data['roles'] = DB::table('roles_tbl as r')
             ->rightJoin('departments_tbl as d', 'r.role_dep_id_fk', '=', 'd.dep_id')
-            ->select('r.role_id', 'r.role_name', 'd.dep_name', 'd.dep_id', 'd.dep_type')
+            ->select('r.role_id', 'r.role_name', 'd.dep_name', 'd.dep_id', 'd.parent_dep_id')
             ->get();
 
         return view('admin.pages.roles-offices', $data);
@@ -32,8 +32,8 @@ class AdminRolesOfficesController extends Controller
     {
         return [
             'departments'  => Department::all(),
-            'officesCount' => Department::where('dep_type', 'administrative')->count(),
-            'deptsCount'   => Department::where('dep_type', 'academic')->count(),
+            'officesCount' => Department::count(),
+            'programsCount'   => Role::where('role_name', 'like', 'Program Chair - %')->count(),
             'facultyCount' => User::where('user_type', 'Faculty')->count(),
             'staffCount'   => User::where('user_type', 'Staff')->count(),
         ];
@@ -58,7 +58,6 @@ class AdminRolesOfficesController extends Controller
                 $roleName = isset($roleData['role_name']) ? trim($roleData['role_name']) : '';
                 $departmentId = $roleData['department_id'] ?? null;
                 $newDeptName = isset($roleData['new_department_name']) ? trim($roleData['new_department_name']) : '';
-                $newDeptType = isset($roleData['new_department_type']) ? trim($roleData['new_department_type']) : 'academic';
 
                 // Create a new department if "NEW" was selected
                 if ($departmentId === 'NEW' && !empty($newDeptName)) {
@@ -73,7 +72,7 @@ class AdminRolesOfficesController extends Controller
                         
                         $newDept = Department::create([
                             'dep_name' => $formattedDeptName,
-                            'dep_type' => $newDeptType
+                            'parent_dep_id' => 35
                         ]);
                         $departmentId = $newDept->dep_id;
                     }
@@ -139,6 +138,19 @@ class AdminRolesOfficesController extends Controller
             // If the user requested to delete the department as well
             if ($request->input('delete_department') === 'true' || $request->input('delete_department') === true) {
                 
+                // Safeguard 1: Block deleting system structural pillars
+                if (in_array($departmentId, [35, 36, 38, 40])) {
+                     DB::rollBack();
+                     return response()->json(['success' => false, 'message' => 'System Safeguard: Deleting this office is strictly prohibited.'], 400);
+                }
+
+                // Safeguard 2: Block deleting departments with sub-offices
+                $subOfficesCount = Department::where('parent_dep_id', $departmentId)->count();
+                if ($subOfficesCount > 0) {
+                     DB::rollBack();
+                     return response()->json(['success' => false, 'message' => 'System Safeguard: Cannot delete department because it still has sub-offices reporting to it. Reassign its sub-offices first.'], 400);
+                }
+
                 // Ensure no OTHER roles are using this department before deleting it
                 $remainingRoles = Role::where('role_dep_id_fk', $departmentId)->count();
                 if ($remainingRoles > 0) {
@@ -178,6 +190,23 @@ class AdminRolesOfficesController extends Controller
             DB::beginTransaction();
 
             $department = Department::findOrFail($id);
+
+            // Safeguard 1: Block deleting system structural pillars
+            if (in_array($id, [35, 36, 38, 40])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'System Safeguard: Deleting this office is strictly prohibited.'
+                ], 400);
+            }
+
+            // Safeguard 2: Block deleting departments with sub-offices
+            $subOfficesCount = Department::where('parent_dep_id', $id)->count();
+            if ($subOfficesCount > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'System Safeguard: Cannot delete department because it still has sub-offices reporting to it. Reassign its sub-offices first.'
+                ], 400);
+            }
 
             // Check if there are any roles still associated with this department
             $rolesCount = Role::where('role_dep_id_fk', $id)->count();
@@ -261,17 +290,34 @@ class AdminRolesOfficesController extends Controller
         try {
             $request->validate([
                 'dep_name' => 'required|string|max:255',
-                'dep_type' => 'required|string|max:255',
+                'parent_dep_id' => 'nullable|integer|in:35,36,38,40',
             ]);
 
             $dept = Department::findOrFail($id);
             $oldName = $dept->dep_name;
-            $oldType = $dept->dep_type;
+            $oldParentId = $dept->parent_dep_id;
 
             $formattedName = collect(explode(' ', $request->dep_name))->map(fn($word) => ucfirst(strtolower($word)))->join(' ');
             
             $dept->dep_name = $formattedName;
-            $dept->dep_type = strtolower($request->dep_type);
+
+            // Shield core pillars from being reassigned to any other parent
+            if (!in_array((int)$id, [35, 36, 38, 40]) && $request->has('parent_dep_id')) {
+                $newParentId = $request->parent_dep_id ? (int)$request->parent_dep_id : null;
+                $dept->parent_dep_id = $newParentId;
+
+                // Log Parent reassignment if changed
+                if ($oldParentId != $newParentId) {
+                    $oldParent = Department::find($oldParentId);
+                    $newParent = Department::find($newParentId);
+                    ActivityLog::log(
+                        'DEPT_REASSIGN',
+                        "{$formattedName} reassigned to " . ($newParent ? $newParent->dep_name : 'None'),
+                        "Reassigned department '{$formattedName}' from '" . ($oldParent ? $oldParent->dep_name : 'None') . "' to '" . ($newParent ? $newParent->dep_name : 'None') . "'"
+                    );
+                }
+            }
+
             $dept->save();
 
             // Log if name changed
@@ -280,15 +326,6 @@ class AdminRolesOfficesController extends Controller
                     'DEPT_RENAME',
                     "Renamed Dept: $formattedName",
                     "Updated department name from '$oldName' to '$formattedName'"
-                );
-            }
-
-            // Log if type changed
-            if ($oldType !== strtolower($request->dep_type)) {
-                ActivityLog::log(
-                    'DEPT_TYPE_CHANGE',
-                    "$formattedName is now " . ucfirst($request->dep_type),
-                    "Changed department '$formattedName' type from '$oldType' to '" . strtolower($request->dep_type) . "'"
                 );
             }
 

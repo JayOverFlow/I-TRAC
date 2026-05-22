@@ -194,6 +194,8 @@ Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->
 
     Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('admin.activity-logs');
     Route::get('/activity-logs/latest', [AdminActivityLogController::class, 'getLatestLogs'])->name('admin.activity-logs.latest');
+
+
 });
 
 

@@ -346,8 +346,8 @@ class AdminRolesAssignmentController extends Controller
         $departments = Department::orderBy('dep_name', 'asc')->get();
 
         // Card counts
-        $officesCount = Department::where('dep_type', 'administrative')->count();
-        $deptsCount   = Department::where('dep_type', 'academic')->count();
+        $officesCount = Department::count();
+        $programsCount = Role::where('role_name', 'like', 'Program Chair - %')->count();
         $facultyCount = User::where('user_type', 'Faculty')->count();
         $staffCount   = User::where('user_type', 'Staff')->count();
 
@@ -411,7 +411,7 @@ class AdminRolesAssignmentController extends Controller
         return [
             'departments'  => $departments,
             'officesCount' => $officesCount,
-            'deptsCount'   => $deptsCount,
+            'programsCount'   => $programsCount,
             'facultyCount' => $facultyCount,
             'staffCount'   => $staffCount,
             'users'        => $users,

@@ -33,6 +33,15 @@
         .existing-dept-selector {
             overflow: visible !important;
         }
+
+        /* Premium Form Select styling inside Modals to prevent chevron overlap */
+        .modal-body select.form-select {
+            font-size: 0.825rem !important;
+            padding-right: 2.5rem !important;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
     </style>
 
     <!-- CUSTOM css -->
@@ -65,7 +74,7 @@
                         <input type="text" class="form-control" id="edit-role-name-input">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Assign to Department | Office</label>
+                        <label class="form-label fw-bold">Move this role to Office:</label>
 
                         <select class="form-select" id="edit-role-dept-select">
                             @foreach($departments as $dept)
@@ -97,14 +106,27 @@
                         <label class="form-label fw-bold">Department Name</label>
                         <input type="text" class="form-control" id="edit-dept-name-input">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Type</label>
-                        <select class="form-select" id="edit-dept-type-select">
-
-                            <option value="academic">Academic</option>
-                            <option value="administrative">Administrative</option>
+                    <div class="mb-3" id="parent-dept-group">
+                        <label class="form-label fw-bold">Parent Office</label>
+                        <select class="form-select" id="edit-dept-parent-select">
+                            @foreach($departments as $dept)
+                                @if(in_array((int)$dept->dep_id, [35, 36, 38, 40]))
+                                    @php
+                                        $displayName = $dept->dep_name;
+                                        if ((int)$dept->dep_id === 36) {
+                                            $displayName = 'Assistant Director for Academic Affairs';
+                                        } elseif ((int)$dept->dep_id === 38) {
+                                            $displayName = 'Assistant Director for Research & Extension';
+                                        } elseif ((int)$dept->dep_id === 40) {
+                                            $displayName = 'Assistant Director for Admin & Finance';
+                                        }
+                                    @endphp
+                                    <option value="{{ $dept->dep_id }}">{{ $displayName }}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
+
                 </div>
                 <div class="modal-footer border-top">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
@@ -383,12 +405,19 @@
                     var $row = $(this).closest('tr');
                     var deptId = $row.data('dep-id');
                     var deptName = $(this).text().trim();
-                    var deptType = $row.data('dep-type');
+                    var parentDepId = $(this).attr('data-parent-dep-id');
 
                     $('#edit-dept-id').val(deptId);
                     $('#edit-dept-name-input').val(deptName);
-                    // Default fallback if type is missing/null in DB
-                    $('#edit-dept-type-select').val(deptType ? deptType.toLowerCase() : 'academic'); 
+
+                    // Shield core pillars from parent reassignment select
+                    var pillars = [35, 36, 38, 40];
+                    if (pillars.includes(Number(deptId))) {
+                        $('#parent-dept-group').addClass('d-none');
+                    } else {
+                        $('#parent-dept-group').removeClass('d-none');
+                        $('#edit-dept-parent-select').val(parentDepId || 35);
+                    }
 
                     var modal = new bootstrap.Modal(document.getElementById('editDeptModal'));
                     modal.show();
@@ -448,15 +477,19 @@
                     });
                 });
 
-                // Department Update AJAX Execution
                 $(document).on('click', '#btn-update-dept-save', function() {
                     var deptId = $('#edit-dept-id').val();
                     var deptName = $('#edit-dept-name-input').val().trim();
-                    var deptType = $('#edit-dept-type-select').val();
 
                     if (!deptName) {
                         Swal.fire('Validation Error', 'Department Name cannot be empty.', 'error');
                         return;
+                    }
+
+                    var parentDepId = null;
+                    var pillars = [35, 36, 38, 40];
+                    if (!pillars.includes(Number(deptId))) {
+                        parentDepId = $('#edit-dept-parent-select').val();
                     }
 
                     var $btn = $(this);
@@ -468,7 +501,7 @@
                         data: {
                             _token: $('meta[name="csrf-token"]').attr('content'),
                             dep_name: deptName,
-                            dep_type: deptType
+                            parent_dep_id: parentDepId
                         },
                         success: function(response) {
                             $btn.prop('disabled', false).text('Save changes');
@@ -476,12 +509,14 @@
                             
                             var table = $('#roles-table').DataTable();
                             
-                            // Find EVERY row sharing this department ID to update global spelling
+                            // Find EVERY row sharing this department ID to update global spelling and attributes
                             $('tr[data-dep-id="' + deptId + '"]').each(function() {
                                 var $row = $(this);
-                                $row.attr('data-dep-type', deptType);
-                                $row.data('dep-type', deptType); // VERY IMPORTANT: Update jQuery's internal object cache
-                                $row.find('.dep-text-val').text(deptName);
+                                var $deptCell = $row.find('.dep-text-val');
+                                $deptCell.text(deptName);
+                                if (parentDepId) {
+                                    $deptCell.attr('data-parent-dep-id', parentDepId);
+                                }
                                 $row.find('td').eq(2).text(deptName); // Hidden group column
                                 table.row($row).invalidate();
                             });
@@ -565,12 +600,10 @@
                         var roleName = $(this).find('.input-role-name').val() || "";
                         var deptId = $(this).find('.select-dept-existing').val();
                         var newDeptName = "";
-                        var newDeptType = "";
                         
                         // If they chose NEW department, fetch that name instead
                         if(deptId === 'NEW') {
                             newDeptName = $(this).find('.input-new-dept-name').val() || "";
-                            newDeptType = $(this).find('.select-new-dept-type').val() || "";
                         }
 
                         var isEmptyRole = (roleName.trim() === '');
@@ -613,8 +646,7 @@
                         newRoles.push({
                             role_name: roleName.trim(),
                             department_id: deptId,
-                            new_department_name: newDeptName.trim(),
-                            new_department_type: newDeptType
+                            new_department_name: newDeptName.trim()
                         });
                     });
                     
@@ -631,8 +663,7 @@
                             newRoles.push({
                                 role_name: roleName.trim(),
                                 department_id: deptId,
-                                new_department_name: '',
-                                new_department_type: ''
+                                new_department_name: ''
                             });
                         }
                     });
