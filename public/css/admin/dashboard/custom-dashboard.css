@@ -192,3 +192,224 @@ body.dark .new-dept-interface {
     white-space: nowrap !important;
     overflow: hidden !important;
 }
+
+/* ==========================================
+   DARK MODE FOR USER MANAGE & DELETION MODALS (GRAYSCALE)
+   ========================================== */
+
+/* 1. Modal Dialog & Content Background */
+body.dark #editUserModal .modal-content,
+body.dark #deleteConfirmModal .modal-content {
+    background-color: #0E0F11 !important;
+    border: 1px solid #1D2127 !important;
+    color: #F3F4F6 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 2. Modal Header */
+body.dark #editUserModal .modal-header,
+body.dark #deleteConfirmModal .modal-header {
+    border-bottom: 1px solid #1D2127 !important;
+    background-color: #0E0F11 !important;
+}
+
+body.dark #editUserModal .modal-header .modal-title,
+body.dark #deleteConfirmModal .modal-header .modal-title {
+    color: #F3F4F6 !important;
+}
+
+body.dark #editUserModal .modal-header .btn-close,
+body.dark #deleteConfirmModal .modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important; /* Makes close button white */
+}
+
+/* 3. Left Panel (Profile Sidebar) */
+body.dark #editUserModal .left-panel {
+    background-color: #15181F !important;
+    border-right: 1px solid #1D2127 !important;
+}
+
+body.dark #editUserModal #modal-fullname {
+    color: #F3F4F6 !important;
+}
+
+body.dark #editUserModal #modal-tupid-badge {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+    border: 1px solid #2A2F38 !important;
+}
+
+body.dark #editUserModal hr {
+    border-color: #1D2127 !important;
+    opacity: 0.6;
+}
+
+/* 4. Tab Labels and Navigation Bar */
+body.dark #editUserModal #editUserTabs {
+    border-bottom: 2px solid #1D2127 !important;
+}
+
+body.dark #editUserModal #editUserTabs .nav-link {
+    color: #888EA8 !important;
+}
+
+body.dark #editUserModal #editUserTabs .nav-link:hover {
+    color: #B91C1C !important;
+}
+
+body.dark #editUserModal #editUserTabs .nav-link.active {
+    color: #B91C1C !important;
+    border-bottom: 2px solid #B91C1C !important;
+    background-color: transparent !important;
+}
+
+/* 5. Inputs & Labels inside right-hand tab pane */
+body.dark #editUserModal label.text-dark {
+    color: #888EA8 !important;
+}
+
+body.dark #editUserModal .form-control {
+    background-color: #1D2127 !important;
+    border: 1px solid #2A2F38 !important;
+    color: #F3F4F6 !important;
+}
+
+body.dark #editUserModal .form-control::placeholder {
+    color: #888EA8 !important;
+    opacity: 0.5;
+}
+
+body.dark #editUserModal .form-control:focus {
+    border-color: #B91C1C !important;
+    box-shadow: 0 0 0 0.25rem rgba(185, 28, 28, 0.25) !important;
+}
+
+/* 6. Static / Read-Only Elements */
+body.dark #editUserModal .bg-light,
+body.dark #deleteConfirmModal .bg-light {
+    background-color: #15181F !important;
+    border: 1px solid #1D2127 !important;
+}
+
+body.dark #editUserModal .bg-light p.text-muted,
+body.dark #deleteConfirmModal .bg-light p.text-muted {
+    color: #888EA8 !important;
+}
+
+body.dark #editUserModal .text-dark,
+body.dark #deleteConfirmModal .text-dark,
+body.dark #editUserModal h5.text-dark,
+body.dark #deleteConfirmModal h5.text-dark,
+body.dark #editUserModal h6.text-dark,
+body.dark #deleteConfirmModal h6.text-dark {
+    color: #F3F4F6 !important;
+}
+
+/* 7. Bottom Main Actions (Borderless design) */
+body.dark #editUserModal #modal-main-actions,
+body.dark #deleteConfirmModal .modal-footer {
+    border-top: none !important;
+    background-color: transparent !important;
+}
+
+body.dark #editUserModal #modal-main-actions .btn-outline-secondary {
+    color: #888EA8 !important;
+    border-color: #1D2127 !important;
+}
+
+body.dark #editUserModal #modal-main-actions .btn-outline-secondary:hover {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+}
+
+/* 8. Deletion Confirmation Modal Components */
+body.dark #deleteConfirmModal p.text-muted {
+    color: #888EA8 !important;
+}
+
+body.dark #deleteConfirmModal label {
+    color: #888EA8 !important;
+}
+
+body.dark #deleteConfirmModal .bg-danger-subtle {
+    background-color: rgba(231, 81, 90, 0.1) !important;
+    border-color: rgba(231, 81, 90, 0.2) !important;
+    color: #e7515a !important;
+}
+
+body.dark #deleteConfirmModal .bg-danger-subtle h6 {
+    color: #e7515a !important;
+}
+
+body.dark #deleteConfirmModal .btn-outline-secondary {
+    color: #888EA8 !important;
+    border-color: #1D2127 !important;
+}
+
+body.dark #deleteConfirmModal .btn-outline-secondary:hover {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+}
+
+body.dark #deleteConfirmModal .form-control {
+    background-color: #1D2127 !important;
+    border: 1px solid #2A2F38 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Eye toggle / submit password borders */
+body.dark #editUserModal #btn-toggle-password {
+    border-color: #2A2F38 !important;
+    color: #888EA8 !important;
+}
+body.dark #editUserModal #btn-toggle-password:hover {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+}
+
+/* 9. Dashboard Table Cell & Filter Legibility Overrides */
+body.dark table#zero-config tbody tr td h6 {
+    color: #F3F4F6 !important;
+}
+
+body.dark table#zero-config tbody tr td span.text-dark {
+    color: #E0E6ED !important;
+}
+
+body.dark table#zero-config tbody tr td small.text-muted,
+body.dark table#zero-config tbody tr td span.text-muted {
+    color: #888EA8 !important;
+}
+
+body.dark #dept-filter-container label {
+    color: #888EA8 !important;
+}
+
+/* 10. Form Validation Background Icon Repeating Fix (Strip repeating X-marks) */
+#editUserModal .form-control.is-invalid,
+#deleteConfirmModal .form-control.is-invalid {
+    background-image: none !important;
+    padding-right: 12px !important;
+    border-color: #e7515a !important;
+}
+
+/* 11. Save Changes Button Styling and Border-color Fix */
+#editUserForm button[type="submit"] {
+    background-color: #4361ee !important;
+    border: 1px solid #4361ee !important;
+    color: #fff !important;
+}
+#editUserForm button[type="submit"]:hover {
+    background-color: #304aca !important;
+    border-color: #304aca !important;
+}
+
+body.dark #editUserForm button[type="submit"] {
+    background-color: #b91c1c !important;
+    border: 1px solid #b91c1c !important;
+    color: #fff !important;
+}
+body.dark #editUserForm button[type="submit"]:hover {
+    background-color: #991b1b !important;
+    border-color: #991b1b !important;
+}
