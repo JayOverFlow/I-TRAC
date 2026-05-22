@@ -36,7 +36,7 @@
                                     </div>
                                     
                                     <div>
-                                        <small class="text-muted text-uppercase font-weight-bold tracking-wider" style="font-size: 0.65rem;">Department / Office</small>
+                                        <small class="text-muted text-uppercase font-weight-bold tracking-wider" style="font-size: 0.65rem;">Office</small>
                                         <div id="modal-depts-list" class="mt-1 d-flex flex-column gap-1">
                                             <!-- Departments loaded dynamically -->
                                         </div>

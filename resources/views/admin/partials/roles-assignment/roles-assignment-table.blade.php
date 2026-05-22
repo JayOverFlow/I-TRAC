@@ -1,10 +1,10 @@
 {{-- Shared Controls for Roles View --}}
 <div id="roles-controls-container" class="d-flex align-items-center gap-3" style="display:none!important;">
-    {{-- Department filter --}}
+    {{-- Office filter --}}
     <div class="d-flex align-items-center gap-2">
-        <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Department</label>
+        <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Office</label>
         <select id="department-filter" class="form-select form-select-sm w-auto">
-            <option value="">All Departments</option>
+            <option value="">All Offices</option>
             @foreach($departments as $department)
                 <option value="{{ $department->dep_name }}">{{ $department->dep_name }}</option>
             @endforeach
@@ -52,8 +52,8 @@
                         <th>Last Name</th>
                         <th>First Name</th>
                         <th>Email</th>
-                        {{-- Hidden column for department filter --}}
-                        <th style="display: none;">Department</th>
+                        {{-- Hidden column for office filter --}}
+                        <th style="display: none;">Office</th>
                     </tr>
                 </thead>
                 <tbody>
