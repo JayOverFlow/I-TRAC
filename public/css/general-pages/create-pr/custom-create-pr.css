@@ -132,3 +132,17 @@ thead.bg-transparent th {
     display: block;
     margin: 0 auto;
 }
+
+/* ── Validation error styles ── */
+.field-error {
+    font-size: 0.78rem;
+    color: #dc3545;
+    margin-top: 3px;
+    display: block;
+    min-height: 1.1rem;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
