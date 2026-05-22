@@ -11,12 +11,9 @@
             {{ $isDone ? 'disabled' : '' }}>
     </td>
     <td class="px-1">
-        <select class="form-select form-control-sm unit-select" name="items[{{ $index }}][unit]" {{ $isDone ? 'disabled' : '' }}>
-            <option value="" selected disabled>Select</option>
-            @foreach(['Piece', 'Lot', 'Set', 'Box', 'Pack', 'Ream', 'Dozen', 'Carton', 'Liter', 'Milliliter', 'Kilogram', 'Gram', 'Meter', 'Roll', 'Square meter'] as $unit)
-                <option value="{{ $unit }}" {{ $item->po_items_unit == $unit ? 'selected' : '' }}>{{ $unit }}</option>
-            @endforeach
-        </select>
+        <input type="text" class="form-control form-control-sm text-center unit-input" 
+            name="items[{{ $index }}][unit]" value="{{ $item->po_items_unit }}" 
+            {{ $isDone ? 'disabled' : '' }}>
     </td>
     <td class="px-1">
         <div class="input-group input-group-sm">

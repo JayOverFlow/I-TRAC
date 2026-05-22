@@ -186,7 +186,7 @@ $(document).ready(function() {
 
     // Submit button logic (Done)
     $(document).on('click', '#submit-po-btn', function() {
-        $('#po_status').val('Submitted');
+        $('#po_status').val('Done');
         const form = $('#po-form');
         form.submit();
     });
