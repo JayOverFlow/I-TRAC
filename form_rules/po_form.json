@@ -1,0 +1,194 @@
+{
+  "form_name": "po_form",
+  "table_identifier": "items",
+  "fields":{
+    "po_supplier": {
+      "type": "text",
+      "label": "Supplier:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "pr_purpose": {
+      "type": "text",
+      "label": "Purpose:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_address": {
+      "type": "text",
+      "label": "Address:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_tele": {
+      "type": "text",
+      "label": "Tel No.:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_tin": {
+      "type": "text",
+      "label": "TIN:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_place_delivery": {
+      "type": "text",
+      "label": "Place of Delivery:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_date_delivery": {
+      "type": "text",
+      "label": "Date of Delivery:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    },
+    "po_no": {
+      "type": "text",
+      "label": "P.O. No.:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_date": {
+      "type": "text",
+      "label": "Date:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    },
+    "po_mode": {
+      "type": "text",
+      "label": "Mode of Procurement:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_tuptin": {
+      "type": "text",
+      "label": "TUP-Taguig TIN:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_delivery_term": {
+      "type": "text",
+      "label": "Delivery Term:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "po_payment_term": {
+      "type": "text",
+      "label": "Payment Term:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    }
+  },
+  "columns": {
+    "items[{{ $index }}][stock]": {
+      "type": "number",
+      "header_text": "Stock",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    },
+    "items[{{ $index }}][unit]": {
+      "type": "text",
+      "header_text": "Unit",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][description]": {
+      "type": "text",
+      "header_text": "Item Description",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "items[{{ $index }}][quantity]": {
+      "type": "number",
+      "header_text": "Qty.",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    },
+    "items[{{ $index }}][cost]": {
+      "type": "number",
+      "header_text": "Unit Cost",
+      "rules": {
+        "required": true,
+        "numeric": true,
+        "min": 1,
+        "max": 9999999
+      }
+    },
+    "items[{{ $index }}][specification]": {
+      "type": "textarea",
+      "label": "Specification",
+      "rules": {
+        "required": false,
+        "string": true,
+        "min_length": 5,
+        "max_length": 1000
+      }
+    }
+  }
+}

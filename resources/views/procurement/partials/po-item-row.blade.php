@@ -6,19 +6,24 @@
 <tr class="po-item-row" data-id="{{ $item->po_items_id ?? 'new' }}">
     <td class="px-1">
         <input type="text" class="form-control form-control-sm text-center stock-input" 
-            name="items[{{ $index }}][stock]" value="{{ $item->po_items_stockno }}" 
+            name="items[{{ $index }}][stock]" data-field="stock"
+            value="{{ $item->po_items_stockno }}" 
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             {{ $isDone ? 'disabled' : '' }}>
+        <span class="field-error d-none text-center"></span>
     </td>
     <td class="px-1">
         <input type="text" class="form-control form-control-sm text-center unit-input" 
-            name="items[{{ $index }}][unit]" value="{{ $item->po_items_unit }}" 
+            name="items[{{ $index }}][unit]" data-field="unit"
+            value="{{ $item->po_items_unit }}" 
             {{ $isDone ? 'disabled' : '' }}>
+        <span class="field-error d-none text-center"></span>
     </td>
     <td class="px-1">
         <div class="input-group input-group-sm">
             <input type="text" class="form-control description-input"
-                name="items[{{ $index }}][description]" value="{{ $item->po_items_descrip }}"
+                name="items[{{ $index }}][description]" data-field="description"
+                value="{{ $item->po_items_descrip }}"
                 {{ $isDone ? 'disabled' : '' }}>
             @if (!$isDone)
                 <span class="input-group-text bg-white border-start-0 add-specification-btn"
@@ -28,18 +33,23 @@
                 </span>
             @endif
         </div>
+        <span class="field-error d-none"></span>
     </td>
     <td class="px-1">
         <input type="text" class="form-control form-control-sm text-center qty-input" 
-            name="items[{{ $index }}][quantity]" value="{{ $item->po_items_quantity }}" 
+            name="items[{{ $index }}][quantity]" data-field="quantity"
+            value="{{ $item->po_items_quantity }}" 
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             {{ $isDone ? 'disabled' : '' }}>
+        <span class="field-error d-none text-center"></span>
     </td>
     <td class="px-1">
         <input type="text" class="form-control form-control-sm text-center cost-input" 
-            name="items[{{ $index }}][cost]" value="{{ $item->po_items_cost }}" 
+            name="items[{{ $index }}][cost]" data-field="cost"
+            value="{{ $item->po_items_cost }}" 
             oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
             {{ $isDone ? 'disabled' : '' }}>
+        <span class="field-error d-none text-center"></span>
     </td>
     <td class="px-1 text-center">
         <span class="amount-display fw-bold" data-amount="{{ $amount }}">₱ {{ number_format($amount, 2) }}</span>
@@ -79,9 +89,10 @@
             <div class="specification-body border border-top-0 rounded-bottom bg-white"
                 style="border-color: #ced4da !important; {{ $hasSpec ? '' : 'display: none;' }}">
                 <textarea class="form-control form-control-sm border-0 shadow-none px-2" 
-                    name="items[{{ $index }}][specification]"
+                    name="items[{{ $index }}][specification]" data-field="specification"
                     rows="2" placeholder="Enter specification details."
                     {{ $isDone ? 'disabled' : '' }}>{{ $item->poSpecs->first()->po_spec_description ?? '' }}</textarea>
+                <span class="field-error d-none"></span>
             </div>
         </div>
     </td>
