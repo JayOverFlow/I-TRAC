@@ -15,9 +15,24 @@ class Department extends Model
     // Mass assignment fields
     protected $fillable = [
         'dep_name',
-        'dep_type',
+        'parent_dep_id',
     ];
 
     // METHODS
 
+    /**
+     * Relationship: Parent Department/Office
+     */
+    public function parent()
+    {
+        return $this->belongsTo(Department::class, 'parent_dep_id', 'dep_id');
+    }
+
+    /**
+     * Relationship: Sub-departments/Offices
+     */
+    public function children()
+    {
+        return $this->hasMany(Department::class, 'parent_dep_id', 'dep_id');
+    }
 }

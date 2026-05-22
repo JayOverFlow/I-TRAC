@@ -18,11 +18,11 @@
             <div class="card">
                 <div class="card-body row p-4">
                     <div class="col-4">
-                        <img src="{{ asset('img/departments.svg') }}" alt="Departments">
+                        <img src="{{ asset('img/departments.svg') }}" alt="Programs">
                     </div>
                     <div class="col-8 text-end">
-                        <h5 class="card-title fw-bold">Departments</h5>
-                        <h5 class="mb-0 fw-bold">{{ $deptsCount }}</h5>
+                        <h5 class="card-title fw-bold">Programs</h5>
+                        <h5 class="mb-0 fw-bold">{{ $programsCount }}</h5>
                     </div>
                 </div>
             </div>

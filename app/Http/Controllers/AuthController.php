@@ -72,10 +72,52 @@ class AuthController extends Controller
     }
 
     public function showRegister() {
-        // Get the departments in the db for dropdown
-        $departments = Department::orderBy('dep_name', 'asc')->get();
+        // Fetch each division's parent and child departments/offices
+        $directorOffice = Department::find(35);
+        $directorChildren = Department::where('parent_dep_id', 35)
+            ->whereNotIn('dep_id', [40, 38, 36])
+            ->orderBy('dep_name', 'asc')
+            ->get();
 
-        return view('auth/register', compact('departments'));
+        $adafo = Department::find(40);
+        $adafoChildren = Department::where('parent_dep_id', 40)
+            ->orderBy('dep_name', 'asc')
+            ->get();
+
+        $adreo = Department::find(38);
+        $adreoChildren = Department::where('parent_dep_id', 38)
+            ->orderBy('dep_name', 'asc')
+            ->get();
+
+        $adaao = Department::find(36);
+        $adaaoChildren = Department::where('parent_dep_id', 36)
+            ->orderBy('dep_name', 'asc')
+            ->get();
+
+        $groupedDepartments = [
+            [
+                'parent' => $directorOffice,
+                'children' => $directorChildren,
+                'label' => "Director's Office & Direct Services"
+            ],
+            [
+                'parent' => $adafo,
+                'children' => $adafoChildren,
+                'label' => "Assistant Director For Administration And Finance Office"
+            ],
+            [
+                'parent' => $adreo,
+                'children' => $adreoChildren,
+                'label' => "Assistant Director for Research and Extension Office"
+            ],
+            [
+                'parent' => $adaao,
+                'children' => $adaaoChildren,
+                'label' => "Assistant Director for Academic Affairs Office"
+            ],
+        ];
+
+        return view('auth/register', compact('groupedDepartments'));
     }
 
     public function register(Request $request) {

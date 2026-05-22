@@ -229,8 +229,16 @@
                                                 </div>
                                                 <select class="form-select" aria-label="Default select example" id="department">
                                                     <option value="" selected disabled>Select</option>
-                                                    @foreach ($departments as $deps)
-                                                        <option value="{{ $deps->dep_id }}">{{ $deps->dep_name }}</option>
+                                                    @foreach ($groupedDepartments as $group)
+                                                        @if($group['parent'])
+                                                            <optgroup label="{{ $group['label'] }}">
+                                                                {{-- Renders the parent office itself as a selectable option --}}
+                                                                <option value="{{ $group['parent']->dep_id }}">{{ $group['parent']->dep_name }}</option>
+                                                                @foreach ($group['children'] as $childDept)
+                                                                    <option value="{{ $childDept->dep_id }}">{{ $childDept->dep_name }}</option>
+                                                                @endforeach
+                                                            </optgroup>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                             </div>
