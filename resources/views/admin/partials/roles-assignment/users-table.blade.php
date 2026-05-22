@@ -5,11 +5,11 @@
 
 {{-- Shared Controls for User View --}}
 <div id="users-controls-container" class="d-flex align-items-center gap-3" style="display:none!important;">
-    {{-- Department filter --}}
+    {{-- Office filter --}}
     <div class="d-flex align-items-center gap-2">
-        <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Department</label>
+        <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Office</label>
         <select id="department-filter-users" class="form-select form-select-sm w-auto">
-            <option value="">All Departments</option>
+            <option value="">All Offices</option>
             @foreach($departments as $department)
                 <option value="{{ $department->dep_name }}">{{ $department->dep_name }}</option>
             @endforeach
@@ -68,14 +68,14 @@
         <td class="position-relative align-middle py-2">
             <div class="position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; z-index:10; width: calc(100% - 20px);">
                 <select class="form-select form-select-sm role-assignment-select shadow-sm table-edit-select" disabled style="font-size:0.85rem;">
-                    <option value="">— Select a Department First —</option>
+                    <option value="">— Select an Office First —</option>
                 </select>
             </div>
         </td>
         <td class="position-relative align-middle py-2">
             <div class="position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; right:45px; z-index:10;">
                 <select class="form-select form-select-sm dept-assignment-select shadow-sm table-edit-select" style="width: 100%; font-size:0.85rem;">
-                    <option value="" disabled selected>Select Department</option>
+                    <option value="" disabled selected>Select Office</option>
                     @foreach($departments as $dept)
                         <option value="{{ $dept->dep_id }}">{{ $dept->dep_name }}</option>
                     @endforeach
@@ -97,7 +97,7 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Role</th>
-                        <th>Department</th>
+                        <th>Office</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -119,7 +119,7 @@
                             </div>
                         </td>
 
-                        {{-- Department Column --}}
+                        {{-- Office Column --}}
                         <td class="position-relative align-middle py-2">
                             <span class="readonly-data">{{ $user->dep_name ?? '—' }}</span>
                             {{-- Edit state: Dropdown with strict bounds --}}
@@ -129,9 +129,9 @@
                                     style="width: 100%; font-size:0.85rem;">
                                     {{-- Only show remove option if they have more than 1 membership --}}
                                     @if($user->dep_count > 1)
-                                        <option value="REMOVE" class="text-danger fw-bold">Remove from this department</option>
+                                        <option value="REMOVE" class="text-danger fw-bold">Remove from this office</option>
                                     @elseif(empty($user->dep_id))
-                                        <option value="" disabled selected>— Select Department —</option>
+                                        <option value="" disabled selected>— Select Office —</option>
                                     @endif
                                     @foreach($departments as $dept)
                                         <option value="{{ $dept->dep_id }}" {{ $user->dep_id == $dept->dep_id ? 'selected' : '' }}>
@@ -147,7 +147,7 @@
                                     data-dep-id="{{ $user->dep_id }}"
                                     data-user-name="{{ $user->user_firstname }} {{ $user->user_lastname }}"
                                     data-dep-name="{{ $user->dep_name }}"
-                                    title="Remove from Department">
+                                    title="Remove from Office">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>

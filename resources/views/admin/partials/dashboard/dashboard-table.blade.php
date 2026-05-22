@@ -1,8 +1,8 @@
-{{-- Department filter: rendered in HTML, moved into DataTables toolbar via JS --}}
+{{-- Office filter: rendered in HTML, moved into DataTables toolbar via JS --}}
 <div id="dept-filter-container" class="d-flex align-items-center gap-2" style="display:none!important;">
-    <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Department</label>
+    <label class="mb-0" style="white-space:nowrap;font-size:.875rem;">Filter by Office</label>
     <select id="department-filter" class="form-select form-select-sm w-auto">
-        <option value="">All Departments</option>
+        <option value="">All Offices</option>
         @foreach($departments as $department)
             <option value="{{ $department->dep_name }}">{{ $department->dep_name }}</option>
         @endforeach
@@ -19,7 +19,7 @@
                         <th scope="col">Role</th>
                         <th scope="col">Contact</th>
                         <th class="text-center" scope="col" style="width: 100px;">Action</th>
-                        <th class="d-none" scope="col">Department</th>
+                        <th class="d-none" scope="col">Office</th>
                     </tr>
                 </thead>
                 <tbody>

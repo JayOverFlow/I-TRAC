@@ -96,14 +96,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow-lg border-0">
                 <div class="modal-header border-bottom">
-                    <h5 class="modal-title font-weight-bolder" id="editDeptModalLabel">Edit Department</h5>
+                    <h5 class="modal-title font-weight-bolder" id="editDeptModalLabel">Edit Office</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
                     <input type="hidden" id="edit-dept-id">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Department Name</label>
+                        <label class="form-label fw-bold">Office Name</label>
                         <input type="text" class="form-control" id="edit-dept-name-input">
                     </div>
                     <div class="mb-3" id="parent-dept-group">
@@ -258,9 +258,9 @@
                 });
 
 
-                // Wire department filter to column search
+                // Wire office filter to column search
                 $(document).on('change', '#department-filter', function() {
-                    table.column(1).search(this.value).draw(); // column 1 is Department
+                    table.column(0).search(this.value).draw(); // column 0 is Office
                 });
 
                 // Delete Role Logic
@@ -270,7 +270,7 @@
 
                     Swal.fire({
                         title: 'Delete what exactly?',
-                        text: "You can delete just this role, or delete both the role and its associated department.",
+                        text: "You can delete just this role, or delete both the role and its associated office.",
                         icon: 'warning',
                         showCancelButton: true,
                         showDenyButton: true,
@@ -278,14 +278,14 @@
                         denyButtonColor: '#8a2be2',    // Purple for Both
                         cancelButtonColor: '#888ea8',  // Gray
                         confirmButtonText: 'Role Only',
-                        denyButtonText: 'Role & Department',
+                        denyButtonText: 'Role & Office',
                         cancelButtonText: 'Cancel'
                     }).then((result) => {
                         // User clicked 'Role Only'
                         if (result.isConfirmed) {
                             executeDelete(roleId, false, $row);
                         } 
-                        // User clicked 'Role & Department'
+                        // User clicked 'Role & Office'
                         else if (result.isDenied) {
                             executeDelete(roleId, true, $row);
                         }
@@ -305,22 +305,23 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Deleted!',
-                                    text: deleteDepartment ? 'Role and Department removed.' : 'Role removed successfully.',
+                                    text: deleteDepartment ? 'Role and Office removed.' : 'Role removed successfully.',
                                 });
 
                                 if (deleteDepartment) {
                                     // Remove the entire row
                                     table.row($row).remove().draw(false);
                                 } else {
-                                    // Make the row look like an empty department dynamically
+                                    // Make the row look like an empty office dynamically
                                     $row.attr('data-role-id', '');
                                     
-                                    // Update Role Column Text
-                                    var $roleCell = $row.find('td:first-child .d-flex');
+                                    // Update Role Column Text (which is now the second column)
+                                    var $roleCell = $row.find('td:nth-child(2) .d-flex');
+                                    var deptId = $row.data('dep-id');
                                     
                                     // Inject exact same structure as Blade
                                     $roleCell.html(`
-                                        <div class="role-text-val flex-grow-1 py-1 px-2 rounded no-role-assigned-wrapper">
+                                        <div class="role-text-val flex-grow-1 py-1 px-2 rounded no-role-assigned-wrapper d-flex justify-content-between align-items-center w-100">
                                             <span class="static-no-role-text text-muted fst-italic ${isEditMode ? 'd-none' : ''}">No Role Assigned</span>
                                             <a href="javascript:void(0);" class="btn-inline-add-role ${isEditMode ? '' : 'd-none'} text-primary fst-italic" style="text-decoration: underline;">Add a Role</a>
                                         </div>
@@ -330,21 +331,13 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x text-danger"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
                                         </div>
+                                        <div class="px-2">
+                                            <button class="btn btn-outline-danger btn-sm p-1 inline-delete-dept-only-btn ${isEditMode ? '' : 'd-none'}" data-dep-id="${deptId}" title="Delete Empty Office">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>
+                                        </div>
                                     `);
-                                    var $btnCell = $row.find('td:last-child .d-flex');
-                                    var deptId = $row.data('dep-id');
                                     
-                                    // Remove the old Role delete button
-                                    $btnCell.find('.inline-delete-btn').remove();
-
-                                    // Inject the generic empty department delete button
-                                    var newBtn = `
-                                        <button class="btn btn-outline-danger btn-sm p-1 inline-delete-dept-only-btn" data-dep-id="${deptId}" title="Delete Empty Department">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                        </button>
-                                    `;
-                                    $btnCell.append(newBtn);
-
                                     // Let DataTables know the inner HTML changed
                                     table.row($row).invalidate().draw(false);
                                 }
@@ -482,7 +475,7 @@
                     var deptName = $('#edit-dept-name-input').val().trim();
 
                     if (!deptName) {
-                        Swal.fire('Validation Error', 'Department Name cannot be empty.', 'error');
+                        Swal.fire('Validation Error', 'Office Name cannot be empty.', 'error');
                         return;
                     }
 
@@ -530,14 +523,14 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Updated!',
-                                text: 'The department details have been applied everywhere.',
+                                text: 'The office details have been applied everywhere.',
                                 timer: 1500,
                                 showConfirmButton: false
                             });
                         },
                         error: function(xhr) {
                             $btn.prop('disabled', false).text('Save changes');
-                            var msg = xhr.responseJSON?.message || 'Failed to update department.';
+                            var msg = xhr.responseJSON?.message || 'Failed to update office.';
                             Swal.fire('Error', msg, 'error');
                         }
                     });
@@ -549,8 +542,8 @@
                     var $row = $(this).closest('tr');
 
                     Swal.fire({
-                        title: 'Delete this department?',
-                        text: "This department has no roles. You won't be able to revert this!",
+                        title: 'Delete this office?',
+                        text: "This office has no roles. You won't be able to revert this!",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#e7515a',
@@ -569,7 +562,7 @@
                                         Swal.fire({
                                             icon: 'success',
                                             title: 'Deleted!',
-                                            text: 'The empty department has been removed.',
+                                            text: 'The empty office has been removed.',
                                         });
                                         // Remove row
                                         table.row($row).remove().draw(false);
@@ -578,7 +571,7 @@
                                     }
                                 },
                                 error: function(xhr) {
-                                    var errMsg = 'Failed to delete department.';
+                                    var errMsg = 'Failed to delete office.';
                                     if(xhr.responseJSON && xhr.responseJSON.message) {
                                         errMsg = xhr.responseJSON.message;
                                     }
@@ -611,32 +604,32 @@
                         var isCreatingDept = (deptId === 'NEW');
                         var isEmptyNewDept = (isCreatingDept && newDeptName.trim() === '');
 
-                        // Error block: No role name and no new department (Did nothing)
+                         // Error block: No role name and no new department (Did nothing)
                         if (isEmptyRole && isExistingDept) {
-                            Swal.fire('Validation Error', 'You must specify a Role Name when assigning to an existing department.', 'error');
+                            Swal.fire('Validation Error', 'You must specify a Role Name when assigning to an existing office.', 'error');
                             hasErrors = true;
                             return false; // Break $.each loop
                         }
 
                         // Error block: Selected New Dept but wrote no name
                         if (isEmptyNewDept) {
-                            Swal.fire('Validation Error', 'You must specify a New Department Name.', 'error');
+                            Swal.fire('Validation Error', 'You must specify a New Office Name.', 'error');
                             hasErrors = true;
                             return false;
                         }
 
                         // Error block: Nothing selected in dropdown
                         if (!deptId) {
-                            Swal.fire('Validation Error', 'You must select a Department or choose to Create New.', 'error');
+                            Swal.fire('Validation Error', 'You must select an Office or choose to Create New.', 'error');
                             hasErrors = true;
                             return false;
                         }
 
                         // Build Summary String
                         if (isCreatingDept && !isEmptyRole) {
-                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in New Department: ${newDeptName.trim()}</small></li>`);
+                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in New Office: ${newDeptName.trim()}</small></li>`);
                         } else if (isCreatingDept && isEmptyRole) {
-                            summaryList.push(`<li style="margin-bottom: 5px;"><b>New Department Only:</b> ${newDeptName.trim()}</li>`);
+                            summaryList.push(`<li style="margin-bottom: 5px;"><b>New Office Only:</b> ${newDeptName.trim()}</li>`);
                         } else if (isExistingDept && !isEmptyRole) {
                             var existingDeptName = $(this).find('.select-dept-existing option:selected').text();
                             summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in: ${existingDeptName}</small></li>`);
@@ -678,14 +671,14 @@
                     // Dynamically build Review Modal based on what is being submitted
                     var modalTitle = 'Save Changes?';
                     var hasRoles = summaryList.some(text => text.includes('<b>Role:</b>'));
-                    var hasDeptsOnly = summaryList.some(text => text.includes('<b>New Department Only:</b>'));
+                    var hasDeptsOnly = summaryList.some(text => text.includes('<b>New Office Only:</b>'));
 
                     if (hasRoles && hasDeptsOnly) {
-                        modalTitle = 'Save Roles & Departments?';
+                        modalTitle = 'Save Roles & Offices?';
                     } else if (hasRoles) {
                         modalTitle = 'Save New Roles?';
                     } else if (hasDeptsOnly) {
-                        modalTitle = 'Save New Departments?';
+                        modalTitle = 'Save New Offices?';
                     }
 
                     var modalHtml = `
