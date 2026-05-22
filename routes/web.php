@@ -177,6 +177,9 @@ Route::controller(AdminAuthController::class)->group(function () {
 // Admin Dashboard Pages
 Route::controller(\App\Http\Controllers\Admin\AdminDashboardController::class)->middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/dashboard', 'index')->name('admin.dashboard');
+    Route::post('/users/update', 'updateUser')->name('admin.users.update');
+    Route::post('/users/update-password', 'updateUserPassword')->name('admin.users.update-password');
+    Route::post('/users/delete', 'deleteUser')->name('admin.users.delete');
     Route::get('/roles-offices', [AdminRolesOfficesController::class, 'index'])->name('admin.roles-offices');
     Route::post('/roles-offices/save', [AdminRolesOfficesController::class, 'saveRoles'])->name('admin.roles-offices.save');
     Route::put('/roles-offices/{id}', [AdminRolesOfficesController::class, 'updateRole'])->name('admin.roles-offices.update');
