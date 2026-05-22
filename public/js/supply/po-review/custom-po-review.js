@@ -67,7 +67,8 @@ $(document).ready(function() {
         const categories = [
             { bodyId: 'tbody-supply-materials', countId: 'count-supply-materials', totalId: 'total-supply-materials' },
             { bodyId: 'tbody-semi-expendable', countId: 'count-semi-expendable', totalId: 'total-semi-expendable' },
-            { bodyId: 'tbody-equipment', countId: 'count-equipment', totalId: 'total-equipment' }
+            { bodyId: 'tbody-equipment', countId: 'count-equipment', totalId: 'total-equipment' },
+            { bodyId: 'tbody-not-delivered', countId: 'count-not-delivered', totalId: 'total-not-delivered' }
         ];
 
         categories.forEach(cat => {
@@ -109,6 +110,7 @@ $(document).ready(function() {
         if (selectedCategory === 'Supply and Materials') targetBodyId = 'tbody-supply-materials';
         else if (selectedCategory === 'Semi-Expendable') targetBodyId = 'tbody-semi-expendable';
         else if (selectedCategory === 'Equipment') targetBodyId = 'tbody-equipment';
+        else if (selectedCategory === 'Not Delivered') targetBodyId = 'tbody-not-delivered';
 
         if (!targetBodyId) return;
 
@@ -167,6 +169,7 @@ $(document).ready(function() {
         if (selectedCategory === 'Supply and Materials') targetBodyId = 'tbody-supply-materials';
         else if (selectedCategory === 'Semi-Expendable') targetBodyId = 'tbody-semi-expendable';
         else if (selectedCategory === 'Equipment') targetBodyId = 'tbody-equipment';
+        else if (selectedCategory === 'Not Delivered') targetBodyId = 'tbody-not-delivered';
 
         if (!targetBodyId) return;
 

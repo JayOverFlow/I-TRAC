@@ -371,6 +371,48 @@
                                     </ul>
                                 </div>
                             </li>
+
+                            <li class="tv-item tv-folder">
+                                <div class="tv-header" id="folderNotDeliveredHeading">
+                                    <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
+                                        data-bs-target="#folderNotDelivered" aria-expanded="false"
+                                        aria-controls="folderNotDelivered">
+                                        <div class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-folder" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path
+                                                    d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <p class="title">Not Delivered</p>
+                                    </div>
+                                </div>
+                                <div id="folderNotDelivered" class="treeview-collapse collapse"
+                                    aria-labelledby="folderNotDeliveredHeading" data-bs-parent="#treeviewFolderStructureEx">
+                                    <ul class="treeview">
+                                        <li class="tv-item tv-file">
+                                            <span class="icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-file" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                    <path
+                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                            <p>Non-Delivery Report</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
