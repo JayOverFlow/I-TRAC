@@ -47,7 +47,7 @@
                                 <span>Done</span>
                             </button>
 
-                            <button type="submit"
+                            <button type="button" id="draft-po-btn"
                                 class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                                 <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                                 <span class="fw-bold">Save as Draft</span>
@@ -69,8 +69,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Supplier:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_supplier" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_supplier" data-field="po_supplier"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_supplier }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -79,8 +81,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Address:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_address" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_address" data-field="po_address"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_address }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -89,8 +93,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Tel No.:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_tele" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_tele" data-field="po_tele"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_tele }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -99,8 +105,10 @@
                                 <h6 class="mb-0 black-text fw-bold">TIN:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_tin" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_tin" data-field="po_tin"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_tin }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -109,8 +117,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Place of Delivery:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_place_delivery" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_place_delivery" data-field="po_place_delivery"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_place_delivery }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -119,9 +129,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Date of Delivery:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_date_delivery"
+                                <input type="text" name="po_date_delivery" data-field="po_date_delivery"
                                     class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date"
                                     value="{{ $po->po_date_delivery }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
                     </div>
@@ -132,8 +143,10 @@
                                 <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_no" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_no" data-field="po_no"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_no }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -142,9 +155,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Date:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_date"
+                                <input type="text" name="po_date" data-field="po_date"
                                     class="form-control form-control-sm w-100 flatpickr-date" placeholder="Select Date"
                                     value="{{ $po->po_date }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -153,8 +167,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Mode of Procurement:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_mode" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_mode" data-field="po_mode"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_mode }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -163,8 +179,10 @@
                                 <h6 class="mb-0 black-text fw-bold">TUP-Taguig TIN:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_tuptin" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_tuptin" data-field="po_tuptin"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_tuptin }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -173,8 +191,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Delivery Term:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_delivery_term" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_delivery_term" data-field="po_delivery_term"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_delivery_term }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
 
@@ -183,8 +203,10 @@
                                 <h6 class="mb-0 black-text fw-bold">Payment Term:</h6>
                             </div>
                             <div class="col-8">
-                                <input type="text" name="po_payment_term" class="form-control form-control-sm w-100"
+                                <input type="text" name="po_payment_term" data-field="po_payment_term"
+                                    class="form-control form-control-sm w-100"
                                     value="{{ $po->po_payment_term }}" {{ $isDone ? 'disabled' : '' }}>
+                                <span class="field-error d-none"></span>
                             </div>
                         </div>
                     </div>
@@ -258,25 +280,7 @@
 
     @include('partials.toast-feedback')
 
-    <!-- Dynamic JS Toast (Hidden) -->
-    <div id="jsValidationToast"
-        class="toast align-items-center text-white bg-danger border-0 shadow-lg position-fixed bottom-0 end-0 m-3"
-        role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 10000;">
-        <div class="d-flex">
-            <div class="toast-body d-flex align-items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-alert-circle">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <div id="jsValidationToastMessage"></div>
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                aria-label="Close"></button>
-        </div>
-    </div>
+
 @endsection
 
 @push('js')
