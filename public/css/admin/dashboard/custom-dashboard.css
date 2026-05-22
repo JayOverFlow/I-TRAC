@@ -182,8 +182,13 @@ body.dark .new-dept-interface {
 
 /* Table Inline Editing Styles */
 .table-edit-container {
-    width: 350px !important;
-    max-width: 350px !important;
+    width: calc(100% - 20px) !important;
+    max-width: 100% !important;
+}
+
+/* Prevent overlapping when inline delete/trash button is present */
+.table-edit-container[style*="right"] {
+    width: auto !important;
 }
 
 .table-edit-select {
