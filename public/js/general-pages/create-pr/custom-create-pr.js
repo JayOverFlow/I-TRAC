@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    // Custom toggle for card collapse using jQuery explicitly 
+    // ─── Card collapse toggle ─────────────────────────────────────────────
     $(document).on('click', '.collapse-toggle', function(e) {
         e.preventDefault();
         var targetCard = $(this).closest('.card-body').find('.pr-collapse-area');
@@ -7,25 +7,24 @@ $(document).ready(function() {
         targetCard.slideToggle(300);
     });
 
-    // Add specification
+    // ─── Specification: Add ───────────────────────────────────────────────
     $(document).on('click', '.add-specification-btn', function() {
         var currentRow = $(this).closest('tr.pr-item-row');
         var specificationRow = currentRow.next('.pr-specification-row');
         specificationRow.removeClass('d-none');
-        // Ensure the body starts visible
         specificationRow.find('.specification-body').show();
         specificationRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
     });
 
-    // Remove specification
+    // ─── Specification: Remove ────────────────────────────────────────────
     $(document).on('click', '.remove-specification-btn', function(e) {
-        e.stopPropagation(); // Prevent toggle from firing
+        e.stopPropagation();
         var specificationRow = $(this).closest('tr.pr-specification-row');
         specificationRow.find('textarea').val('');
         specificationRow.addClass('d-none');
     });
 
-    // Toggle specification (Minimize/Maximize) - 100% jQuery Solution
+    // ─── Specification: Toggle (Minimize/Maximize) ────────────────────────
     $(document).on('click', '.toggle-specification-action', function(e) {
         var container = $(this).closest('.custom-specification-container');
         var body = container.find('.specification-body');
@@ -40,7 +39,7 @@ $(document).ready(function() {
         });
     });
 
-    // Add Item
+    // ─── Add Item ─────────────────────────────────────────────────────────
     $(document).on('click', '.add-item-btn', function(e) {
         e.preventDefault();
         var tbody = $(this).closest('.card').find('tbody');
@@ -80,12 +79,18 @@ $(document).ready(function() {
         newDescRow.find('.specification-body').show();
         newDescRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
 
+        // Clear error states on cloned rows
+        newRow.find('.is-invalid').removeClass('is-invalid');
+        newRow.find('.field-error').text('').addClass('d-none');
+        newDescRow.find('.is-invalid').removeClass('is-invalid');
+        newDescRow.find('.field-error').text('').addClass('d-none');
+
         tbody.append(newRow);
         tbody.append(newDescRow);
         updateTotals();
     });
 
-    // Remove Row
+    // ─── Remove Row ───────────────────────────────────────────────────────
     $(document).on('click', '.remove-row-btn', function() {
         var row = $(this).closest('tr.pr-item-row');
         var specificationRow = row.next('.pr-specification-row');
@@ -94,7 +99,7 @@ $(document).ready(function() {
         updateTotals();
     });
 
-    // Calculate Amount
+    // ─── Calculate Amount ─────────────────────────────────────────────────
     $(document).on('input', '.qty-input, .cost-input', function() {
         var row = $(this).closest('tr.pr-item-row');
         var qty = parseFloat(row.find('.qty-input').val()) || 0;
@@ -111,6 +116,7 @@ $(document).ready(function() {
         updateTotals();
     });
 
+    // ─── Update Totals ────────────────────────────────────────────────────
     function updateTotals() {
         var totalAmount = 0;
         $('.pr-card').each(function() {
@@ -139,17 +145,162 @@ $(document).ready(function() {
     // Generate initial values
     updateTotals();
 
-    // Submit button logic
-    $(document).on('click', '#submit-pr-btn', function() {
-        const url = $(this).data('url');
-        const form = $('#pr-form');
+    // ─── Error helpers ────────────────────────────────────────────────────
+
+    /**
+     * Remove all error states from the form.
+     */
+    function clearAllErrors() {
+        $('#pr-form .field-error').text('').addClass('d-none');
+        $('#pr-form .is-invalid').removeClass('is-invalid');
+    }
+
+    /**
+     * Display field-level errors returned by the Laravel controller.
+     * @param {Object} errors — shape: { "pr_section": ["msg"], "items.0.unit": ["msg"], ... }
+     */
+    function showFieldErrors(errors) {
+        var rows = $('#pr-form .pr-item-row');
+
+        $.each(errors, function(key, messages) {
+            var msg = messages[0];
+
+            // Header fields: pr_section, pr_purpose, pr_no
+            if (!key.startsWith('items.')) {
+                var input = $('#pr-form [data-field="' + key + '"]');
+                if (input.length) {
+                    input.addClass('is-invalid');
+                    input.closest('.col-8').find('.field-error').text(msg).removeClass('d-none');
+                }
+                return;
+            }
+
+            // Item fields: items.0.unit → index=0, field=unit
+            var parts = key.split('.');
+            if (parts.length < 3) return;
+            var idx = parseInt(parts[1], 10);
+            var field = parts[2];
+
+            var row = rows.eq(idx);
+            if (!row.length) return;
+
+            var input = row.find('[data-field="' + field + '"]');
+            if (!input.length) return;
+
+            input.addClass('is-invalid');
+
+            // For specification, find the span inside the spec row
+            if (field === 'specification') {
+                var specRow = row.next('.pr-specification-row');
+                specRow.find('.field-error').text(msg).removeClass('d-none');
+                return;
+            }
+
+            // For other fields, find the error span within the same <td>
+            var errorSpan = input.closest('td').find('.field-error');
+            if (errorSpan.length) {
+                errorSpan.text(msg).removeClass('d-none');
+            }
+        });
+    }
+
+    // ─── Toast helper ─────────────────────────────────────────────────────
+
+    /**
+     * Show a dynamic Bootstrap toast message.
+     */
+    function showToast(message, type) {
+        var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+        var toast = $(
+            '<div class="toast align-items-center text-white ' + bgClass + ' border-0 shadow-lg" role="alert">' +
+                '<div class="d-flex">' +
+                    '<div class="toast-body">' + message + '</div>' +
+                    '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                '</div>' +
+            '</div>'
+        );
+        $('.toast-container').append(toast);
+        var bsToast = new bootstrap.Toast(toast[0], { delay: 5000 });
+        bsToast.show();
+        toast.on('hidden.bs.toast', function() { toast.remove(); });
+    }
+
+    // ─── AJAX form submission ─────────────────────────────────────────────
+
+    /**
+     * Submit the PR form via fetch with FormData.
+     * @param {string} intent  — 'submit' or 'draft'
+     * @param {string} actionUrl — the route URL to POST to
+     */
+    function submitPrForm(intent, actionUrl) {
+        clearAllErrors();
+
+        var form = document.getElementById('pr-form');
+        $('#pr-intent').val(intent);
+
+        var formData = new FormData(form);
+
+        // Disable buttons to prevent double-submission
+        $('#submit-pr-btn, #pr-form button[type="submit"]').prop('disabled', true);
+
+        fetch(actionUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(function(response) {
+            return response.json().then(function(data) {
+                return { status: response.status, ok: response.ok, data: data };
+            });
+        })
+        .then(function(result) {
+            if (result.ok && result.data.success) {
+                // Success — redirect if URL provided, otherwise show toast
+                if (result.data.redirect) {
+                    window.location.href = result.data.redirect;
+                } else {
+                    showToast(result.data.message || 'Saved!', 'success');
+                }
+                return;
+            }
+
+            if (result.status === 422 && result.data.errors) {
+                // Validation errors — show inline per field
+                showFieldErrors(result.data.errors);
+                showToast('Please fix the errors below.', 'error');
+                return;
+            }
+
+            // Other server errors (409, 500, etc.)
+            showToast(result.data.message || 'Something went wrong.', 'error');
+        })
+        .catch(function() {
+            showToast('Network error. Check your connection.', 'error');
+        })
+        .finally(function() {
+            $('#submit-pr-btn, #pr-form button[type="submit"]').prop('disabled', false);
+        });
+    }
+
+    // ─── Submit button — strict validation ────────────────────────────────
+    $(document).on('click', '#submit-pr-btn', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
         if (url) {
-            form.attr('action', url);
+            submitPrForm('submit', url);
         }
-        form.submit();
     });
 
-    // Cancel button logic
+    // ─── Save as Draft — prevent default, use AJAX ────────────────────────
+    $('#pr-form').on('submit', function(e) {
+        e.preventDefault();
+        submitPrForm('draft', this.action);
+    });
+
+    // ─── Cancel button logic ──────────────────────────────────────────────
     $(document).on('click', '#cancel-pr-btn', function() {
         const url = $(this).data('url');
         const form = $('#cancel-pr-form');
@@ -158,11 +309,4 @@ $(document).ready(function() {
             form.submit();
         }
     });
-});
-
-$(document).on('click', '.dropdown-item', function(e) {
-    e.preventDefault();
-    var selectedText = $(this).text().trim();
-    var button = $(this).closest('.btn-group').find('.dropdown-toggle');
-    button.find('span').text(selectedText);
 });

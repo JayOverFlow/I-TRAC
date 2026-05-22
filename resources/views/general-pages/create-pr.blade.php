@@ -13,6 +13,7 @@
 
 <form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form">
     @csrf
+    <input type="hidden" name="_intent" id="pr-intent" value="draft">
     @php
         $rowIndex = 0;
         $isReadOnly = !in_array($task->task_status, ['Pending', 'Rejected']);
@@ -89,19 +90,7 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
 
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
 
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body">
@@ -121,9 +110,11 @@
                             <h6 class="mb-0 black-text fw-bold">Section:</h6>
                         </div>
                         <div class="col-8">
-                            <input type="text" name="pr_section" class="form-control form-control-sm w-100"
+                            <input type="text" name="pr_section" data-field="pr_section"
+                                class="form-control form-control-sm w-100"
                                 value="{{ $pr?->pr_section ?? old('pr_section') }}"
                                 {{ $isReadOnly ? 'disabled' : '' }}>
+                            <span class="field-error d-none"></span>
                         </div>
                     </div>
 
@@ -132,9 +123,11 @@
                             <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
                         </div>
                         <div class="col-8">
-                            <input type="text" name="pr_purpose" class="form-control form-control-sm w-100"
+                            <input type="text" name="pr_purpose" data-field="pr_purpose"
+                                class="form-control form-control-sm w-100"
                                 value="{{ $pr?->pr_purpose ?? old('pr_purpose') }}"
                                 {{ $isReadOnly ? 'disabled' : '' }}>
+                            <span class="field-error d-none"></span>
                         </div>
                     </div>
                 </div>
@@ -155,8 +148,10 @@
                             <h6 class="mb-0 black-text fw-bold">P.R No.:</h6>
                         </div>
                         <div class="col-8">
-                            <input type="text" name="pr_no" class="form-control form-control-sm w-100"
+                            <input type="text" name="pr_no" data-field="pr_no"
+                                class="form-control form-control-sm w-100"
                                 value="{{ $pr?->pr_no ?? old('pr_no') }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                            <span class="field-error d-none"></span>
                         </div>
                     </div>
                 </div>
@@ -217,63 +212,17 @@
 
                                             {{-- Unit --}}
                                             <td class="px-1">
-                                                <select class="form-select form-control-sm"
-                                                    name="items[{{ $rowIndex }}][unit]"
+                                                <input type="text" class="form-control form-control-sm text-center"
+                                                    name="items[{{ $rowIndex }}][unit]" data-field="unit"
+                                                    value="{{ $saved?->pr_items_unit ?? '' }}"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
-                                                    <option value="" {{ !$saved ? 'selected' : '' }} disabled>
-                                                        Select</option>
-                                                    <option value="Piece"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Piece' ? 'selected' : '' }}>
-                                                        Piece</option>
-                                                    <option value="Lot"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Lot' ? 'selected' : '' }}>
-                                                        Lot</option>
-                                                    <option value="Set"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Set' ? 'selected' : '' }}>
-                                                        Set</option>
-                                                    <option value="Box"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Box' ? 'selected' : '' }}>
-                                                        Box</option>
-                                                    <option value="Pack"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Pack' ? 'selected' : '' }}>
-                                                        Pack</option>
-                                                    <option value="Ream"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Ream' ? 'selected' : '' }}>
-                                                        Ream</option>
-                                                    <option value="Dozen"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Dozen' ? 'selected' : '' }}>
-                                                        Dozen</option>
-                                                    <option value="Carton"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Carton' ? 'selected' : '' }}>
-                                                        Carton</option>
-                                                    <option value="Liter"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Liter' ? 'selected' : '' }}>
-                                                        Liter</option>
-                                                    <option value="Milliliter"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Milliliter' ? 'selected' : '' }}>
-                                                        Milliliter</option>
-                                                    <option value="Kilogram"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Kilogram' ? 'selected' : '' }}>
-                                                        Kilogram</option>
-                                                    <option value="Gram"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Gram' ? 'selected' : '' }}>
-                                                        Gram</option>
-                                                    <option value="Meter"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Meter' ? 'selected' : '' }}>
-                                                        Meter</option>
-                                                    <option value="Roll"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Roll' ? 'selected' : '' }}>
-                                                        Roll</option>
-                                                    <option value="Square meter"
-                                                        {{ ($saved?->pr_items_unit ?? '') === 'Square meter' ? 'selected' : '' }}>
-                                                        Square meter</option>
-                                                </select>
+                                                <span class="field-error d-none text-center"></span>
                                             </td>
                                             {{-- Item Description --}}
                                             <td class="px-1">
                                                 <div class="input-group input-group-sm">
                                                     <input type="text" class="form-control"
-                                                        name="items[{{ $rowIndex }}][description]"
+                                                        name="items[{{ $rowIndex }}][description]" data-field="description"
                                                         value="{{ $saved?->pr_items_descrip ?? '' }}"
                                                         {{ $isReadOnly ? 'disabled' : '' }}>
                                                     @if (!$isReadOnly)
@@ -285,22 +234,25 @@
                                                         </span>
                                                     @endif
                                                 </div>
+                                                <span class="field-error d-none"></span>
                                             </td>
                                             {{-- Qty. --}}
                                             <td class="px-1"><input type="text"
                                                     class="form-control form-control-sm text-center qty-input"
-                                                    name="items[{{ $rowIndex }}][quantity]"
+                                                    name="items[{{ $rowIndex }}][quantity]" data-field="quantity"
                                                     value="{{ $saved?->pr_items_quantity ?? '' }}"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
+                                                <span class="field-error d-none text-center"></span>
                                             </td>
                                             {{-- Unit Cost --}}
                                             <td class="px-1"><input type="text"
                                                     class="form-control form-control-sm text-center cost-input"
-                                                    name="items[{{ $rowIndex }}][cost]"
+                                                    name="items[{{ $rowIndex }}][cost]" data-field="cost"
                                                     value="{{ $saved?->pr_items_cost ? number_format($saved?->pr_items_cost, 2, '.', '') : '' }}"
                                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
+                                                <span class="field-error d-none text-center"></span>
                                             </td>
                                             {{-- Amount --}}
                                             @php
@@ -356,8 +308,9 @@
                                                     <div class="specification-body border border-top-0 rounded-bottom bg-white"
                                                         style="border-color: #ced4da !important;">
                                                         <textarea class="form-control form-control-sm border-0 shadow-none px-2"
-                                                            name="items[{{ $rowIndex }}][specification]" rows="2" placeholder="Enter specification details."
+                                                            name="items[{{ $rowIndex }}][specification]" data-field="specification" rows="2" placeholder="Enter specification details."
                                                             {{ $isReadOnly ? 'disabled' : '' }}>{{ $specText }}</textarea>
+                                                        <span class="field-error d-none"></span>
                                                     </div>
                                                 </div>
                                             </td>

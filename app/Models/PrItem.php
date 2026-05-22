@@ -18,7 +18,6 @@ class PrItem extends Model
         'pr_items_cost',
         'pr_items_descrip',
         'bidding_status',
-        'pr_items_category'
     ];
 
     protected $appends = ['pr_items_total_cost'];

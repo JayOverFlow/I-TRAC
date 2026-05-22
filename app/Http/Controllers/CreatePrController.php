@@ -11,6 +11,7 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class CreatePrController extends Controller
@@ -53,6 +54,69 @@ class CreatePrController extends Controller
     }
 
     /**
+     * Build validation rules & messages based on intent.
+     * Submit = strict (all required). Draft = lenient.
+     */
+    private function validatePr(Request $request, string $intent): \Illuminate\Validation\Validator
+    {
+        if ($intent === 'submit') {
+            $rules = [
+                'pr_section'              => 'required|string|min:5|max:50',
+                'pr_purpose'              => 'required|string|min:5|max:50',
+                'pr_no'                   => 'nullable|string|min:5|max:20',
+                'items'                   => 'required|array|min:1',
+                'items.*.unit'            => 'required|string|min:1|max:20',
+                'items.*.description'     => 'required|string|min:5|max:50',
+                'items.*.quantity'        => 'required|integer|min:1|max:9999999',
+                'items.*.cost'            => 'required|numeric|min:1|max:9999999',
+                'items.*.specification'   => 'nullable|string|min:5|max:1000',
+            ];
+        } else {
+            $rules = [
+                'pr_section'              => 'nullable|string|min:5|max:50',
+                'pr_purpose'              => 'nullable|string|min:5|max:50',
+                'pr_no'                   => 'nullable|string|min:5|max:20',
+                'items'                   => 'nullable|array',
+                'items.*.unit'            => 'nullable|string|min:1|max:20',
+                'items.*.description'     => 'nullable|string|min:5|max:50',
+                'items.*.quantity'        => 'nullable|integer|min:1|max:9999999',
+                'items.*.cost'            => 'nullable|numeric|min:1|max:9999999',
+                'items.*.specification'   => 'nullable|string|min:5|max:1000',
+            ];
+        }
+
+        $messages = [
+            'pr_section.required'          => 'Section is required.',
+            'pr_section.min'               => 'Section must be at least 5 characters.',
+            'pr_section.max'               => 'Section must not exceed 50 characters.',
+            'pr_purpose.required'          => 'Purpose is required.',
+            'pr_purpose.min'               => 'Purpose must be at least 5 characters.',
+            'pr_purpose.max'               => 'Purpose must not exceed 50 characters.',
+            'pr_no.min'                    => 'PR No. must be at least 5 characters.',
+            'pr_no.max'                    => 'PR No. must not exceed 20 characters.',
+            'items.required'               => 'At least one item is required.',
+            'items.min'                    => 'At least one item is required.',
+            'items.*.unit.required'        => 'Unit is required.',
+            'items.*.unit.max'             => 'Unit must not exceed 20 characters.',
+            'items.*.description.required' => 'Description is required.',
+            'items.*.description.min'      => 'Description must be at least 5 characters.',
+            'items.*.description.max'      => 'Description must not exceed 50 characters.',
+            'items.*.quantity.required'    => 'Quantity is required.',
+            'items.*.quantity.integer'     => 'Quantity must be a whole number.',
+            'items.*.quantity.min'         => 'Quantity must be at least 1.',
+            'items.*.quantity.max'         => 'Quantity is too large.',
+            'items.*.cost.required'        => 'Unit cost is required.',
+            'items.*.cost.numeric'         => 'Unit cost must be a number.',
+            'items.*.cost.min'             => 'Unit cost must be at least 1.',
+            'items.*.cost.max'             => 'Unit cost is too large.',
+            'items.*.specification.min'    => 'Specification must be at least 5 characters.',
+            'items.*.specification.max'    => 'Specification must not exceed 1000 characters.',
+        ];
+
+        return Validator::make($request->all(), $rules, $messages);
+    }
+
+    /**
      * Save or update the PR as a Draft.
      * Task status stays "Pending".
      */
@@ -66,8 +130,20 @@ class CreatePrController extends Controller
         }
 
         if (!in_array($task->task_status, ['Pending', 'Rejected'])) {
-            return redirect()->route('show.create.pr', $task_id)
-                ->with('error', 'This Purchase Request has already been submitted and can no longer be edited.');
+            return response()->json([
+                'success' => false,
+                'message' => 'This PR has already been submitted and can no longer be edited.',
+            ], 409);
+        }
+
+        // Validate (lenient for drafts)
+        $validator = $this->validatePr($request, 'draft');
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
         }
 
         try {
@@ -81,13 +157,19 @@ class CreatePrController extends Controller
                 // Task status stays "Pending" for drafts
             });
 
-            return redirect()->route('show.create.pr', $task_id)
-                ->with('success', 'Purchase Request saved as draft.');
+            session()->flash('success', 'Purchase Request saved as draft.');
+
+            return response()->json([
+                'success'  => true,
+                'message'  => 'Purchase Request saved as draft.',
+                'redirect' => route('show.create.pr', $task_id),
+            ]);
         } catch (\Exception $e) {
             Log::error('Draft Save Error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Something went wrong while saving the draft. Please try again.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while saving the draft. Please try again.',
+            ], 500);
         }
     }
 
@@ -105,8 +187,20 @@ class CreatePrController extends Controller
         }
 
         if (!in_array($task->task_status, ['Pending', 'Rejected'])) {
-            return redirect()->route('show.create.pr', $task_id)
-                ->with('error', 'This Purchase Request has already been submitted.');
+            return response()->json([
+                'success' => false,
+                'message' => 'This PR has already been submitted.',
+            ], 409);
+        }
+
+        // Validate (strict for submission)
+        $validator = $this->validatePr($request, 'submit');
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
         }
 
         try {
@@ -161,13 +255,19 @@ class CreatePrController extends Controller
                 }
             });
 
-            return redirect()->route('show.tasks')
-                ->with('success', 'Purchase Request submitted successfully.');
+            session()->flash('success', 'Purchase Request submitted successfully.');
+
+            return response()->json([
+                'success'  => true,
+                'message'  => 'Purchase Request submitted successfully.',
+                'redirect' => route('show.tasks'),
+            ]);
         } catch (\Exception $e) {
             Log::error('PR Submit Error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Something went wrong while submitting the PR. Please try again.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while submitting the PR. Please try again.',
+            ], 500);
         }
     }
 
