@@ -31,9 +31,19 @@ class CheckRole
         // 3. Check if the active role matches at least one of the required roles/permissions
         $hasRole = in_array($activeRoleGen, $roles);
 
-        // 4. If they don't have the role, block them with a 403 Forbidden error
+        // 4. If they don't have the role, gracefully redirect them to their allowed home page
         if (!$hasRole) {
-            abort(403, 'Unauthorized access. You do not have the right role.');
+            if ($activeRole) {
+                switch ($activeRole->gen_role) {
+                    case 'Head':
+                        return redirect()->route('show.dashboard');
+                    case 'Procurement':
+                    case 'Supply':
+                        return redirect()->route('show.procure');
+                }
+            }
+            // Default fallback for unassigned users
+            return redirect()->route('show.mr');
         }
 
         // 5. If they pass, allow them to proceed to the controller

@@ -232,19 +232,62 @@
                     $activeRoleId = session('active_role_id') ?? ($allRoles->first()?->role_id ?? null);
                     $activeRole = $allRoles->where('role_id', $activeRoleId)->first() ?? $allRoles->first();
                     
-                    // Resolve active role display name, preventing duplicate department suffix if already part of role_name
-                    if ($activeRole) {
-                        $depName = $activeRole->department ? $activeRole->department->dep_name : '';
-                        $roleName = $activeRole->role_name;
-                        if (!empty($depName) && str_contains($roleName, $depName)) {
-                            $activeRoleDisplayName = $roleName;
-                        } else {
-                            $activeRoleDisplayName = $roleName . (!empty($depName) ? ' - ' . $depName : '');
+                    // Helper to format role names according to specific rules
+                    $formatRoleDisplayName = function($role) {
+                        if (!$role) {
+                            $userType = auth()->user()->user_type;
+                            $firstDep = auth()->user()->departments->first();
+                            if ($firstDep) {
+                                $depAcronym = $firstDep->dep_acronym;
+                                $depName = !empty($depAcronym) ? $depAcronym : $firstDep->dep_name;
+                                return $userType . ' - ' . $depName;
+                            }
+                            return $userType;
                         }
-                    } else {
-                        $activeRoleDisplayName = auth()->user()->user_type;
-                    }
-
+                        
+                        // 1. If role has a database-configured acronym, use it directly
+                        if (!empty($role->role_acronym)) {
+                            return $role->role_acronym;
+                        }
+                        
+                        $roleName = $role->role_name;
+                        
+                        // 2. Roles that shouldn't have office/department appended
+                        $excludeOfficeRoles = [
+                            'Assistant Director for Academic Affairs',
+                            'Assistant Director for Administration and Finance',
+                            'Assistant Director for Research and Extension',
+                            'Assistant Director in Research and Extension',
+                            'Campus Director',
+                        ];
+                        
+                        if (in_array($roleName, $excludeOfficeRoles)) {
+                            return $roleName;
+                        }
+                        
+                        // 3. Fallback to department acronym/name appending
+                        $depName = $role->department ? $role->department->dep_name : '';
+                        if (empty($depName)) {
+                            return $roleName;
+                        }
+                        
+                        $depAcronym = $role->department ? $role->department->dep_acronym : null;
+                        $shortDepName = !empty($depAcronym) ? $depAcronym : $depName;
+                        
+                        // Prevent duplicate department suffix if already part of role_name
+                        if (str_contains($roleName, $depName) || str_contains($roleName, $shortDepName)) {
+                            return $roleName;
+                        }
+                        
+                        // Handle "Head - [Department Name]" and shorten to "Head - [Acronym]"
+                        if (str_starts_with($roleName, 'Head - ') && !empty($depAcronym)) {
+                            return 'Head - ' . $depAcronym;
+                        }
+                        
+                        return $roleName . ' - ' . $shortDepName;
+                    };
+                    
+                    $activeRoleDisplayName = $formatRoleDisplayName($activeRole);
                     $userRoleGen = $activeRole?->gen_role ?? auth()->user()->user_type;
                     $showApp = in_array($userRoleGen, ['Head', 'Procurement', 'Supply']);
                 @endphp
@@ -294,96 +337,89 @@
                     </form>
                 </div>
 
-                {{-- Divider and Switch Accounts Selection --}}
-                <div class="dropdown-divider-switch"></div>
-                <div class="switch-accounts-label">Switch accounts</div>
-                <div class="switch-accounts-list">
-                    @foreach ($allRoles as $role)
-                        @php
-                            $roleDepName = $role->department ? $role->department->dep_name : '';
-                            $roleName = $role->role_name;
-                            
-                            // Prevent duplicate department suffix if already part of role_name
-                            if (!empty($roleDepName) && str_contains($roleName, $roleDepName)) {
-                                $displayRoleName = $roleName;
-                            } else {
-                                $displayRoleName = $roleName . (!empty($roleDepName) ? ' - ' . $roleDepName : '');
-                            }
-                            
-                            $isActive = ($role->role_id == $activeRoleId);
-                        @endphp
-                        <div class="switch-account-item d-flex align-items-center justify-content-between" data-role-id="{{ $role->role_id }}">
-                            <div class="account-info">
-                                <div class="account-role">{{ $displayRoleName }}</div>
-                            </div>
-                            <div class="account-selector">
-                                <input type="radio" name="active_role_selector" value="{{ $role->role_id }}" class="custom-radio-selector" {{ $isActive ? 'checked' : '' }}>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Click Listener to switch active account/department with premium loading transition --}}
-                <script>
-                    document.querySelectorAll('.switch-account-item').forEach(item => {
-                        item.addEventListener('click', function(e) {
-                            const roleId = this.dataset.roleId;
-                            const radio = this.querySelector('.custom-radio-selector');
-                            
-                            // If clicked row is already the active checked row, do nothing
-                            if (radio && radio.checked && e.target.tagName === 'INPUT') {
-                                return;
-                            }
-
-                            // Check the radio visually
-                            if (radio) {
-                                radio.checked = true;
-                            }
-
-                            // 1. Render and inject the fullscreen loader spinner overlay
-                            const loadScreen = document.createElement('div');
-                            loadScreen.id = 'load_screen';
-                            loadScreen.innerHTML = `
-                                <div class="loader">
-                                    <div class="loader-content">
-                                        <div class="spinner-grow align-self-center" style="color: var(--red-text-2) !important;"></div>
-                                    </div>
+                @if ($allRoles->count() > 1)
+                    {{-- Divider and Switch Accounts Selection --}}
+                    <div class="dropdown-divider-switch"></div>
+                    <div class="switch-accounts-label">Switch accounts</div>
+                    <div class="switch-accounts-list">
+                        @foreach ($allRoles as $role)
+                            @php
+                                $displayRoleName = $formatRoleDisplayName($role);
+                                $isActive = ($role->role_id == $activeRoleId);
+                            @endphp
+                            <div class="switch-account-item d-flex align-items-center justify-content-between" data-role-id="{{ $role->role_id }}">
+                                <div class="account-info">
+                                    <div class="account-role">{{ $displayRoleName }}</div>
                                 </div>
-                            `;
-                            document.body.appendChild(loadScreen);
+                                <div class="account-selector">
+                                    <input type="radio" name="active_role_selector" value="{{ $role->role_id }}" class="custom-radio-selector" {{ $isActive ? 'checked' : '' }}>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
 
-                            // 2. Fire the AJAX POST request to update active role in session
-                            fetch('{{ route("switch.account") }}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify({ role_id: roleId })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // 3. Refresh page to dynamically reload dashboard and task filters
-                                    window.location.reload();
-                                } else {
-                                    // Clean up loading overlay on failure
+                    {{-- Click Listener to switch active account/department with premium loading transition --}}
+                    <script>
+                        document.querySelectorAll('.switch-account-item').forEach(item => {
+                            item.addEventListener('click', function(e) {
+                                const roleId = this.dataset.roleId;
+                                const radio = this.querySelector('.custom-radio-selector');
+                                
+                                // If clicked row is already the active checked row, do nothing
+                                if (radio && radio.checked && e.target.tagName === 'INPUT') {
+                                    return;
+                                }
+
+                                // Check the radio visually
+                                if (radio) {
+                                    radio.checked = true;
+                                }
+
+                                // 1. Render and inject the fullscreen loader spinner overlay
+                                const loadScreen = document.createElement('div');
+                                loadScreen.id = 'load_screen';
+                                loadScreen.innerHTML = `
+                                    <div class="loader">
+                                        <div class="loader-content">
+                                            <div class="spinner-grow align-self-center" style="color: var(--red-text-2) !important;"></div>
+                                        </div>
+                                    </div>
+                                `;
+                                document.body.appendChild(loadScreen);
+
+                                // 2. Fire the AJAX POST request to update active role in session
+                                fetch('{{ route("switch.account") }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({ role_id: roleId })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // 3. Refresh page to dynamically reload dashboard and task filters
+                                        window.location.reload();
+                                    } else {
+                                        // Clean up loading overlay on failure
+                                        if (loadScreen.parentNode) {
+                                            document.body.removeChild(loadScreen);
+                                        }
+                                        alert('Failed to switch department: ' + data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error switching account:', error);
                                     if (loadScreen.parentNode) {
                                         document.body.removeChild(loadScreen);
                                     }
-                                    alert('Failed to switch department: ' + data.message);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error switching account:', error);
-                                if (loadScreen.parentNode) {
-                                    document.body.removeChild(loadScreen);
-                                }
-                                alert('An error occurred. Please try again.');
+                                    alert('An error occurred. Please try again.');
+                                });
                             });
                         });
-                    });
-                </script>
+                    </script>
+                @endif
             </div>
         </li>
     </ul>
