@@ -439,7 +439,10 @@
             {{-- @include('supply.pages.partials._iar') --}}
             
             {{-- PAR --}}
-            @include('supply.pages.partials._par')
+            {{-- @include('supply.pages.partials._par') --}}
+            
+            {{-- ICS --}}
+            @include('supply.pages.partials._ics')
         </div>
     </div>
 @endsection
