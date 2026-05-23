@@ -36,7 +36,7 @@
 
         /* Premium Form Select styling inside Modals to prevent chevron overlap */
         .modal-body select.form-select {
-            font-size: 0.825rem !important;
+            font-size: 1.1rem !important;
             padding-right: 2.5rem !important;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -80,6 +80,15 @@
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->dep_id }}">{{ $dept->dep_name }}</option>
                             @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">General Role Type</label>
+                        <select class="form-select" id="edit-role-gen-select">
+                            <option value="Unassigned" selected>None</option>
+                            <option value="Head">Head</option>
+                            <option value="Procurement">Procurement</option>
+                            <option value="Supply">Supply</option>
                         </select>
                     </div>
                 </div>
@@ -132,6 +141,51 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="btn-update-dept-save">Save changes</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Delete Role/Office Confirmation Modal --}}
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 450px;">
+            <div class="modal-content border-0" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <div class="modal-header border-0 pt-4 px-4 pb-0">
+                    <h5 class="modal-title font-weight-bold text-danger" id="deleteConfirmModalLabel">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle me-2" style="vertical-align: middle;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <span style="vertical-align: middle;">Confirm Deletion</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <form id="deleteConfirmForm" autocomplete="off">
+                    @csrf
+                    <input type="hidden" id="delete-item-id" />
+                    <input type="hidden" id="delete-item-type" /> {{-- 'role' or 'dept' --}}
+                    <input type="hidden" id="delete-role-delete-dept" value="false" />
+                    
+                    <div class="modal-body px-4 py-3">
+                        <p class="text-muted mb-3" style="font-size: 0.875rem; line-height: 1.5;">
+                            Are you sure you want to permanently delete <span id="delete-item-name" class="text-dark">this item</span>? This action is irreversible.
+                        </p>
+                        
+                        <div class="p-3 bg-light rounded-3 mb-3" style="border: 1px solid #ebedf2;">
+                            <h6 class="font-weight-bold text-dark mb-1" style="font-size: 0.8rem;">Administrator Authorization Required</h6>
+                            <p class="text-muted mb-0" style="font-size: 0.725rem; line-height: 1.4;">
+                                To authorize this deletion, please enter your administrator account password below to confirm your identity.
+                            </p>
+                        </div>
+                        
+                        <div class="form-group mb-0">
+                            <label for="admin-verify-password" class="form-label font-weight-bold text-dark" style="font-size: 0.75rem;">Admin Password</label>
+                            <input type="password" class="form-control" id="admin-verify-password" name="admin_password" placeholder="Enter admin password" required style="border-radius: 6px; font-size: 0.875rem; padding: 10px 12px;" />
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer border-0 px-4 pb-4 pt-0 d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary font-weight-bold px-3 py-2" data-bs-dismiss="modal" style="font-size: 0.8rem; border-radius: 6px;">Cancel</button>
+                        <button type="submit" class="btn btn-danger font-weight-bold px-3 py-2" style="font-size: 0.8rem; border-radius: 6px; background-color: #e7515a; border-color: #e7515a;">Confirm & Delete</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -268,6 +322,7 @@
                 $(document).on('click', '.inline-delete-btn', function() {
                     var roleId = $(this).data('role-id');
                     var $row = $(this).closest('tr');
+                    var roleName = $row.find('.role-text-val').text().trim();
 
                     Swal.fire({
                         title: 'Delete what exactly?',
@@ -284,77 +339,128 @@
                     }).then((result) => {
                         // User clicked 'Role Only'
                         if (result.isConfirmed) {
-                            executeDelete(roleId, false, $row);
+                            $('#delete-item-id').val(roleId);
+                            $('#delete-item-type').val('role');
+                            $('#delete-role-delete-dept').val('false');
+                            $('#delete-item-name').html(`Role <strong>${roleName}</strong>`);
+                            $('#admin-verify-password').val('');
+                            $('#deleteConfirmModal').modal('show');
                         } 
                         // User clicked 'Role & Office'
                         else if (result.isDenied) {
-                            executeDelete(roleId, true, $row);
+                            var deptName = $row.find('.dep-text-val').text().trim();
+                            $('#delete-item-id').val(roleId);
+                            $('#delete-item-type').val('role');
+                            $('#delete-role-delete-dept').val('true');
+                            $('#delete-item-name').html(`Role <strong>${roleName}</strong> and its Office <strong>${deptName}</strong>`);
+                            $('#admin-verify-password').val('');
+                            $('#deleteConfirmModal').modal('show');
                         }
                     });
                 });
 
-                function executeDelete(roleId, deleteDepartment, $row) {
-                    $.ajax({
-                        url: "/admin/roles-offices/" + roleId,
-                        method: 'DELETE',
-                        data: {
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            delete_department: deleteDepartment
-                        },
-                        success: function(response) {
-                            if(response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    text: deleteDepartment ? 'Role and Office removed.' : 'Role removed successfully.',
-                                });
+                // AJAX Submit Delete Confirmation Form
+                $(document).on('submit', '#deleteConfirmForm', function(e) {
+                    e.preventDefault();
+                    
+                    var itemId = $('#delete-item-id').val();
+                    var itemType = $('#delete-item-type').val();
+                    var deleteDept = $('#delete-role-delete-dept').val() === 'true';
+                    var adminPassword = $('#admin-verify-password').val();
+                    
+                    var $form = $(this);
+                    var $submitBtn = $form.find('button[type="submit"]');
+                    
+                    $submitBtn.prop('disabled', true).text('Verifying...');
+                    
+                    if (itemType === 'role') {
+                        var $row = $('tr[data-role-id="' + itemId + '"]');
+                        $.ajax({
+                            url: "/admin/roles-offices/" + itemId,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                delete_department: deleteDept,
+                                admin_password: adminPassword
+                            },
+                            success: function(response) {
+                                $submitBtn.prop('disabled', false).text('Confirm & Delete');
+                                if (response.success) {
+                                    $('#deleteConfirmModal').modal('hide');
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Deleted!',
+                                        text: deleteDept ? 'Role and Office removed.' : 'Role removed successfully.',
+                                    });
 
-                                if (deleteDepartment) {
-                                    // Remove the entire row
+                                    if (deleteDept) {
+                                        table.row($row).remove().draw(false);
+                                    } else {
+                                        // Make the row look like an empty office dynamically
+                                        $row.attr('data-role-id', '');
+                                        var $roleCell = $row.find('td:nth-child(2) .d-flex');
+                                        var deptId = $row.data('dep-id');
+                                        
+                                        $roleCell.html(`
+                                            <div class="role-text-val flex-grow-1 py-1 px-2 rounded no-role-assigned-wrapper d-flex justify-content-between align-items-center w-100">
+                                                <span class="static-no-role-text text-muted fst-italic ${isEditMode ? 'd-none' : ''}">No Role Assigned</span>
+                                                <a href="javascript:void(0);" class="btn-inline-add-role ${isEditMode ? '' : 'd-none'} text-primary fst-italic" style="text-decoration: underline;">Add a Role</a>
+                                            </div>
+                                            <div class="inline-role-add-container d-none flex-grow-1 d-flex align-items-center gap-2 px-2">
+                                                <input type="text" class="form-control form-control-sm inline-role-input" placeholder="Enter Role Name">
+                                                <button type="button" class="btn btn-sm btn-cancel-inline-role p-1 border-0 shadow-none bg-transparent" title="Cancel">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x text-danger"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                </button>
+                                            </div>
+                                            <div class="px-2">
+                                                <button class="btn btn-outline-danger btn-sm p-1 inline-delete-dept-only-btn ${isEditMode ? '' : 'd-none'}" data-dep-id="${deptId}" title="Delete Empty Office">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                </button>
+                                            </div>
+                                        `);
+                                        table.row($row).invalidate().draw(false);
+                                    }
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            },
+                            error: function(xhr) {
+                                $submitBtn.prop('disabled', false).text('Confirm & Delete');
+                                var errMsg = xhr.responseJSON?.message || 'Failed to delete data.';
+                                Swal.fire('Error', errMsg, 'error');
+                            }
+                        });
+                    } else if (itemType === 'dept') {
+                        var $row = $('tr[data-dep-id="' + itemId + '"]');
+                        $.ajax({
+                            url: "/admin/departments/" + itemId,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                admin_password: adminPassword
+                            },
+                            success: function(response) {
+                                $submitBtn.prop('disabled', false).text('Confirm & Delete');
+                                if (response.success) {
+                                    $('#deleteConfirmModal').modal('hide');
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Deleted!',
+                                        text: 'The empty office has been removed.',
+                                    });
                                     table.row($row).remove().draw(false);
                                 } else {
-                                    // Make the row look like an empty office dynamically
-                                    $row.attr('data-role-id', '');
-                                    
-                                    // Update Role Column Text (which is now the second column)
-                                    var $roleCell = $row.find('td:nth-child(2) .d-flex');
-                                    var deptId = $row.data('dep-id');
-                                    
-                                    // Inject exact same structure as Blade
-                                    $roleCell.html(`
-                                        <div class="role-text-val flex-grow-1 py-1 px-2 rounded no-role-assigned-wrapper d-flex justify-content-between align-items-center w-100">
-                                            <span class="static-no-role-text text-muted fst-italic ${isEditMode ? 'd-none' : ''}">No Role Assigned</span>
-                                            <a href="javascript:void(0);" class="btn-inline-add-role ${isEditMode ? '' : 'd-none'} text-primary fst-italic" style="text-decoration: underline;">Add a Role</a>
-                                        </div>
-                                        <div class="inline-role-add-container d-none flex-grow-1 d-flex align-items-center gap-2 px-2">
-                                            <input type="text" class="form-control form-control-sm inline-role-input" placeholder="Enter Role Name">
-                                            <button type="button" class="btn btn-sm btn-cancel-inline-role p-1 border-0 shadow-none bg-transparent" title="Cancel">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x text-danger"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                            </button>
-                                        </div>
-                                        <div class="px-2">
-                                            <button class="btn btn-outline-danger btn-sm p-1 inline-delete-dept-only-btn ${isEditMode ? '' : 'd-none'}" data-dep-id="${deptId}" title="Delete Empty Office">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                            </button>
-                                        </div>
-                                    `);
-                                    
-                                    // Let DataTables know the inner HTML changed
-                                    table.row($row).invalidate().draw(false);
+                                    Swal.fire('Error', response.message, 'error');
                                 }
-                            } else {
-                                Swal.fire('Error', response.message, 'error');
+                            },
+                            error: function(xhr) {
+                                $submitBtn.prop('disabled', false).text('Confirm & Delete');
+                                var errMsg = xhr.responseJSON?.message || 'Failed to delete office.';
+                                Swal.fire('Error', errMsg, 'error');
                             }
-                        },
-                        error: function(xhr) {
-                            var errMsg = 'Failed to delete data.';
-                            if(xhr.responseJSON && xhr.responseJSON.message) {
-                                errMsg = xhr.responseJSON.message;
-                            }
-                            Swal.fire('Error', errMsg, 'error');
-                        }
-                    });
-                }
+                        });
+                    }
+                });
 
                 // Inline Add Role Handlers
                 $(document).on('click', '.btn-inline-add-role', function() {
@@ -383,10 +489,12 @@
 
                     var roleName = $(this).text().trim();
                     var deptId = $row.data('dep-id');
+                    var genRole = $(this).attr('data-gen-role') || 'Head';
 
                     $('#edit-role-id').val(roleId);
                     $('#edit-role-name-input').val(roleName);
                     $('#edit-role-dept-select').val(deptId);
+                    $('#edit-role-gen-select').val(genRole);
 
                     var modal = new bootstrap.Modal(document.getElementById('editRoleModal'));
                     modal.show();
@@ -423,6 +531,7 @@
                     var roleName = $('#edit-role-name-input').val().trim();
                     var deptId = $('#edit-role-dept-select').val();
                     var deptName = $('#edit-role-dept-select option:selected').text();
+                    var genRole = $('#edit-role-gen-select').val();
 
                     if (!roleName) {
                         Swal.fire('Validation Error', 'Role Name cannot be empty.', 'error');
@@ -438,7 +547,8 @@
                         data: {
                             _token: $('meta[name="csrf-token"]').attr('content'),
                             role_name: roleName,
-                            department_id: deptId
+                            department_id: deptId,
+                            gen_role: genRole
                         },
                         success: function(response) {
                             $btn.prop('disabled', false).text('Save changes');
@@ -446,7 +556,10 @@
                             
                             // Dynamically update UI without refresh
                             var $row = $('tr[data-role-id="' + roleId + '"]');
-                            $row.find('.role-text-val').text(roleName);
+                            var $roleTextVal = $row.find('.role-text-val');
+                            $roleTextVal.text(roleName);
+                            $roleTextVal.attr('data-gen-role', genRole);
+                            
                             // Update Department linkages
                             $row.attr('data-dep-id', deptId);
                             $row.find('.dep-text-val').text(deptName);
@@ -541,6 +654,7 @@
                 $(document).on('click', '.inline-delete-dept-only-btn', function() {
                     var deptId = $(this).data('dep-id');
                     var $row = $(this).closest('tr');
+                    var deptName = $row.find('.dep-text-val').text().trim();
 
                     Swal.fire({
                         title: 'Delete this office?',
@@ -552,33 +666,11 @@
                         confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            $.ajax({
-                                url: "/admin/departments/" + deptId,
-                                method: 'DELETE',
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr('content')
-                                },
-                                success: function(response) {
-                                    if(response.success) {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Deleted!',
-                                            text: 'The empty office has been removed.',
-                                        });
-                                        // Remove row
-                                        table.row($row).remove().draw(false);
-                                    } else {
-                                        Swal.fire('Error', response.message, 'error');
-                                    }
-                                },
-                                error: function(xhr) {
-                                    var errMsg = 'Failed to delete office.';
-                                    if(xhr.responseJSON && xhr.responseJSON.message) {
-                                        errMsg = xhr.responseJSON.message;
-                                    }
-                                    Swal.fire('Error', errMsg, 'error');
-                                }
-                            });
+                            $('#delete-item-id').val(deptId);
+                            $('#delete-item-type').val('dept');
+                            $('#delete-item-name').html(`Office <strong>${deptName}</strong>`);
+                            $('#admin-verify-password').val('');
+                            $('#deleteConfirmModal').modal('show');
                         }
                     });
                 });
@@ -593,6 +685,7 @@
                     $('#roles-table tbody tr.new-row-pending').each(function() {
                         var roleName = $(this).find('.input-role-name').val() || "";
                         var deptId = $(this).find('.select-dept-existing').val();
+                        var genRole = $(this).find('.select-gen-role').val() || "Head";
                         var newDeptName = "";
                         
                         // If they chose NEW department, fetch that name instead
@@ -619,6 +712,13 @@
                             return false;
                         }
 
+                        var parentDepId = $(this).find('.select-new-dept-parent').val();
+                        if (isCreatingDept && !parentDepId) {
+                            Swal.fire('Validation Error', 'Please select a Parent Office for the new department.', 'error');
+                            hasErrors = true;
+                            return false;
+                        }
+
                         // Error block: Nothing selected in dropdown
                         if (!deptId) {
                             Swal.fire('Validation Error', 'You must select an Office or choose to Create New.', 'error');
@@ -628,19 +728,21 @@
 
                         // Build Summary String
                         if (isCreatingDept && !isEmptyRole) {
-                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in New Office: ${newDeptName.trim()}</small></li>`);
+                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <small class="badge bg-secondary">${genRole}</small><br><small class="text-muted">↳ in New Office: ${newDeptName.trim()}</small></li>`);
                         } else if (isCreatingDept && isEmptyRole) {
                             summaryList.push(`<li style="margin-bottom: 5px;"><b>New Office Only:</b> ${newDeptName.trim()}</li>`);
                         } else if (isExistingDept && !isEmptyRole) {
                             var existingDeptName = $(this).find('.select-dept-existing option:selected').text();
-                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in: ${existingDeptName}</small></li>`);
+                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <small class="badge bg-secondary">${genRole}</small><br><small class="text-muted">↳ in: ${existingDeptName}</small></li>`);
                         }
 
                         // Push to payload. Allows empty role name ONLY if creating a new dept.
                         newRoles.push({
                             role_name: roleName.trim(),
                             department_id: deptId,
-                            new_department_name: newDeptName.trim()
+                            new_department_name: newDeptName.trim(),
+                            parent_dep_id: parentDepId || null,
+                            gen_role: genRole
                         });
                     });
                     
@@ -652,12 +754,13 @@
                             var deptId = $row.data('dep-id');
                             var deptName = $row.find('.dep-text-val').text().trim();
 
-                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <br><small class="text-muted">↳ in: ${deptName}</small></li>`);
+                            summaryList.push(`<li style="margin-bottom: 5px;"><b>Role:</b> ${roleName.trim()} <small class="badge bg-secondary">Unassigned</small><br><small class="text-muted">↳ in: ${deptName}</small></li>`);
                             
                             newRoles.push({
                                 role_name: roleName.trim(),
                                 department_id: deptId,
-                                new_department_name: ''
+                                new_department_name: '',
+                                gen_role: 'Unassigned'
                             });
                         }
                     });

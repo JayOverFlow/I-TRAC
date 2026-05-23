@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminRolesOfficesController extends Controller
 {
@@ -19,7 +20,7 @@ class AdminRolesOfficesController extends Controller
         // Fetch Roles and their Departments (Right join to ensure all Departments show, even if they have no Roles)
         $data['roles'] = DB::table('roles_tbl as r')
             ->rightJoin('departments_tbl as d', 'r.role_dep_id_fk', '=', 'd.dep_id')
-            ->select('r.role_id', 'r.role_name', 'd.dep_name', 'd.dep_id', 'd.parent_dep_id')
+            ->select('r.role_id', 'r.role_name', 'r.gen_role', 'd.dep_name', 'd.dep_id', 'd.parent_dep_id')
             ->get();
 
         return view('admin.pages.roles-offices', $data);
@@ -70,9 +71,15 @@ class AdminRolesOfficesController extends Controller
                         // Title-case the new department name
                         $formattedDeptName = collect(explode(' ', $newDeptName))->map(fn($word) => ucfirst(strtolower($word)))->join(' ');
                         
+                        // Parse parent_dep_id from roleData (ensure it is one of the allowed division values)
+                        $parentDepId = 35;
+                        if (isset($roleData['parent_dep_id']) && in_array((int)$roleData['parent_dep_id'], [35, 36, 38, 40])) {
+                            $parentDepId = (int)$roleData['parent_dep_id'];
+                        }
+
                         $newDept = Department::create([
                             'dep_name' => $formattedDeptName,
-                            'parent_dep_id' => 35
+                            'parent_dep_id' => $parentDepId
                         ]);
                         $departmentId = $newDept->dep_id;
                     }
@@ -80,9 +87,15 @@ class AdminRolesOfficesController extends Controller
 
                 // Create the role ONLY IF role name is intentionally provided
                 if (!empty($roleName)) {
+                    $genRole = 'Unassigned';
+                    if (isset($roleData['gen_role']) && in_array($roleData['gen_role'], ['Head', 'Procurement', 'Supply', 'Unassigned'])) {
+                        $genRole = $roleData['gen_role'];
+                    }
+
                     Role::create([
                         'role_name' => $roleName,
                         'role_dep_id_fk' => $departmentId,
+                        'gen_role' => $genRole,
                     ]);
 
                     // Log the creation of a new role
@@ -90,7 +103,7 @@ class AdminRolesOfficesController extends Controller
                     ActivityLog::log(
                         'ROLE_CREATE',
                         "New role: $roleName",
-                        "Added new role '$roleName' under department '" . ($dept ? $dept->dep_name : 'Unknown') . "'"
+                        "Added new role '$roleName' ($genRole) under department '" . ($dept ? $dept->dep_name : 'Unknown') . "'"
                     );
                 } else if ($departmentId !== 'NEW' && !empty($newDeptName)) {
                     // Log only department creation if no role was provided
@@ -118,6 +131,25 @@ class AdminRolesOfficesController extends Controller
      */
     public function deleteRole(Request $request, $id)
     {
+        // 1. Password confirmation check
+        $adminId = session('admin_id');
+        $admin = \App\Models\Admin::find($adminId);
+
+        if (!$admin || !Hash::check($request->admin_password, $admin->admin_password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authorization failed. Incorrect admin password.'
+            ], 422);
+        }
+
+        // 2. Safeguard check: Block deleting key Procurement and Supply roles
+        if (in_array((int)$id, [10, 11])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'System Safeguard: Deleting key Procurement and Supply roles is strictly prohibited.'
+            ], 400);
+        }
+
         try {
             DB::beginTransaction();
             
@@ -139,12 +171,18 @@ class AdminRolesOfficesController extends Controller
             if ($request->input('delete_department') === 'true' || $request->input('delete_department') === true) {
                 
                 // Safeguard 1: Block deleting system structural pillars
-                if (in_array($departmentId, [35, 36, 38, 40])) {
+                if (in_array((int)$departmentId, [35, 36, 38, 40])) {
                      DB::rollBack();
                      return response()->json(['success' => false, 'message' => 'System Safeguard: Deleting this office is strictly prohibited.'], 400);
                 }
 
-                // Safeguard 2: Block deleting departments with sub-offices
+                // Safeguard 2: Block deleting key Procurement and Supply offices
+                if (in_array((int)$departmentId, [15, 16])) {
+                     DB::rollBack();
+                     return response()->json(['success' => false, 'message' => 'System Safeguard: Deleting key Procurement and Supply offices is strictly prohibited.'], 400);
+                }
+
+                // Safeguard 3: Block deleting departments with sub-offices
                 $subOfficesCount = Department::where('parent_dep_id', $departmentId)->count();
                 if ($subOfficesCount > 0) {
                      DB::rollBack();
@@ -184,22 +222,42 @@ class AdminRolesOfficesController extends Controller
     /**
      * Delete an empty department
      */
-    public function deleteDepartment($id)
+    public function deleteDepartment(Request $request, $id)
     {
+        // 1. Password confirmation check
+        $adminId = session('admin_id');
+        $admin = \App\Models\Admin::find($adminId);
+
+        if (!$admin || !Hash::check($request->admin_password, $admin->admin_password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authorization failed. Incorrect admin password.'
+            ], 422);
+        }
+
+        // 2. Safeguard check: Block deleting system structural pillars
+        if (in_array((int)$id, [35, 36, 38, 40])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'System Safeguard: Deleting this office is strictly prohibited.'
+            ], 400);
+        }
+
+        // 3. Safeguard check: Block deleting key Procurement and Supply offices
+        if (in_array((int)$id, [15, 16])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'System Safeguard: Deleting key Procurement and Supply offices is strictly prohibited.'
+            ], 400);
+        }
+
         try {
             DB::beginTransaction();
 
             $department = Department::findOrFail($id);
+            $deptName = $department->dep_name;
 
-            // Safeguard 1: Block deleting system structural pillars
-            if (in_array($id, [35, 36, 38, 40])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'System Safeguard: Deleting this office is strictly prohibited.'
-                ], 400);
-            }
-
-            // Safeguard 2: Block deleting departments with sub-offices
+            // Safeguard 4: Block deleting departments with sub-offices
             $subOfficesCount = Department::where('parent_dep_id', $id)->count();
             if ($subOfficesCount > 0) {
                 return response()->json([
@@ -219,6 +277,12 @@ class AdminRolesOfficesController extends Controller
             }
 
             $department->delete();
+
+            ActivityLog::log(
+                'DEPT_DELETE',
+                "Deleted Office: $deptName",
+                "Permanently deleted the empty office '$deptName'"
+            );
 
             DB::commit();
 
@@ -241,15 +305,20 @@ class AdminRolesOfficesController extends Controller
             $request->validate([
                 'role_name' => 'required|string|max:255',
                 'department_id' => 'required|integer',
+                'gen_role' => 'nullable|string|in:Head,Procurement,Supply,Unassigned',
             ]);
 
             $role = Role::findOrFail($id);
             $oldName = $role->role_name;
             $oldDepId = $role->role_dep_id_fk;
+            $oldGenRole = $role->gen_role;
             $oldDept = Department::find($oldDepId);
 
             $role->role_name = $request->role_name;
             $role->role_dep_id_fk = $request->department_id;
+            if ($request->has('gen_role')) {
+                $role->gen_role = $request->gen_role;
+            }
             $role->save();
 
             $newDept = Department::find($request->department_id);
@@ -260,6 +329,15 @@ class AdminRolesOfficesController extends Controller
                     'ROLE_RENAME',
                     "Renamed Role: {$request->role_name}",
                     "Updated role name from '$oldName' to '{$request->role_name}'"
+                );
+            }
+
+            // Log if role classification type changed
+            if ($oldGenRole !== $role->gen_role) {
+                ActivityLog::log(
+                    'ROLE_TYPE_CHANGE',
+                    "Role type updated: {$request->role_name}",
+                    "Changed classification of role '{$request->role_name}' from '$oldGenRole' to '{$role->gen_role}'"
                 );
             }
 

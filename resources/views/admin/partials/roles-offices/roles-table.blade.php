@@ -51,10 +51,30 @@
                 </div>
 
                 {{-- New Dept Interface (Hidden by default) --}}
-                <div class="new-dept-interface d-none mt-1 p-2 rounded">
+                <div class="new-dept-interface d-none mt-1 p-2 rounded border bg-light">
+                    <div class="mb-1">
+                        <input type="text" class="form-control form-control-sm input-new-dept-name" placeholder="New Office Name">
+                    </div>
                     <div class="d-flex align-items-center gap-2 w-100">
                         <div class="flex-grow-1">
-                            <input type="text" class="form-control form-control-sm input-new-dept-name" placeholder="New Office Name">
+                            <select class="form-select form-select-sm select-new-dept-parent">
+                                <option value="" disabled selected>— Select Parent Office —</option>
+                                @foreach($departments as $dept)
+                                    @if(in_array((int)$dept->dep_id, [35, 36, 38, 40]))
+                                        @php
+                                            $displayName = $dept->dep_name;
+                                            if ((int)$dept->dep_id === 36) {
+                                                $displayName = 'Assistant Director for Academic Affairs';
+                                            } elseif ((int)$dept->dep_id === 38) {
+                                                $displayName = 'Assistant Director for Research & Extension';
+                                            } elseif ((int)$dept->dep_id === 40) {
+                                                $displayName = 'Assistant Director for Admin & Finance';
+                                            }
+                                        @endphp
+                                        <option value="{{ $dept->dep_id }}">{{ $displayName }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
                         </div>
                         <div class="d-flex gap-1">
                             <button type="button" class="btn btn-sm btn-secondary btn-cancel-new-dept p-1 px-2" title="Cancel">
@@ -66,7 +86,13 @@
             </div>
         </td>
         <td>
-            <input type="text" class="form-control form-control-sm input-role-name" placeholder="Enter Role Name (Optional for New Office)">
+            <input type="text" class="form-control form-control-sm input-role-name mb-1" placeholder="Enter Role Name (Optional for New Office)">
+            <select class="form-select form-select-sm select-gen-role">
+                <option value="Unassigned" selected>None</option>
+                <option value="Head">Head</option>
+                <option value="Procurement">Procurement</option>
+                <option value="Supply">Supply</option>
+            </select>
         </td>
     </tr>
 </template>
@@ -91,7 +117,7 @@
                         <td class="align-middle">
                             <div class="d-flex justify-content-between align-items-center w-100 h-100">
                                 @if($role->role_id)
-                                    <div class="role-text-val editable-role-text transition-all flex-grow-1 py-1 px-2 rounded" data-role-id="{{ $role->role_id }}">{{ $role->role_name }}</div>
+                                    <div class="role-text-val editable-role-text transition-all flex-grow-1 py-1 px-2 rounded" data-role-id="{{ $role->role_id }}" data-gen-role="{{ $role->gen_role }}">{{ $role->role_name }}</div>
                                     
                                     <div class="px-2">
                                         <button class="btn btn-outline-danger btn-sm p-1 inline-delete-btn d-none" data-role-id="{{ $role->role_id }}" title="Delete Role / Office">
