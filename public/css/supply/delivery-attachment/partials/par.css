@@ -1,0 +1,9 @@
+/**
+ * Dedicated styles for the Property Acknowledgement Receipt (PAR) partial.
+ * Locked to .par-container to prevent global collisions.
+ */
+
+.par-container .flatpickr {
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
