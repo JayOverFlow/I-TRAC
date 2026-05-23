@@ -1,0 +1,33 @@
+/**
+ * Dedicated styles for the Inspection and Acceptance Report (IAR) partial.
+ * Locked to .iar-container to prevent global collisions.
+ */
+
+.iar-container .flatpickr {
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
+
+.iar-container .form-check-input {
+    cursor: pointer;
+}
+
+.iar-container .form-check-label {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease, font-weight 0.2s ease;
+}
+
+.iar-container .form-check-input:checked + .form-check-label {
+    font-weight: 700;
+}
+
+.iar-container input[name="partial"] {
+    transition: border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.iar-container input[name="partial"]:disabled {
+    background-color: #f8f9fa !important;
+    opacity: 0.65;
+    cursor: not-allowed;
+}

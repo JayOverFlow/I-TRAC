@@ -1,4 +1,4 @@
-<div class="col-md-9">
+<div class="col-md-9 ris-container">
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body px-0 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3 px-3">
@@ -166,3 +166,11 @@
         </div>
     </div>
 </div>
+
+@push('css')
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/ris.css') }}">
+@endpush
+
+@push('js')
+    <script src="{{ asset('js/supply/delivery-attachment/partials/ris.js') }}"></script>
+@endpush
