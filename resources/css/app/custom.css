@@ -578,3 +578,23 @@ body.dark .custom-radio-selector:checked::before {
     border-radius: 50%;
     display: block;
 }
+
+/* ==========================================
+   DYNAMIC ROLE-BASED AVATAR BORDERS
+   ========================================== */
+
+/* Head / Procurement / Supply Roles: Royal Purple/Violet */
+.head-avatar, .procurement-avatar, .supply-avatar {
+    padding: 2px;
+    border-radius: 50%;
+    border: 2px solid transparent !important;
+    background: linear-gradient(135deg, #A855F7, #E9D5FF, #7E22CE) border-box !important;
+}
+
+/* Faculty / Staff Roles (Generic/Unassigned): Sleek Silver Gradient */
+.faculty-avatar {
+    padding: 2px;
+    border-radius: 50%;
+    border: 2px solid transparent !important;
+    background: linear-gradient(135deg, #64748B, #CBD5E1, #475569) border-box !important;
+}
