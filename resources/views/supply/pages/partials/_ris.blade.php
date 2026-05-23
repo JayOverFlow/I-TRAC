@@ -28,7 +28,9 @@
                             <h6>$po->po_supplier</h6>
                         </div>
                     </div>
+                </div>
 
+                <div class="col-md-6 border-start-md">
                     <div class="row align-items-center mb-3">
                         <div class="col-4">
                             <h6 class="mb-0 black-text fw-bold">Office:</h6>
@@ -37,18 +39,23 @@
                             <h6>$po->po_address</h6>
                         </div>
                     </div>
+                </div>
+            </div>
 
+            <div class="row justify-content-center align-items-center ms-4 ps-1 mb-0 text-start">
+                <div class="col-1 ps-0">
+                    <h6 class="black-text fw-bold">Purpose:</h6>
+                </div>
+                <div class="col-11">
+                    <h6>$po->purpose</h6>
+                </div>
+            </div>
+
+            <div class="row g-4 ms-3 mt-0 mb-1">
+                <div class="col-md-6">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
                         <input type="text" name="fund_cluster" class="form-control form-control-sm ms-2 w-75">
-                    </div>
-                </div>
-
-                <div class="col-md-6 border-start-md">
-                    <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
-                        <input type="text" name="responsibility_center_code"
-                            class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">RIS Number:</h6>
@@ -56,15 +63,29 @@
                     </div>
                 </div>
 
-                <div class="row justify-content-center align-items-center ms-2 ps-1 mb-3 text-start">
-                    <div class="col-1 ps-0">
-                        <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
+                <div class="col-md-6">
+                    <div class="row align-items-center mb-3">
+                        <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
+                        <input type="text" name="responsibility_center_code"
+                            class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
-                    <div class="col-11">
-                        <h6 class="mb-0">$po->purpose</h6>
+                </div>
+            </div>
+            <hr class="m-0 p-0">
+            <div class="row g-4 ms-3 mt-1 mb-1">
+                <div class="col-md-6">
+                    <div class="row align-items-center mb-3">
+                        <h6 class="mb-2 black-text fw-bold">Requested by:</h6>
+                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="requested_by" placeholder="Dropdown to select user?">
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="row align-items-center mb-3">
+                        <h6 class="mb-2 black-text fw-bold">Received by:</h6>
+                        <input type="text" class="form-control form-control-sm ms-2 mb-2 w-75" name="received_by" placeholder="Dropdown to select user?">
+                    </div>
+                </div>
             </div>
             <hr class="m-0 p-0">
             <div class="row mt-3">
@@ -91,7 +112,8 @@
                         <tr>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][stock_no]" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    name="items[0][stock_no]"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
