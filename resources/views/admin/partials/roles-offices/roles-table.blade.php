@@ -74,7 +74,7 @@
 <div style="margin-top: 20px;">
     <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
         <div class="widget-content widget-content-area br-8">
-            <table id="roles-table" class="table dt-table-hover" style="width:100%">
+            <table id="roles-table" class="table dt-table-hover" style="width:100%; table-layout: fixed;">
                 <thead>
                     <tr>
                         <th style="width: 50% !important;">Office</th>

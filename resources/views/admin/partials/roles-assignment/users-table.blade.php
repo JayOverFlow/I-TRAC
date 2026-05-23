@@ -91,13 +91,13 @@
 <div style="margin-top: 20px;">
     <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
         <div class="widget-content widget-content-area br-8" style="min-height: 500px;">
-            <table id="users-table" class="table dt-table-hover" style="width:100%">
+            <table id="users-table" class="table dt-table-hover" style="width:100%; table-layout: fixed;">
                 <thead>
                     <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Role</th>
-                        <th>Office</th>
+                        <th style="width: 15% !important;">First Name</th>
+                        <th style="width: 15% !important;">Last Name</th>
+                        <th style="width: 35% !important;">Role</th>
+                        <th style="width: 35% !important;">Office</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -45,13 +45,11 @@
 <div style="margin-top: 20px;">
     <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
         <div class="widget-content widget-content-area br-8" style="min-height: 500px;">
-            <table id="zero-config" class="table dt-table-hover" style="width:100%">
+            <table id="zero-config" class="table dt-table-hover" style="width:100%; table-layout: fixed;">
                 <thead>
                     <tr>
-                        <th>Role</th>
-                        <th>Last Name</th>
-                        <th>First Name</th>
-                        <th>Email</th>
+                        <th style="width: 50% !important;">Role</th>
+                        <th style="width: 50% !important;">Name</th>
                         {{-- Hidden column for office filter --}}
                         <th style="display: none;">Office</th>
                     </tr>
@@ -61,12 +59,18 @@
                     <tr data-role-id="{{ $role->role_id }}">
                         <td>{{ $role->role_name ?? '—' }}</td>
                         
-                        {{-- Editable User Columns --}}
+                        {{-- Combined User Name Column --}}
                         <td class="position-relative align-middle py-2">
-                            <span class="readonly-data">{{ $role->user_lastname ?? '—' }}</span>
+                            <span class="readonly-data">
+                                @if($role->user_lastname)
+                                    {{ $role->user_lastname }}, {{ $role->user_firstname }}
+                                @else
+                                    —
+                                @endif
+                            </span>
                             
                             {{-- Editing State: User Dropdown occupies the space when editing --}}
-                            <div class="edit-data d-none position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; z-index: 10;">
+                            <div class="edit-data d-none position-absolute table-edit-container" style="top:50%; transform:translateY(-50%); left:10px; z-index: 10; width: calc(100% - 20px);">
                                 <select class="form-select form-select-sm user-assignment-select shadow-sm table-edit-select" data-role-id="{{ $role->role_id }}" data-original-value="{{ $role->user_id ?? '' }}" style="font-size: 0.85rem;">
                                     <option value="">-- Unassigned --</option>
                                     @foreach($allUsers as $user)
@@ -77,19 +81,13 @@
                                 </select>
                             </div>
                         </td>
-                        <td class="position-relative align-middle py-2">
-                            <span class="readonly-data">{{ $role->user_firstname ?? '—' }}</span>
-                        </td>
-                        <td class="position-relative align-middle py-2">
-                            <span class="readonly-data">{{ $role->user_email ?? '—' }}</span>
-                        </td>
 
                         {{-- Hidden column data --}}
                         <td style="display: none;">{{ $role->dep_name ?? 'N/A' }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center">No roles found.</td>
+                        <td colspan="3" class="text-center">No roles found.</td>
                     </tr>
                     @endforelse
                 </tbody>
