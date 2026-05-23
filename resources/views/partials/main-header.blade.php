@@ -1,3 +1,72 @@
+@php
+    $allRoles = auth()->user()->roles;
+    $activeRoleId = session('active_role_id') ?? ($allRoles->first()?->role_id ?? null);
+    $activeRole = $allRoles->where('role_id', $activeRoleId)->first() ?? $allRoles->first();
+    
+    // Helper to format role names according to specific rules
+    $formatRoleDisplayName = function($role) {
+        if (!$role) {
+            $userType = auth()->user()->user_type;
+            $firstDep = auth()->user()->departments->first();
+            if ($firstDep) {
+                $depAcronym = $firstDep->dep_acronym;
+                $depName = !empty($depAcronym) ? $depAcronym : $firstDep->dep_name;
+                return $userType . ' - ' . $depName;
+            }
+            return $userType;
+        }
+        
+        // 1. If role has a database-configured acronym, use it directly
+        if (!empty($role->role_acronym)) {
+            return $role->role_acronym;
+        }
+        
+        $roleName = $role->role_name;
+        
+        // 2. Roles that shouldn't have office/department appended
+        $excludeOfficeRoles = [
+            'Assistant Director for Academic Affairs',
+            'Assistant Director for Administration and Finance',
+            'Assistant Director for Research and Extension',
+            'Assistant Director in Research and Extension',
+            'Campus Director',
+        ];
+        
+        if (in_array($roleName, $excludeOfficeRoles)) {
+            return $roleName;
+        }
+        
+        // 3. Fallback to department acronym/name appending
+        $depName = $role->department ? $role->department->dep_name : '';
+        if (empty($depName)) {
+            return $roleName;
+        }
+        
+        $depAcronym = $role->department ? $role->department->dep_acronym : null;
+        $shortDepName = !empty($depAcronym) ? $depAcronym : $depName;
+        
+        // Prevent duplicate department suffix if already part of role_name
+        if (str_contains($roleName, $depName) || str_contains($roleName, $shortDepName)) {
+            return $roleName;
+        }
+        
+        // Handle "Head - [Department Name]" and shorten to "Head - [Acronym]"
+        if (str_starts_with($roleName, 'Head - ') && !empty($depAcronym)) {
+            return 'Head - ' . $depAcronym;
+        }
+        
+        return $roleName . ' - ' . $shortDepName;
+    };
+    
+    $activeRoleDisplayName = $formatRoleDisplayName($activeRole);
+    $userRoleGen = $activeRole?->gen_role ?? auth()->user()->user_type;
+    $showApp = in_array($userRoleGen, ['Head', 'Procurement', 'Supply']);
+
+    // Dynamic Role-based border class (Head, Procurement, Supply vs Faculty/Staff)
+    $avatarBorderClass = (in_array($userRoleGen, ['Head', 'Procurement', 'Supply']) || str_contains(strtolower($userRoleGen), 'head'))
+        ? 'head-avatar'
+        : 'faculty-avatar';
+@endphp
 <header class="header navbar navbar-expand-sm expand-header">
 
     <a href="javascript:void(0);" class="sidebarCollapse" data-placement="bottom"><svg xmlns="http://www.w3.org/2000/svg"
@@ -219,78 +288,13 @@
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
                     <div class="avatar avatar-sm">
-                        <img alt="avatar" src="{{ asset('img/profile-30.png') }}"
-                            class="rounded-circle head-avatar">
+                        <img alt="avatar" src="{{ auth()->user()->user_profile_photo ? asset(auth()->user()->user_profile_photo) : asset('img/profiles/blank.avif') }}"
+                            class="rounded-circle {{ $avatarBorderClass }}">
                     </div>
                 </div>
             </a>
 
             <div class="dropdown-menu position-absolute" aria-labelledby="userProfileDropdown">
-                {{-- Dynamic Active Role Resolver --}}
-                @php
-                    $allRoles = auth()->user()->roles;
-                    $activeRoleId = session('active_role_id') ?? ($allRoles->first()?->role_id ?? null);
-                    $activeRole = $allRoles->where('role_id', $activeRoleId)->first() ?? $allRoles->first();
-                    
-                    // Helper to format role names according to specific rules
-                    $formatRoleDisplayName = function($role) {
-                        if (!$role) {
-                            $userType = auth()->user()->user_type;
-                            $firstDep = auth()->user()->departments->first();
-                            if ($firstDep) {
-                                $depAcronym = $firstDep->dep_acronym;
-                                $depName = !empty($depAcronym) ? $depAcronym : $firstDep->dep_name;
-                                return $userType . ' - ' . $depName;
-                            }
-                            return $userType;
-                        }
-                        
-                        // 1. If role has a database-configured acronym, use it directly
-                        if (!empty($role->role_acronym)) {
-                            return $role->role_acronym;
-                        }
-                        
-                        $roleName = $role->role_name;
-                        
-                        // 2. Roles that shouldn't have office/department appended
-                        $excludeOfficeRoles = [
-                            'Assistant Director for Academic Affairs',
-                            'Assistant Director for Administration and Finance',
-                            'Assistant Director for Research and Extension',
-                            'Assistant Director in Research and Extension',
-                            'Campus Director',
-                        ];
-                        
-                        if (in_array($roleName, $excludeOfficeRoles)) {
-                            return $roleName;
-                        }
-                        
-                        // 3. Fallback to department acronym/name appending
-                        $depName = $role->department ? $role->department->dep_name : '';
-                        if (empty($depName)) {
-                            return $roleName;
-                        }
-                        
-                        $depAcronym = $role->department ? $role->department->dep_acronym : null;
-                        $shortDepName = !empty($depAcronym) ? $depAcronym : $depName;
-                        
-                        // Prevent duplicate department suffix if already part of role_name
-                        if (str_contains($roleName, $depName) || str_contains($roleName, $shortDepName)) {
-                            return $roleName;
-                        }
-                        
-                        // Handle "Head - [Department Name]" and shorten to "Head - [Acronym]"
-                        if (str_starts_with($roleName, 'Head - ') && !empty($depAcronym)) {
-                            return 'Head - ' . $depAcronym;
-                        }
-                        
-                        return $roleName . ' - ' . $shortDepName;
-                    };
-                    
-                    $activeRoleDisplayName = $formatRoleDisplayName($activeRole);
-                    $userRoleGen = $activeRole?->gen_role ?? auth()->user()->user_type;
-                    $showApp = in_array($userRoleGen, ['Head', 'Procurement', 'Supply']);
-                @endphp
 
                 <div class="user-profile-section">
                     <div class="media mx-auto">

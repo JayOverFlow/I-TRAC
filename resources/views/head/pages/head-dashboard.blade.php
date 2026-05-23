@@ -22,6 +22,21 @@
 @section('content')
     <div class="p-0">
         <div class="row">
+
+            <div class="col-4">
+                <div class="card h-100">
+                    <div class="card-body row p-4">
+                        <div class="col-4">
+                            <img src="{{ asset('img/SchoolYear.svg') }}" alt="School Year">
+                        </div>
+                        <div class="col-8 text-end">
+                            <h5 class="card-title fw-bold">Fiscal Year</h5>
+                            <h5 class="mb-0 fw-bold">2026</span></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-4">
                 <div class="card h-100">
                     <div class="card-body row p-4">
@@ -51,19 +66,7 @@
                 </div>
             </div>
 
-            <div class="col-4">
-                <div class="card h-100">
-                    <div class="card-body row p-4">
-                        <div class="col-4">
-                            <img src="{{ asset('img/SchoolYear.svg') }}" alt="School Year">
-                        </div>
-                        <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">School Year</h5>
-                            <h5 class="mb-0 fw-bold">2026</span></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 
