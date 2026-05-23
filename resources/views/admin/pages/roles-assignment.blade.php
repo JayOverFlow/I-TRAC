@@ -47,6 +47,7 @@
         $(document).ready(function() {
             // --- USERS TABLE INITIALIZATION ---
             var usersTable = $('#users-table').DataTable({
+                "autoWidth": false,
                 "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
                 "<'table-responsive'tr>" +
                 "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
@@ -385,6 +386,7 @@
 
             // --- ROLES TABLE INITIALIZATION (Original Logic) ---
             var rolesTable = $('#zero-config').DataTable({
+                "autoWidth": false,
                 "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
                 "<'table-responsive'tr>" +
                 "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
@@ -412,7 +414,7 @@
                     $rightCol.prepend($btnContainer);
 
                     $(document).on('change', '#department-filter', function() {
-                        table.column(4).search(this.value).draw();
+                        table.column(2).search(this.value).draw();
                     });
 
                     // Edit Mode Logic
