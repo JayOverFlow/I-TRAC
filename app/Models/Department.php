@@ -15,6 +15,7 @@ class Department extends Model
     // Mass assignment fields
     protected $fillable = [
         'dep_name',
+        'dep_acronym',
         'parent_dep_id',
     ];
 

@@ -40,11 +40,11 @@ class TaskController extends Controller
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-tasks', compact('tasks')), // Fix this
-            null          => view('unassigned/pages/unassigned-tasks', compact('tasks')), // Unassinged (No role) users
-            'Procurement' => view('procurement/pages/procurement-tasks', compact('tasks')),
-            'Supply'      => view('supply/pages/supply-tasks', compact('tasks')),
-            default       => view('errors.403'),
+            'Head'             => view('head/pages/head-tasks', compact('tasks')), // Fix this
+            null, 'Unassigned' => view('unassigned/pages/unassigned-tasks', compact('tasks')), // Unassigned (No role) users
+            'Procurement'      => view('procurement/pages/procurement-tasks', compact('tasks')),
+            'Supply'           => view('supply/pages/supply-tasks', compact('tasks')),
+            default            => abort(403),
         };
     }
 }

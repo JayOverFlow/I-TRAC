@@ -21,11 +21,11 @@ class MrController extends Controller
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-mr', compact('data')),
-            null          => view('unassigned/pages/unassigned-mr', compact('data')), // Unassinged (No role) users
-            'Procurement' => view('procurement/pages/procurement-mr', compact('data')),
-            'Supply' => view('supply/pages/supply-mr', compact('data')),
-            default       => view('errors.403'),
+            'Head'             => view('head/pages/head-mr', compact('data')),
+            null, 'Unassigned' => view('unassigned/pages/unassigned-mr', compact('data')), // Unassigned (No role) users
+            'Procurement'      => view('procurement/pages/procurement-mr', compact('data')),
+            'Supply'           => view('supply/pages/supply-mr', compact('data')),
+            default            => abort(403),
         };
     }
 }

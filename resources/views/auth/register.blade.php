@@ -173,6 +173,10 @@
                                     <button class="btn btn-red btn-back me-3" disabled>Back</button>
                                     <button class="btn btn-red btn-nxt">Next</button>
                                 </div>
+
+                                <div class="mt-4 text-center">
+                                    <p class="black-text">Already have an account? <a href="{{ route('login') }}" class="red-text">Login.</a></p>
+                                </div>
                             </div>
                             <div id="validationStep-two" class="content" role="tabpanel">
                                 <div class="needs-validation">
