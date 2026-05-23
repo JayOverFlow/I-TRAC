@@ -1,0 +1,24 @@
+/**
+ * Dedicated styles for the Requisition and Issue Slip (RIS) partial.
+ * Locked to .ris-container to prevent global collisions.
+ */
+
+.ris-container input[type="radio"] {
+    cursor: pointer;
+}
+
+.ris-container tbody tr {
+    transition: background-color 0.25s ease;
+}
+
+.ris-container tbody tr:hover {
+    background-color: rgba(220, 53, 69, 0.02) !important;
+}
+
+.ris-container .form-check-inline {
+    transition: transform 0.2s ease;
+}
+
+.ris-container .form-check-inline:hover {
+    transform: scale(1.1);
+}

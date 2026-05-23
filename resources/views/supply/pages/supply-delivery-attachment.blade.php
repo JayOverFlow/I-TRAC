@@ -6,6 +6,8 @@
 
 @push('css')
     <!-- Page SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('plugins/src/flatpickr/flatpickr.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/css/light/flatpickr/custom-flatpickr.css') }}">
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/page-specific/custom-tree_view.css') }}">
 
     <!-- CUSTOM css -->
@@ -431,15 +433,18 @@
             </div> --}}
 
             {{-- RIS --}}
-            @include('supply.pages.partials._ris')
+            {{-- @include('supply.pages.partials._ris') --}}
+            
+            {{-- IAR --}}
+            @include('supply.pages.partials._iar')
         </div>
     </div>
 @endsection
 
 @push('js')
-    <!-- Page SPECIFIC css -->
+    <!-- Page SPECIFIC js -->
+    <script src="{{ asset('plugins/src/flatpickr/flatpickr.js') }}"></script>
 
-    <!-- CUSTOM css -->
+    <!-- CUSTOM js -->
     <script src="{{ asset('js/supply/delivery-attachment/custom-delivery-attachment.js') }}"></script>
-    
 @endpush
