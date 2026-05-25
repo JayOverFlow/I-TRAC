@@ -4,7 +4,7 @@
 */
 
 :root {
-    --itrac-red: #a30000;
+    --itrac-red: #8C0404; /* Crimson Red matching general aesthetic */
     --text-muted: #888ea8;
     --text-dark: #3b3f5c;
     --border-color: #e0e6ed;
@@ -12,18 +12,13 @@
 
 /* 
    Main Container 
-   Height matches the Inbox page (calc(100vh - 158px)) 
 */
 .profile-container {
     display: flex;
-    gap: 20px;
-    min-height: auto; /* View mode height dictacted by content */
+    gap: 25px;
+    min-height: auto;
     margin-top: 20px;
     padding-bottom: 20px;
-}
-
-.profile-container.edit-mode {
-    min-height: 720px; /* Kept fixed for stability during edit/zoom */
 }
 
 /* 
@@ -31,7 +26,7 @@
    Corresponds to the red/white card on the left of the mockup.
 */
 .profile-sidebar {
-    flex: 0 0 450px; /* Enlarged to reach almost half-size of the main content */
+    flex: 0 0 380px; /* Aligned nicely to fit mockup dimensions */
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
@@ -40,87 +35,98 @@
     align-items: center;
     box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08);
     border: 1px solid var(--border-color);
+    padding-bottom: 30px;
 }
 
 /* Red header at the top of the sidebar */
 .profile-sidebar-header {
     background-color: var(--itrac-red);
-    height: 100px;
+    height: 120px;
     width: 100%;
 }
 
-/* Avatar container with overlapping position and double border */
+/* Avatar container with overlapping position */
 .profile-avatar-wrapper {
-    margin-top: -60px; /* Overlaps the red header */
+    margin-top: -75px; /* Overlaps the red header */
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-bottom: 15px;
 }
 
 .profile-avatar-wrapper img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: none; /* Removed white inner border */
-    box-shadow: 0 0 0 5px #4361ee; /* Blue outer border matching mockup */
-    object-fit: cover;
-    margin-bottom: 10px;
+    width: 150px !important;
+    height: 150px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Absolute positioned photo change button with bulletproof overrides */
+.btn-avatar-overlay {
+    position: absolute !important;
+    bottom: 5px !important;
+    right: 5px !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    background-color: var(--itrac-red) !important;
+    border: 3px solid #fff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.2s ease !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+}
+
+.btn-avatar-overlay:hover {
+    background-color: #700303 !important;
+    transform: scale(1.08) !important;
+}
+
+.btn-avatar-overlay svg {
+    stroke: #fff !important;
+    stroke-width: 2.5 !important;
+    width: 15px !important;
+    height: 15px !important;
+    fill: none !important;
 }
 
 .profile-sidebar-info {
     text-align: center;
-    padding: 20px;
-    flex-grow: 1;
+    padding: 0 20px;
+    width: 100%;
 }
 
 .profile-sidebar-info h4 {
     color: var(--text-dark);
     font-weight: 700;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-size: 1.25rem;
 }
 
-.profile-sidebar-info p {
+.profile-sidebar-info .sidebar-role {
     color: var(--itrac-red);
     font-size: 0.9rem;
     font-weight: 600;
-    margin-bottom: 20px;
-}
-
-/* Edit Profile Button Style: Using high specificity to ensure it matches the mockup */
-
-.profile-container .btn.btn-edit-profile {
-    border: 1px solid #bfc9d4 !important;
-    background-color: #fff !important;
-    padding: 7px 20px !important;
-    border-radius: 7px !important; /* Matches the rounded mockup */
-    color: #888ea8 !important;
-    font-size: 0.95rem !important;
-    font-weight: 500 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    transition: all 0.3s ease !important;
-    letter-spacing: 0.5px !important;
-    box-shadow: none !important;
-}
-
-.profile-container .btn.btn-edit-profile:hover {
-    background-color: #f8f9fa !important;
-    border-color: #a0aab4 !important;
+    margin-bottom: 0;
+    line-height: 1.4;
 }
 
 /* 
    RIGHT COLUMN: General Information 
-   Corresponds to the large information card on the right.
 */
 .profile-main-content {
     flex: 1;
     background: #fff;
     border-radius: 12px;
-    padding: 10px 30px; /* Further reduced top padding */
+    padding: 25px 30px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08);
@@ -131,49 +137,79 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 8px; /* Tighter spacing */
+    padding-bottom: 12px;
     border-bottom: 1px solid #f1f2f3;
-    margin-bottom: 30px; /* Reduced margin */
+    margin-bottom: 30px;
 }
 
 .profile-main-header h3 {
     color: var(--itrac-red);
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1.35rem;
     margin: 0;
 }
 
-/* Information Grid Placement */
+/* 3-Column Information Grid */
 .info-sections {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px; /* Minimized gap between columns */
-    padding-left: 50px; /* Shifts content to the right */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+}
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .info-section-title {
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 25px;
-    font-size: 1.1rem;
+    margin-bottom: 5px;
+    font-size: 1.05rem;
 }
 
 .info-item {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .info-label {
-    display: block;
     color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 5px;
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+    font-weight: 600;
 }
 
 .info-value {
-    display: block;
     color: var(--text-dark);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    word-wrap: break-word;
+}
+
+/* Change Password Button in view mode */
+.btn-change-password {
+    border: 1px solid #bfc9d4 !important;
+    background-color: #fff !important;
+    padding: 6px 12px !important; /* Compact padding */
+    border-radius: 6px !important;
+    color: var(--text-muted) !important;
+    font-size: 0.8rem !important; /* Smaller text size */
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    align-self: flex-start;
+    cursor: pointer;
+}
+
+.btn-change-password:hover {
+    background-color: #f8f9fa !important;
+    border-color: #a0aab4 !important;
+    color: var(--text-dark) !important;
 }
 
 /* Password field with eye icon */
@@ -181,12 +217,12 @@
     display: flex;
     align-items: center;
     position: relative;
-    flex-wrap: wrap; /* Fixes error message overlap */
+    width: 100%;
 }
 
 .password-toggle-icon {
     position: absolute;
-    right: 15px;
+    right: 12px;
     color: var(--text-muted);
     cursor: pointer;
     z-index: 10;
@@ -194,118 +230,123 @@
 
 .field-error-msg {
     display: block;
-    width: 100%;       /* pushes it below the input row */
+    width: 100%;
     margin-top: 5px;
     font-size: 0.78rem;
     color: #e7515a;
+    font-weight: 600;
 }
 
-/* 
-   EDIT MODE TRANSITION LOGIC
-*/
-
-/* Toggle Visibility */
-.profile-container.edit-mode .view-mode-only {
-    display: none !important;
-}
-
-.profile-container:not(.edit-mode) .edit-mode-only {
-    display: none !important;
-}
-
-/* Sidebar Edit Buttons */
-.avatar-edit-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 75%;
-    padding: 20px 40px;
-}
-
-.btn-upload-photo {
-    background-color: var(--itrac-red) !important;
-    color: #fff !important;
-    border: none !important;
-    padding: 10px !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-}
-
-.btn-delete-photo {
-    background-color: #fff !important;
-    color: var(--text-dark) !important;
-    border: 1px solid var(--border-color) !important;
-    padding: 10px !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-}
-
-/* Form Controls */
+/* Form Controls styled premium */
 .profile-container .form-control {
     border: 1px solid #bfc9d4;
-    padding: 12px 15px;
+    padding: 10px 14px;
     border-radius: 8px;
     color: var(--text-dark);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    width: 100%;
+    transition: all 0.2s ease;
 }
 
 .profile-container .form-control:focus {
-    border-color: var(--itrac-red);
-    box-shadow: 0 0 0 0.2rem rgba(163, 0, 0, 0.1);
+    border-color: #4361ee !important;
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15) !important;
+    background-color: #fff !important;
 }
 
 .profile-container .form-control::placeholder {
-    color: #d3d3d3;
+    color: #cbd5e1;
     font-weight: 400;
 }
 
-/* Footer Buttons */
-.profile-footer {
-    margin-top: auto;
-    padding-top: 30px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
+/* ==========================================
+   COMPACT PASSWORD EDIT COLUMN STYLES
+   ========================================== */
+
+.password-edit-item {
+    margin-bottom: 8px !important;
 }
 
-.btn-go-back {
-    background-color: #fff !important;
-    color: var(--text-muted) !important;
-    border: 1px solid #bfc9d4 !important;
-    padding: 10px 25px !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
+.password-edit-item-last {
+    margin-bottom: 12px !important;
 }
 
-.btn-save-changes {
+.password-edit-item .info-label {
+    margin-bottom: 2px !important;
+}
+
+/* Compact inputs for password edit form */
+.profile-container .form-control.password-edit-input {
+    padding: 6px 10px !important;
+    font-size: 0.84rem !important;
+    font-weight: 500 !important;
+    height: 32px !important;
+    border-radius: 6px !important;
+}
+
+/* Compact inline password action buttons */
+.btn-save-password {
     background-color: var(--itrac-red) !important;
     color: #fff !important;
     border: none !important;
-    padding: 10px 25px !important;
-    border-radius: 8px !important;
+    padding: 6px 12px !important; /* Compact padding */
+    border-radius: 6px !important;
     font-weight: 600 !important;
+    font-size: 0.8rem !important; /* Scaled down text */
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+    height: 32px !important;
 }
 
-/* Adjustments for Edit Mode Header */
-.profile-container.edit-mode .profile-main-header h3 {
-    color: var(--itrac-red);
+.btn-save-password:hover {
+    background-color: #700303 !important;
+    transform: translateY(-1px);
 }
 
-.profile-container.edit-mode .info-sections {
-    padding-left: 0; /* Align to left in edit mode */
+.btn-cancel-password {
+    background-color: #fff !important;
+    color: var(--text-muted) !important;
+    border: 1px solid #bfc9d4 !important;
+    padding: 6px 12px !important; /* Compact padding */
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important; /* Scaled down text */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+    height: 32px !important;
+}
+
+.btn-cancel-password:hover {
+    background-color: #f8f9fa !important;
+    border-color: #a0aab4 !important;
+    color: var(--text-dark) !important;
+}
+
+/* Responsive Rules for Tablet and Mobile sizes */
+@media (max-width: 1024px) {
+    .profile-container {
+        flex-direction: column;
+    }
+    .profile-sidebar {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+    .info-sections {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .info-sections {
+        grid-template-columns: 1fr;
+    }
 }
