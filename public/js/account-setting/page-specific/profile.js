@@ -1,184 +1,38 @@
 /**
  * Profile Tab JS
  * Handles:
- *  - View/Edit mode toggle
- *  - Password visibility toggle
- *  - Save Changes (profile info + password) via AJAX
- *  - Avatar upload and delete via AJAX
+ *  - Avatar upload overlay triggers and AJAX uploading
+ *  - Inline password edit form toggling (Change Password ↔ Cancel)
+ *  - Inline password saving via AJAX and error mapping
+ *  - Form visibility and error cleaning
  */
 
 document.addEventListener('DOMContentLoaded', function () {
 
     // ──────────────────────────────────────────────
-    // 1. CSRF Token (required for all POST/DELETE requests)
+    // 1. CSRF Token (required for POST requests)
     // ──────────────────────────────────────────────
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
     // ──────────────────────────────────────────────
     // 2. Element References
     // ──────────────────────────────────────────────
-    const profileSection    = document.getElementById('profile-section');
-    const editBtn           = document.getElementById('edit-profile-btn');
-    const goBackBtn         = document.getElementById('go-back-btn');
-    const saveBtn           = document.getElementById('btn-save-changes');
-    const uploadBtn         = document.getElementById('btn-upload-photo');
-    const deletePhotoBtn    = document.getElementById('btn-delete-photo');
+    const avatarOverlayBtn  = document.getElementById('btn-avatar-overlay');
     const avatarFileInput   = document.getElementById('avatar-file-input');
     const avatarImg         = document.getElementById('profile-avatar-img');
-    const sidebarFullname   = document.getElementById('sidebar-fullname');
+
+    const changePasswordBtn = document.getElementById('change-password-btn');
+    const savePasswordBtn   = document.getElementById('save-password-btn');
+    const cancelPasswordBtn = document.getElementById('cancel-password-btn');
+
+    const staticSection     = document.getElementById('password-static-section');
+    const editSection       = document.getElementById('password-edit-section');
 
     // ──────────────────────────────────────────────
-    // 3. View ↔ Edit Mode Toggle
+    // 3. Avatar Upload Trigger
     // ──────────────────────────────────────────────
-    if (editBtn && profileSection) {
-        editBtn.addEventListener('click', function () {
-            profileSection.classList.add('edit-mode');
-            clearPasswordFields();
-            clearFieldErrors();
-        });
-    }
-
-    if (goBackBtn && profileSection) {
-        goBackBtn.addEventListener('click', function () {
-            profileSection.classList.remove('edit-mode');
-            clearPasswordFields();
-            clearFieldErrors();
-        });
-    }
-
-    // ──────────────────────────────────────────────
-    // 4. Password Visibility Toggle
-    // ──────────────────────────────────────────────
-    document.querySelectorAll('.password-toggle-icon').forEach(icon => {
-        icon.addEventListener('click', function (e) {
-            e.preventDefault();
-            const container = this.closest('.password-field');
-            if (!container) return;
-            const input = container.querySelector('input');
-            if (!input) return;
-
-            if (input.type === 'password') {
-                input.type = 'text';
-                this.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-            } else {
-                input.type = 'password';
-                this.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-            }
-        });
-    });
-
-    // ──────────────────────────────────────────────
-    // 5. Save Changes Button
-    // ──────────────────────────────────────────────
-    if (saveBtn) {
-        saveBtn.addEventListener('click', async function () {
-            clearFieldErrors();
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Saving...';
-
-            try {
-                // Always save profile info
-                await saveProfileInfo();
-
-                // Only save password if any password field is filled
-                const currentPw = document.getElementById('input-current-password')?.value;
-                const newPw     = document.getElementById('input-new-password')?.value;
-                const confirmPw = document.getElementById('input-confirm-password')?.value;
-
-                if (currentPw || newPw || confirmPw) {
-                    if (newPw !== confirmPw) {
-                        showFieldErrors({ confirm_password: ['Passwords do not match.'] });
-                        throw new Error('Validation failed');
-                    }
-                    await savePassword(currentPw, newPw, confirmPw);
-                }
-
-                showToast('Profile updated successfully!', 'success');
-                profileSection.classList.remove('edit-mode');
-                clearPasswordFields();
-
-            } catch (err) {
-                // Errors are already shown inline; do nothing extra
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    Save Changes
-                `;
-            }
-        });
-    }
-
-    // ──────────────────────────────────────────────
-    // 6. Save Profile Info (AJAX)
-    // ──────────────────────────────────────────────
-    async function saveProfileInfo() {
-        const body = new URLSearchParams({
-            user_firstname:  document.getElementById('input-firstname')?.value  ?? '',
-            user_middlename: document.getElementById('input-middlename')?.value ?? '',
-            user_lastname:   document.getElementById('input-lastname')?.value   ?? '',
-            user_suffix:     document.getElementById('input-suffix')?.value     ?? '',
-            user_contactno:  document.getElementById('input-contactno')?.value  ?? '',
-        });
-
-        const res  = await fetch('/account-settings/update-profile', {
-            method:  'POST',
-            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-            body:    body.toString(),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            if (data.errors) showFieldErrors(data.errors);
-            throw new Error('Profile update failed');
-        }
-
-        // Update the sidebar name live
-        const fn = document.getElementById('input-firstname')?.value ?? '';
-        const mn = document.getElementById('input-middlename')?.value ?? '';
-        const ln = document.getElementById('input-lastname')?.value ?? '';
-        const sf = document.getElementById('input-suffix')?.value ?? '';
-        if (sidebarFullname) {
-            sidebarFullname.textContent = [fn, mn, ln, sf].filter(Boolean).join(' ');
-        }
-
-        // Update view-mode spans live
-        setViewValue('view-firstname',  fn);
-        setViewValue('view-middlename', mn || 'N/A');
-        setViewValue('view-lastname',   ln);
-        setViewValue('view-suffix',     sf || 'N/A');
-    }
-
-    // ──────────────────────────────────────────────
-    // 7. Save Password (AJAX)
-    // ──────────────────────────────────────────────
-    async function savePassword(currentPw, newPw, confirmPw) {
-        const body = new URLSearchParams({
-            current_password: currentPw,
-            new_password:     newPw,
-            confirm_password: confirmPw,
-        });
-
-        const res  = await fetch('/account-settings/update-password', {
-            method:  'POST',
-            headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-            body:    body.toString(),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            if (data.errors) showFieldErrors(data.errors);
-            throw new Error('Password update failed');
-        }
-    }
-
-    // ──────────────────────────────────────────────
-    // 8. Avatar Upload
-    // ──────────────────────────────────────────────
-    if (uploadBtn && avatarFileInput) {
-        uploadBtn.addEventListener('click', function () {
+    if (avatarOverlayBtn && avatarFileInput) {
+        avatarOverlayBtn.addEventListener('click', function () {
             avatarFileInput.click();
         });
 
@@ -190,8 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('profile_photo', file);
             formData.append('_token', csrfToken);
 
-            uploadBtn.disabled = true;
-            uploadBtn.textContent = 'Uploading...';
+            avatarOverlayBtn.disabled = true;
+            const originalSvg = avatarOverlayBtn.innerHTML;
+            avatarOverlayBtn.innerHTML = `
+                <div class="spinner-border spinner-border-sm text-white" role="status" style="width: 12px; height: 12px; border-width: 2px;"></div>
+            `;
 
             try {
                 const res  = await fetch('/account-settings/update-avatar', {
@@ -203,61 +60,136 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (res.ok && data.success) {
                     if (avatarImg) avatarImg.src = data.photo_url;
+                    
+                    // Also update the main header nav user avatar dynamically if present
+                    const headerAvatar = document.querySelector('.navbar-item .avatar img');
+                    if (headerAvatar) headerAvatar.src = data.photo_url;
+
                     showToast('Profile photo updated!', 'success');
                 } else {
-                    showToast(data.message ?? 'Upload failed. Note: some image formats (e.g., HEIC, AVIF) are not supported. Please use JPEG, PNG, or WebP.', 'error');
+                    showToast(data.message ?? 'Upload failed. Supported formats: JPEG, PNG, WebP.', 'error');
                 }
             } catch (err) {
-                showToast('An error occurred during upload. Please ensure your image is a supported format like JPEG, PNG, or WebP.', 'error');
+                showToast('An error occurred during upload. Please try a different image.', 'error');
             } finally {
-                uploadBtn.disabled = false;
-                uploadBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Upload photo`;
+                avatarOverlayBtn.disabled = false;
+                avatarOverlayBtn.innerHTML = originalSvg;
                 avatarFileInput.value = '';
             }
         });
     }
 
     // ──────────────────────────────────────────────
-    // 9. Avatar Delete
+    // 4. Password Form Toggles
     // ──────────────────────────────────────────────
-    if (deletePhotoBtn) {
-        deletePhotoBtn.addEventListener('click', async function () {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to remove your profile photo?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            });
+    if (changePasswordBtn && editSection && staticSection) {
+        changePasswordBtn.addEventListener('click', function () {
+            staticSection.style.display = 'none';
+            editSection.style.display = 'block';
+            clearPasswordFields();
+            clearFieldErrors();
+        });
+    }
 
-            if (!result.isConfirmed) return;
+    if (cancelPasswordBtn && editSection && staticSection) {
+        cancelPasswordBtn.addEventListener('click', function () {
+            editSection.style.display = 'none';
+            staticSection.style.display = 'block';
+            clearPasswordFields();
+            clearFieldErrors();
+        });
+    }
 
-            deletePhotoBtn.disabled = true;
+    // ──────────────────────────────────────────────
+    // 5. Password Eye Visibility Toggle
+    // ──────────────────────────────────────────────
+    document.querySelectorAll('.password-toggle-icon').forEach(icon => {
+        icon.addEventListener('click', function (e) {
+            e.preventDefault();
+            const container = this.closest('.password-field');
+            if (!container) return;
+            const input = container.querySelector('input');
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.classList.remove('feather-eye-off');
+                this.classList.add('feather-eye');
+                this.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            } else {
+                input.type = 'password';
+                this.classList.remove('feather-eye');
+                this.classList.add('feather-eye-off');
+                this.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            }
+        });
+    });
+
+    // ──────────────────────────────────────────────
+    // 6. Save Password (AJAX Submit)
+    // ──────────────────────────────────────────────
+    if (savePasswordBtn) {
+        savePasswordBtn.addEventListener('click', async function () {
+            clearFieldErrors();
+
+            const currentPw = document.getElementById('input-current-password')?.value;
+            const newPw     = document.getElementById('input-new-password')?.value;
+            const confirmPw = document.getElementById('input-confirm-password')?.value;
+
+            if (!currentPw || !newPw || !confirmPw) {
+                const dummyErrors = {};
+                if (!currentPw) dummyErrors.current_password = ['Current password is required.'];
+                if (!newPw) dummyErrors.new_password = ['New password is required.'];
+                if (!confirmPw) dummyErrors.confirm_password = ['Confirmation is required.'];
+                showFieldErrors(dummyErrors);
+                return;
+            }
+
+            if (newPw !== confirmPw) {
+                showFieldErrors({ confirm_password: ['Passwords do not match.'] });
+                return;
+            }
+
+            savePasswordBtn.disabled = true;
+            savePasswordBtn.textContent = 'Saving...';
 
             try {
-                const res  = await fetch('/account-settings/delete-avatar', {
-                    method:  'DELETE',
-                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                const body = new URLSearchParams({
+                    current_password: currentPw,
+                    new_password:     newPw,
+                    confirm_password: confirmPw,
                 });
+
+                const res  = await fetch('/account-settings/update-password', {
+                    method:  'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+                    body:    body.toString(),
+                });
+
                 const data = await res.json();
 
-                if (res.ok && data.success) {
-                    // Reset to the default placeholder using data-blank attribute
-                    if (avatarImg && avatarImg.dataset.blank) {
-                        avatarImg.src = avatarImg.dataset.blank;
+                if (!res.ok || !data.success) {
+                    if (data.errors) {
+                        showFieldErrors(data.errors);
+                    } else {
+                        showToast(data.message ?? 'Failed to update password.', 'error');
                     }
-                    showToast('Profile photo removed.', 'success');
-                } else {
-                    showToast('Failed to remove photo.', 'error');
+                    throw new Error('Password update failed');
                 }
+
+                showToast('Password updated successfully!', 'success');
+                editSection.style.display = 'none';
+                staticSection.style.display = 'block';
+                clearPasswordFields();
+
             } catch (err) {
-                showToast('An error occurred.', 'error');
+                // validation error already styled inline, ignore
             } finally {
-                deletePhotoBtn.disabled = false;
+                savePasswordBtn.disabled = false;
+                savePasswordBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    Save Changes
+                `;
             }
         });
     }
@@ -273,11 +205,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function setViewValue(id, value) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    }
-
     function clearFieldErrors() {
         document.querySelectorAll('.field-error-msg').forEach(el => el.remove());
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
@@ -285,15 +212,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
      * Display Laravel validation errors inline beneath the matching input.
-     * Keys like "user_firstname" map to input id "input-firstname".
      */
     function showFieldErrors(errors) {
         const keyMap = {
-            user_firstname:   'input-firstname',
-            user_middlename:  'input-middlename',
-            user_lastname:    'input-lastname',
-            user_suffix:      'input-suffix',
-            user_contactno:   'input-contactno',
             current_password: 'input-current-password',
             new_password:     'input-new-password',
             confirm_password: 'input-confirm-password',
@@ -311,17 +232,12 @@ document.addEventListener('DOMContentLoaded', function () {
             msg.textContent = Array.isArray(messages) ? messages[0] : messages;
             input.closest('.info-item')?.appendChild(msg);
         });
-
-        // showToast('Please fix the errors below.', 'error');
-        throw new Error('Validation failed');
     }
 
     /**
-     * Simple toast notification.
-     * Uses Bootstrap's toast if available, otherwise falls back to a custom element.
+     * Simple custom toast notification.
      */
     function showToast(message, type = 'success') {
-        // Remove any existing toasts
         document.querySelectorAll('.profile-toast').forEach(t => t.remove());
 
         const toast       = document.createElement('div');
