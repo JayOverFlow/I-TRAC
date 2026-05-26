@@ -156,14 +156,14 @@
                                                 {{-- TUP-ID --}}
                                                 <div class="d-flex align-items-center mb-2">
                                                     <label for="tup-id" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                        TUP ID
+                                                        TUPT-ID
                                                     </label>
                                                     
                                                     <div class="invalid-feedback ms-2 mt-0">
-                                                        Please enter your TUP ID
+                                                        Please enter your TUPT-ID
                                                     </div>
                                                 </div>
-                                                <input type="text" class="form-control" id="tup-id" name="tup_id" placeholder="6 digits">
+                                                <input type="text" class="form-control" id="tup-id" name="tup_id" placeholder="XXXXX-00-0000">
                                             </div>
                                         </div>
                                     </div>
@@ -296,7 +296,7 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <h6 class="mb-0">TUP ID</h6>
+                                            <h6 class="mb-0">TUPT-ID</h6>
                                             <h5 class="black-text" id="review-tup-id"></h5>
                                         </div>
 

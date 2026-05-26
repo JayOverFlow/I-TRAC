@@ -99,7 +99,7 @@
                     <h5 class="info-section-title">Account Setup</h5>
 
                     <div class="info-item">
-                        <span class="info-label">TUP-ID</span>
+                        <span class="info-label">TUPT-ID</span>
                         <span class="info-value">{{ $user->user_tupid }}</span>
                     </div>
 

@@ -39,14 +39,14 @@
                 <div class="modal-body">
                     <div class="form-group mb-3">
                         <input type="text" class="form-control" id="user-search-input"
-                            placeholder="Search by Name/TUP ID">
+                            placeholder="Search by Name/TUPT-ID">
                     </div>
                     <div class="table-responsive" style="height: 250px; overflow-y: auto;">
                         <table class="table table-hover user-list-table mb-0">
                             <thead>
                                 <tr>
                                     <th scope="col" class="fw-bold">Name</th>
-                                    <th scope="col" class="text-center fw-bold" style="width: 120px;">TUP ID
+                                    <th scope="col" class="text-center fw-bold" style="width: 120px;">TUPT-ID
                                     </th>
                                 </tr>
                             </thead>
@@ -58,7 +58,7 @@
                                             {{ $subordinate->user_firstname }} {{ $subordinate->user_lastname }}
                                         </td>
                                         <td class="text-center align-middle">
-                                            TUPT-{{ $subordinate->user_tupid }}
+                                            {{ $subordinate->user_tupid }}
                                         </td>
                                     </tr>
                                 @empty

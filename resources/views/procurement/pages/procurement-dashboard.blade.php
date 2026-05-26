@@ -71,7 +71,7 @@
         <table id="zero-config" class="table table-striped dt-table-hover" style="width:100%">
             <thead>
                 <tr>
-                    <th class="fw-bold">TUP-ID</th>
+                    <th class="fw-bold">TUPT-ID</th>
                     <th class="fw-bold">Full Name</th>
                     <th class="fw-bold">Status</th>
                 </tr>

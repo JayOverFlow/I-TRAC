@@ -24,17 +24,21 @@ class AdminDashboardController extends Controller
      */
     public function updateUser(Request $request)
     {
+        if ($request->has('tupid')) {
+            $request->merge(['tupid' => strtoupper($request->tupid)]);
+        }
+
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,user_id',
             'firstname' => 'required|string|min:3|max:50',
             'middlename' => 'nullable|string|min:3|max:50',
             'lastname' => 'required|string|min:3|max:50',
             'suffix' => 'nullable|string|max:10',
-            'tupid' => 'required|string|max:6|regex:/^\d{6}$/|unique:users,user_tupid,' . $request->user_id . ',user_id',
+            'tupid' => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid,' . $request->user_id . ',user_id',
             'contactno' => 'nullable|string|max:20',
         ], [
-            'tupid.unique' => 'This TUPT ID is already taken by another user.',
-            'tupid.regex' => 'TUPT ID must be exactly 6 digits.',
+            'tupid.unique' => 'This TUPT-ID is already taken by another user.',
+            'tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
             'firstname.min' => 'First name must be at least 3 characters.',
             'lastname.min' => 'Last name must be at least 3 characters.',
         ]);

@@ -68,9 +68,9 @@
 <tr class="po-specification-row {{ $hasSpec ? '' : 'd-none' }}">
     <td colspan="2"></td>
     <td class="px-1">
-        <div class="custom-specification-container">
-            <div class="d-flex justify-content-between align-items-center bg-white border rounded-top custom-specification-header toggle-specification-action"
-                style="cursor: pointer; border-color: #ced4da !important;">
+        <div class="custom-specification-container {{ $isDone ? 'is-disabled' : '' }}">
+            <div class="d-flex justify-content-between align-items-center border rounded-top custom-specification-header toggle-specification-action"
+                style="cursor: pointer;">
                 <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
                     Specification</div>
                 <div class="d-flex align-items-center pe-3">
@@ -86,9 +86,9 @@
                     </svg>
                 </div>
             </div>
-            <div class="specification-body border border-top-0 rounded-bottom bg-white"
-                style="border-color: #ced4da !important; {{ $hasSpec ? '' : 'display: none;' }}">
-                <textarea class="form-control form-control-sm border-0 shadow-none px-2" 
+            <div class="specification-body border border-top-0 rounded-bottom"
+                style="{{ $hasSpec ? '' : 'display: none;' }}">
+                <textarea class="form-control form-control-sm border-0 shadow-none px-2 specification-textarea" 
                     name="items[{{ $index }}][specification]" data-field="specification"
                     rows="2" placeholder="Enter specification details."
                     {{ $isDone ? 'disabled' : '' }}>{{ $item->poSpecs->first()->po_spec_description ?? '' }}</textarea>
