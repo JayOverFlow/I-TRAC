@@ -50,12 +50,19 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => $user // Optionally return user data
         ]);
-    }public function checkTupId(Request $request)
+    }
+
+    public function checkTupId(Request $request)
     {
+        if ($request->has('user_tupid')) {
+            $request->merge(['user_tupid' => strtoupper($request->user_tupid)]);
+        }
+
         $validator = Validator::make($request->all(), [
-            'user_tupid' => 'required|string|size:6|unique:users,user_tupid',
+            'user_tupid' => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid',
         ], [
-            'user_tupid.unique' => 'TUP ID already exists.',
+            'user_tupid.unique' => 'TUPT-ID already exists.',
+            'user_tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -63,7 +70,7 @@ class AuthController extends Controller
                 'message' => $validator->errors()->first('user_tupid'),
             ], 422);
         }
-        return response()->json(['status' => 'success', 'message' => 'TUP ID is available.']);
+        return response()->json(['status' => 'success', 'message' => 'TUPT-ID is available.']);
     }
     // --------------------------------------------------
     // CHECK EMAIL — called live as user types
@@ -88,16 +95,23 @@ class AuthController extends Controller
     // --------------------------------------------------
     public function register(Request $request)
     {
+        if ($request->has('user_tupid')) {
+            $request->merge(['user_tupid' => strtoupper($request->user_tupid)]);
+        }
+
         $validator = Validator::make($request->all(), [
             'user_firstname'         => 'required|string|max:50',
             'user_middlename'        => 'nullable|string|max:50',
             'user_lastname'          => 'required|string|max:50',
             'user_suffix'            => 'nullable|string|max:10',
-            'user_tupid'             => 'required|string|size:6|unique:users,user_tupid',
+            'user_tupid'             => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid',
             'user_email'             => 'required|email|regex:/^.+@tup\.edu\.ph$/i|unique:users,user_email',
             'user_password'          => 'required|string|min:8',
             'user_type'              => 'required|in:Faculty,Staff',
             'selected_department_id' => 'required|integer|exists:departments_tbl,dep_id',
+        ], [
+            'user_tupid.unique' => 'TUPT-ID already exists.',
+            'user_tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
         ]);
         if ($validator->fails()) {
             return response()->json([

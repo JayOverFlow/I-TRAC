@@ -131,9 +131,10 @@ class AuthController extends Controller
                     'middle_name' => 'required|string|min:3|max:50',
                     'last_name' => 'required|string|min:3|max:50',
                     'suffix' => 'nullable|string|max:10',
-                    'tup_id' => 'required|string|max:6|unique:users,user_tupid|regex:/^\d{6}$/',
+                    'tup_id' => 'required|string|max:13|unique:users,user_tupid|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/',
                 ], [
-                    'tup_id.unique' => 'TUP ID already exists.',
+                    'tup_id.unique' => 'TUPT-ID already exists.',
+                    'tup_id.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
                 ]);
             } elseif ($step == 2) { // Step 2 validation
                 $validator = Validator::make($request->all(), [
@@ -179,6 +180,9 @@ class AuthController extends Controller
                 'user_type',
                 'department'
             ]);
+            if (isset($newData['tup_id'])) {
+                $newData['tup_id'] = strtoupper($newData['tup_id']);
+            }
 
             session(['registration_data' => array_merge($currentData, $newData)]);
 

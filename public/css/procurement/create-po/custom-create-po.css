@@ -1,30 +1,36 @@
-.card-budget{
+.card-budget {
     /* background: linear-gradient(45deg, #C60202, #930000) !important; */
     border: none;
 }
 
-.w-6  {
-    width: 6% !important; 
-    }
-.w-13 { 
-    width: 13% !important; 
+.w-6 {
+    width: 6% !important;
 }
-.w-45 { 
-    width: 45% !important; 
+
+.w-13 {
+    width: 13% !important;
 }
-.article-cell-wrapper{
+
+.w-45 {
+    width: 45% !important;
+}
+
+.article-cell-wrapper {
     width: 100%;
 }
+
 .specification-box-container {
     width: 100%;
 }
-.add-specification-btn{
+
+.add-specification-btn {
     cursor: pointer;
 }
 
-.choose-btn, #btndefault{
+.choose-btn,
+#btndefault {
     width: 150px;
-    height:50px;
+    height: 50px;
     border: 1px solid #BFC9D4 !important;
     border-radius: 6px !important;
     background-color: #FFFFFF !important;
@@ -34,18 +40,20 @@
     display: none !important;
 }
 
-.dropdown-btn{
+.dropdown-btn {
     width: 10px;
-    height:10px;
-   
+    height: 10px;
+
 }
 
 .po-specification-row td {
-    border-top: none !important; /* Seamless look */
+    border-top: none !important;
+    /* Seamless look */
     padding-top: 0 !important;
 }
 
-.card-pad,.card-body{
+.card-pad,
+.card-body {
     padding: 25px 30px !important;
 }
 
@@ -53,14 +61,16 @@
     object-fit: cover;
 }
 
-.avatar-img, .avatar-add {
+.avatar-img,
+.avatar-add {
     width: 35px;
     height: 35px;
     object-fit: cover;
 }
 
 .ms-n2 {
-    margin-left: -10px !important; /* This creates the overlapping effect */
+    margin-left: -10px !important;
+    /* This creates the overlapping effect */
 }
 
 .avatar-add {
@@ -73,6 +83,7 @@
 .collapse-toggle .arrow-icon {
     transition: transform 0.3s ease;
 }
+
 .collapse-toggle.rotate-arrow .arrow-icon {
     transform: rotate(180deg);
 }
@@ -93,6 +104,12 @@ thead.bg-transparent th {
 }
 
 /* Custom Description Toggle Styling */
+.custom-specification-header,
+.specification-body {
+    background-color: #ffffff;
+    border-color: #ced4da !important;
+}
+
 .custom-specification-header {
     transition: background-color 0.2s ease;
     user-select: none;
@@ -102,43 +119,63 @@ thead.bg-transparent th {
     background-color: #f1f2f3 !important;
 }
 
+body.dark .custom-specification-header,
+body.dark .specification-body {
+    background-color: #1D2127 !important;
+    border-color: #2A2F38 !important;
+}
+
+body.dark .custom-specification-container.is-disabled .custom-specification-header,
+body.dark .custom-specification-container.is-disabled .specification-body {
+    background-color: #2a2f38 !important;
+    border-color: transparent !important;
+}
+
 body.dark .custom-specification-header:hover {
-  background-color: #2A2F38 !important;
+    background-color: #2A2F38 !important;
+}
+
+body.dark .specification-textarea {
+    background-color: transparent !important;
+    color: #6b7280 !important;
 }
 
 /* Dark mode: make collapse arrows and add-item visible */
 body.dark .collapse-toggle,
 body.dark .collapse-toggle svg,
 body.dark button.collapse-toggle {
-  color: #F3F4F6 !important;
-  stroke: currentColor;
+    color: #F3F4F6 !important;
+    stroke: currentColor;
 }
 
 body.dark .add-item-btn,
 body.dark button.add-item-btn {
-  color: #B91C1C !important;
+    color: #B91C1C !important;
 }
 
 body.dark .add-item-btn:hover,
 body.dark button.add-item-btn:hover {
-  color: #DC2626 !important;
+    color: #DC2626 !important;
 }
 
 /* Dark mode: override Bootstrap's text-black utility */
 body.dark .text-black {
-  color: #F3F4F6 !important;
+    color: #F3F4F6 !important;
 }
+
 body.dark .black-text {
-  color: #F3F4F6 !important;
+    color: #F3F4F6 !important;
 }
 
 .specification-arrow {
     transition: transform 0.3s ease;
-    transform: rotate(180deg); /* Default open state */
+    transform: rotate(180deg);
+    /* Default open state */
 }
 
 .specification-body {
-    display: block; /* Default open state */
+    display: block;
+    /* Default open state */
 }
 
 .remove-specification-btn {
