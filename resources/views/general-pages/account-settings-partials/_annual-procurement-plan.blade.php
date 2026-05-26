@@ -8,25 +8,32 @@
                     <th class="fw-bold black-text text-nowrap text-center" style="width: 15%">APP-ID</th>
                     <th class="fw-bold black-text" style="width: 50%">Title</th>
                     <th class="fw-bold black-text text-center" style="width: 25%">Date Created</th>
-                    <th class="fw-bold black-text text-nowrap text-center" style="width: 10%">Action</th>
+                    <th class="fw-bold black-text text-nowrap text-center" style="width: 10%">Status</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($apps as $app)
+                    @php
+                        $targetRoute = $app->app_status === 'Done'
+                            ? route('show.assign.pr', $app->app_id)
+                            : route('show.create-app', $app->app_id);
+                    @endphp
                     <tr>
                         <td class="text-center" style="cursor: pointer;"
-                            onclick="window.location='{{ route('show.assign.pr', $app->app_id) }}'">
+                            onclick="window.location='{{ $targetRoute }}'">
                             {{ $app->app_id }}</td>
                         <td style="cursor: pointer;"
-                            onclick="window.location='{{ route('show.assign.pr', $app->app_id) }}'">
+                            onclick="window.location='{{ $targetRoute }}'">
                             {{ $app->app_title ?? 'Untitled APP' }}</td>
                         <td class="text-center" style="cursor: pointer;"
-                            onclick="window.location='{{ route('show.assign.pr', $app->app_id) }}'">
+                            onclick="window.location='{{ $targetRoute }}'">
                             {{ $app->created_at ? $app->created_at->format('Y-m-d') : 'N/A' }}</td>
                         <td class="text-center">
-                            <button class="btn bg-transparent p-0 border-0 shadow-none"><img
-                                    src="{{ asset('img/Edit.svg') }}" alt="Edit" width="19"
-                                    height="20"></button>
+                            @if ($app->app_status === 'Done')
+                                <span class="badge bg-success" style="font-size: 0.78rem;">Done</span>
+                            @else
+                                <span class="badge bg-warning" style="font-size: 0.78rem;">Draft</span>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

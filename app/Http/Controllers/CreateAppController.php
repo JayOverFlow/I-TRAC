@@ -10,9 +10,29 @@ use App\Models\AppItem;
 
 class CreateAppController extends Controller
 {
-    public function showCreateApp()
+    public function showCreateApp($app_id = null)
     {
-        return view('head/pages/head-create-app');
+        $app_data = null;
+        if ($app_id) {
+            $app_data = AppParent::with('appItems')->findOrFail($app_id);
+
+            // Scope the APP strictly to the active department context to prevent cross-department tampering.
+            $user = auth()->user();
+            $activeRoleId = session('active_role_id');
+            $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+            $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
+
+            if ($app_data->app_dep_id_fk !== $dep_id) {
+                abort(403, 'Unauthorized access to this APP record.');
+            }
+
+            // If status is already Done, redirect they should be sent directly to assign-pr
+            if ($app_data->app_status === 'Done') {
+                return redirect()->route('show.assign.pr', $app_id);
+            }
+        }
+
+        return view('head/pages/head-create-app', compact('app_data'));
     }
 
     public function createApp(Request $request)
@@ -105,10 +125,30 @@ class CreateAppController extends Controller
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $depId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments()->first()?->dep_id);
 
-        $app = AppParent::create([
-            'saved_by_user_id_fk' => $user->user_id,
-            'app_dep_id_fk'       => $depId,
-        ]);
+        $appId = $request->input('app_id');
+
+        if ($appId) {
+            $app = AppParent::findOrFail($appId);
+
+            // Scope safety check
+            if ($app->app_dep_id_fk !== $depId) {
+                abort(403, 'Unauthorized access.');
+            }
+
+            // Update status
+            $app->update([
+                'app_status' => $intent === 'done' ? 'Done' : 'Draft',
+            ]);
+
+            // Clear old items to overwrite
+            $app->appItems()->delete();
+        } else {
+            $app = AppParent::create([
+                'saved_by_user_id_fk' => $user->user_id,
+                'app_dep_id_fk'       => $depId,
+                'app_status'          => $intent === 'done' ? 'Done' : 'Draft',
+            ]);
+        }
 
         foreach ($request->input('items', []) as $item) {
             AppItem::create([
@@ -134,10 +174,14 @@ class CreateAppController extends Controller
 
         session()->flash('success', $message);
 
+        $redirectUrl = $intent === 'done'
+            ? route('show.assign.pr', $app->app_id)
+            : route('show.create-app', $app->app_id);
+
         return response()->json([
             'success'  => true,
             'message'  => $message,
-            'redirect' => route('show.create-app'),
+            'redirect' => $redirectUrl,
         ]);
     }
 }

@@ -92,10 +92,11 @@
     </div>
     <!-- END MAIN CONTAINER -->
 
-    @include('partials.toast-feedback')
-
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @include('partials.toast-feedback')
+    @include('partials.action-confirmation-alert')
 
     <!-- Inject SPECIFIC and CUSTOM js-->
     @stack('js')
