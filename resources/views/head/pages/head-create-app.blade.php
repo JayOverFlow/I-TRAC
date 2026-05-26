@@ -17,6 +17,9 @@
     <form method="POST" action="{{ route('create.app') }}" id="create-app-form">
         @csrf
         <input type="hidden" name="_intent" id="form-intent" value="done">
+        @if(isset($app_data))
+            <input type="hidden" name="app_id" value="{{ $app_data->app_id }}">
+        @endif
 
         <div class="card allocated-budget-card mb-3">
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
@@ -42,126 +45,247 @@
         </div>
 
         <div id="project-items-container">
-            <div class="card project-item-card mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item 1</span> | Procurement
-                            Project
-                            Details</h5>
+            @if(isset($app_data) && $app_data->appItems->count() > 0)
+                @foreach($app_data->appItems as $index => $item)
+                    <div class="card project-item-card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item {{ $index + 1 }}</span> | Procurement Project Details</h5>
 
-                        <button type="button" class="btn btn-dark-red remove-project-btn d-none">
-                            <img src="{{ asset('img/Trash.svg') }}" width="20" height="20">
-                        </button>
-                    </div>
+                                <button type="button" class="btn btn-dark-red remove-project-btn {{ $app_data->appItems->count() === 1 ? 'd-none' : '' }}" title="Remove project/item">
+                                    <img src="{{ asset('img/Trash.svg') }}" width="20" height="20">
+                                </button>
+                            </div>
 
-                    <div class="row mb-3">
-                        <div class="form-group col-4">
-                            <label>Project Title</label>
-                            <input type="text" class="form-control" name="items[0][proj_title]"
-                                data-field="proj_title">
-                            <span class="field-error d-none"></span>
-                        </div>
+                            <div class="row mb-3">
+                                <div class="form-group col-4">
+                                    <label>Project Title</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][proj_title]"
+                                        data-field="proj_title" value="{{ $item->app_item_proj_title }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
 
-                        <div class="form-group col-4">
-                            <label>End-User or Implementing Unit</label>
-                            <input type="text" class="form-control" name="items[0][end_user]"
-                                data-field="end_user">
-                            <span class="field-error d-none"></span>
-                        </div>
+                                <div class="form-group col-4">
+                                    <label>End-User or Implementing Unit</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][end_user]"
+                                        data-field="end_user" value="{{ $item->app_items_end_user }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
 
-                        <div class="form-group col-4">
-                            <label>General Description</label>
-                            <input type="text" class="form-control" name="items[0][gen_desc]"
-                                data-field="gen_desc">
-                            <span class="field-error d-none"></span>
-                        </div>
-                    </div>
+                                <div class="form-group col-4">
+                                    <label>General Description</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][gen_desc]"
+                                        data-field="gen_desc" value="{{ $item->app_items_gen_desc }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
+                            </div>
 
-                    <div class="row mb-3">
-                        <div class="form-group col-4">
-                            <label>Mode of Procurement</label>
-                            <input type="text" class="form-control" name="items[0][mode]"
-                                data-field="mode">
-                            <span class="field-error d-none"></span>
-                        </div>
+                            <div class="row mb-3">
+                                <div class="form-group col-4">
+                                    <label>Mode of Procurement</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][mode]"
+                                        data-field="mode" value="{{ $item->app_items_mode }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
 
-                        <div class="form-group col-4">
-                            <label>Criteria for Bid Evaluation</label>
-                            <input type="text" class="form-control" name="items[0][criteria]"
-                                data-field="criteria"
-                                placeholder="Including Sustainability and Domestic Preference">
-                            <span class="field-error d-none"></span>
-                        </div>
+                                <div class="form-group col-4">
+                                    <label>Criteria for Bid Evaluation</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][criteria]"
+                                        data-field="criteria"
+                                        placeholder="Including Sustainability and Domestic Preference" value="{{ $item->app_items_criteria }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
 
-                        <div class="form-group col-4">
-                            <label>To be covered by an Early Procurement Activity</label>
-                            <span class="field-error d-none"></span>
-                            <div class="mt-4 d-flex justify-content-center" data-field="covered">
-                                <input class="form-check-input" type="radio" name="items[0][covered]"
-                                    id="covered-yes-0" value="Yes">
-                                <label class="form-check-label ms-2 me-4" for="covered-yes-0">Yes</label>
+                                <div class="form-group col-4">
+                                    <label>To be covered by an Early Procurement Activity</label>
+                                    <span class="field-error d-none"></span>
+                                    <div class="mt-4 d-flex justify-content-center" data-field="covered">
+                                        <input class="form-check-input" type="radio" name="items[{{ $index }}][covered]"
+                                            id="covered-yes-{{ $index }}" value="Yes" {{ $item->app_items_covered === 'Yes' ? 'checked' : '' }}>
+                                        <label class="form-check-label ms-2 me-4" for="covered-yes-{{ $index }}">Yes</label>
 
-                                <input class="form-check-input" type="radio" name="items[0][covered]"
-                                    id="covered-no-0" value="No">
-                                <label class="form-check-label ms-2" for="covered-no-0">No</label>
+                                        <input class="form-check-input" type="radio" name="items[{{ $index }}][covered]"
+                                            id="covered-no-{{ $index }}" value="No" {{ $item->app_items_covered === 'No' ? 'checked' : '' }}>
+                                        <label class="form-check-label ms-2" for="covered-no-{{ $index }}">No</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <h5 class="card-title fw-bold col-6">Projected Timeline</h5>
+                                <h5 class="card-title fw-bold col-6">Funding Details</h5>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="form-group col-3">
+                                    <label>Start of Procurement Activity</label>
+                                    <input type="text" class="form-control flatpickr-date" name="items[{{ $index }}][start]"
+                                        data-field="start" placeholder="Select Date" value="{{ $item->app_items_start ? \Carbon\Carbon::parse($item->app_items_start)->format('Y-m-d') : '' }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
+
+                                <div class="form-group col-3">
+                                    <label>End of Procurement Activity</label>
+                                    <input type="text" class="form-control flatpickr-date" name="items[{{ $index }}][end]"
+                                        data-field="end" placeholder="Select Date" value="{{ $item->app_items_end }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
+
+                                <div class="form-group col-3">
+                                    <label>Source of Fund</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][source]"
+                                        data-field="source" value="{{ $item->app_items_source }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
+
+                                <div class="form-group col-3">
+                                    <label>Estimated Budget/Approved Budget</label>
+                                    <input type="number" class="form-control estimated-budget-input"
+                                        name="items[{{ $index }}][esti_budget]" data-field="esti_budget"
+                                        placeholder="In Peso" step="any" min="0" value="{{ $item->app_items_esti_budget }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <label>Procurement Strategy or Tools</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][tools]"
+                                        data-field="tools" value="{{ $item->app_items_tools }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label>REMARKS</label>
+                                    <input type="text" class="form-control" name="items[{{ $index }}][remarks]"
+                                        data-field="remarks"
+                                        placeholder="Other relevant descriptions of the procurement project, if applicable" value="{{ $item->app_items_remarks }}">
+                                    <span class="field-error d-none"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
+                @endforeach
+            @else
+                <div class="card project-item-card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item 1</span> | Procurement Project Details</h5>
 
-                    <div class="row">
-                        <h5 class="card-title fw-bold col-6">Projected Timeline</h5>
-                        <h5 class="card-title fw-bold col-6">Funding Details</h5>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="form-group col-3">
-                            <label>Start of Procurement Activity</label>
-                            <input type="text" class="form-control flatpickr-date" name="items[0][start]"
-                                data-field="start" placeholder="Select Date">
-                            <span class="field-error d-none"></span>
+                            <button type="button" class="btn btn-dark-red remove-project-btn d-none" title="Remove project/item">
+                                <img src="{{ asset('img/Trash.svg') }}" width="20" height="20">
+                            </button>
                         </div>
 
-                        <div class="form-group col-3">
-                            <label>End of Procurement Activity</label>
-                            <input type="text" class="form-control flatpickr-date" name="items[0][end]"
-                                data-field="end" placeholder="Select Date">
-                            <span class="field-error d-none"></span>
+                        <div class="row mb-3">
+                            <div class="form-group col-4">
+                                <label>Project Title</label>
+                                <input type="text" class="form-control" name="items[0][proj_title]"
+                                    data-field="proj_title">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-4">
+                                <label>End-User or Implementing Unit</label>
+                                <input type="text" class="form-control" name="items[0][end_user]"
+                                    data-field="end_user">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-4">
+                                <label>General Description</label>
+                                <input type="text" class="form-control" name="items[0][gen_desc]"
+                                    data-field="gen_desc">
+                                <span class="field-error d-none"></span>
+                            </div>
                         </div>
 
-                        <div class="form-group col-3">
-                            <label>Source of Fund</label>
-                            <input type="text" class="form-control" name="items[0][source]"
-                                data-field="source">
-                            <span class="field-error d-none"></span>
+                        <div class="row mb-3">
+                            <div class="form-group col-4">
+                                <label>Mode of Procurement</label>
+                                <input type="text" class="form-control" name="items[0][mode]"
+                                    data-field="mode">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-4">
+                                <label>Criteria for Bid Evaluation</label>
+                                <input type="text" class="form-control" name="items[0][criteria]"
+                                    data-field="criteria"
+                                    placeholder="Including Sustainability and Domestic Preference">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-4">
+                                <label>To be covered by an Early Procurement Activity</label>
+                                <span class="field-error d-none"></span>
+                                <div class="mt-4 d-flex justify-content-center" data-field="covered">
+                                    <input class="form-check-input" type="radio" name="items[0][covered]"
+                                        id="covered-yes-0" value="Yes">
+                                    <label class="form-check-label ms-2 me-4" for="covered-yes-0">Yes</label>
+
+                                    <input class="form-check-input" type="radio" name="items[0][covered]"
+                                        id="covered-no-0" value="No">
+                                    <label class="form-check-label ms-2" for="covered-no-0">No</label>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group col-3">
-                            <label>Estimated Budget/Approved Budget</label>
-                            <input type="number" class="form-control estimated-budget-input"
-                                name="items[0][esti_budget]" data-field="esti_budget"
-                                placeholder="In Peso" step="any" min="0">
-                            <span class="field-error d-none"></span>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-6">
-                            <label>Procurement Strategy or Tools</label>
-                            <input type="text" class="form-control" name="items[0][tools]"
-                                data-field="tools">
-                            <span class="field-error d-none"></span>
+                        <div class="row">
+                            <h5 class="card-title fw-bold col-6">Projected Timeline</h5>
+                            <h5 class="card-title fw-bold col-6">Funding Details</h5>
                         </div>
 
-                        <div class="form-group col-6">
-                            <label>REMARKS</label>
-                            <input type="text" class="form-control" name="items[0][remarks]"
-                                data-field="remarks"
-                                placeholder="Other relevant descriptions of the procurement project, if applicable">
-                            <span class="field-error d-none"></span>
+                        <div class="row mb-3">
+                            <div class="form-group col-3">
+                                <label>Start of Procurement Activity</label>
+                                <input type="text" class="form-control flatpickr-date" name="items[0][start]"
+                                    data-field="start" placeholder="Select Date">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-3">
+                                <label>End of Procurement Activity</label>
+                                <input type="text" class="form-control flatpickr-date" name="items[0][end]"
+                                    data-field="end" placeholder="Select Date">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-3">
+                                <label>Source of Fund</label>
+                                <input type="text" class="form-control" name="items[0][source]"
+                                    data-field="source">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-3">
+                                <label>Estimated Budget/Approved Budget</label>
+                                <input type="number" class="form-control estimated-budget-input"
+                                    name="items[0][esti_budget]" data-field="esti_budget"
+                                    placeholder="In Peso" step="any" min="0">
+                                <span class="field-error d-none"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label>Procurement Strategy or Tools</label>
+                                <input type="text" class="form-control" name="items[0][tools]"
+                                    data-field="tools">
+                                <span class="field-error d-none"></span>
+                            </div>
+
+                            <div class="form-group col-6">
+                                <label>REMARKS</label>
+                                <input type="text" class="form-control" name="items[0][remarks]"
+                                    data-field="remarks"
+                                    placeholder="Other relevant descriptions of the procurement project, if applicable">
+                                <span class="field-error d-none"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
 
         <div class="d-flex justify-content-center mb-3">

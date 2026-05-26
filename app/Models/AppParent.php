@@ -21,6 +21,7 @@ class AppParent extends Model
         'app_approved_by_name',
         'app_approved_by_designation',
         'app_dep_id_fk',
+        'app_status',
     ];
 
     public function appItems()

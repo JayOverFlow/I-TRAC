@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnDraft              = document.getElementById("btn-draft");
     const projectItemsContainer = document.getElementById("project-items-container");
     const totalAmountDisplay    = document.getElementById("total-amount-display");
-    const notification          = document.getElementById("form-notification");
-    const notificationMsg       = document.getElementById("form-notification-msg");
 
     // ─── Flatpickr init ──────────────────────────────────────────────────────
     if (typeof flatpickr !== "undefined") {
@@ -210,13 +208,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnDone) {
         btnDone.addEventListener("click", function () {
-            submitForm("done");
+            window.confirmAction({
+                title: 'Submit Annual Procurement Plan?',
+                text: 'Are you sure you want to complete this Annual Procurement Plan? This will submit it for final review and cannot be modified once approved.',
+                icon: 'question',
+                confirmButtonText: 'Yes, Submit It',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    submitForm("done");
+                }
+            });
         });
     }
 
     if (btnDraft) {
         btnDraft.addEventListener("click", function () {
-            submitForm("draft");
+            window.confirmAction({
+                title: 'Save as Draft?',
+                text: 'Are you sure you want to save this Annual Procurement Plan as a draft? You will be able to edit and submit it later.',
+                icon: 'info',
+                confirmButtonText: 'Yes, Save as Draft',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    submitForm("draft");
+                }
+            });
         });
     }
 
@@ -294,6 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // ─── Total amount & Remove card (event delegation) ────────────────────────
 
     if (projectItemsContainer) {
+        updateTotalAmount();
+
         projectItemsContainer.addEventListener("input", function (e) {
             if (e.target.classList.contains("estimated-budget-input")) {
                 updateTotalAmount();
@@ -305,9 +323,18 @@ document.addEventListener("DOMContentLoaded", function () {
             if (trashBtn) {
                 const cardToRemove = trashBtn.closest(".project-item-card");
                 if (cardToRemove) {
-                    cardToRemove.remove();
-                    updateTotalAmount();
-                    reindexItems();
+                    window.confirmAction({
+                        title: 'Remove Project Item?',
+                        text: 'Are you sure you want to remove this procurement project item from your plan? This will delete all entered data for this item.',
+                        icon: 'warning',
+                        confirmButtonText: 'Yes, Remove It',
+                        cancelButtonText: 'Cancel',
+                        onConfirm: function() {
+                            cardToRemove.remove();
+                            updateTotalAmount();
+                            reindexItems();
+                        }
+                    });
                 }
             }
         });
