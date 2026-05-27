@@ -80,8 +80,8 @@
 
     <div class="card allocated-budget-card mb-3">
         <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
-            <h5 class="card-title mb-0 white-text">ALLOCATED BUDGET</h5>
-            <h5 class="card-title mb-0 white-text">PHP 12,345.00</h5>
+            <h5 class="card-title mb-0 white-text" style="color: #fff !important;">ALLOCATED BUDGET</h5>
+            <h5 class="card-title mb-0 white-text" style="color: #fff !important;">PHP 12,345.00</h5>
         </div>
     </div>
 

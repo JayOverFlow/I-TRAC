@@ -104,10 +104,15 @@ thead.bg-transparent th {
 }
 
 /* Custom Description Toggle Styling */
-.custom-specification-header,
+.custom-specification-header {
+    background-color: #ffffff;
+    border: 1px solid #bfc9d4 !important;
+}
+
 .specification-body {
     background-color: #ffffff;
-    border-color: #ced4da !important;
+    border: 1px solid #bfc9d4 !important;
+    border-top: none !important;
 }
 
 .custom-specification-header {
@@ -119,10 +124,15 @@ thead.bg-transparent th {
     background-color: #f1f2f3 !important;
 }
 
-body.dark .custom-specification-header,
+body.dark .custom-specification-header {
+    background-color: #2a2f38 !important;
+    border: 1px solid #2a2f38 !important;
+}
+
 body.dark .specification-body {
-    background-color: #1D2127 !important;
-    border-color: #2A2F38 !important;
+    background-color: #2a2f38 !important;
+    border: 1px solid #2a2f38 !important;
+    border-top: none !important;
 }
 
 body.dark .custom-specification-container.is-disabled .custom-specification-header,
@@ -137,7 +147,11 @@ body.dark .custom-specification-header:hover {
 
 body.dark .specification-textarea {
     background-color: transparent !important;
-    color: #6b7280 !important;
+    color: #bfc9d4 !important;
+}
+
+body.dark .specification-textarea:focus {
+    color: #ffffff !important;
 }
 
 /* Dark mode: make collapse arrows and add-item visible */

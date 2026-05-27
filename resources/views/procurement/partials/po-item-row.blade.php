@@ -69,7 +69,7 @@
     <td colspan="2"></td>
     <td class="px-1">
         <div class="custom-specification-container {{ $isDone ? 'is-disabled' : '' }}">
-            <div class="d-flex justify-content-between align-items-center border rounded-top custom-specification-header toggle-specification-action"
+            <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
                 style="cursor: pointer;">
                 <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
                     Specification</div>
@@ -86,7 +86,7 @@
                     </svg>
                 </div>
             </div>
-            <div class="specification-body border border-top-0 rounded-bottom"
+            <div class="specification-body rounded-bottom"
                 style="{{ $hasSpec ? '' : 'display: none;' }}">
                 <textarea class="form-control form-control-sm border-0 shadow-none px-2 specification-textarea" 
                     name="items[{{ $index }}][specification]" data-field="specification"

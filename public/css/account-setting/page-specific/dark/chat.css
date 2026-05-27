@@ -24,7 +24,7 @@ body.dark .wrapper {
 }
 body.dark .chat-system {
   display: flex;
-  height: 720px !important; /* Fixed height for stability during zoom */
+  height: calc(100vh - 220px) !important; /* Dynamic height for stability during zoom */
   -webkit-box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
   box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
@@ -79,7 +79,7 @@ body.dark .chat-system .user-list-box .people {
   margin: auto;
   width: 100%;
   overflow: auto;
-  height: calc(100vh - 238px);
+  height: calc(100vh - 320px);
 }
 body.dark .chat-system .user-list-box .people .person {
   position: relative;
@@ -174,7 +174,7 @@ body.dark .chat-system .chat-box .overlay-phone-call {
   display: none;
   position: absolute;
   width: 100%;
-  height: calc(100vh - 104px);
+  height: calc(100vh - 204px);
   z-index: -1;
   opacity: 0;
   transition: all 0.4s ease-in-out;
@@ -276,7 +276,7 @@ body.dark .chat-system .chat-box .overlay-video-call {
   display: none;
   position: absolute;
   width: 100%;
-  height: calc(100vh - 104px);
+  height: calc(100vh - 204px);
   z-index: -1;
   opacity: 0;
   transition: all 0.4s ease-in-out;

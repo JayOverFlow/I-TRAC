@@ -55,7 +55,7 @@ $(document).ready(function() {
                 }
 
                 response.users.forEach(function(user) {
-                    const avatar = user.user_profile_photo ? `/img/profiles/${user.user_profile_photo}` : '/img/profiles/blank.avif';
+                    const avatar = user.user_profile_photo ? `/${user.user_profile_photo}` : '/img/profiles/blank.avif';
                     const name = `${user.user_firstname} ${user.user_lastname}`;
                     const time = formatTime(user.latest_message_date);
                     const preview = user.latest_message ? user.latest_message : 'No messages yet';
@@ -110,7 +110,7 @@ $(document).ready(function() {
                     lastMessageCount = 0;
                     
                     const user = response.target_user;
-                    const avatar = user.user_profile_photo ? `/img/profiles/${user.user_profile_photo}` : '/img/profiles/blank.avif';
+                    const avatar = user.user_profile_photo ? `/${user.user_profile_photo}` : '/img/profiles/blank.avif';
                     const name = `${user.user_firstname} ${user.user_lastname}`;
                     
                     $('#active-chat-img').attr('src', avatar);
