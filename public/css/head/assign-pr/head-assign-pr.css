@@ -3,7 +3,8 @@
 }
 
 
-td, th {
+td,
+th {
     color: var(--black-text) !important;
 }
 
@@ -15,4 +16,30 @@ td, th {
 
 .user-list-table td {
     border-bottom: none !important;
+}
+
+/* DARK MODE OVERRIDES */
+body.dark #zero-config th {
+    color: #bfc9d4 !important;
+}
+
+body.dark .modal-content {
+    background-color: #0e1726 !important;
+}
+
+body.dark .modal-title {
+    color: #bfc9d4 !important;
+}
+
+body.dark .user-list-table th,
+body.dark .user-list-table td {
+    color: #bfc9d4 !important;
+}
+
+body.dark #user-search-input::placeholder {
+    color: #888ea8 !important;
+}
+
+body.dark .user-list-item.active {
+    background-color: #1D2127 !important;
 }

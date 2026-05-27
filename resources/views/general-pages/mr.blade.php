@@ -23,7 +23,7 @@
                             <img src="{{ asset('img/mr-all.svg') }}" alt="ALL">
                         </div>
                         <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">ALL</h5>
+                            <h6 class="card-title fw-bold">ALL</h6>
                             <h5 class="mb-0 fw-bold"><span>10</span></h5>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                             <img src="{{ asset('img/mr-equipment.svg') }}" alt="Equipment">
                         </div>
                         <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">Equipment</h5>
+                            <h6 class="card-title fw-bold">Equipment</h6>
                             <h5 class="mb-0 fw-bold"><span>10</span></h5>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                             <img src="{{ asset('img/mr-semi-expandable.svg') }}" alt="Semi-Expandable">
                         </div>
                         <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">Semi-Expandable</h5>
+                            <h6 class="card-title fw-bold">Semi-Expandable</h6>
                             <h5 class="mb-0 fw-bold"><span>10</span></h5>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                             <img src="{{ asset('img/mr-supplies.svg') }}" alt="Supplies & Materials">
                         </div>
                         <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">Supplies & Materials</h5>
+                            <h6 class="card-title fw-bold">Supplies & Materials</h6>
                             <h5 class="mb-0 fw-bold"><span>10</span></h5>
                         </div>
                     </div>

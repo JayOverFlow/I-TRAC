@@ -146,3 +146,28 @@ thead.bg-transparent th {
     border-color: #dc3545;
     background-image: none;
 }
+
+/* DARK MODE OVERRIDES */
+body.dark .custom-specification-header {
+    background-color: #2a2f38 !important;
+    border: 1px solid #2a2f38 !important;
+}
+
+body.dark .specification-body {
+    background-color: #2a2f38 !important;
+    border: 1px solid #2a2f38 !important;
+    border-top: none !important;
+}
+
+body.dark .custom-specification-header:hover {
+    background-color: #2A2F38 !important;
+}
+
+body.dark .specification-body textarea {
+    background-color: transparent !important;
+    color: #bfc9d4 !important;
+}
+
+body.dark .specification-body textarea:focus {
+    color: #ffffff !important;
+}

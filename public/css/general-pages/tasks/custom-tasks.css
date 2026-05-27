@@ -1,0 +1,6 @@
+/* DARK MODE SPECIFIC OVERRIDES */
+body.dark .btn-close svg,
+body.dark .btn-close svg line {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}

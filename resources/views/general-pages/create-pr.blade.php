@@ -284,8 +284,8 @@
                                             <td colspan="1"></td>
                                             <td class="px-1">
                                                 <div class="custom-specification-container">
-                                                    <div class="d-flex justify-content-between align-items-center bg-white border rounded-top custom-specification-header toggle-specification-action"
-                                                        style="cursor: pointer; border-color: #ced4da !important;">
+                                                    <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
+                                                        style="cursor: pointer;">
                                                         <div class="p-1 px-2 black-text flex-grow-1"
                                                             style="font-size: 0.8rem;">
                                                             Specification
@@ -305,8 +305,8 @@
                                                             </svg>
                                                         </div>
                                                     </div>
-                                                    <div class="specification-body border border-top-0 rounded-bottom bg-white"
-                                                        style="border-color: #ced4da !important;">
+                                                    <div class="specification-body rounded-bottom"
+                                                        style="{{ !$specText ? 'display: none;' : '' }}">
                                                         <textarea class="form-control form-control-sm border-0 shadow-none px-2"
                                                             name="items[{{ $rowIndex }}][specification]" data-field="specification" rows="2" placeholder="Enter specification details."
                                                             {{ $isReadOnly ? 'disabled' : '' }}>{{ $specText }}</textarea>
