@@ -50,9 +50,14 @@ class CreatePrController extends Controller
             }
         }
 
+        $breadcrumbs = [
+            ['title' => 'Tasks', 'url' => route('show.tasks')],
+            ['title' => 'Create PR', 'url' => '']
+        ];
+
         return match ($userRole) {
-            'Head'   => view('head/pages/head-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped')),
-            null     => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped')),
+            'Head'   => view('head/pages/head-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs')),
+            null     => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs')),
             default  => view('errors.403'),
         };
     }

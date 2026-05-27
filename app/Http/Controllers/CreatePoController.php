@@ -28,7 +28,13 @@ class CreatePoController extends Controller
             $poItems = collect([new PoItem()]);
         }
 
-        return view('procurement/pages/procurement-create-po', compact('po', 'poItems'));
+        $breadcrumbs = [
+            ['title' => 'Procurement', 'url' => route('show.procure')],
+            ['title' => 'PR Preview', 'url' => route('show.pr.preview', $po->pr_id_fk)],
+            ['title' => 'Create PO', 'url' => '']
+        ];
+
+        return view('procurement/pages/procurement-create-po', compact('po', 'poItems', 'breadcrumbs'));
     }
 
     public function createPo(Request $request, $pr_id) {

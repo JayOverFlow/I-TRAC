@@ -17,6 +17,11 @@ class PrPreviewController extends Controller
         // Group items by project title
         $groupedItems = $pr->prItems->groupBy(fn($item) => $item->appItem?->app_item_proj_title ?? 'Untitled Project');
 
-        return view('procurement.pages.procurement-pr-preview', compact('pr', 'groupedItems'));
+        $breadcrumbs = [
+            ['title' => 'Procurement', 'url' => route('show.procure')],
+            ['title' => 'PR Preview', 'url' => '']
+        ];
+
+        return view('procurement.pages.procurement-pr-preview', compact('pr', 'groupedItems', 'breadcrumbs'));
     }
 }

@@ -45,7 +45,12 @@ class AssignPrController extends Controller
             ->get();
         }
 
-        return view('head/pages/head-assign-pr', compact('app_data', 'subordinates'));
+        $breadcrumbs = [
+            ['title' => 'Account Settings', 'url' => route('account.settings')],
+            ['title' => 'Assign PR', 'url' => '']
+        ];
+
+        return view('head/pages/head-assign-pr', compact('app_data', 'subordinates', 'breadcrumbs'));
     }
 
     public function assignPr(Request $request) {
