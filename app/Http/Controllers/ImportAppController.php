@@ -11,7 +11,12 @@ class ImportAppController extends Controller
 {
     public function showImportApp()
     {
-        return view('head/pages/head-import-app');
+        $breadcrumbs = [
+            ['title' => 'Account Settings', 'url' => route('account.settings')],
+            ['title' => 'Import APP', 'url' => '']
+        ];
+
+        return view('head/pages/head-import-app', compact('breadcrumbs'));
     }
 
     public function importApp(Request $request)

@@ -30,6 +30,7 @@ class CreatePoController extends Controller
 
         $breadcrumbs = [
             ['title' => 'Procurement', 'url' => route('show.procure')],
+            ['title' => 'PR Preview', 'url' => route('show.pr.preview', $po->pr_id_fk)],
             ['title' => 'Create PO', 'url' => '']
         ];
 
