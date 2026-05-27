@@ -32,7 +32,12 @@ class CreateAppController extends Controller
             }
         }
 
-        return view('head/pages/head-create-app', compact('app_data'));
+        $breadcrumbs = [
+            ['title' => 'Account Settings', 'url' => route('account.settings')],
+            ['title' => 'Create APP', 'url' => '']
+        ];
+
+        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs'));
     }
 
     public function createApp(Request $request)

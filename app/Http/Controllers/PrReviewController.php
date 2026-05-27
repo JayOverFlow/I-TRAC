@@ -37,7 +37,12 @@ class PrReviewController extends Controller
         // Group items by project title
         $groupedItems = $pr->prItems->groupBy(fn($item) => $item->appItem->app_item_proj_title ?? 'Untitled Project');
 
-        return view('head.pages.head-pr-review', compact('task', 'pr', 'groupedItems'));
+        $breadcrumbs = [
+            ['title' => 'Tasks', 'url' => route('show.tasks')],
+            ['title' => 'PR Review', 'url' => '']
+        ];
+
+        return view('head.pages.head-pr-review', compact('task', 'pr', 'groupedItems', 'breadcrumbs'));
     }
 
     /**
@@ -71,7 +76,13 @@ class PrReviewController extends Controller
             $groupedItems = $originalTask->appItems->groupBy('app_item_proj_title');
         }
 
-        return view('head.pages.head-edit-submitted-pr', compact('task', 'pr', 'groupedItems', 'savedItemsGrouped'));
+        $breadcrumbs = [
+            ['title' => 'Tasks', 'url' => route('show.tasks')],
+            ['title' => 'PR Review', 'url' => route('show.pr.review', $task_id)],
+            ['title' => 'Edit', 'url' => '']
+        ];
+
+        return view('head.pages.head-edit-submitted-pr', compact('task', 'pr', 'groupedItems', 'savedItemsGrouped', 'breadcrumbs'));
     }
 
     /**

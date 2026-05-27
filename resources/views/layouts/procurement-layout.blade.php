@@ -61,6 +61,8 @@
 
                 <div class="middle-content container-xxl p-0">
 
+                    @include('partials.breadcrumbs')
+
                     <div class="row layout-top-spacing">
                         @yield('content')
                     </div>
