@@ -445,7 +445,10 @@
             {{-- @include('supply.pages.partials._ics') --}}
             
             {{-- RSPI --}}
-            @include('supply.pages.partials._rspi')
+            {{-- @include('supply.pages.partials._rspi') --}}
+            
+            {{-- RSMI --}}
+            @include('supply.pages.partials._rsmi')
         </div>
     </div>
 @endsection

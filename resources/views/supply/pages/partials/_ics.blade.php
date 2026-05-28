@@ -139,8 +139,8 @@
                                     name="items[0][inventory_item_no]">
                             </td>
                             <td class="px-1">
-                                <input type="text" class="form-control form-control-sm flatpickr"
-                                    name="items[0][estimated_useful_time]" placeholder="Select Date..">
+                                <input type="text" class="form-control form-control-sm text-center"
+                                    name="items[0][estimated_useful_time]">
                             </td>
                             <td class="p-0">
                                 <button type="button"
