@@ -598,3 +598,20 @@ body.dark .custom-radio-selector:checked::before {
     border: 2px solid transparent !important;
     background: linear-gradient(135deg, #64748B, #CBD5E1, #475569) border-box !important;
 }
+
+/* ==========================================
+   DARK MODE CONTRAST & ACCESSIBILITY FIXES
+   ========================================== */
+
+/* Invert dark-themed SVGs loaded as images to light/white inside Dark Mode */
+body.dark img[src*="Back.svg"],
+body.dark img[src*="Info.svg"] {
+    filter: invert(1) brightness(1.5) !important;
+}
+
+/* Ensure small helper/muted texts are readable on dark backgrounds */
+body.dark small,
+body.dark .small {
+    color: #A1A1AA !important;
+}
+

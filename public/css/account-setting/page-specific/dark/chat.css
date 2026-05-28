@@ -60,7 +60,7 @@ body.dark .chat-system .user-list-box input {
   padding-left: 38px;
   font-size: 16px;
   width: 100%;
-  color: #22c7d5;
+  color: #fff;
   border: 0;
   outline: none;
   padding: 12px 16px 12px 20px;
@@ -134,7 +134,7 @@ body.dark .chat-system .user-list-box .people .person .user-info .f-body .previe
   font-weight: 600;
 }
 body.dark .chat-system .user-list-box .people .person:hover .user-info .f-body .meta-info .user-name, body.dark .chat-system .user-list-box .people .person:hover .user-info .f-body .meta-info .user-meta-time {
-  color: #22c7d5;
+  color: #fff;
 }
 body.dark .chat-system .user-list-box .people .person.active:after, body.dark .chat-system .user-list-box .people .person:hover:after {
   display: none;
@@ -477,7 +477,7 @@ body.dark .chat-system .chat-box .chat-box-inner .chat-meta-user.chat-active .ch
 }
 body.dark .chat-system .chat-box .chat-box-inner .chat-meta-user.chat-active .chat-action-btn .dropdown-menu a:hover {
   background-color: transparent;
-  color: #22c7d5;
+  color: #fff;
 }
 body.dark .chat-system .chat-box .chat-box-inner .chat-meta-user.chat-active .chat-action-btn .dropdown-menu a svg {
   color: #A1A1AA;
