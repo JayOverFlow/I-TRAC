@@ -121,15 +121,59 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "X-CSRF-TOKEN": csrf },
                 body: formData,
             })
-                .then((response) => response.json())
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.message || "Failed to assign Purchase Request. Please check your inputs.");
+                    }
+                    return response.json();
+                })
                 .then((data) => {
                     if (data.success) {
-                        // 4. Close the modal and reload the page to reflect changes
+                        // Close the modal and reload the page to reflect changes
                         $("#exampleModalCenter").modal("hide");
                         location.reload();
+                    } else {
+                        throw new Error(data.message || "An error occurred during assignment.");
                     }
                 })
-                .catch((error) => console.error("Assignment error:", error));
+                .catch((error) => {
+                    console.error("Assignment error:", error);
+                    $("#exampleModalCenter").modal("hide");
+                    showToast('error', error.message || 'An error occurred while assigning the PR.');
+                });
+        });
+    }
+
+    function showToast(type, message) {
+        const container = document.querySelector('.toast-container');
+        if (!container) return;
+
+        const isSuccess = type === 'success';
+        const bgClass = isSuccess ? 'bg-success' : 'bg-danger';
+        const icon = isSuccess 
+            ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+
+        const toastHtml = `
+            <div class="toast align-items-center text-white ${bgClass} border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        ${icon}
+                        <div>${message}</div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', toastHtml);
+        const toastEl = container.lastElementChild;
+        const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+        toast.show();
+        
+        toastEl.addEventListener('hidden.bs.toast', () => {
+            toastEl.remove();
         });
     }
 });
