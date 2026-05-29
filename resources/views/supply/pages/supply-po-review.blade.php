@@ -22,7 +22,8 @@
                 <div class="mb-3">
                     <h5 class="fw-bold red-text-2 ms-1 mb-0">Purchase Order Review</h5>
                     <small><img src="{{ asset('img/Info.svg') }}" alt="info" width="16" height="16"> Please
-                        verify the information, check the confirmation box, and click 'Continue to generate' below.</small>
+                        verify the information, sort the items by category, and check the confirmation box to proceed by
+                        clicking the 'Generate Delivery Attachment/s' button below.</small>
                 </div>
             </div>
 
@@ -257,7 +258,8 @@
                                 <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
+                                <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
+                                <th class="text-center black-text fw-bold" style="width: 4%"></th>
                             </tr>
                         </thead>
                         <tbody id="tbody-supply-materials">
@@ -279,6 +281,15 @@
                                             <option value="Not Delivered">Not Delivered</option>
                                         </select>
                                     </td>
+                                    <td class="px-1 text-center">
+                                        <button type="button" class="btn border btn-white assign-item-btn"
+                                            title="Assign Item" data-item-id="{{ $item->po_items_id }}"
+                                            data-item-desc="{{ $item->po_items_descrip }}"
+                                            data-item-qty="{{ $item->po_items_quantity }}">
+                                            <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
+                                                alt="Assign">
+                                        </button>
+                                    </td>
                                 </tr>
 
                                 @foreach ($item->poSpecs as $spec)
@@ -287,7 +298,7 @@
                                         <td class="px-1 py-0" style="font-size: 0.85rem;">
                                             > {{ $spec->po_spec_description }}
                                         </td>
-                                        <td colspan="4"></td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 @endforeach
                             @endforeach
@@ -320,7 +331,8 @@
                                 <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
+                                <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
+                                <th class="text-center black-text fw-bold" style="width: 4%"></th>
                             </tr>
                         </thead>
                         <tbody id="tbody-semi-expendable">
@@ -342,6 +354,13 @@
                                             <option value="Not Delivered">Not Delivered</option>
                                         </select>
                                     </td>
+                                    <td class="px-1 text-center">
+                                        <button type="button" class="btn border btn-white assign-item-btn"
+                                            title="Assign Item">
+                                            <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
+                                                alt="Assign">
+                                        </button>
+                                    </td>
                                 </tr>
 
                                 @foreach ($item->poSpecs as $spec)
@@ -350,7 +369,7 @@
                                         <td class="px-1 py-0" style="font-size: 0.85rem;">
                                             > {{ $spec->po_spec_description }}
                                         </td>
-                                        <td colspan="4"></td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 @endforeach
                             @endforeach
@@ -383,7 +402,8 @@
                                 <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
                                 <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
+                                <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
+                                <th class="text-center black-text fw-bold" style="width: 4%"></th>
                             </tr>
                         </thead>
                         <tbody id="tbody-equipment">
@@ -404,6 +424,13 @@
                                             <option value="Equipment" selected>Equipment</option>
                                         </select>
                                     </td>
+                                    <td class="px-1 text-center">
+                                        <button type="button" class="btn border btn-white assign-item-btn"
+                                            title="Assign Item">
+                                            <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
+                                                alt="Assign">
+                                        </button>
+                                    </td>
                                 </tr>
 
                                 @foreach ($item->poSpecs as $spec)
@@ -412,7 +439,7 @@
                                         <td class="px-1 py-0" style="font-size: 0.85rem;">
                                             > {{ $spec->po_spec_description }}
                                         </td>
-                                        <td colspan="4"></td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 @endforeach
                             @endforeach
@@ -499,6 +526,104 @@
             Generate Delivery Attachment/s
         </button>
     </div>
+
+    {{-- Assign Quantity Modal (Supply and Materials only) --}}
+    <div class="modal fade" id="assignDeptModal" tabindex="-1" aria-labelledby="assignDeptModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-bottom pb-3">
+                    <h5 class="modal-title fw-bold red-text-2" id="assignDeptModalLabel">Assign Quantity</h5>
+                </div>
+                <div class="modal-body">
+                    {{-- Item Info --}}
+                    <div class="">
+                        <p class="mb-1 black-text fw-bold" id="modal-item-desc"></p>
+                        <p class="mb-2 black-text">Quantity: <span id="modal-item-qty"
+                                class="fw-semibold text-dark"></span></p>
+                        <p class="mb-0 black-text d-flex align-items-center gap-1 small">
+                            <img src="{{ asset('img/Info.svg') }}" alt="info" width="16" height="16">
+                            Distribute the quantity to one or more departments
+                        </p>
+                    </div>
+
+                    {{-- Column header bar --}}
+                    <table class="table table-sm table-borderless align-middle mb-2" id="assign-dept-table">
+                        <thead>
+                            <tr class="assign-dept-header">
+                                <th class="black-text fw-bold rounded-start px-1">Department</th>
+                                <th class="black-text fw-bold text-center px-1" style="width: 20%;">Quantity</th>
+                                <th class="rounded-end px-1" style="width: 2%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="assign-dept-tbody">
+                            <tr class="dept-row align-middle">
+                                <td class="px-2">
+                                    <input type="text" class="form-control form-control-sm dept-name" placeholder="Enter Department">
+                                </td>
+                                <td class="px-2">
+                                    <input type="text" class="form-control form-control-sm dept-qty text-center">
+                                </td>
+                                <td class="text-center px-0">
+                                    <button type="button" class="btn border-0 bg-transparent text-black fw-bold remove-dept-row-btn p-0">
+                                        <img src="{{ asset('img/remove.svg') }}" alt="Remove">
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    {{-- Add Department button --}}
+                    <div class="text-center mt-3">
+                        <button type="button" class="btn border btn-white btn-sm px-4 fw-bold" id="add-dept-row-btn">
+                            + Add Department
+                        </button>
+                    </div>
+
+                    {{-- Total assigned tracker (right-aligned, always visible) --}}
+                    <div class="d-flex justify-content-end align-items-center gap-2 mt-4">
+                        <span class="black-text">Total assigned:</span>
+                        <span class="black-text fw-bold">
+                            <span id="total-assigned-display">0</span>/<span id="total-qty-cap"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="modal-footer pt-0" style="border-top: none !important;">
+                    <button type="button" class="btn btn-gray px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-red text-white px-4" id="confirm-assign-btn"
+                        disabled>Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Quantity Distribution HTML Templates for Dynamic Rendering --}}
+    <template id="qty-distribution-header-template">
+        <tr class="qty-distribution-header-row" data-item-id="">
+            <td colspan="2"></td>
+            <td class="px-1 py-0">
+                <div class="qty-distribution-header-text">
+                    Quantity Distribution
+                </div>
+            </td>
+            <td colspan="5"></td>
+        </tr>
+    </template>
+
+    <template id="qty-distribution-row-template">
+        <tr class="qty-distribution-row" data-item-id="">
+            <td colspan="2"></td>
+            <td class="px-1 py-0">
+                <div class="qty-dept-name-container">
+                    <span class="qty-dept-name"></span>
+                </div>
+            </td>
+            <td class="px-1 text-center py-0 qty-dept-qty">
+                {{-- Quantity --}}
+            </td>
+            <td colspan="4"></td>
+        </tr>
+    </template>
 @endsection
 
 @push('js')

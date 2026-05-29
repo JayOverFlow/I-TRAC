@@ -3,3 +3,68 @@
     background-color: transparent !important;
     background: transparent !important;
 }
+
+/* Quantity distribution header row styling */
+.qty-distribution-header-row td {
+    background-color: transparent !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.qty-distribution-header-text {
+    color: #4B6BFB !important; /* Royal blue color from mockup */
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding-left: 0.25rem;
+}
+
+/* Quantity distribution department row styling */
+.qty-distribution-row td {
+    background-color: transparent !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.qty-dept-name-container {
+    border-left: 2px solid #3b82f6; /* Beautiful blue vertical line */
+    padding-left: 1rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+    margin-left: 0.25rem;
+    line-height: 1.5;
+    color: #4A5568; /* Slate gray */
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.qty-dept-qty {
+    color: #2D3748;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+}
+
+/* Dark mode overrides for Quantity distribution */
+body.dark .qty-distribution-header-text {
+    color: #6366F1 !important; /* High contrast indigo for dark theme */
+}
+
+body.dark .qty-dept-name-container {
+    border-left-color: #6366F1;
+    color: #CBD5E1;
+}
+
+body.dark .qty-dept-qty {
+    color: #F8FAFC;
+}
+
+/* Assign modal — dept column header bar */
+.assign-dept-header {
+    background-color: #f1f3f4;
+}
+
+body.dark .assign-dept-header {
+    background-color: #2D3748;
+    color: #F8FAFC;
+}

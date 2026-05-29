@@ -124,6 +124,10 @@ $(document).ready(function() {
             const itemId = trItem.data('id');
             const trSpecs = $(`tr.po-specification-row[data-item-id="${itemId}"]`); 
 
+            // Clean up any old distribution rows
+            $(`.qty-distribution-header-row[data-item-id="${itemId}"]`).remove();
+            $(`.qty-distribution-row[data-item-id="${itemId}"]`).remove();
+
             // Remove the checkbox td
             trItem.find('td:first').remove();
 
@@ -134,6 +138,29 @@ $(document).ready(function() {
             const selectEl = trItem.find('.category-select');
             selectEl.find('option[value=""]').remove();
             selectEl.val(selectedCategory);
+
+            // Add or remove action button and adjust spec colspan depending on category
+            if (selectedCategory !== 'Not Delivered') {
+                if (trItem.find('.assign-item-btn').length === 0) {
+                    const dId   = trItem.data('id');
+                    const dDesc = trItem.find('td').eq(2).text().trim();
+                    const dQty  = trItem.find('td').eq(3).text().trim();
+                    trItem.append(`
+                        <td class="px-1 text-center">
+                            <button type="button" class="btn border btn-white assign-item-btn" title="Assign Item"
+                                data-item-id="${dId}"
+                                data-item-desc="${dDesc}"
+                                data-item-qty="${dQty}">
+                                <img src="/img/Assign.svg" width="16" height="16" alt="Assign">
+                            </button>
+                        </td>
+                    `);
+                }
+                trSpecs.find('td:last').attr('colspan', 5);
+            } else {
+                trItem.find('.assign-item-btn').closest('td').remove();
+                trSpecs.find('td:last').attr('colspan', 4);
+            }
 
             // Move to target table
             targetTbody.append(trItem);
@@ -165,6 +192,10 @@ $(document).ready(function() {
         const itemId = trItem.data('id');
         const trSpecs = $(`tr.po-specification-row[data-item-id="${itemId}"]`);
 
+        // Clean up any old distribution rows
+        $(`.qty-distribution-header-row[data-item-id="${itemId}"]`).remove();
+        $(`.qty-distribution-row[data-item-id="${itemId}"]`).remove();
+
         let targetBodyId = '';
         if (selectedCategory === 'Supply and Materials') targetBodyId = 'tbody-supply-materials';
         else if (selectedCategory === 'Semi-Expendable') targetBodyId = 'tbody-semi-expendable';
@@ -185,6 +216,29 @@ $(document).ready(function() {
 
             // Remove empty option so they can't uncategorize
             select.find('option[value=""]').remove();
+        }
+
+        // Add or remove action button and adjust spec colspan depending on category
+        if (selectedCategory !== 'Not Delivered') {
+            if (trItem.find('.assign-item-btn').length === 0) {
+                const dId   = trItem.data('id');
+                const dDesc = trItem.find('td').eq(2).text().trim();
+                const dQty  = trItem.find('td').eq(3).text().trim();
+                trItem.append(`
+                    <td class="px-1 text-center">
+                        <button type="button" class="btn border btn-white assign-item-btn" title="Assign Item"
+                            data-item-id="${dId}"
+                            data-item-desc="${dDesc}"
+                            data-item-qty="${dQty}">
+                            <img src="/img/Assign.svg" width="16" height="16" alt="Assign">
+                        </button>
+                    </td>
+                `);
+            }
+            trSpecs.find('td:last').attr('colspan', 5);
+        } else {
+            trItem.find('.assign-item-btn').closest('td').remove();
+            trSpecs.find('td:last').attr('colspan', 4);
         }
 
         // Move to target table
@@ -225,4 +279,123 @@ $(document).ready(function() {
 
     // Initialize counts on page load
     updateCategoryTotals();
+
+    // ─── Assign Item to Departments (Supply and Materials only) ─────────────
+
+    let currentItemId = null;
+
+    // Recalculate total assigned; toggle check icon color and Assign button state
+    function updateTotalAssigned() {
+        const cap = parseInt($('#total-qty-cap').text(), 10) || 0;
+        let total = 0;
+        $('#assign-dept-tbody .dept-qty').each(function () {
+            total += parseInt($(this).val(), 10) || 0;
+        });
+        $('#total-assigned-display').text(total);
+
+        const fulfilled = (total === cap && cap > 0);
+        $('#confirm-assign-btn').prop('disabled', !fulfilled);
+    }
+
+    // Open modal — only wired to Supply and Materials assign buttons
+    // Falls back to reading row cells so dynamically moved items also work
+    $(document).on('click', '#tbody-supply-materials .assign-item-btn', function () {
+        const btn = $(this);
+        const row = btn.closest('tr.po-item-row');
+
+        currentItemId = btn.data('item-id') || row.data('id');
+        const desc    = btn.data('item-desc') || row.find('td').eq(2).text().trim();
+        const qty     = parseInt(btn.data('item-qty') || row.find('td').eq(3).text().trim(), 10);
+
+        $('#modal-item-desc').text(desc);
+        $('#modal-item-qty').text(qty);
+        $('#total-qty-cap').text(qty);
+
+        // Reset to one empty row and refresh tracker
+        $('#assign-dept-tbody .dept-row:not(:first)').remove();
+        const firstRow = $('#assign-dept-tbody .dept-row:first');
+        firstRow.find('.dept-name').val('');
+        firstRow.find('.dept-qty').val('');
+        updateTotalAssigned();
+
+        new bootstrap.Modal(document.getElementById('assignDeptModal')).show();
+    });
+
+    // Add a department row
+    $(document).on('click', '#add-dept-row-btn', function () {
+        const clone = $('#assign-dept-tbody .dept-row:first').clone();
+        clone.find('input').val('');
+        $('#assign-dept-tbody').append(clone);
+    });
+
+    // Remove a department row (keep at least one)
+    $(document).on('click', '.remove-dept-row-btn', function () {
+        if ($('#assign-dept-tbody .dept-row').length > 1) {
+            $(this).closest('.dept-row').remove();
+            updateTotalAssigned();
+        }
+    });
+
+    // Restrict quantity input to positive integers only (no letters, signs, or dots)
+    $(document).on('keypress', '#assign-dept-tbody .dept-qty', function (e) {
+        if (e.which < 48 || e.which > 57) {
+            e.preventDefault();
+        }
+    });
+
+    $(document).on('input', '#assign-dept-tbody .dept-qty', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        updateTotalAssigned();
+    });
+
+    // Confirm Assign — render distribution summary below the item's spec rows
+    $(document).on('click', '#confirm-assign-btn', function () {
+        const distributions = [];
+        $('#assign-dept-tbody .dept-row').each(function () {
+            const name = $(this).find('.dept-name').val().trim();
+            const qty  = parseInt($(this).find('.dept-qty').val(), 10) || 0;
+            if (name && qty > 0) distributions.push({ name, qty });
+        });
+
+        if (!distributions.length) return;
+
+        // Replace any prior distribution for this item
+        $(`.qty-distribution-header-row[data-item-id="${currentItemId}"]`).remove();
+        $(`.qty-distribution-row[data-item-id="${currentItemId}"]`).remove();
+
+        const rowsToInsert = [];
+
+        // 1. Get header row from Blade template
+        const headerTemplate = document.getElementById('qty-distribution-header-template');
+        if (headerTemplate) {
+            const headerClone = document.importNode(headerTemplate.content, true);
+            $(headerClone).find('.qty-distribution-header-row').attr('data-item-id', currentItemId);
+            rowsToInsert.push(headerClone);
+        }
+
+        // 2. Get distribution row template and clone for each department
+        const rowTemplate = document.getElementById('qty-distribution-row-template');
+        if (rowTemplate) {
+            distributions.forEach(d => {
+                const rowClone = document.importNode(rowTemplate.content, true);
+                const tr = $(rowClone).find('.qty-distribution-row');
+                tr.attr('data-item-id', currentItemId);
+                tr.find('.qty-dept-name').text(d.name);
+                tr.find('.qty-dept-qty').text(d.qty);
+                rowsToInsert.push(rowClone);
+            });
+        }
+
+        // Insert after last spec row, or directly after the item row
+        const lastSpec = $(`.po-specification-row[data-item-id="${currentItemId}"]`).last();
+        let insertAfterEl = lastSpec.length ? lastSpec : $(`#tbody-supply-materials .po-item-row[data-id="${currentItemId}"]`);
+
+        // Insert all rows in order
+        rowsToInsert.reverse().forEach(clone => {
+            insertAfterEl.after(clone);
+        });
+
+        bootstrap.Modal.getInstance(document.getElementById('assignDeptModal')).hide();
+        showToast('Quantity successfully distributed.', 'success');
+    });
 });
