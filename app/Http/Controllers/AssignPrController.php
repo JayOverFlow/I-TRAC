@@ -28,6 +28,11 @@ class AssignPrController extends Controller
             abort(403, 'Unauthorized access to this APP record.');
         }
 
+        if ($app_data->app_status === 'Draft') {
+            return redirect()->route('show.create-app', ['app_id' => $app_id])
+                ->with('error', 'Cannot assign Purchase Requests. The APP is still in Draft status.');
+        }
+
         // Query users in the same department (excluding the authenticated user)
         // Subordinates are defined as all users who belong to the same department as the Head,
         // excluding any user that holds the 'Head' role in that specific department.
@@ -78,6 +83,8 @@ class AssignPrController extends Controller
         // Mark each selected item as assigned to this user
         AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_assigned_to' => $assignedTo]);
 
+        session()->flash('success', 'Purchase Request successfully assigned to the selected user.');
+        
         return response()->json(['success' => true]);
     }
     

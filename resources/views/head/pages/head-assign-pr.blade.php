@@ -110,12 +110,12 @@
                                     <img src="{{ asset('img/Assigned.svg') }}" width="24" height="24"
                                         title="Item is already assigned">
                                 </td>
-                                <td>{{ $appItem->app_item_proj_title }}</td>
-                                <td>{{ $appItem->app_items_gen_desc }}</td>
-                                <td>{{ $appItem->app_items_mode }}</td>
-                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
-                                <td>{{ $appItem->app_items_esti_budget }}</td>
+                                <td>{{ $appItem->app_item_proj_title ?: '---' }}</td>
+                                <td>{{ $appItem->app_items_gen_desc ?: '---' }}</td>
+                                <td>{{ $appItem->app_items_mode ?: '---' }}</td>
+                                <td>{{ $appItem->app_items_start ? \Carbon\Carbon::parse($appItem->app_items_start)->format('m-d-Y') : '---' }}</td>
+                                <td>{{ $appItem->app_items_end ? \Carbon\Carbon::parse($appItem->app_items_end)->format('m-d-Y') : '---' }}</td>
+                                <td>{{ $appItem->app_items_esti_budget ? number_format($appItem->app_items_esti_budget, 2) : '---' }}</td>
                             </tr>
                         @else
                             {{-- Not assigned: show checkbox --}}
@@ -128,12 +128,12 @@
                                             value="{{ $appItem->app_item_id }}">
                                     </div>
                                 </td>
-                                <td>{{ $appItem->app_item_proj_title }}</td>
-                                <td>{{ $appItem->app_items_gen_desc }}</td>
-                                <td>{{ $appItem->app_items_mode }}</td>
-                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_start ?? 'now')->format('m-d-Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($appItem->app_items_end ?? 'now')->format('m-d-Y') }}</td>
-                                <td>{{ $appItem->app_items_esti_budget }}</td>
+                                <td>{{ $appItem->app_item_proj_title ?: '---' }}</td>
+                                <td>{{ $appItem->app_items_gen_desc ?: '---' }}</td>
+                                <td>{{ $appItem->app_items_mode ?: '---' }}</td>
+                                <td>{{ $appItem->app_items_start ? \Carbon\Carbon::parse($appItem->app_items_start)->format('m-d-Y') : '---' }}</td>
+                                <td>{{ $appItem->app_items_end ? \Carbon\Carbon::parse($appItem->app_items_end)->format('m-d-Y') : '---' }}</td>
+                                <td>{{ $appItem->app_items_esti_budget ? number_format($appItem->app_items_esti_budget, 2) : '---' }}</td>
                             </tr>
                         @endif
                     @empty
@@ -148,9 +148,11 @@
                     data-bs-target="#exampleModalCenter" disabled>Assign</button>
                 <button class="btn btn-action btn-red btn-nxt" id="create-btn" disabled>Create</button>
             </div>
-            <h5 class="text-end fw-bold black-text me-3">Total Amount: <span class="fw-normal">Php 20,000.00</span></h5>
+            <h5 class="text-end fw-bold black-text me-3">Total Amount: <span class="fw-normal">₱ {{ number_format($app_data->appItems->sum('app_items_esti_budget'), 2) }}</span></h5>
         </div>
     </div>
+
+    @include('partials.toast-feedback')
 @endsection
 
 @push('js')
