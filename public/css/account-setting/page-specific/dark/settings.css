@@ -1,0 +1,235 @@
+/*
+    DARK MODE SETTINGS TAB STYLES
+    Overrides settings UI tokens under the body.dark namespace.
+*/
+
+body.dark {
+    --border-color: #191e3a;
+    --card-bg: #15181D;
+    --text-muted: #888ea8;
+    --text-dark: #f1f2f3;
+    --brand-red: #B91C1C; /* Dark-mode specific crimson red accent */
+}
+
+body.dark .settings-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.12);
+    padding: 16px 20px !important; /* Replicate and lock base card padding */
+    transition: all 0.2s ease;
+}
+
+body.dark .settings-card h3 {
+    color: var(--brand-red);
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    margin: 0 0 4px 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important; /* Replicate and lock header text metrics */
+}
+
+body.dark .settings-description {
+    color: #888ea8;
+    font-size: 0.82rem !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    line-height: 1.4 !important; /* Replicate and lock description text metrics */
+}
+
+/* Replicate and lock dynamic layout properties */
+body.dark .choose-theme-card {
+    min-height: 295px !important; /* Replicate the custom desktop height alignment */
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+body.dark .card-content-inline {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+body.dark .switch-label {
+    position: relative !important;
+    display: inline-block !important;
+    width: 52px !important;
+    height: 28px !important;
+    cursor: pointer !important;
+    margin: 0 !important; /* Neutralize any vertical layout label margins */
+}
+
+/* Choose Theme Previews in Dark Mode */
+body.dark .theme-option-label {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+}
+
+body.dark .theme-thumbnail-wrapper {
+    background: #1e232b;
+    border-color: var(--border-color);
+}
+
+
+
+body.dark .custom-radio {
+    border-color: #404856;
+}
+
+body.dark .theme-option-label input:checked ~ .custom-radio {
+    border-color: var(--brand-red);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.22);
+}
+
+body.dark .custom-radio::after {
+    background-color: var(--brand-red);
+}
+
+/* Inline Card Layouts in Dark Mode */
+body.dark .card-header-inline {
+    border-bottom: 1px solid #1e232b;
+}
+
+/* Switch Slider in Dark Mode */
+body.dark .slider {
+    background-color: #2a313d;
+}
+
+body.dark .switch-input:checked + .switch-label .slider {
+    background-color: var(--brand-red);
+}
+
+body.dark .switch-input:checked + .switch-label .slider:before {
+    color: var(--brand-red);
+}
+
+/* Links & Alerts in Dark Mode */
+body.dark .learn-more-link, 
+body.dark .set-link, 
+body.dark .view-link {
+    color: var(--brand-red);
+}
+
+body.dark .learn-more-link:hover, 
+body.dark .set-link:hover, 
+body.dark .view-link:hover {
+    color: #e3342f;
+}
+
+body.dark .settings-alert-box {
+    background-color: #1e232b;
+    border: 1px solid var(--border-color);
+    color: #d3d3d3;
+}
+
+body.dark .alert-text {
+    color: #a1a09a;
+}
+
+/* Full-bleed APP overrides in Dark Mode */
+body.dark .app-card {
+    padding: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+body.dark .app-card-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 16px 20px 12px 20px !important;
+}
+
+body.dark .app-card-divider {
+    height: 1px !important;
+    background-color: var(--border-color) !important;
+    width: 100% !important;
+}
+
+body.dark .app-card .settings-alert-box {
+    background-color: #1e232b !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 16px 20px !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: #d3d3d3 !important;
+}
+
+body.dark .app-card .alert-text {
+    color: #a1a09a !important;
+    font-size: 0.9rem !important;
+}
+
+/* Red Banner and Button layout parity in Dark Mode */
+body.dark .promo-banner {
+    background-color: transparent !important; /* Transparent parent background to eliminate dark red outlines */
+}
+
+body.dark .promo-left {
+    margin-top: 130px !important; /* Shift to bottom matching light mode */
+}
+
+body.dark .btn-download-now {
+    background-color: #ffffff !important;
+    color: #222222 !important;
+    font-weight: 500 !important; /* Replicate locked elegant semi-bold weight */
+    font-size: 0.85rem !important;
+    padding: 8px 20px !important; /* Replicate reduced padding */
+    border-radius: 50px !important;
+    align-self: flex-start !important;
+    border: none !important;
+    margin-left: 20px !important; /* Replicate right horizontal shift */
+    box-shadow: 
+        0 0 0 4px rgba(255, 255, 255, 0.35), 
+        0 0 0 8px rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+body.dark .btn-download-now:hover {
+    transform: scale(1.04) !important;
+    background-color: #ffffff !important;
+    color: #222222 !important; /* Explicitly lock crisp text color */
+    /* Expand glowing concentric rings on hover for a premium pop! */
+    box-shadow: 
+        0 0 0 6px rgba(255, 255, 255, 0.45), 
+        0 0 0 12px rgba(255, 255, 255, 0.25) !important;
+}
+
+body.dark .promo-bg-image {
+    position: absolute !important;
+    top: -24px !important; /* Replicate exact layout shift */
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100% + 24px) !important;
+    object-fit: fill !important; /* Stretch to fit perfectly to prevent text/phone cropping */
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 0 !important; /* Keep top-right sharp so the phone is never clipped */
+    z-index: 1 !important;
+    pointer-events: none !important;
+}
+
+
+
+/* Placeholder for Unassigned Users in Dark Mode */
+body.dark .settings-placeholder-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+body.dark .settings-placeholder-card h3 {
+    color: var(--brand-red);
+}
+
+body.dark .settings-placeholder-card p {
+    color: #888ea8;
+}

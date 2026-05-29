@@ -7,11 +7,13 @@
 
     <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/profile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/account-setting/custom-account-setting.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/settings.css') }}">
 
     <!-- DARK MODE SPECIFIC css -->
     <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/dark/account-settings.css') }}">
     <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/dark/user-profile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/dark/tabs.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/account-setting/page-specific/dark/settings.css') }}">
 @endpush
 
 @section('content')

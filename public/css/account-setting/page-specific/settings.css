@@ -1,0 +1,494 @@
+/*
+    SETTINGS TAB STYLES
+    Isolates light-mode styling for settings elements.
+*/
+
+:root {
+    --brand-red: #8C0404; /* Crimson Red matching general aesthetic */
+    --brand-red-light: #fff2f2;
+    --text-muted: #888ea8;
+    --text-dark: #3b3f5c;
+    --border-color: #e0e6ed;
+    --card-bg: #ffffff;
+}
+
+/* Container & Grid Setup */
+.settings-container {
+    display: flex;
+    gap: 24px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+.settings-left-col {
+    flex: 0 0 54%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-right-col {
+    flex: 0 0 43%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Premium Card Elements */
+.settings-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.05);
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+}
+
+.settings-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--brand-red);
+    margin: 0 0 4px 0;
+}
+
+.settings-description {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Choose Theme Selectors */
+.choose-theme-card {
+    min-height: 295px; /* Dynamically expands to align left and right columns on desktop */
+    display: flex;
+    flex-direction: column;
+}
+
+.choose-theme-card .theme-options {
+    flex-grow: 1;
+    display: flex;
+    align-items: center; /* Vertically center the options in the expanded card space */
+    justify-content: center;
+    margin-top: 0; /* Override margin-top to allow perfect vertical centering */
+}
+
+.theme-options {
+    display: flex;
+    gap: 82px;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.theme-option {
+    flex: 0 0 auto;
+}
+
+.theme-option-label {
+    display: flex;
+    flex-direction: row; /* Horizontal side-by-side layout */
+    align-items: center; /* Vertically centered */
+    gap: 6px;
+    cursor: pointer;
+}
+
+.theme-thumbnail-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+    transition: all 0.25s ease;
+    width: 140px; /* Constrain width precisely */
+    height: auto;
+    background: #f8f9fa;
+}
+
+.theme-option:hover .theme-thumbnail-wrapper {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}
+
+.theme-thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Custom Styled Radio Button */
+.custom-radio {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-radio::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: var(--brand-red);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.theme-option-label input:checked ~ .custom-radio {
+    border-color: var(--brand-red);
+    box-shadow: 0 0 0 3px rgba(140, 4, 4, 0.12);
+}
+
+.theme-option-label input:checked ~ .custom-radio::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Inline Card Layouts */
+.card-content-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.card-header-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f2f3;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+/* Custom premium switch toggle sibling structure */
+.switch-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.switch-label {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e0e6ed;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: transform 0.28s cubic-bezier(0.68, -0.55, 0.265, 1.55), background-color 0.2s ease;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.switch-input:checked + .switch-label .slider {
+    background-color: var(--brand-red);
+}
+
+.switch-input:checked + .switch-label .slider:before {
+    transform: translateX(24px);
+    content: "\2713";
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--brand-red);
+    line-height: 22px;
+    text-align: center;
+}
+
+/* Links & Anchors */
+.learn-more-link, .set-link, .view-link {
+    color: var(--brand-red);
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.learn-more-link:hover, .set-link:hover, .view-link:hover {
+    color: #700303;
+    text-decoration: underline;
+}
+
+.arrow-icon {
+    font-family: monospace;
+    margin-left: 2px;
+}
+
+/* APP Warning Alert Box */
+.settings-alert-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.alert-icon-wrapper {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+.alert-text {
+    font-size: 0.9rem;
+    color: #515365;
+}
+
+/* Full-bleed APP settings card overrides */
+.app-card {
+    padding: 0 !important; /* Allow child divider and alert box to extend to borders */
+    overflow: hidden; /* Ensure rounded corners crop the grey alert box background */
+    display: flex;
+    flex-direction: column;
+}
+
+.app-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px 12px 20px;
+}
+
+.app-card-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    width: 100%;
+}
+
+.app-card .settings-alert-box {
+    background-color: #f8f9fa;
+    border: none !important; /* Eliminate internal nested border */
+    border-radius: 0 !important; /* Crop top radius, rely on container overflow for bottom corners */
+    padding: 16px 20px; /* Align content with card headers */
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-dark);
+}
+
+.app-card .alert-icon-wrapper {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+.app-card .alert-text {
+    font-size: 0.9rem;
+    color: #888ea8;
+}
+
+/* Red 3D Promo Banner */
+.promo-banner {
+    background-color: transparent !important; /* Transparent parent background to eliminate dark red outlines */
+    border-radius: 12px;
+    position: relative;
+    overflow: visible; /* Crucial for phone 3D overflow */
+    color: #ffffff;
+    padding: 30px;
+    margin-top: 5px;
+    min-height: 210px;
+    display: flex;
+    align-items: center;
+}
+
+.promo-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.promo-left {
+    flex: 1;
+    max-width: 58%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 130px; /* Shifts the button to the bottom below background SVG text */
+}
+
+.promo-tagline {
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 8px;
+}
+
+.promo-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 22px;
+    line-height: 1.1;
+    color: #ffffff;
+}
+
+.btn-download-now {
+    background-color: #ffffff !important;
+    color: #222222 !important; /* Dark premium charcoal text color */
+    font-weight: 500 !important; /* Replicate elegant medium weight */
+    font-size: 0.85rem !important; /* Replicate sleek sizing */
+    padding: 8px 20px !important; /* Reduced layout padding */
+    border-radius: 50px !important; /* Fully rounded pill shape */
+    align-self: flex-start;
+    border: none !important;
+    margin-left: 20px !important; /* Shift slightly to the right */
+    /* Layered concentric glowing ring shadows on red background */
+    box-shadow: 
+        0 0 0 4px rgba(255, 255, 255, 0.35), 
+        0 0 0 8px rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.btn-download-now:hover {
+    transform: scale(1.04) !important; /* Slightly increase size elastically */
+    background-color: #ffffff !important;
+    color: #222222 !important; /* Explicitly lock crisp text color */
+    /* Expand glowing concentric rings on hover for a premium pop! */
+    box-shadow: 
+        0 0 0 6px rgba(255, 255, 255, 0.45), 
+        0 0 0 12px rgba(255, 255, 255, 0.25) !important;
+}
+
+.promo-right {
+    flex: 0 0 35%;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.promo-bg-image {
+    position: absolute;
+    top: -24px; /* Shift background SVG up so built-in phone overlaps perfectly */
+    left: 0;
+    width: 100%;
+    height: calc(100% + 24px); /* Make element taller to cover overlap shift */
+    object-fit: fill !important; /* Stretch to fit perfectly to prevent text/phone cropping */
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 0 !important; /* Keep top-right sharp so the phone is never clipped */
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Placeholder for Unassigned Users */
+.settings-placeholder-container {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.settings-placeholder-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.05);
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.settings-placeholder-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--brand-red);
+    margin-bottom: 12px;
+}
+
+.settings-placeholder-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+    .settings-container {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .settings-left-col, .settings-right-col {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+    
+    .choose-theme-card {
+        min-height: auto !important;
+    }
+    
+    .choose-theme-card .theme-options {
+        margin-top: 12px !important;
+    }
+    
+    .phone-mockup {
+        top: -120px;
+        width: 180px;
+    }
+}
+
+@media (max-width: 600px) {
+    .promo-banner {
+        padding: 30px;
+        min-height: auto;
+    }
+    
+    .promo-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+    
+    .promo-left {
+        max-width: 100%;
+    }
+    
+    .promo-right {
+        width: 100%;
+        justify-content: center;
+        height: 120px;
+    }
+    
+    .phone-mockup {
+        position: relative;
+        right: 0;
+        top: 0;
+        transform: none;
+        width: 150px;
+        margin: 0 auto;
+    }
+}
