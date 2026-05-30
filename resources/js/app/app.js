@@ -204,60 +204,9 @@ var App = function() {
             
             if (togglethemeEl) {
                 togglethemeEl.addEventListener('click', function() {
-                    // Start fade out transition
-                    document.body.style.transition = 'opacity 0.2s ease-in-out';
-                    document.body.style.opacity = '0';
-                    
-                    // Wait for fade out to complete before swapping themes
-                    setTimeout(function() {
-                        var getLocalStorage = localStorage.getItem("theme");
-                        var parseObj = JSON.parse(getLocalStorage);
-
-                        if (parseObj && parseObj.settings && parseObj.settings.layout) {
-                            if (parseObj.settings.layout.darkMode) {
-
-                                var getObjectSettings = parseObj.settings.layout;
-                                var newParseObject = {...getObjectSettings, darkMode: false};
-                                var newObject = { ...parseObj, settings: { layout: newParseObject }}
-
-                                localStorage.setItem("theme", JSON.stringify(newObject))
-                                document.body.classList.remove('dark')
-                                
-                            } else {
-
-                                var getObjectSettings = parseObj.settings.layout;
-                                var newParseObject = {...getObjectSettings, darkMode: true};
-                                var newObject = { ...parseObj, settings: { layout: newParseObject }}
-
-                                localStorage.setItem("theme", JSON.stringify(newObject))
-                                document.body.classList.add('dark')
-                            }
-                        } else {
-                            // Default if localStorage is empty
-                            var settingsObject = {
-                                admin: 'Equation Admin Template',
-                                settings: {
-                                    layout: {
-                                        name: layoutName,
-                                        darkMode: true,
-                                    }
-                                }
-                            }
-                            localStorage.setItem("theme", JSON.stringify(settingsObject));
-                            document.body.classList.add('dark');
-                        }
-                        // Make fade in slower
-                        document.body.style.transition = 'opacity 0.5s ease-out';
-                        
-                        // Fade back in after swapping theme
-                        document.body.style.opacity = '1';
-                        
-                        // Clean up transition style after fade in completes
-                        setTimeout(function() {
-                            document.body.style.transition = '';
-                        }, 500);
-                        
-                    }, 200);
+                    if (window.ThemeManager) {
+                        window.ThemeManager.toggle();
+                    }
                 })
             }
         },

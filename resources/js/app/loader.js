@@ -77,56 +77,7 @@ window.addEventListener("load", function(){
         localStorage.setItem("theme", JSON.stringify(equationThemeObject));
     }
 
-    // Get Dark Mode Information i.e darkMode: true or false
-    
-    if (equationThemeObject.settings.layout.darkMode) {
-        localStorage.setItem("theme", JSON.stringify(equationThemeObject));
-        getequationThemeObject = localStorage.getItem("theme");
-        getParseObject = JSON.parse(getequationThemeObject)
-    
-        if (getParseObject.settings.layout.darkMode) {
-            ifStarterKit = document.body.getAttribute('page') === 'starter-pack' ? true : false;
-            document.body.classList.add('dark');
-            if (ifStarterKit) {
-                if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '/img/logo.svg')
-                }
-            } else {
-                if (document.querySelector('.navbar-logo')) {
-                    var darkLogoPath = getParseObject.settings.layout.logo.darkLogo;
-                    // Normalize old paths to new paths
-                    if (darkLogoPath && (darkLogoPath.includes('../src/assets/img/') || darkLogoPath.includes('../../src/assets/img/'))) {
-                        darkLogoPath = '/img/logo.svg';
-                    }
-                    document.querySelector('.navbar-logo').setAttribute('src', darkLogoPath)
-                }
-            }
-        }
-    } else {
-        localStorage.setItem("theme", JSON.stringify(equationThemeObject));
-        getequationThemeObject = localStorage.getItem("theme");
-        getParseObject = JSON.parse(getequationThemeObject)
-
-        if (!getParseObject.settings.layout.darkMode) {
-            ifStarterKit = document.body.getAttribute('page') === 'starter-pack' ? true : false;
-            document.body.classList.remove('dark');
-            if (ifStarterKit) {
-                if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '/img/itrac-header-logo.png')
-                }
-            } else {
-                if (document.querySelector('.navbar-logo')) {
-                    var lightLogoPath = getParseObject.settings.layout.logo.lightLogo;
-                    // Normalize old paths to new paths
-                    if (lightLogoPath && (lightLogoPath.includes('../src/assets/img/') || lightLogoPath.includes('../../src/assets/img/'))) {
-                        lightLogoPath = '/img/itrac-header-logo.png';
-                    }
-                    document.querySelector('.navbar-logo').setAttribute('src', lightLogoPath)
-                }
-            }
-            
-        }
-    }
+    // Dark mode state is now managed globally by ThemeManager and the <head> inline script.
 
     // Get Layout Information i.e boxed: true or false
 
