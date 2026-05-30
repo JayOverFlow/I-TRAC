@@ -59,12 +59,12 @@ body.dark .qty-dept-qty {
     color: #F8FAFC;
 }
 
-/* Assign modal — dept column header bar */
-.assign-dept-header {
+/* Assign modal — dept and user column header bar */
+.assign-dept-header, .assign-user-header {
     background-color: #f1f3f4;
 }
 
-body.dark .assign-dept-header {
+body.dark .assign-dept-header, body.dark .assign-user-header {
     background-color: #2D3748;
     color: #F8FAFC;
 }
