@@ -1,110 +1,55 @@
 body.dark .widget-content-area {
-  border: 1px solid #1D2127;
   box-shadow: none;
-  padding: 0;
   background-color: #15181D;
 }
 body.dark .no-content:before, body.dark .no-content:after {
-  display: none !important;
 }
 body.dark .dataTables_wrapper {
-  padding: 0;
 }
 body.dark .dt--top-section {
-  margin: 20px 21px 20px 21px;
 }
 body.dark .dt--bottom-section {
-  padding: 15px;
 }
 body.dark .table-form {
-  display: flex;
-  margin: 17px 21px 25px 21px;
-  justify-content: space-between;
 }
 body.dark .table-form .form-group {
-  margin-bottom: 0;
 }
 body.dark .table-form .form-group label {
   color: #A1A1AA;
-  font-size: 14px;
-  align-self: center;
 }
 body.dark .table-form .form-group input {
-  padding: 7px 18px 7px 14px;
-  height: auto;
-  font-size: 12px;
 }
 body.dark table.dt-table-hover tbody tr:hover {
   background: rgba(185, 28, 28, 0.05); /* Very subtle red hover */
 }
 body.dark table.dataTable thead .sorting:before, body.dark table.dataTable thead .sorting_asc:before, body.dark table.dataTable thead .sorting_desc:before, body.dark table.dataTable thead .sorting_asc_disabled:before, body.dark table.dataTable thead .sorting_desc_disabled:before {
   color: #6B7280;
-  content: "";
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-up'%3E%3Cpolyline points='18 15 12 9 6 15'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 12px;
-  width: 14px;
-  height: 14px;
-  right: 0.3rem;
-  top: 0.5rem;
 }
 body.dark table.dataTable thead .sorting:after, body.dark table.dataTable thead .sorting_asc:after, body.dark table.dataTable thead .sorting_asc_disabled:after, body.dark table.dataTable thead .sorting_desc:after, body.dark table.dataTable thead .sorting_desc_disabled:after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 12px;
-  width: 14px;
-  height: 14px;
-  content: "";
-  right: 0.3rem;
-  top: 1.3rem;
 }
 body.dark table.dataTable thead .sorting_asc:before, body.dark table.dataTable thead .sorting_desc:after {
   color: #B91C1C;
 }
 body.dark table.dataTable > thead > tr, body.dark table.dataTable > tfoot > tr {
-  border: none;
 }
 body.dark .page-item .page-link:hover {
   background: #1D2127;
   color: #F3F4F6;
 }
 body.dark table.dataTable {
-  border-collapse: separate;
-  border-spacing: 0 5px;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  border-collapse: collapse !important;
   background: transparent;
 }
 body.dark .table > tbody tr {
-  border-radius: 4px;
-  border-bottom: 1px solid #1D2127;
 }
 body.dark .table.table-hover tbody tr {
   background-color: transparent;
 }
 body.dark .table > thead > tr > th {
-  text-transform: initial;
-  font-weight: 600;
-  border-top: none;
   background: #1D2127;
-  border-right: none;
-  border-left: none;
-  padding: 12px 21px;
   color: #F3F4F6;
-  font-size: 14px;
-  letter-spacing: 1px;
-  white-space: nowrap;
 }
 body.dark .table > tbody > tr > td {
-  font-size: 14px;
-  border: none;
-  padding: 12px 21px;
   color: #A1A1AA;
-  letter-spacing: 1px;
-  white-space: nowrap;
 }
 body.dark .table-striped tbody tr:nth-of-type(odd) {
   background-color: transparent !important;
@@ -115,42 +60,18 @@ body.dark .dataTable.table-striped tbody tr:nth-of-type(odd) td {
   color: #F3F4F6;
 }
 body.dark div.dataTables_wrapper div.dataTables_info {
-  padding: 10px 16px;
   color: #A1A1AA;
-  font-weight: 600;
-  border: 1px solid #1D2127;
-  display: inline-block;
-  border-radius: 6px;
-  font-size: 13px;
 }
 body.dark div.dataTables_wrapper div.dataTables_filter svg {
-  position: absolute;
-  top: 11px;
-  right: 9px;
-  width: 18px;
-  height: 18px;
   color: #A1A1AA;
 }
 body.dark .dataTables_wrapper .form-control {
   background: #15181D;
-  border: 1px solid #1D2127;
   color: #F3F4F6;
-  border-radius: 6px;
-  font-size: 14px;
-  padding: 7px 16px;
-  height: calc(1.3em + 1.3rem + 2px);
 }
 body.dark .page-link {
-  margin-right: 5px;
-  border-radius: 8px;
   background: #15181D;
-  border: 1px solid #1D2127;
   color: #A1A1AA;
-  height: 33px;
-  width: 33px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
 }
 body.dark .page-item.active .page-link {
   background-color: #B91C1C;

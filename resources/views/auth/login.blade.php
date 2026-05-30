@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
+    <script>
+        (function() {
+            try {
+                var t = localStorage.getItem("theme");
+                if (t) {
+                    var p = JSON.parse(t);
+                    if (p && p.settings && p.settings.layout && p.settings.layout.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    }
+                }
+            } catch(e) {}
+        })();
+    </script>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,18 +37,6 @@
 
 </head>
 <body class="layout-boxed">
-
-    <script>
-        (function() {
-            var theme = localStorage.getItem("theme");
-            if (theme) {
-                var parseObj = JSON.parse(theme);
-                if (parseObj.settings.layout.darkMode) {
-                    document.body.classList.add('dark');
-                }
-            }
-        })();
-    </script>
 
     <div class="main-container vh-100" id="container">
         <div class="row vh-100 g-0">

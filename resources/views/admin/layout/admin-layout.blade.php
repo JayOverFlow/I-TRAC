@@ -5,6 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>@yield('title')</title>
+    <script>
+        (function() {
+            try {
+                var t = localStorage.getItem("theme");
+                if (t) {
+                    var p = JSON.parse(t);
+                    if (p && p.settings && p.settings.layout && p.settings.layout.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    }
+                }
+            } catch(e) {}
+        })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/itrac-favicon.svg') }}"/>
 
     {{-- Google Fonts --}}
@@ -23,17 +36,6 @@
 
 </head>
 <body class="layout-boxed enable-secondaryNav">
-    <script>
-        (function() {
-            var theme = localStorage.getItem("theme");
-            if (theme) {
-                var parseObj = JSON.parse(theme);
-                if (parseObj.settings.layout.darkMode) {
-                    document.body.classList.add('dark');
-                }
-            }
-        })();
-    </script>
     <!-- BEGIN LOADER -->
     <div id="load_screen"> <div class="loader"> <div class="loader-content">
         <div class="spinner-grow align-self-center"></div>

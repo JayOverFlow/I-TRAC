@@ -140,14 +140,13 @@
 <script>
 (function() {
     function initThemeSettingsSelector() {
-        const themeRadios = document.querySelectorAll('input[name="theme_selection"]');
-        if (!themeRadios.length) return;
+        var themeRadios = document.querySelectorAll('input[name="theme_selection"]');
+        if (!themeRadios.length || !window.ThemeManager) return;
         
-        // 1. Function to synchronize theme options with current body class
+        // Sync radio buttons to current theme state
         function syncThemeRadios() {
-            const isDark = document.body.classList.contains('dark');
-            const activeValue = isDark ? 'dark' : 'light';
-            const radioToCheck = document.querySelector(`input[name="theme_selection"][value="${activeValue}"]`);
+            var activeValue = window.ThemeManager.isDark() ? 'dark' : 'light';
+            var radioToCheck = document.querySelector('input[name="theme_selection"][value="' + activeValue + '"]');
             if (radioToCheck) {
                 radioToCheck.checked = true;
             }
@@ -156,77 +155,20 @@
         // Initial sync
         syncThemeRadios();
         
-        // Listen to global toggles (e.g. standard theme toggler click)
-        const globalThemeToggle = document.querySelector('.theme-toggle');
-        if (globalThemeToggle) {
-            globalThemeToggle.addEventListener('click', function() {
-                // Wait slightly for the app.js transition fade to apply body class
-                setTimeout(syncThemeRadios, 250);
-            });
-        }
+        // Listen to ThemeManager events (e.g. when toggled from header button)
+        document.addEventListener('itrac:themeChanged', function() {
+            syncThemeRadios();
+        });
         
-        // 2. Intercept settings radio selection clicks
-        themeRadios.forEach(radio => {
+        // Handle radio button selection
+        themeRadios.forEach(function(radio) {
             radio.addEventListener('change', function() {
-                const targetValue = this.value;
-                const isTargetDark = targetValue === 'dark';
-                const currentIsDark = document.body.classList.contains('dark');
+                var isTargetDark = this.value === 'dark';
+                var currentIsDark = window.ThemeManager.isDark();
                 
                 // Only trigger if state is actually changing
                 if (isTargetDark !== currentIsDark) {
-                    // Replicate premium global switch fade-out/in
-                    document.body.style.transition = 'opacity 0.2s ease-in-out';
-                    document.body.style.opacity = '0';
-                    
-                    setTimeout(function() {
-                        // Toggle body class
-                        if (isTargetDark) {
-                            document.body.classList.add('dark');
-                        } else {
-                            document.body.classList.remove('dark');
-                        }
-                        
-                        // Update localstorage
-                        const getLocalStorage = localStorage.getItem("theme");
-                        if (getLocalStorage) {
-                            try {
-                                const parseObj = JSON.parse(getLocalStorage);
-                                if (parseObj && parseObj.settings && parseObj.settings.layout) {
-                                    parseObj.settings.layout.darkMode = isTargetDark;
-                                    localStorage.setItem("theme", JSON.stringify(parseObj));
-                                }
-                            } catch (e) {
-                                console.error("Error parsing localstorage theme", e);
-                            }
-                        } else {
-                            const settingsObject = {
-                                admin: 'Equation Admin Template',
-                                settings: {
-                                    layout: {
-                                        name: 'Horizontal Light Menu',
-                                        darkMode: isTargetDark,
-                                    }
-                                }
-                            };
-                            localStorage.setItem("theme", JSON.stringify(settingsObject));
-                        }
-                        
-                        // Update header logo
-                        const logoImg = document.querySelector('.navbar-logo');
-                        if (logoImg) {
-                            const logoSrc = isTargetDark ? '/img/logo.svg' : '/img/itrac-header-logo.png';
-                            logoImg.setAttribute('src', logoSrc);
-                        }
-                        
-                        // Fade back in
-                        document.body.style.transition = 'opacity 0.5s ease-out';
-                        document.body.style.opacity = '1';
-                        
-                        setTimeout(function() {
-                            document.body.style.transition = '';
-                        }, 500);
-                        
-                    }, 200);
+                    window.ThemeManager.setDark(isTargetDark);
                 }
             });
         });

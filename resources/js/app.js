@@ -9,4 +9,5 @@ import './app/loader.js';
 import './app/perfect-scrollbar.min.js';
 import './app/mousetrap.min.js';
 import './app/waves.min.js';
+import './app/theme.js';
 import './app/app.js';

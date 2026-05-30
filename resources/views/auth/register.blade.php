@@ -7,6 +7,19 @@
     {{-- Used for Email Verification for security --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Register</title>
+    <script>
+        (function() {
+            try {
+                var t = localStorage.getItem("theme");
+                if (t) {
+                    var p = JSON.parse(t);
+                    if (p && p.settings && p.settings.layout && p.settings.layout.darkMode) {
+                        document.documentElement.classList.add('dark');
+                    }
+                }
+            } catch(e) {}
+        })();
+    </script>
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,18 +46,6 @@
 
 </head>
 <body class="layout-boxed">
-
-    <script>
-        (function() {
-            var theme = localStorage.getItem("theme");
-            if (theme) {
-                var parseObj = JSON.parse(theme);
-                if (parseObj.settings.layout.darkMode) {
-                    document.body.classList.add('dark');
-                }
-            }
-        })();
-    </script>
 
     <div class="main-container" id="container">
         <div class="row">
