@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PoParent;
+use App\Models\User;
 
 class PoReviewController extends Controller
 {
@@ -16,7 +17,9 @@ class PoReviewController extends Controller
             ['title' => 'PO Review', 'url' => '']
         ];
         
+        $users = User::all();
+        
         // 2. Return supply-po-review
-        return view('supply.pages.supply-po-review', compact('po', 'breadcrumbs'));
+        return view('supply.pages.supply-po-review', compact('po', 'breadcrumbs', 'users'));
     }
 }

@@ -356,7 +356,9 @@
                                     </td>
                                     <td class="px-1 text-center">
                                         <button type="button" class="btn border btn-white assign-item-btn"
-                                            title="Assign Item">
+                                            title="Assign Item" data-item-id="{{ $item->po_items_id }}"
+                                            data-item-desc="{{ $item->po_items_descrip }}"
+                                            data-item-qty="{{ $item->po_items_quantity }}">
                                             <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
                                                 alt="Assign">
                                         </button>
@@ -426,7 +428,9 @@
                                     </td>
                                     <td class="px-1 text-center">
                                         <button type="button" class="btn border btn-white assign-item-btn"
-                                            title="Assign Item">
+                                            title="Assign Item" data-item-id="{{ $item->po_items_id }}"
+                                            data-item-desc="{{ $item->po_items_descrip }}"
+                                            data-item-qty="{{ $item->po_items_quantity }}">
                                             <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
                                                 alt="Assign">
                                         </button>
@@ -582,6 +586,7 @@
 
                     {{-- Total assigned tracker (right-aligned, always visible) --}}
                     <div class="d-flex justify-content-end align-items-center gap-2 mt-4">
+                        <img src="{{ asset('img/gray-check.svg') }}" id="assign-check-icon" alt="Check Icon" width="20" height="20">
                         <span class="black-text">Total assigned:</span>
                         <span class="black-text fw-bold">
                             <span id="total-assigned-display">0</span>/<span id="total-qty-cap"></span>
@@ -591,6 +596,82 @@
                 <div class="modal-footer pt-0" style="border-top: none !important;">
                     <button type="button" class="btn btn-gray px-4" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-red text-white px-4" id="confirm-assign-btn"
+                        disabled>Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Assign Quantity Modal (Semi-Expendables and Equipment) --}}
+    <div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-bottom pb-3">
+                    <h5 class="modal-title fw-bold red-text-2" id="assignUserModalLabel">Assign Quantity</h5>
+                </div>
+                <div class="modal-body">
+                    {{-- Item Info --}}
+                    <div class="">
+                        <p class="mb-1 black-text fw-bold" id="modal-user-item-desc"></p>
+                        <p class="mb-2 black-text">Quantity: <span id="modal-user-item-qty"
+                                class="fw-semibold text-dark"></span></p>
+                        <p class="mb-0 black-text d-flex align-items-center gap-1 small">
+                            <img src="{{ asset('img/Info.svg') }}" alt="info" width="16" height="16">
+                            Distribute the quantity to one or more departments
+                        </p>
+                    </div>
+
+                    {{-- Column header bar --}}
+                    <table class="table table-sm table-borderless align-middle mb-2" id="assign-user-table">
+                        <thead>
+                            <tr class="assign-user-header">
+                                <th class="black-text fw-bold rounded-start px-2 py-2">Name</th>
+                                <th class="black-text fw-bold text-center px-2 py-2" style="width: 20%;">Quantity</th>
+                                <th class="rounded-end px-2 py-2" style="width: 2%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="assign-user-tbody">
+                            <tr class="user-row align-middle">
+                                <td class="px-2">
+                                    <select class="form-select form-select-sm user-select">
+                                        <option value="" selected disabled>Select User</option>
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->user_id }}">{{ $user->user_fullname }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td class="px-2">
+                                    <input type="text" class="form-control form-control-sm user-qty text-center">
+                                </td>
+                                <td class="text-center px-0">
+                                    <button type="button" class="btn border-0 bg-transparent text-black fw-bold remove-user-row-btn p-0">
+                                        <img src="{{ asset('img/remove.svg') }}" alt="Remove">
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    {{-- Add User button --}}
+                    <div class="text-center mt-3">
+                        <button type="button" class="btn border btn-white btn-sm px-4 fw-bold" id="add-user-row-btn">
+                            + Add User
+                        </button>
+                    </div>
+
+                    {{-- Total assigned tracker (right-aligned, always visible) --}}
+                    <div class="d-flex justify-content-end align-items-center gap-2 mt-4">
+                        <img src="{{ asset('img/gray-check.svg') }}" id="user-assign-check-icon" alt="Check Icon" width="20" height="20">
+                        <span class="black-text">Total assigned:</span>
+                        <span class="black-text fw-bold">
+                            <span id="total-user-assigned-display">0</span>/<span id="total-user-qty-cap"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="modal-footer pt-0" style="border-top: none !important;">
+                    <button type="button" class="btn btn-gray px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-red text-white px-4" id="confirm-user-assign-btn"
                         disabled>Assign</button>
                 </div>
             </div>
