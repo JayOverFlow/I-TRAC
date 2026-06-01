@@ -26,12 +26,20 @@ class PrParent extends Model
         'submitted_at',
         'pr_total',
         'retrieved_by',
+        'app_id_fk',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
         'created_at'   => 'datetime',
     ];
+
+    // Belongs to one APP Parent
+    public function app()
+    {
+        return $this->belongsTo(AppParent::class, 'app_id_fk', 'app_id');
+    }
+
 
     // One PR has many items
     public function prItems()

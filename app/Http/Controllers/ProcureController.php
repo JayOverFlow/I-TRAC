@@ -19,14 +19,14 @@ class ProcureController extends Controller
         if ($userRole === 'Procurement') {
             // Fetch Retrieved Purchase Requests and Created Purchase Orders
             $retrievedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
-            $pos = PoParent::with('purchaseRequest')->where('saved_by_user_id_fk', $user->user_id)->get();
+            $pos = PoParent::with('purchaseRequest.app')->where('saved_by_user_id_fk', $user->user_id)->get();
             
             return view('procurement.pages.procurement-procure', compact('user', 'retrievedPrs', 'pos'));
         }
 
         if ($userRole === 'Supply') {
             // Fetch only Retrieved Purchase Orders
-            $pos = PoParent::with('purchaseRequest')->where('retrieved_by', $user->user_id)->get();
+            $pos = PoParent::with('purchaseRequest.app')->where('retrieved_by', $user->user_id)->get();
             
             return view('supply.pages.supply-procure', compact('user', 'pos'));
         }
@@ -40,7 +40,12 @@ class ProcureController extends Controller
             'pr_unique_code' => ['required', 'string', 'max:50'],
         ]);
 
-        $prCode = $request->pr_unique_code;
+        $prCode = trim($request->pr_unique_code);
+
+        // Self-healing: If user submitted PR202601001 instead of PR-202601-001
+        if (preg_match('/^PR\d{9}$/i', $prCode)) {
+            $prCode = 'PR-' . substr($prCode, 2, 6) . '-' . substr($prCode, 8);
+        }
 
         // Find the PR with the given unique code that is 'Approved'
         $pr = \App\Models\PrParent::where('pr_unique_code', $prCode)
@@ -70,7 +75,12 @@ class ProcureController extends Controller
             'po_unique_code' => ['required', 'string', 'max:50'],
         ]);
 
-        $poCode = $request->po_unique_code;
+        $poCode = trim($request->po_unique_code);
+
+        // Self-healing: If user submitted PO202601001001 instead of PO-202601001-001
+        if (preg_match('/^PO\d{12}$/i', $poCode)) {
+            $poCode = 'PO-' . substr($poCode, 2, 9) . '-' . substr($poCode, 11);
+        }
 
         $po = PoParent::where('po_unique_code', $poCode)
             ->where('po_status', 'Done')
