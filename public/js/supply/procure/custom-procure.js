@@ -45,15 +45,49 @@ $(document).ready(function() {
             </form>
         `);
 
-        // Link custom input to DataTable search and button state
+        // Link custom input to DataTable search and button state with dynamic formatting
         $('#input-' + btnId).on('input', function() {
-            let val = $(this).val();
+            let val = $(this).val().toUpperCase();
+            
+            // Strip all non-alphanumeric characters
+            let clean = val.replace(/[^A-Z0-9]/g, '');
+            let formatted = val;
+            let isValid = false;
+            
+            if (btnId === 'retrieve-po-btn') {
+                // Ensure it starts with PO
+                if (clean.length > 0 && !clean.startsWith('PO')) {
+                    if (clean.startsWith('P')) {
+                        clean = 'PO' + clean.substring(1);
+                    } else {
+                        clean = 'PO' + clean;
+                    }
+                }
+                
+                // Format to: PO-YYYYVVXXX-XXX (e.g. PO-202601001-001)
+                formatted = '';
+                if (clean.length > 0) {
+                    formatted += 'PO';
+                }
+                if (clean.length > 2) {
+                    formatted += '-' + clean.substring(2, 11);
+                }
+                if (clean.length > 11) {
+                    formatted += '-' + clean.substring(11, 14);
+                }
+                
+                $(this).val(formatted);
+                isValid = /^PO-\d{9}-\d{3}$/.test(formatted);
+            } else {
+                isValid = regex.test(val);
+                formatted = val;
+            }
             
             // Filter DataTable
-            table.search(val).draw();
+            table.search(formatted).draw();
             
-            // Enable/Disable Retrieve button based on regex
-            if (regex.test(val)) {
+            // Enable/Disable Retrieve button
+            if (isValid) {
                 $('#' + btnId).prop('disabled', false);
             } else {
                 $('#' + btnId).prop('disabled', true);
@@ -61,8 +95,8 @@ $(document).ready(function() {
         });
     }
 
-    // Initialize table for PO
-    initTable('#po-table', 'po-search-box', 'po_unique_code', 'retrieve-po-btn', /^PO\d+$/);
+    // Initialize table for PO (Updated regex pattern for backfill compatibility)
+    initTable('#po-table', 'po-search-box', 'po_unique_code', 'retrieve-po-btn', /^PO-\d{9}-\d{3}$/);
 
     // Handle PO review redirection
     $(document).on('click', '.clickable-row', function() {

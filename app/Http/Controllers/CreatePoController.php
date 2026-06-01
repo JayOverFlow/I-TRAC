@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\PoParent;
 use App\Models\PoItem;
 use App\Models\PoSpec;
+use App\Models\PrParent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -44,10 +45,19 @@ class CreatePoController extends Controller
 
         $user = Auth::user();
 
-        // Generate incrementing unique code (PO0000 format)
-        $lastPo = PoParent::orderBy('po_id', 'desc')->first();
-        $nextNum = $lastPo ? ($lastPo->po_id + 1) : 1;
-        $uniqueCode = 'PO' . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+        // Resolve parent PR
+        $pr = PrParent::findOrFail($pr_id);
+
+        // Generate sequential unique code (PO-[Clean PR Code]-[PO Count] format)
+        if ($pr && $pr->pr_unique_code) {
+            $cleanPrCode = str_replace(['PR', '-'], '', $pr->pr_unique_code);
+            $poCount = PoParent::where('pr_id_fk', $pr_id)->count() + 1;
+            $uniqueCode = 'PO-' . $cleanPrCode . '-' . str_pad($poCount, 3, '0', STR_PAD_LEFT);
+        } else {
+            $lastPo = PoParent::orderBy('po_id', 'desc')->first();
+            $nextNum = $lastPo ? ($lastPo->po_id + 1) : 1;
+            $uniqueCode = 'PO-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+        }
 
         $po = PoParent::create([
             'pr_id_fk' => $pr_id,

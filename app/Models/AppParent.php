@@ -22,6 +22,7 @@ class AppParent extends Model
         'app_approved_by_designation',
         'app_dep_id_fk',
         'app_status',
+        'app_unique_code',
     ];
 
     public function appItems()
@@ -33,4 +34,10 @@ class AppParent extends Model
     {
         return $this->belongsTo(User::class, 'saved_by_user_id_fk', 'user_id');
     }
+
+    public function purchaseRequests()
+    {
+        return $this->hasMany(PrParent::class, 'app_id_fk', 'app_id');
+    }
 }
+

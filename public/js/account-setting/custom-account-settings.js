@@ -18,16 +18,43 @@ $(document).ready(function() {
             </form>
         `);
 
-        // Link custom input to DataTable search and button state
+        // Link custom input to DataTable search and button state with automatic formatting
         $('#pr-search-input').on('input', function() {
-            let val = $(this).val();
+            let val = $(this).val().toUpperCase();
+            
+            // Strip all non-alphanumeric characters
+            let clean = val.replace(/[^A-Z0-9]/g, '');
+            
+            // Ensure the input always starts with PR
+            if (clean.length > 0 && !clean.startsWith('PR')) {
+                if (clean.startsWith('P')) {
+                    clean = 'PR' + clean.substring(1);
+                } else {
+                    clean = 'PR' + clean;
+                }
+            }
+            
+            // Format to: PR-YYYYVV-XXX (e.g. PR-202601-001)
+            let formatted = '';
+            if (clean.length > 0) {
+                formatted += 'PR';
+            }
+            if (clean.length > 2) {
+                formatted += '-' + clean.substring(2, 8);
+            }
+            if (clean.length > 8) {
+                formatted += '-' + clean.substring(8, 11);
+            }
+            
+            // Update input value and cursor position smoothly
+            $(this).val(formatted);
             
             // Filter DataTable
-            table.search(val).draw();
+            table.search(formatted).draw();
             
-            // Enable/Disable Retrieve button based on regex (PR followed by digits)
-            const prRegex = /^PR\d+$/;
-            if (prRegex.test(val)) {
+            // Enable/Disable Retrieve button based on the completed new format: PR-DDDDDD-DDD
+            const prRegex = /^PR-\d{6}-\d{3}$/;
+            if (prRegex.test(formatted)) {
                 $('#retrieve-btn').prop('disabled', false);
             } else {
                 $('#retrieve-btn').prop('disabled', true);

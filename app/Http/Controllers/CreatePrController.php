@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\PrParent;
 use App\Models\PrItem;
 use App\Models\PrSpec;
+use App\Models\AppParent;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -295,29 +296,57 @@ class CreatePrController extends Controller
         // Check if a PR already exists for this task
         $pr = $task->pr_id_fk ? PrParent::find($task->pr_id_fk) : null;
 
+        // Resolve parent APP from first item associated with the task
+        $firstItem = $task->appItems()->first();
+        $appId = $firstItem ? $firstItem->app_id_fk : null;
+        $app = $appId ? AppParent::find($appId) : null;
+
         if ($pr) {
+            // Self-heal/ensure sequential unique code exists
+            $uniqueCode = $pr->pr_unique_code;
+            if (!$uniqueCode || !str_contains($uniqueCode, '-')) {
+                if ($app && $app->app_unique_code) {
+                    $cleanAppCode = str_replace(['APP', '-'], '', $app->app_unique_code);
+                    $prCount = PrParent::where('app_id_fk', $appId)->count() + 1;
+                    $uniqueCode = 'PR-' . $cleanAppCode . '-' . str_pad($prCount, 3, '0', STR_PAD_LEFT);
+                } else {
+                    $lastPr = PrParent::orderBy('pr_id', 'desc')->first();
+                    $nextNum = $lastPr ? ($lastPr->pr_id + 1) : 1;
+                    $uniqueCode = 'PR-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+                }
+            }
+
             // Update existing PR header
             $pr->update([
-                'pr_section'    => $request->input('pr_section'),
-                'pr_no'         => $request->input('pr_no'),
-                'pr_department' => $departmentId,
-                'pr_purpose'    => $request->input('pr_purpose'),
-                'pr_status'     => $status,
-                'submitted_at'  => $status === 'Submitted' ? now() : $pr->submitted_at,
+                'pr_section'     => $request->input('pr_section'),
+                'pr_no'          => $request->input('pr_no'),
+                'pr_department'  => $departmentId,
+                'app_id_fk'      => $appId,
+                'pr_unique_code' => $uniqueCode,
+                'pr_purpose'     => $request->input('pr_purpose'),
+                'pr_status'      => $status,
+                'submitted_at'   => $status === 'Submitted' ? now() : $pr->submitted_at,
             ]);
 
             // Delete old items (cascades to specs via FK)
             $pr->prItems()->delete();
         } else {
-            // Generate incrementing unique code (PR0000 format)
-            $lastPr = PrParent::orderBy('pr_id', 'desc')->first();
-            $nextNum = $lastPr ? ($lastPr->pr_id + 1) : 1;
-            $uniqueCode = 'PR' . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+            // Generate sequential unique code (PR-YYYYVV-XXX format)
+            if ($app && $app->app_unique_code) {
+                $cleanAppCode = str_replace(['APP', '-'], '', $app->app_unique_code);
+                $prCount = PrParent::where('app_id_fk', $appId)->count() + 1;
+                $uniqueCode = 'PR-' . $cleanAppCode . '-' . str_pad($prCount, 3, '0', STR_PAD_LEFT);
+            } else {
+                $lastPr = PrParent::orderBy('pr_id', 'desc')->first();
+                $nextNum = $lastPr ? ($lastPr->pr_id + 1) : 1;
+                $uniqueCode = 'PR-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+            }
 
             // Create new PR header
             $pr = PrParent::create([
                 'pr_section'           => $request->input('pr_section'),
                 'pr_department'        => $departmentId,
+                'app_id_fk'            => $appId,
                 'pr_no'                => $request->input('pr_no'),
                 'pr_date'              => now()->toDateString(),
                 'pr_purpose'           => $request->input('pr_purpose'),

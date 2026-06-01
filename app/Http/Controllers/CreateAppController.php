@@ -140,20 +140,36 @@ class CreateAppController extends Controller
                 abort(403, 'Unauthorized access.');
             }
 
-            // Update status
-            $app->update([
+            // Update status and ensure unique code exists
+            $appData = [
                 'app_status' => $intent === 'done' ? 'Done' : 'Draft',
-            ]);
+            ];
+            if (!$app->app_unique_code) {
+                $year = date('Y');
+                $appCount = AppParent::where('app_dep_id_fk', $app->app_dep_id_fk)
+                    ->whereYear('created_at', $year)
+                    ->count() + 1;
+                $appData['app_unique_code'] = 'APP-' . $year . '-' . str_pad($appCount, 2, '0', STR_PAD_LEFT);
+            }
+            $app->update($appData);
 
             // Clear old items to overwrite
             $app->appItems()->delete();
         } else {
+            $year = date('Y');
+            $appCount = AppParent::where('app_dep_id_fk', $depId)
+                ->whereYear('created_at', $year)
+                ->count() + 1;
+            $appUniqueCode = 'APP-' . $year . '-' . str_pad($appCount, 2, '0', STR_PAD_LEFT);
+
             $app = AppParent::create([
                 'saved_by_user_id_fk' => $user->user_id,
                 'app_dep_id_fk'       => $depId,
+                'app_unique_code'     => $appUniqueCode,
                 'app_status'          => $intent === 'done' ? 'Done' : 'Draft',
             ]);
         }
+
 
         foreach ($request->input('items', []) as $item) {
             AppItem::create([
