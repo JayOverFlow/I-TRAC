@@ -123,5 +123,6 @@
             });
         });
     </script>
+    <script src="{{ asset('js/account-setting/custom-settings.js') }}"></script>
     {{-- <script src="{{ asset('js/account-setting/custom-account-setting.js') }}"></script> --}}
 @endpush

@@ -85,16 +85,16 @@
                 <div class="settings-card app-card">
                     <div class="app-card-header">
                         <h3>Annual Procurement Plan</h3>
-                        <a href="#" class="set-link">Click to set <span class="arrow-icon">&gt;</span></a>
+                        <a href="javascript:void(0);" class="set-link" data-bs-toggle="modal" data-bs-target="#setAppModal">Click to set <span class="arrow-icon">&gt;</span></a>
                     </div>
                     
                     <div class="app-card-divider"></div>
                     
-                    <div class="settings-alert-box">
-                        <div class="alert-icon-wrapper">
+                    <div id="settings-app-alert-box" class="settings-alert-box">
+                        <div id="settings-app-alert-icon-wrapper" class="alert-icon-wrapper">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                         </div>
-                        <span class="alert-text">No APP is set</span>
+                        <span id="settings-app-alert-text" class="alert-text">No APP is set</span>
                     </div>
                 </div>
 
@@ -182,4 +182,102 @@
     }
 })();
 </script>
+
+<!-- Set APP Modal -->
+<div class="modal fade" id="setAppModal" tabindex="-1" aria-labelledby="setAppModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content custom-app-modal">
+            <div class="modal-header custom-modal-header">
+                <div class="header-left">
+                    <h3 class="modal-title" id="setAppModalLabel">Annual Procurement Plan</h3>
+                    <p class="modal-subtitle">Set this year's APP</p>
+                </div>
+                <div class="header-right">
+                    <div class="modal-search-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="search-icon" style="transform: rotate(45deg);"><path d="M14 7 A6 6 0 1 0 7 14"></path></svg>
+                        <input type="text" id="modal-app-search" class="form-control modal-search-input" placeholder="Search here...">
+                    </div>
+                    <button type="button" class="btn-modal-close" data-bs-dismiss="modal" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body custom-modal-body">
+                <div class="app-plans-list">
+                    <!-- F.Y. 2026 Active Plan -->
+                    <div class="app-plan-item" data-search="2026">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2026</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app active-set" id="btn-set-app-2026">Set APP</button>
+                    </div>
+
+                    <!-- F.Y. 2026 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2026">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2026</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+
+                    <!-- F.Y. 2024 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2024">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2024</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+
+                    <!-- F.Y. 2023 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2023">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2023</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+
+                    <!-- F.Y. 2022 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2022">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2022</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+
+                    <!-- F.Y. 2021 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2021">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2021</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+
+                    <!-- F.Y. 2020 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2020">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2020</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+
+                    <!-- F.Y. 2019 Disabled Plan -->
+                    <div class="app-plan-item" data-search="2019">
+                        <div class="plan-details">
+                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2019</h4>
+                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                        </div>
+                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

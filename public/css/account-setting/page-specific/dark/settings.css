@@ -160,3 +160,114 @@ body.dark .settings-placeholder-card h3 {
 body.dark .settings-placeholder-card p {
     color: #888ea8;
 }
+
+/* DARK MODE OVERRIDES FOR HIGH FIDELITY ANNUAL PROCUREMENT PLAN MODAL */
+body.dark .custom-app-modal {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark .custom-modal-header {
+    border-bottom: 1px solid var(--border-color) !important;
+    background-color: var(--card-bg) !important;
+}
+
+body.dark .custom-modal-header .modal-title {
+    color: var(--brand-red) !important;
+}
+
+body.dark .custom-modal-header .modal-subtitle {
+    color: var(--text-muted);
+}
+
+body.dark .modal-search-input {
+    border-color: var(--brand-red) !important;
+    background-color: #0e1726 !important;
+    color: var(--text-dark) !important;
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1) !important;
+}
+
+body.dark .modal-search-input:focus {
+    border-color: var(--brand-red) !important;
+    box-shadow: 0 0 0 5px rgba(185, 28, 28, 0.22) !important;
+}
+
+body.dark .btn-modal-close {
+    background-color: #1c2331 !important;
+    color: #f1f2f3 !important;
+}
+
+body.dark .btn-modal-close:hover {
+    background-color: #2e3b52 !important;
+    color: var(--brand-red) !important;
+}
+
+body.dark .custom-modal-body {
+    background-color: var(--card-bg) !important;
+}
+
+body.dark .app-plans-list::-webkit-scrollbar-track {
+    background: #0e1726;
+}
+
+body.dark .app-plans-list::-webkit-scrollbar-thumb {
+    background: var(--brand-red);
+}
+
+body.dark .app-plans-list::-webkit-scrollbar-thumb:hover {
+    background: #991b1b;
+}
+
+body.dark .app-plan-item {
+    border-bottom-color: var(--border-color) !important;
+    background-color: var(--card-bg) !important;
+}
+
+body.dark .app-plan-item:hover {
+    background-color: #1e232b !important;
+}
+
+body.dark .app-plan-item .plan-title {
+    color: var(--text-dark);
+}
+
+body.dark .app-plan-item .plan-subtitle {
+    color: var(--text-muted);
+}
+
+body.dark .btn-set-app {
+    background-color: #191e3a;
+    border-color: var(--border-color);
+    color: var(--text-dark);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+body.dark .btn-set-app:hover {
+    border-color: var(--brand-red);
+    color: var(--brand-red);
+    background-color: rgba(185, 28, 28, 0.1);
+    box-shadow: 0 4px 8px rgba(185, 28, 28, 0.15);
+}
+
+body.dark .btn-set-app-disabled {
+    background-color: #12151a !important;
+    border-color: #191e3a !important;
+    color: #3b3f5c !important;
+}
+
+/* Success status bar in Dark Mode */
+body.dark .settings-app-success-alert {
+    background-color: #064e3b !important;
+    border-color: #047857 !important;
+    color: #34d399 !important;
+}
+
+body.dark .settings-app-success-alert .alert-icon-wrapper {
+    color: #34d399 !important;
+}
+
+body.dark .settings-app-success-alert .alert-text {
+    color: #34d399 !important;
+}
+
