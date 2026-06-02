@@ -134,7 +134,7 @@
       "type": "number",
       "header_text": "Stock",
       "rules": {
-        "required": true,
+        "required": false,
         "integer": true,
         "min": 1,
         "max": 9999999
