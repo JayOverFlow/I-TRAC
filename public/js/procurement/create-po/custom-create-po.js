@@ -330,7 +330,7 @@ $(document).ready(function() {
     });
 });
 
-$(document).on('click', '.dropdown-item', function(e) {
+$(document).on('click', '.btn-group .dropdown-item', function(e) {
     e.preventDefault();
     var selectedText = $(this).text().trim();
     var button = $(this).closest('.btn-group').find('.dropdown-toggle');

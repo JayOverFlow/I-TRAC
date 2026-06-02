@@ -59,6 +59,8 @@ class AuthController extends Controller
 
             switch ($gen_role) {
                 case 'Head':
+                case 'Procurement':
+                case 'Supply':
                     return redirect()->route('show.dashboard');
                 default:
                     return redirect()->route('show.mr');

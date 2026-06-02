@@ -492,3 +492,231 @@
         margin: 0 auto;
     }
 }
+
+/* HIGH FIDELITY ANNUAL PROCUREMENT PLAN MODAL */
+.custom-app-modal {
+    border-radius: 16px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.custom-modal-header {
+    border-bottom: 1px solid #f1f2f3 !important;
+    padding: 20px 24px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.custom-modal-header .header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-modal-header .modal-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--brand-red) !important;
+    margin: 0 !important;
+    line-height: 1.2;
+}
+
+.custom-modal-header .modal-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 4px 0 0 0 !important;
+}
+
+.custom-modal-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Modal Search Bar */
+.modal-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.modal-search-wrapper .search-icon {
+    position: absolute;
+    left: 16px;
+    color: #888ea8 !important;
+    pointer-events: none;
+}
+
+.modal-search-input {
+    border-radius: 30px !important;
+    border: 1.2px solid var(--brand-red) !important;
+    padding: 8px 16px 8px 38px !important;
+    font-size: 0.9rem !important;
+    width: 220px;
+    height: 38px !important;
+    background-color: #ffffff !important;
+    color: var(--text-dark) !important;
+    box-shadow: 0 0 0 3px rgba(140, 4, 4, 0.08) !important; /* Elegant pinkish soft outline glow */
+    transition: all 0.25s ease !important;
+}
+
+.modal-search-input:focus {
+    border-color: var(--brand-red) !important;
+    box-shadow: 0 0 0 5px rgba(140, 4, 4, 0.15) !important;
+    width: 250px; /* Expands smoothly on focus */
+}
+
+/* Modal Close Button */
+.btn-modal-close {
+    background: #f0f2f5 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #2c3e50 !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+.btn-modal-close:hover {
+    background: #e4e7eb !important;
+    color: var(--brand-red) !important;
+    transform: scale(1.05) !important;
+}
+
+/* Scrollable Plans List */
+.custom-modal-body {
+    padding: 0 !important; /* Flush padding for clean borders */
+    background-color: #ffffff;
+}
+
+.app-plans-list {
+    max-height: 420px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Premium Thin Red Scrollbar */
+.app-plans-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.app-plans-list::-webkit-scrollbar-track {
+    background: #fafafa;
+}
+
+.app-plans-list::-webkit-scrollbar-thumb {
+    background: var(--brand-red);
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.app-plans-list::-webkit-scrollbar-thumb:hover {
+    background: #700303;
+}
+
+/* APP Plan Item Row */
+.app-plan-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid #f8f9fa;
+    background-color: #ffffff;
+    transition: background-color 0.2s ease;
+}
+
+.app-plan-item:last-child {
+    border-bottom: none;
+}
+
+.app-plan-item:hover {
+    background-color: #fcfcfc;
+}
+
+.app-plan-item .plan-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-right: 20px;
+}
+
+.app-plan-item .plan-title {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #3b3f5c;
+    margin: 0 0 4px 0 !important;
+}
+
+.app-plan-item .plan-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0 !important;
+}
+
+/* Action Buttons */
+.btn-set-app {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 8px 24px;
+    border-radius: 8px;
+    transition: all 0.22s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+    min-width: 104px;
+    text-align: center;
+}
+
+.btn-set-app:hover {
+    border-color: var(--brand-red);
+    color: var(--brand-red);
+    background-color: var(--brand-red-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(140, 4, 4, 0.08);
+}
+
+.btn-set-app:active {
+    transform: translateY(0);
+}
+
+.btn-set-app-disabled {
+    background-color: #fafafa !important;
+    border: 1px solid #f1f2f3 !important;
+    color: #d3d3d3 !important;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 8px 24px;
+    border-radius: 8px;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    min-width: 104px;
+    text-align: center;
+}
+
+/* Active plan text state on settings card success */
+.settings-app-success-alert {
+    background-color: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    color: #065f46 !important;
+}
+
+.settings-app-success-alert .alert-icon-wrapper {
+    color: #059669 !important;
+}
+
+.settings-app-success-alert .alert-text {
+    color: #047857 !important;
+    font-weight: 600;
+}
+
