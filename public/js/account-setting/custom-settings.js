@@ -26,6 +26,7 @@
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 var query = this.value.toLowerCase().trim();
+                var hasResults = false;
                 
                 planItems.forEach(function(item) {
                     var title = item.querySelector('.plan-title').textContent.toLowerCase();
@@ -33,10 +34,16 @@
                     
                     if (title.indexOf(query) !== -1 || subtitle.indexOf(query) !== -1) {
                         item.style.setProperty('display', 'flex', 'important');
+                        hasResults = true;
                     } else {
                         item.style.setProperty('display', 'none', 'important');
                     }
                 });
+
+                var emptyState = document.getElementById('modal-search-empty-state');
+                if (emptyState) {
+                    emptyState.style.setProperty('display', hasResults ? 'none' : 'block', 'important');
+                }
             });
         }
 
@@ -103,5 +110,59 @@
         document.addEventListener('DOMContentLoaded', initSettingsModalInteractions);
     } else {
         initSettingsModalInteractions();
+    }
+})();
+
+/**
+ * Settings Nested View Manager
+ * Handles the SPA-like navigation between Settings Main, APP List, etc.
+ */
+(function() {
+    'use strict';
+
+    function initSettingsViewManager() {
+        var viewArchiveBtn = document.getElementById('btn-view-archive');
+        var viewBackBtn = document.getElementById('btn-archive-back');
+        
+        if (viewArchiveBtn) {
+            viewArchiveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateToSettingsView('settings-view-archive-apps');
+            });
+        }
+        
+        if (viewBackBtn) {
+            viewBackBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateToSettingsView('settings-view-main');
+            });
+        }
+    }
+
+    function navigateToSettingsView(targetViewId) {
+        var allPanes = document.querySelectorAll('.settings-view-pane');
+        var targetPane = document.getElementById(targetViewId);
+        
+        if (!targetPane) return;
+        
+        // Hide all panes
+        allPanes.forEach(function(pane) {
+            pane.style.display = 'none';
+            pane.classList.remove('active');
+        });
+        
+        // Show target pane
+        targetPane.style.display = 'block';
+        
+        // Force reflow for animation restart
+        void targetPane.offsetWidth;
+        
+        targetPane.classList.add('active');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSettingsViewManager);
+    } else {
+        initSettingsViewManager();
     }
 })();

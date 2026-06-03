@@ -182,10 +182,9 @@ body.dark .custom-modal-header .modal-subtitle {
 }
 
 body.dark .modal-search-input {
-    border-color: var(--brand-red) !important;
+    border-color: var(--text-dark) !important;
     background-color: #0e1726 !important;
     color: var(--text-dark) !important;
-    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1) !important;
 }
 
 body.dark .modal-search-input:focus {
@@ -239,21 +238,21 @@ body.dark .app-plan-item .plan-subtitle {
 body.dark .btn-set-app {
     background-color: #191e3a;
     border-color: var(--border-color);
-    color: var(--text-dark);
+    color: #f1f2f3 !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 body.dark .btn-set-app:hover {
     border-color: var(--brand-red);
-    color: var(--brand-red);
+    color: var(--brand-red) !important;
     background-color: rgba(185, 28, 28, 0.1);
     box-shadow: 0 4px 8px rgba(185, 28, 28, 0.15);
 }
 
 body.dark .btn-set-app-disabled {
-    background-color: #12151a !important;
+    background-color: #1b2e4b !important;
     border-color: #191e3a !important;
-    color: #3b3f5c !important;
+    color: #888ea8 !important;
 }
 
 /* Success status bar in Dark Mode */
@@ -271,3 +270,15 @@ body.dark .settings-app-success-alert .alert-text {
     color: #34d399 !important;
 }
 
+/* =========================================
+   ARCHIVE APP LIST STYLES (Level 1)
+   ========================================= */
+body.dark .archive-back-link:hover {
+    color: #f1f2f3 !important;
+}
+
+body.dark .archive-search-wrapper .archive-search-input {
+    background-color: #0e1726;
+    border-color: #191e3a;
+    color: #f1f2f3;
+}
