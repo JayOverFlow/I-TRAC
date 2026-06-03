@@ -40,7 +40,7 @@
     border-radius: 12px;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.05);
-    padding: 16px 20px;
+    padding: 14px 20px;
     transition: all 0.2s ease;
 }
 
@@ -516,10 +516,11 @@
     flex-direction: column;
 }
 
-.custom-modal-header .modal-title {
+/* Override global modal title color in light mode */
+body:not(.dark) .custom-modal-header .modal-title {
     font-size: 1.35rem;
     font-weight: 700;
-    color: var(--brand-red) !important;
+    color: #8C0404 !important; /* Enforced brand red color */
     margin: 0 !important;
     line-height: 1.2;
 }
@@ -551,15 +552,14 @@
 }
 
 .modal-search-input {
-    border-radius: 30px !important;
-    border: 1.2px solid var(--brand-red) !important;
+    border-radius: 10px !important;
+    border: 1.2px solid var(--text-dark) !important;
     padding: 8px 16px 8px 38px !important;
     font-size: 0.9rem !important;
     width: 220px;
     height: 38px !important;
     background-color: #ffffff !important;
     color: var(--text-dark) !important;
-    box-shadow: 0 0 0 3px rgba(140, 4, 4, 0.08) !important; /* Elegant pinkish soft outline glow */
     transition: all 0.25s ease !important;
 }
 
@@ -691,9 +691,9 @@
 }
 
 .btn-set-app-disabled {
-    background-color: #fafafa !important;
-    border: 1px solid #f1f2f3 !important;
-    color: #d3d3d3 !important;
+    background-color: #f1f2f3 !important;
+    border: 1px solid #e0e6ed !important;
+    color: #888ea8 !important;
     font-weight: 600;
     font-size: 0.88rem;
     padding: 8px 24px;
@@ -720,3 +720,58 @@
     font-weight: 600;
 }
 
+/* =========================================
+   NESTED VIEW MANAGER STYLES (Settings Tab)
+   ========================================= */
+.settings-view-container {
+    position: relative;
+    width: 100%;
+}
+
+.settings-view-pane {
+    animation: fadeSlideUp 0.35s ease forwards;
+}
+
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   ARCHIVE APP LIST STYLES (Level 1)
+   ========================================= */
+.archive-breadcrumb {
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.archive-back-link {
+    color: #888ea8 !important;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.archive-back-link:hover {
+    color: #3b3f5c !important;
+}
+
+.archive-breadcrumb .breadcrumb-separator {
+    color: #888ea8;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.archive-breadcrumb .breadcrumb-current {
+    color: var(--brand-red);
+}

@@ -11,9 +11,12 @@
     aria-labelledby="animated-underline-settings-tab">
 
     @if($hasPremiumSettings)
-        <div class="settings-container">
-            
-            <!-- LEFT COLUMN (Theme, Notifications, FAQs) -->
+        <div class="settings-view-container">
+            <!-- LEVEL 0: Main Settings View -->
+            <div id="settings-view-main" class="settings-view-pane active">
+                <div class="settings-container">
+                    
+                    <!-- LEFT COLUMN (Theme, Notifications, FAQs) -->
             <div class="settings-left-col">
                 
                 <!-- CHOOSE THEME CARD -->
@@ -102,7 +105,7 @@
                 <div class="settings-card archive-card">
                     <div class="card-header-inline">
                         <h3>Archive</h3>
-                        <a href="#" class="view-link">View <span class="arrow-icon">&gt;</span></a>
+                        <a href="javascript:void(0);" class="view-link" id="btn-view-archive">View <span class="arrow-icon">&gt;</span></a>
                     </div>
                     <p class="settings-description mt-2">Access documents previously attached to Purchase Order</p>
                 </div>
@@ -124,7 +127,115 @@
 
             </div>
 
-        </div>
+                </div>
+            </div> <!-- End settings-view-main -->
+
+            <!-- LEVEL 1: Archive APP List View -->
+            <div id="settings-view-archive-apps" class="settings-view-pane" style="display: none;">
+                <div class="widget-content widget-content-area br-8 p-0">
+                    
+                    <!-- Top Section -->
+                    <div class="dt--top-section" style="margin: 0; padding: 20px 21px 20px 21px;">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 d-flex justify-content-sm-start align-items-center">
+                                <div class="dataTables_length">
+                                    <label>
+                                        <div class="archive-breadcrumb">
+                                            <a href="javascript:void(0);" id="btn-archive-back" class="text-decoration-none archive-back-link">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                                                Archive
+                                            </a>
+                                            <span class="breadcrumb-separator">&gt;</span>
+                                            <span class="breadcrumb-current fw-bold red-text-2">Annual Procurement Plan</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3">
+                                <div class="dataTables_filter">
+                                    <div class="position-relative">
+                                        <input type="search" class="form-control form-control-sm archive-search-input" placeholder="Search..." aria-controls="zero-config" style="padding-right: 32px; width: 200px; font-size: 0.85rem;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888ea8;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Responsive Section -->
+                    <div class="table-responsive">
+                        <table class="table table-striped dt-table-hover dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="fw-bold sorting" style="width: 15%">APP-Code</th>
+                                    <th class="fw-bold sorting" style="width: 50%">Title</th>
+                                    <th class="fw-bold sorting" style="width: 20%">Created by</th>
+                                    <th class="fw-bold text-nowrap text-center sorting" style="width: 15%">Date Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>APP-2026-01</td>
+                                    <td>Annual Procurement Plan for Year F.Y. 2026</td>
+                                    <td>Patrick James Ariado</td>
+                                    <td class="text-center">03/01/2026</td>
+                                </tr>
+                                <tr>
+                                    <td>APP-2026-01</td>
+                                    <td>Annual Procurement Plan for Year F.Y. 2025</td>
+                                    <td>Miguel Ibanez</td>
+                                    <td class="text-center">03/22/2021</td>
+                                </tr>
+                                <tr>
+                                    <td>APP-2026-01</td>
+                                    <td>Annual Procurement Plan for Year F.Y. 2024</td>
+                                    <td>Milo Bougainvillea</td>
+                                    <td class="text-center">03/22/2021</td>
+                                </tr>
+                                <tr>
+                                    <td>APP-2026-01</td>
+                                    <td>Annual Procurement Plan for Year F.Y. 2023</td>
+                                    <td>Miguel Ibanez</td>
+                                    <td class="text-center">03/22/2021</td>
+                                </tr>
+                                <tr>
+                                    <td>APP-2026-01</td>
+                                    <td>Annual Procurement Plan for Year F.Y. 2022</td>
+                                    <td>Milo Bougainvillea</td>
+                                    <td class="text-center">03/22/2021</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bottom Section -->
+                    <div class="dt--bottom-section d-sm-flex justify-content-sm-between text-center">
+                        <div class="dt--pages-count mb-sm-0 mb-3">
+                            <div class="dataTables_info">Showing page 1 of 1</div>
+                        </div>
+                        <div class="dt--pagination">
+                            <div class="dataTables_paginate paging_simple_numbers">
+                                <ul class="pagination">
+                                    <li class="paginate_button page-item previous disabled">
+                                        <a href="#" class="page-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                                        </a>
+                                    </li>
+                                    <li class="paginate_button page-item active"><a href="#" class="page-link">1</a></li>
+                                    <li class="paginate_button page-item next disabled">
+                                        <a href="#" class="page-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div> <!-- End settings-view-archive-apps -->
+
+        </div> <!-- End settings-view-container -->
     @else
         <!-- Placeholder for Unassigned and general roles -->
         <div class="settings-placeholder-container">
@@ -194,7 +305,7 @@
                 </div>
                 <div class="header-right">
                     <div class="modal-search-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="search-icon" style="transform: rotate(45deg);"><path d="M14 7 A6 6 0 1 0 7 14"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" id="modal-app-search" class="form-control modal-search-input" placeholder="Search here...">
                     </div>
                     <button type="button" class="btn-modal-close" data-bs-dismiss="modal" aria-label="Close">
@@ -275,9 +386,13 @@
                         </div>
                         <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
                     </div>
+
+                    <!-- Empty State -->
+                    <div id="modal-search-empty-state" class="text-center p-5" style="display: none;">
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">No Annual Procurement Plans found.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 

@@ -93,12 +93,12 @@
     <script>
         $(document).ready(function() {
             /**
-             * Activates the Bootstrap tab based on the current URL hash.
+             * Activates the Bootstrap tab based on the current URL hash or localStorage.
              * We use hashes that match the button IDs (minus the '-tab' suffix)
              * but don't match the tab-pane IDs exactly, preventing native browser jumps.
              */
             function activateTabFromHash() {
-                var hash = window.location.hash;
+                var hash = window.location.hash || localStorage.getItem('active_account_settings_tab');
                 if (hash) {
                     // Try to find a button whose ID matches [hash]-tab
                     var tabButtonId = hash.substring(1) + '-tab';
@@ -120,6 +120,21 @@
             // Listen for hash changes to support same-page navigation from the header
             $(window).on('hashchange', function() {
                 activateTabFromHash();
+            });
+
+            // Save active tab on change to persist across reloads
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var targetHash = $(e.target).attr("href");
+                
+                // Save to local storage
+                localStorage.setItem('active_account_settings_tab', targetHash);
+                
+                // Seamlessly update URL without jumping
+                if(history.replaceState) {
+                    history.replaceState(null, null, targetHash);
+                } else {
+                    window.location.hash = targetHash;
+                }
             });
         });
     </script>
