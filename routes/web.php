@@ -137,6 +137,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/account-settings/update-password', 'updatePassword')->name('account.settings.update.password');
         Route::post('/account-settings/update-avatar', 'updateAvatar')->name('account.settings.update.avatar');
         Route::delete('/account-settings/delete-avatar', 'deleteAvatar')->name('account.settings.delete.avatar');
+        Route::get('/account-settings/archive/app-data/{app_id}', 'getArchiveAppData')->name('account.settings.archive.app-data');
     });
 
     // Chat System
