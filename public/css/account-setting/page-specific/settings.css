@@ -775,3 +775,58 @@ body:not(.dark) .custom-modal-header .modal-title {
 .archive-breadcrumb .breadcrumb-current {
     color: var(--brand-red);
 }
+
+.archive-clickable-row {
+    cursor: pointer;
+}
+
+/* =========================================
+   ARCHIVE APP PROJECT DETAILS (Level 3)
+   ========================================= */
+.app-detail-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.app-detail-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.app-detail-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #3b3f5c;
+}
+
+.app-detail-divider {
+    border-color: #e0e6ed;
+    margin: 8px 0 !important;
+}
+
+.btn-collapse-details {
+    color: #3b3f5c;
+    transition: transform 0.3s ease;
+}
+
+.btn-collapse-details.collapsed {
+    transform: rotate(-180deg);
+}
+
+/* Dark Mode Overrides */
+body.dark .app-detail-header {
+    color: #bfc9d4;
+}
+
+body.dark .app-detail-value {
+    color: #e0e6ed;
+}
+
+body.dark .app-detail-divider {
+    border-color: #191e3a;
+}
+
+body.dark .btn-collapse-details {
+    color: #bfc9d4;
+}

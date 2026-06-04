@@ -187,4 +187,28 @@ class AccountSettingsController extends Controller
             'message' => 'Profile photo removed.',
         ]);
     }
+
+    /**
+     * Fetch the related projects (appItems) and purchase orders for a given APP.
+     */
+    public function getArchiveAppData($app_id)
+    {
+        $app = AppParent::with(['appItems'])->findOrFail($app_id);
+        
+        // Eager load PRs and their POs
+        $appWithPos = AppParent::with(['purchaseRequests.purchaseOrders'])->findOrFail($app_id);
+        
+        $purchaseOrders = collect();
+        foreach ($appWithPos->purchaseRequests as $pr) {
+            foreach ($pr->purchaseOrders as $po) {
+                $purchaseOrders->push($po);
+            }
+        }
+
+        return response()->json([
+            'app_unique_code' => $app->app_unique_code,
+            'appItems' => $app->appItems,
+            'purchaseOrders' => $purchaseOrders
+        ]);
+    }
 }
