@@ -1,17 +1,14 @@
-<div class="col-md-9 par-container">
+<div class="col-md-9 par-container document-view-container" id="doc-par-{{ $par->par_id }}" style="display: none;">
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body px-0 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3 px-3">
                 <h5 class="fw-bold red-text-2 ms-1 mb-0">Property Acknowledgement Receipt</h5>
                 <div class="">
-                    <button type="button" id=""
-                        class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                    <button type="button" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                         <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                         <span>Export as PDF</span>
                     </button>
-
-                    <button type="submit" id=""
-                        class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                    <button type="submit" class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                         <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                         <span class="fw-bold">Save as Draft</span>
                     </button>
@@ -22,7 +19,7 @@
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
-                        <input type="text" name="fund_cluster" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="fund_cluster" value="{{ $par->par_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
 
                     <div class="row align-items-center mb-5">
@@ -30,7 +27,7 @@
                             <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">$po->po_no</h6>
+                            <h6 class="mb-0">{{ $par->par_po_no }}</h6>
                         </div>
                     </div>
                 </div>
@@ -38,11 +35,11 @@
                 <div class="col-md-6 border-start-md">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">PAR No.:</h6>
-                        <input type="text" name="par_no" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="par_no" value="" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Code:</h6>
-                        <input type="text" name="code" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="code" value="{{ $par->par_code }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                 </div>
             </div>
@@ -54,19 +51,17 @@
                             <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">$po->po_no</h6>
+                            <h6 class="mb-0">{{ $par->receiver && $par->receiver->departments->isNotEmpty() ? $par->receiver->departments->first()->dep_name : 'Faculty / Staff' }}</h6>
                         </div>
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Received by:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="received_by"
-                            placeholder="Dropdown to select user?">
+                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="received_by" value="{{ $par->receiver ? $par->receiver->user_fullname : '' }}"
+                            placeholder="Received User">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date:</h6>
-                        <input type="text"
-                            class="form-control form-control-sm ms-2 w-75 flatpickr"
-                            name="date" placeholder="Select Date..">
+                        <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="date" value="{{ $par->par_received_by_date }}" placeholder="Select Date..">
                     </div>
                 </div>
 
@@ -76,7 +71,7 @@
                             <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">$po->po_no</h6>
+                            <h6 class="mb-0">Supply Officer</h6>
                         </div>
                     </div>
                     <div class="row align-items-center mb-5">
@@ -84,14 +79,12 @@
                             <h6 class="mb-0 black-text fw-bold">Issued by:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">$po->po_no</h6>
+                            <h6 class="mb-0">{{ $par->issuer ? $par->issuer->user_fullname : 'Supply Officer' }}</h6>
                         </div>
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 mt-2 pt-1 black-text fw-bold">Date:</h6>
-                        <input type="text"
-                            class="form-control form-control-sm ms-2 w-75 flatpickr"
-                            name="date" placeholder="Select Date..">
+                        <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="date" value="{{ $par->par_issued_by_date }}" placeholder="Select Date..">
                     </div>
                 </div>
             </div>
@@ -110,31 +103,30 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($par->parItems as $index => $item)
                         <tr>
                             <td class="px-1">
-                                <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][qty]" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <input type="text" class="form-control form-control-sm text-center qty-input"
+                                    name="items[{{ $index }}][qty]" value="{{ $item->par_quantity }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][unit]">
+                                    name="items[{{ $index }}][unit]" value="{{ $item->par_unit }}">
+                            </td>
+                            <td class="px-1">
+                                <input type="text" class="form-control form-control-sm"
+                                    name="items[{{ $index }}][description]" value="{{ implode(', ', array_filter(array_merge([$item->par_items_descrip], $item->parSpecs->pluck('par_spec_description')->toArray()))) }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][description]">
+                                    name="items[{{ $index }}][property_no]" value="{{ $item->par_property_no }}">
                             </td>
                             <td class="px-1">
-                                <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][property_no]">
-                            </td>
-                            <td class="px-1">
-                                <input type="text"
-                                    class="form-control form-control-sm flatpickr"
-                                    name="items[0][date_required]" placeholder="Select Date..">
+                                <input type="text" class="form-control form-control-sm flatpickr"
+                                    name="items[{{ $index }}][date_acquired]" value="{{ $item->par_date_acquired }}" placeholder="Select Date..">
                             </td>
                             <td class="px-1 text-center">
-                                <span class="amount-display fw-bold" data-amount="0">₱
-                                    0.00</span>
+                                <span class="amount-display fw-bold" data-amount="{{ $item->par_amount }}">₱{{ number_format($item->par_amount, 2) }}</span>
                             </td>
                             <td class="p-0">
                                 <button type="button"
@@ -143,22 +135,14 @@
                                 </button>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             <hr class="m-0 p-0">
             <div class="text-center my-2">
-                <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
-                    Item</button>
+                <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add Item</button>
             </div>
         </div>
     </div>
 </div>
-
-@push('css')
-    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/par.css') }}">
-@endpush
-
-@push('js')
-    <script src="{{ asset('js/supply/delivery-attachment/partials/par.js') }}"></script>
-@endpush

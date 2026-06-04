@@ -22,3 +22,9 @@
 .ris-container .form-check-inline:hover {
     transform: scale(1.1);
 }
+
+.ris-container .flatpickr {
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
+

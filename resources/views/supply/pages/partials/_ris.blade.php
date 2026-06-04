@@ -1,17 +1,14 @@
-<div class="col-md-9 ris-container">
+<div class="col-md-9 ris-container document-view-container" id="doc-ris-{{ $ris->ris_id }}" style="display: none;">
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body px-0 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3 px-3">
                 <h5 class="fw-bold red-text-2 ms-1 mb-0">Requisition and Issue Slip</h5>
                 <div class="">
-                    <button type="button" id=""
-                        class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                    <button type="button" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                         <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                         <span>Export as PDF</span>
                     </button>
-
-                    <button type="submit" id=""
-                        class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                    <button type="submit" class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                         <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                         <span class="fw-bold">Save as Draft</span>
                     </button>
@@ -25,7 +22,7 @@
                             <h6 class="mb-0 black-text fw-bold">Division:</h6>
                         </div>
                         <div class="col-8">
-                            <h6>$po->po_supplier</h6>
+                            <h6>Taguig Campus</h6>
                         </div>
                     </div>
                 </div>
@@ -36,7 +33,7 @@
                             <h6 class="mb-0 black-text fw-bold">Office:</h6>
                         </div>
                         <div class="col-8">
-                            <h6>$po->po_address</h6>
+                            <h6>{{ $ris->ris_office }}</h6>
                         </div>
                     </div>
                 </div>
@@ -47,7 +44,7 @@
                     <h6 class="black-text fw-bold">Purpose:</h6>
                 </div>
                 <div class="col-11">
-                    <h6>$po->purpose</h6>
+                    <h6>{{ $ris->ris_purpose }}</h6>
                 </div>
             </div>
 
@@ -55,35 +52,35 @@
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
-                        <input type="text" name="fund_cluster" class="form-control form-control-sm ms-2 w-75">
+                        <input type="text" name="fund_cluster" value="{{ $ris->ris_fund_cluster }}" class="form-control form-control-sm ms-2 w-75">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">RIS Number:</h6>
-                        <input type="text" name="ris_no" class="form-control form-control-sm ms-2 w-75">
+                        <input type="text" name="ris_no" value="" class="form-control form-control-sm ms-2 w-75">
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
-                        <input type="text" name="responsibility_center_code"
+                        <input type="text" name="responsibility_center_code" value="{{ $ris->ris_center_code }}"
                             class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                 </div>
             </div>
             <hr class="m-0 p-0">
-            <div class="row g-4 ms-3 mt-1 mb-1">
+            <div class="row g-4 ms-3 mt-0 mb-1">
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Requested by:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="requested_by" placeholder="Dropdown to select user?">
+                        <h6 class="mb-2 black-text fw-bold">Received by:</h6>
+                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="requested_by" value="{{ $ris->receiver ? $ris->receiver->user_fullname : '' }}">
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Received by:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 mb-2 w-75" name="received_by" placeholder="Dropdown to select user?">
+                        <h6 class="mb-2 black-text fw-bold">Date:</h6>
+                        <input type="text" name="ris_date" value="{{ $ris->ris_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
                     </div>
                 </div>
             </div>
@@ -109,44 +106,49 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($ris->risItems as $index => $item)
                         <tr>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][stock_no]"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    name="items[{{ $index }}][stock_no]"
+                                    value="{{ $item->ris_stock_no }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][unit]">
+                                    name="items[{{ $index }}][unit]"
+                                    value="{{ $item->ris_unit }}">
+                            </td>
+                            <td class="px-1">
+                                <input type="text" class="form-control form-control-sm"
+                                    name="items[{{ $index }}][description]"
+                                    value="{{ implode(', ', array_filter(array_merge([$item->ris_items_descrip], $item->risSpecs->pluck('ris_spec_description')->toArray()))) }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][description]">
-                            </td>
-                            <td class="px-1">
-                                <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][qty_requisition]"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    name="items[{{ $index }}][qty_requisition]"
+                                    value="{{ $item->ris_quantity }}">
                             </td>
                             <td class="px-1 text-center">
                                 <div class="form-check form-check-danger form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="items[0][is_available]"
-                                        id="ris-available-yes-0" value="1">
+                                    <input class="form-check-input" type="radio" name="items[{{ $index }}][is_available]"
+                                        id="ris-available-yes-{{ $index }}" value="1" {{ $item->ris_stock_available > 0 ? 'checked' : '' }}>
                                 </div>
                             </td>
                             <td class="px-1 text-center">
                                 <div class="form-check form-check-danger form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="items[0][is_available]"
-                                        id="ris-available-no-0" value="0">
+                                    <input class="form-check-input" type="radio" name="items[{{ $index }}][is_available]"
+                                        id="ris-available-no-{{ $index }}" value="0" {{ $item->ris_stock_available == 0 ? 'checked' : '' }}>
                                 </div>
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][qty_issue]">
+                                    name="items[{{ $index }}][qty_issue]"
+                                    value="{{ $item->ris_issued_quantity }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[0][remarks]">
+                                    name="items[{{ $index }}][remarks]"
+                                    value="">
                             </td>
                             <td class="p-0">
                                 <button type="button"
@@ -155,22 +157,14 @@
                                 </button>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             <hr class="m-0 p-0">
             <div class="text-center my-2">
-                <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add
-                    Item</button>
+                <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add Item</button>
             </div>
         </div>
     </div>
 </div>
-
-@push('css')
-    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/ris.css') }}">
-@endpush
-
-@push('js')
-    <script src="{{ asset('js/supply/delivery-attachment/partials/ris.js') }}"></script>
-@endpush

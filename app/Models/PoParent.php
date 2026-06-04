@@ -67,4 +67,39 @@ class PoParent extends Model
     {
         return $this->belongsTo(User::class, 'retrieved_by', 'user_id');
     }
+
+    public function iarReports()
+    {
+        return $this->hasMany(Iar::class, 'iar_po_id_fk', 'po_id');
+    }
+
+    public function risSlips()
+    {
+        return $this->hasMany(Ris::class, 'po_id_fk', 'po_id');
+    }
+
+    public function rsmiReports()
+    {
+        return $this->hasMany(Rsmi::class, 'po_id_fk', 'po_id');
+    }
+
+    public function icsSlips()
+    {
+        return $this->hasMany(Ics::class, 'po_id_fk', 'po_id');
+    }
+
+    public function rspiReports()
+    {
+        return $this->hasMany(Rspi::class, 'po_id_fk', 'po_id');
+    }
+
+    public function parReceipts()
+    {
+        return $this->hasMany(Par::class, 'po_id_fk', 'po_id');
+    }
+
+    public function ndrReports()
+    {
+        return $this->hasMany(Ndr::class, 'po_id_fk', 'po_id');
+    }
 }

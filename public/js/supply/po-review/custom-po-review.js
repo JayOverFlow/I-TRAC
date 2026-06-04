@@ -175,10 +175,12 @@ $(document).ready(function() {
         updateSelectionCount();
         updateCategoryTotals();
 
-        // If declaration is already checked, re-evaluate or uncheck it if items are left
-        if ($('#form-check-danger').is(':checked') && $('#tbody-uncategorized .po-item-row').length > 0) {
-            $('#form-check-danger').prop('checked', false);
-            $('#generate-btn').prop('disabled', true);
+        // Re-evaluate validation state if checked
+        if ($('#form-check-danger').is(':checked')) {
+            if (!checkAllQuantitiesAssigned()) {
+                $('#form-check-danger').prop('checked', false);
+                $('#generate-btn').prop('disabled', true);
+            }
         }
     });
 
@@ -255,21 +257,47 @@ $(document).ready(function() {
         updateSelectionCount();
         updateCategoryTotals();
 
-        // If declaration is already checked, re-evaluate or uncheck it if items are left
-        if ($('#form-check-danger').is(':checked') && $('#tbody-uncategorized .po-item-row').length > 0) {
-            $('#form-check-danger').prop('checked', false);
-            $('#generate-btn').prop('disabled', true);
+        // Re-evaluate validation state if checked
+        if ($('#form-check-danger').is(':checked')) {
+            if (!checkAllQuantitiesAssigned()) {
+                $('#form-check-danger').prop('checked', false);
+                $('#generate-btn').prop('disabled', true);
+            }
         }
     });
+
+    // Helper to verify that all items (except Not Delivered) have at least one quantity distribution
+    function checkAllQuantitiesAssigned() {
+        let allDistributed = true;
+        
+        // Find all item rows that are NOT in the 'Not Delivered' table
+        const itemsToCheck = $('.po-item-row').filter(function() {
+            return $(this).closest('tbody').attr('id') !== 'tbody-not-delivered';
+        });
+        
+        if (itemsToCheck.length === 0) {
+            return true;
+        }
+        
+        itemsToCheck.each(function() {
+            const itemId = $(this).data('id');
+            // A distribution exists if there is at least one .qty-distribution-row for this item ID
+            const hasDist = $(`.qty-distribution-row[data-item-id="${itemId}"]`).length > 0;
+            if (!hasDist) {
+                allDistributed = false;
+                return false; // Break early
+            }
+        });
+        
+        return allDistributed;
+    }
 
     // Continue to generate button
     $('#form-check-danger').on('change', function() {
         if ($(this).is(':checked')) {
-            // Check if there are still items in #tbody-uncategorized
-            const uncategorizedCount = $('#tbody-uncategorized .po-item-row').length;
-            if (uncategorizedCount > 0) {
+            if (!checkAllQuantitiesAssigned()) {
                 $(this).prop('checked', false);
-                showToast('All items must be categorized before proceeding.', 'error');
+                showToast('All items must be fully distributed (except Not Delivered items) before proceeding.', 'error');
                 $('#generate-btn').prop('disabled', true);
                 return;
             }
@@ -602,5 +630,80 @@ $(document).ready(function() {
 
         bootstrap.Modal.getInstance(document.getElementById('assignUserModal')).hide();
         showToast('Quantity successfully distributed.', 'success');
+    });
+
+    // ─── Generate Delivery Attachments Click Handler ───────────────────────
+    $('#generate-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        let items = [];
+        $('.po-item-row').each(function() {
+            let row = $(this);
+            let itemId = row.data('id');
+            let category = row.find('.category-select').val();
+            if (!category) return;
+
+            let distributions = [];
+            $(`.qty-distribution-row[data-item-id="${itemId}"]`).each(function() {
+                let distRow = $(this);
+                let qty = parseInt(distRow.find('.qty-dept-qty').text().trim(), 10) || 0;
+                let name = distRow.find('.qty-dept-name').text().trim();
+                let userId = distRow.attr('data-user-id');
+
+                if (userId) {
+                    distributions.push({
+                        user_id: userId,
+                        user_fullname: name,
+                        qty: qty
+                    });
+                } else {
+                    distributions.push({
+                        dept_name: name,
+                        qty: qty
+                    });
+                }
+            });
+
+            items.push({
+                po_items_id: itemId,
+                category: category,
+                distributions: distributions
+            });
+        });
+
+        // Disable button to prevent duplicate submissions
+        $('#generate-btn').prop('disabled', true);
+
+        $.ajax({
+            url: `/po-review/${window.poId}/generate-attachments`,
+            method: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+            data: JSON.stringify({ items: items }),
+            success: function(response) {
+                if (response.success) {
+                    showToast(response.message || 'Delivery Attachments generated successfully.', 'success');
+                    if (response.redirect) {
+                        setTimeout(function() {
+                            window.location.href = response.redirect;
+                        }, 1000);
+                    }
+                } else {
+                    showToast(response.message || 'Failed to generate attachments.', 'error');
+                    $('#generate-btn').prop('disabled', false);
+                }
+            },
+            error: function(xhr) {
+                let errMsg = 'Something went wrong.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errMsg = xhr.responseJSON.message;
+                }
+                showToast(errMsg, 'error');
+                $('#generate-btn').prop('disabled', false);
+            }
+        });
     });
 });

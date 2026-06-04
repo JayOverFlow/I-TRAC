@@ -13,27 +13,7 @@ $(document).ready(function() {
         });
     }
 
-    // ─── 2. Complete / Partial Status Toggle Interaction ──────────────────────
-    function handleStatusToggle() {
-        const partialInput = $('#iar-partial-qty');
-        const isPartialChecked = $('#iar-status-partial').is(':checked');
-
-        if (isPartialChecked) {
-            partialInput.prop('disabled', false).focus();
-        } else {
-            partialInput.prop('disabled', true).val('');
-        }
-    }
-
-    // Trigger on change of default radio buttons inside .iar-container
-    $(document).on('change', '.iar-container input[name="flexRadioDefault"]', function() {
-        handleStatusToggle();
-    });
-
-    // Run once on load to establish correct initial state
-    handleStatusToggle();
-
-    // ─── 3. Add Item Row (Scope-Locked to IAR Table) ──────────────────────────
+    // ─── 2. Add Item Row (Scope-Locked to IAR Table) ──────────────────────────
     $(document).on('click', '.iar-container .add-item-btn', function(e) {
         e.preventDefault();
         
@@ -61,7 +41,7 @@ $(document).ready(function() {
         tbody.append(newRow);
     });
 
-    // ─── 4. Remove Item Row (Scope-Locked to IAR Table) ───────────────────────
+    // ─── 3. Remove Item Row (Scope-Locked to IAR Table) ───────────────────────
     $(document).on('click', '.iar-container .remove-row-btn', function(e) {
         e.preventDefault();
         var tbody = $(this).closest('tbody');
@@ -80,3 +60,4 @@ $(document).ready(function() {
         $(this).closest('tr').remove();
     });
 });
+

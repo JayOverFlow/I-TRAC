@@ -4,7 +4,16 @@
  */
 
 $(document).ready(function() {
-    // ─── 1. Add Item Row (Scope-Locked to RIS Table) ──────────────────────────
+    // ─── 1. Flatpickr Calendar Initialization ─────────────────────────────────
+    if (typeof flatpickr !== "undefined") {
+        flatpickr(".ris-container .flatpickr", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: "true"
+        });
+    }
+
+    // ─── 2. Add Item Row (Scope-Locked to RIS Table) ──────────────────────────
     $(document).on('click', '.ris-container .add-item-btn', function(e) {
         e.preventDefault();
         
@@ -48,7 +57,7 @@ $(document).ready(function() {
         tbody.append(newRow);
     });
 
-    // ─── 2. Remove Item Row (Scope-Locked to RIS Table) ───────────────────────
+    // ─── 3. Remove Item Row (Scope-Locked to RIS Table) ───────────────────────
     $(document).on('click', '.ris-container .remove-row-btn', function(e) {
         e.preventDefault();
         var tbody = $(this).closest('tbody');

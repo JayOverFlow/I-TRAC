@@ -1,12 +1,26 @@
 /**
  * Custom JavaScript for the Supply Delivery Attachment page.
- * Note: Component-specific styles and interactive logic (such as row addition/removal,
- * flatpickr initialization, and toggle behaviors) have been separated into:
- * - public/js/supply/delivery-attachment/partials/iar.js
- * - public/js/supply/delivery-attachment/partials/ris.js
- * to isolate concerns and prevent event conflicts.
+ * Handles folder structure treeview selection and document view toggling.
  */
 
 $(document).ready(function() {
-    // Page-wide general helpers can be defined here if needed.
+    $('.document-node').on('click', function(e) {
+        e.preventDefault();
+
+        // Highlight selected node
+        $('.document-node').removeClass('active-doc');
+        $(this).addClass('active-doc');
+
+        // Get target container ID
+        var targetId = $(this).data('target');
+
+        // Hide placeholder view card
+        $('#placeholder-view-card').addClass('d-none').hide();
+
+        // Hide all document view containers
+        $('.document-view-container').addClass('d-none').hide();
+
+        // Show targeted document view container
+        $('#' + targetId).removeClass('d-none').show();
+    });
 });
