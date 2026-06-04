@@ -2,3 +2,9 @@
 .rspi-container {
     /* Add any RSPI-specific styles here if necessary */
 }
+
+.rspi-container .flatpickr {
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
+

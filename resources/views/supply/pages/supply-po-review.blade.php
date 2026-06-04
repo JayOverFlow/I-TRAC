@@ -525,10 +525,12 @@
             </label>
         </div>
 
-        <button type="button" id="generate-btn"
-            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3" disabled>
-            Generate Delivery Attachment/s
-        </button>
+        <div class="generate-btn-container">
+            <button type="button" id="generate-btn"
+                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3" disabled>
+                Generate Delivery Attachment/s
+            </button>
+        </div>
     </div>
 
     {{-- Assign Quantity Modal (Supply and Materials only) --}}
@@ -709,7 +711,9 @@
 
 @push('js')
     <!-- Page SPECIFIC css -->
-
+    <script>
+        window.poId = "{{ $po->po_id }}";
+    </script>
     <!-- CUSTOM css -->
     <script src="{{ asset('js/supply/po-review/custom-po-review.js') }}"></script>
 @endpush

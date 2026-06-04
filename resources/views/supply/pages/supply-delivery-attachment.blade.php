@@ -12,7 +12,57 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/custom-delivery-attachment.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/iar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/ris.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/rsmi.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/ics.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/rspi.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/par.css') }}">
+    
+    <style>
+        .document-node {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .document-node:hover {
+            background-color: rgba(220, 53, 69, 0.08);
+        }
+        .document-node.active-doc {
+            background-color: rgba(220, 53, 69, 0.15);
+            font-weight: bold;
+            color: #dc3545;
+        }
+    </style>
 @endpush
+
+@php
+    // Group IARs by category based on their items
+    $supplyIars = $po->iarReports->filter(function($iar) {
+        $firstItem = $iar->iarItems->first();
+        return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Supply and Materials';
+    });
+
+    $semiExpendableIars = $po->iarReports->filter(function($iar) {
+        $firstItem = $iar->iarItems->first();
+        return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
+    });
+
+    $equipmentIars = $po->iarReports->filter(function($iar) {
+        $firstItem = $iar->iarItems->first();
+        return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Equipment';
+    });
+
+    // Group RISs by category based on their items
+    $supplyRiss = $po->risSlips->filter(function($ris) {
+        $firstItem = $ris->risItems->first();
+        return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Supply and Materials';
+    });
+
+    $semiExpendableRiss = $po->risSlips->filter(function($ris) {
+        $firstItem = $ris->risItems->first();
+        return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
+    });
+@endphp
 
 @section('content')
     <div class="col-12 p-0">
@@ -27,7 +77,7 @@
                 </div>
 
                 <hr class="m-0 p-0">
-                <h6 class="fw-bold red-text-2 ms-4 mt-4 mb-3">Title: $po->po_title</h6>
+                <h6 class="fw-bold red-text-2 ms-4 mt-4 mb-3">Title: {{ $po->po_title }}</h6>
                 <div class="row g-4 ms-3">
                     <div class="col-md-6">
                         <div class="row align-items-center mb-3">
@@ -35,7 +85,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Supplier:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_supplier</h6>
+                                <h6>{{ $po->po_supplier }}</h6>
                             </div>
                         </div>
 
@@ -44,7 +94,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Address:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_address</h6>
+                                <h6>{{ $po->po_address }}</h6>
                             </div>
                         </div>
 
@@ -53,7 +103,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Tel No.:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_tele</h6>
+                                <h6>{{ $po->po_tele }}</h6>
                             </div>
                         </div>
 
@@ -62,7 +112,7 @@
                                 <h6 class="mb-0 black-text fw-bold">TIN:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_tin</h6>
+                                <h6>{{ $po->po_tin }}</h6>
                             </div>
                         </div>
 
@@ -71,7 +121,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Place of Delivery:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_place_delivery</h6>
+                                <h6>{{ $po->po_place_delivery }}</h6>
                             </div>
                         </div>
 
@@ -80,7 +130,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Date of Delivery:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_date_delivery</h6>
+                                <h6>{{ $po->po_date_delivery }}</h6>
                             </div>
                         </div>
                     </div>
@@ -91,7 +141,7 @@
                                 <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_no</h6>
+                                <h6>{{ $po->po_no }}</h6>
                             </div>
                         </div>
 
@@ -100,7 +150,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Date:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_date</h6>
+                                <h6>{{ $po->po_date }}</h6>
                             </div>
                         </div>
 
@@ -109,7 +159,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Mode of Procurement:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_mode</h6>
+                                <h6>{{ $po->po_mode }}</h6>
                             </div>
                         </div>
 
@@ -118,7 +168,7 @@
                                 <h6 class="mb-0 black-text fw-bold">TUP-Taguig TIN:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_tuptin</h6>
+                                <h6>{{ $po->po_tuptin }}</h6>
                             </div>
                         </div>
 
@@ -127,7 +177,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Delivery Term:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_delivery_term</h6>
+                                <h6>{{ $po->po_delivery_term }}</h6>
                             </div>
                         </div>
 
@@ -136,7 +186,7 @@
                                 <h6 class="mb-0 black-text fw-bold">Payment Term:</h6>
                             </div>
                             <div class="col-8">
-                                <h6>$po->po_payment_term</h6>
+                                <h6>{{ $po->po_payment_term }}</h6>
                             </div>
                         </div>
                     </div>
@@ -152,6 +202,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Delivery Attachments</h5>
                         <ul class="treeview folder-structure" id="treeviewFolderStructureEx">
+                            {{-- Supply and Materials Folder --}}
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderSupplyHeading">
                                     <div class="tv-collapsible" data-bs-toggle="collapse" data-bs-target="#folderSupply"
@@ -173,58 +224,49 @@
                                 <div id="folderSupply" class="treeview-collapse collapse show"
                                     aria-labelledby="folderSupplyHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Inspection and Acceptance Report</p>
-                                        </li>
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Requisition and Issue Slip</p>
-                                        </li>
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Report of Supplies and Materials Issued</p>
-                                        </li>
+                                        @foreach($supplyIars as $iar)
+                                            <li class="tv-item tv-file document-node" data-target="doc-iar-{{ $iar->iar_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>IAR</p>
+                                            </li>
+                                        @endforeach
+
+                                         @foreach($supplyRiss as $ris)
+                                            <li class="tv-item tv-file document-node" data-target="doc-ris-{{ $ris->ris_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>RIS - {{ $ris->ris_office }}</p>
+                                            </li>
+                                        @endforeach
+
+                                        @foreach($po->rsmiReports as $rsmi)
+                                            <li class="tv-item tv-file document-node" data-target="doc-rsmi-{{ $rsmi->rsmi_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>RSMI</p>
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </li>
 
+                            {{-- Semi-Expendable Folder --}}
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderSemiExpendableHeading">
                                     <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
@@ -248,74 +290,62 @@
                                     aria-labelledby="folderSemiExpendableHeading"
                                     data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Inspection and Acceptance Report</p>
-                                        </li>
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Requisition and Issue Slip</p>
-                                        </li>
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Inventory Custodian Slip</p>
-                                        </li>
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Report of Semi Expendable property issued</p>
-                                        </li>
+                                        @foreach($semiExpendableIars as $iar)
+                                            <li class="tv-item tv-file document-node" data-target="doc-iar-{{ $iar->iar_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>IAR</p>
+                                            </li>
+                                        @endforeach
+
+                                         @foreach($semiExpendableRiss as $ris)
+                                            <li class="tv-item tv-file document-node" data-target="doc-ris-{{ $ris->ris_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>RIS - {{ $ris->receiver->user_fullname ?? 'User' }}</p>
+                                            </li>
+                                        @endforeach
+
+                                        @foreach($po->icsSlips as $ics)
+                                            <li class="tv-item tv-file document-node" data-target="doc-ics-{{ $ics->ics_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>ICS - {{ $ics->receiver->user_fullname ?? 'User' }}</p>
+                                            </li>
+                                        @endforeach
+
+                                         @foreach($po->rspiReports as $rspi)
+                                            <li class="tv-item tv-file document-node" data-target="doc-rspi-{{ $rspi->rspi_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>RSPI</p>
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </li>
 
+                            {{-- Equipment Folder --}}
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderEquipmentHeading">
                                     <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
@@ -338,42 +368,36 @@
                                 <div id="folderEquipment" class="treeview-collapse collapse"
                                     aria-labelledby="folderEquipmentHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Inspection and Acceptance Report</p>
-                                        </li>
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Property Acknowledgement Receipt</p>
-                                        </li>
+                                        @foreach($equipmentIars as $iar)
+                                            <li class="tv-item tv-file document-node" data-target="doc-iar-{{ $iar->iar_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>IAR</p>
+                                            </li>
+                                        @endforeach
+
+                                        @foreach($po->parReceipts as $par)
+                                            <li class="tv-item tv-file document-node" data-target="doc-par-{{ $par->par_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>PAR - {{ $par->receiver->user_fullname ?? 'User' }}</p>
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </li>
 
+                            {{-- Not Delivered Folder --}}
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderNotDeliveredHeading">
                                     <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
@@ -396,22 +420,18 @@
                                 <div id="folderNotDelivered" class="treeview-collapse collapse"
                                     aria-labelledby="folderNotDeliveredHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
-                                        <li class="tv-item tv-file">
-                                            <span class="icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-file" width="24"
-                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" fill="none" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                                    <path
-                                                        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                                    </path>
-                                                </svg>
-                                            </span>
-                                            <p>Non-Delivery Report</p>
-                                        </li>
+                                        @foreach($po->ndrReports as $ndr)
+                                            <li class="tv-item tv-file document-node" data-target="doc-ndr-{{ $ndr->ndr_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>NDR - {{ $ndr->ndr_no }}</p>
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </div>
                             </li>
@@ -420,35 +440,52 @@
                 </div>
             </div>
 
-            {{-- View File Area --}}
-            {{-- <div class="col-md-9">
+            {{-- Placeholder card --}}
+            <div class="col-md-9" id="placeholder-view-card">
                 <div class="card shadow-sm border-0 mb-3 h-100">
-                    <div class="card-body d-flex align-items-center justify-content-center text-center">
+                    <div class="card-body d-flex align-items-center justify-content-center text-center py-5">
                         <div>
                             <img src="{{ asset('img/File.svg') }}" width="200" height="200">
-                            <h6>Open a file to view</h6>
+                            <h6 class="mt-3 text-muted">Open a file to view</h6>
                         </div>
                     </div>
                 </div>
-            </div> --}}
+            </div>
 
-            {{-- RIS --}}
-            {{-- @include('supply.pages.partials._ris') --}}
-            
-            {{-- IAR --}}
-            {{-- @include('supply.pages.partials._iar') --}}
-            
-            {{-- PAR --}}
-            {{-- @include('supply.pages.partials._par') --}}
-            
-            {{-- ICS --}}
-            {{-- @include('supply.pages.partials._ics') --}}
-            
-            {{-- RSPI --}}
-            {{-- @include('supply.pages.partials._rspi') --}}
-            
-            {{-- RSMI --}}
-            @include('supply.pages.partials._rsmi')
+            {{-- Render all IARs --}}
+            @foreach($po->iarReports as $iar)
+                @include('supply.pages.partials._iar', ['iar' => $iar])
+            @endforeach
+
+            {{-- Render all RISs --}}
+            @foreach($po->risSlips as $ris)
+                @include('supply.pages.partials._ris', ['ris' => $ris])
+            @endforeach
+
+            {{-- Render all RSMIs --}}
+            @foreach($po->rsmiReports as $rsmi)
+                @include('supply.pages.partials._rsmi', ['rsmi' => $rsmi])
+            @endforeach
+
+            {{-- Render all ICSs --}}
+            @foreach($po->icsSlips as $ics)
+                @include('supply.pages.partials._ics', ['ics' => $ics])
+            @endforeach
+
+            {{-- Render all RSPIs --}}
+            @foreach($po->rspiReports as $rspi)
+                @include('supply.pages.partials._rspi', ['rspi' => $rspi])
+            @endforeach
+
+            {{-- Render all PARs --}}
+            @foreach($po->parReceipts as $par)
+                @include('supply.pages.partials._par', ['par' => $par])
+            @endforeach
+
+            {{-- Render all NDRs --}}
+            @foreach($po->ndrReports as $ndr)
+                @include('supply.pages.partials._ndr', ['ndr' => $ndr])
+            @endforeach
         </div>
     </div>
 @endsection
@@ -458,5 +495,11 @@
     <script src="{{ asset('plugins/src/flatpickr/flatpickr.js') }}"></script>
 
     <!-- CUSTOM js -->
-    <script src="{{ asset('js/supply/delivery-attachment/custom-delivery-attachment.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/custom-delivery-attachment.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/partials/iar.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/partials/ris.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/partials/rsmi.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/partials/ics.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/partials/rspi.js') }}"></script>
+                                    <script src="{{ asset('js/supply/delivery-attachment/partials/par.js') }}"></script>
 @endpush

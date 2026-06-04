@@ -78,13 +78,11 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
 
     Route::controller(PoReviewController::class)->group(function () {
         Route::get('/po-review/{po_id}', 'showPoReview')->name('show.po.review');
-        // Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
+        Route::post('/po-review/{po_id}/generate-attachments', 'generateAttachments')->name('generate.attachments');
     });
 
     Route::controller(DeliveryAttachmentController::class)->group(function () {
-        // Route::get('/delivery-attachment/{po_id}', 'showDeliveryAttachment')->name('show.delivery.attachment');
-        Route::get('/delivery-attachment', 'showDeliveryAttachment')->name('show.delivery.attachment');
-        // Route::post('/procure/retrieve-po', 'retrievePo')->name('procure.retrieve.po');
+        Route::get('/delivery-attachment/{po_id}', 'showDeliveryAttachment')->name('show.delivery.attachment');
     });
 });
 

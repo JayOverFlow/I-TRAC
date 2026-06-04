@@ -5,3 +5,9 @@
 .rsmi-container .remove-row-btn:hover {
     opacity: 0.7;
 }
+
+.rsmi-container .flatpickr {
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
+

@@ -2,3 +2,9 @@
 .ics-container {
     /* Add any ICS-specific styles here if necessary */
 }
+
+.ics-container .flatpickr {
+    background-color: #ffffff !important;
+    cursor: pointer;
+}
+
