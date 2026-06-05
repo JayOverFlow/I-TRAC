@@ -8,15 +8,43 @@ use App\Models\PrParent;
 use App\Models\PrItem;
 use App\Models\PrSpec;
 use App\Models\AppParent;
-use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
 
 class CreatePrController extends Controller
 {
+
+    private function authorizeTask(Task $task)
+    {
+        $user = Auth::user();
+        
+        // Resolve active role dynamically based on active session context
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
+        $depId = $activeRole ? $activeRole->role_dep_id_fk : null;
+
+        $isHeadRole = in_array($userRole, ['Head', 'Procurement', 'Supply']);
+
+        // Check authorization:
+        // 1. User is assigned to or created the task
+        if ($task->assigned_to === $user->user_id || $task->assigned_by === $user->user_id) {
+            return;
+        }
+
+        // 2. OR user is a Head-level role in the task's department
+        if ($isHeadRole && $depId && $task->task_dep_id_fk == $depId) {
+            return;
+        }
+
+        abort(403, 'Unauthorized action.');
+    }
 
     public function showCreatePr($task_id)
     {
@@ -27,12 +55,9 @@ class CreatePrController extends Controller
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $userRole = $activeRole?->gen_role;
 
-        $task = Task::with('appItems')->findOrFail($task_id);
+        $task = Task::with(['appItems.app', 'purchaseRequest'])->findOrFail($task_id);
 
-        // Ensure only the assigned user can view their PR task
-        if ($task->assigned_to !== $user->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeTask($task);
 
         // Group items by project title
         $groupedItems = $task->appItems->groupBy('app_item_proj_title');
@@ -52,14 +77,19 @@ class CreatePrController extends Controller
         }
 
         $breadcrumbs = [
-            ['title' => 'Tasks', 'url' => route('show.tasks')],
+            ['title' => 'Purchase Request', 'url' => route('show.tasks')],
             ['title' => 'Create PR', 'url' => '']
         ];
 
+        // Flag: direct creation means the user created the task themselves from the APP checklist
+        $isDirectCreation = ($task->task_type === 'PR Assignment' && $task->assigned_by === $task->assigned_to);
+
         return match ($userRole) {
-            'Head'   => view('head/pages/head-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs')),
-            null     => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs')),
-            default  => view('errors.403'),
+            'Head'             => view('head/pages/head-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs', 'isDirectCreation')),
+            'Procurement'      => view('procurement/pages/procurement-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs', 'isDirectCreation')),
+            'Supply'           => view('supply/pages/supply-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs', 'isDirectCreation')),
+            null, 'Unassigned' => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs', 'isDirectCreation')),
+            default            => abort(403),
         };
     }
 
@@ -135,11 +165,9 @@ class CreatePrController extends Controller
         $user = Auth::user();
         $task = Task::findOrFail($task_id);
 
-        if ($task->assigned_to !== $user->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeTask($task);
 
-        if (!in_array($task->task_status, ['Pending', 'Rejected'])) {
+        if ($task->task_status !== 'Pending') {
             return response()->json([
                 'success' => false,
                 'message' => 'This PR has already been submitted and can no longer be edited.',
@@ -184,26 +212,25 @@ class CreatePrController extends Controller
     }
 
     /**
-     * Submit the PR to the department head.
-     * Task status changes to "Submitted".
+     * Complete the PR (assigned subordinate flow).
+     * Task and PR status change to "Complete".
+     * No PR Review task is created; the Head views the completed task directly.
      */
     public function submitPr(Request $request, $task_id)
     {
         $user = Auth::user();
         $task = Task::findOrFail($task_id);
 
-        if ($task->assigned_to !== $user->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeTask($task);
 
-        if (!in_array($task->task_status, ['Pending', 'Rejected'])) {
+        if ($task->task_status !== 'Pending') {
             return response()->json([
                 'success' => false,
-                'message' => 'This PR has already been submitted.',
+                'message' => 'This PR has already been completed.',
             ], 409);
         }
 
-        // Validate (strict for submission)
+        // Validate (strict for completion)
         $validator = $this->validatePr($request, 'submit');
 
         if ($validator->fails()) {
@@ -217,68 +244,29 @@ class CreatePrController extends Controller
             DB::transaction(function () use ($request, $user, $task) {
 
                 // Save/update the PR data first
-                $pr = $this->saveOrUpdatePr($request, $user, $task, 'Submitted');
+                $pr = $this->saveOrUpdatePr($request, $user, $task, 'Complete');
 
                 // Link PR to task if not already linked
                 if (!$task->pr_id_fk) {
                     $task->update(['pr_id_fk' => $pr->pr_id]);
                 }
 
-                // Mark the original task as Submitted
-                $task->update(['task_status' => 'Submitted']);
-
-                // Find the active role & active department dynamically based on active session context
-                $activeRoleId = session('active_role_id');
-                $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
-                $departmentId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments->first()?->dep_id);
-
-                if ($departmentId) {
-                    // Find the Head role for this department
-                    $headRole = Role::where('role_dep_id_fk', $departmentId)
-                        ->where('gen_role', 'Head')
-                        ->first();
-
-                    if ($headRole && $headRole->user) {
-                        $headUserId = $headRole->user->user_id_fk;
-
-                        // Check if a review task already exists for this PR
-                        $reviewTask = Task::where('pr_id_fk', $pr->pr_id)
-                            ->where('task_type', 'PR Review')
-                            ->first();
-
-                        if ($reviewTask) {
-                            // Update existing review task back to Pending
-                            $reviewTask->update([
-                                'task_status'      => 'Pending',
-                                'task_description' => 'Revised Purchase Request submitted for review.',
-                            ]);
-                        } else {
-                            // Create a new task for the department head to review
-                            Task::create([
-                                'assigned_by'      => $user->user_id,
-                                'assigned_to'      => $headUserId,
-                                'task_description' => 'Purchase Request submitted for review.',
-                                'pr_id_fk'         => $pr->pr_id,
-                                'task_type'        => 'PR Review',
-                                'task_status'      => 'Pending',
-                            ]);
-                        }
-                    }
-                }
+                // Mark the task as Complete — the Head views this task directly; no review task needed
+                $task->update(['task_status' => 'Complete']);
             });
 
-            session()->flash('success', 'Purchase Request submitted successfully.');
+            session()->flash('success', 'Purchase Request marked as complete.');
 
             return response()->json([
                 'success'  => true,
-                'message'  => 'Purchase Request submitted successfully.',
-                'redirect' => route('show.tasks'),
+                'message'  => 'Purchase Request marked as complete.',
+                'redirect' => route('show.create.pr', $task_id),
             ]);
         } catch (\Exception $e) {
             Log::error('PR Submit Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Something went wrong while submitting the PR. Please try again.',
+                'message' => 'Something went wrong while completing the PR. Please try again.',
             ], 500);
         }
     }
@@ -325,7 +313,7 @@ class CreatePrController extends Controller
                 'pr_unique_code' => $uniqueCode,
                 'pr_purpose'     => $request->input('pr_purpose'),
                 'pr_status'      => $status,
-                'submitted_at'   => $status === 'Submitted' ? now() : $pr->submitted_at,
+                'submitted_at'   => $pr->submitted_at ?: (in_array($status, ['Complete', 'Exported']) ? now() : null),
             ]);
 
             // Delete old items (cascades to specs via FK)
@@ -354,7 +342,7 @@ class CreatePrController extends Controller
                 'saved_by_user_id_fk'  => $user->user_id,
                 'pr_unique_code'       => $uniqueCode,
                 'pr_status'            => $status,
-                'submitted_at'         => $status === 'Submitted' ? now() : null,
+                'submitted_at'         => in_array($status, ['Complete', 'Exported']) ? now() : null,
             ]);
         }
 
@@ -391,25 +379,24 @@ class CreatePrController extends Controller
         return $pr;
     }
     /**
-     * Cancel a submitted PR and return it to Draft status.
-     * Allowed only within 3 days of submission.
+     * Cancel a completed PR and return it to Pending/Draft status.
+     * Allowed only within 3 days of completion.
+     * Only available while the Head has not yet exported the PR (status != 'Exported').
      */
     public function cancelPr($task_id)
     {
         $user = Auth::user();
         $task = Task::with('purchaseRequest')->findOrFail($task_id);
 
-        if ($task->assigned_to !== $user->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeTask($task);
 
         $pr = $task->purchaseRequest;
 
-        if (!$pr || $task->task_status !== 'Submitted') {
-            return redirect()->back()->with('error', 'Only submitted purchase requests can be cancelled.');
+        if (!$pr || $task->task_status !== 'Complete') {
+            return redirect()->back()->with('error', 'Only completed purchase requests can be cancelled.');
         }
 
-        // Check 3-day deadline
+        // Check 3-day deadline from when it was completed (submitted_at tracks this)
         $deadline = \Carbon\Carbon::parse($pr->submitted_at)->addDays(3);
         if (now()->greaterThan($deadline)) {
             return redirect()->back()->with('error', 'Cancellation period (3 days) has expired.');
@@ -422,19 +409,265 @@ class CreatePrController extends Controller
 
                 // Revert Task status to Pending
                 $task->update(['task_status' => 'Pending']);
-
-                // Find and delete the head's review task
-                Task::where('pr_id_fk', $pr->pr_id)
-                    ->where('task_type', 'PR Review')
-                    ->where('task_status', 'Pending') // Only delete if not already being processed
-                    ->delete();
             });
 
             return redirect()->route('show.create.pr', $task_id)
-                ->with('success', 'Purchase Request submission cancelled. It is now back to Draft.');
+                ->with('success', 'Purchase Request cancelled. It is now back to Draft.');
         } catch (\Exception $e) {
             Log::error('PR Cancel Error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Something went wrong while cancelling the submission.');
+        }
+    }
+
+    /**
+     * Export the PR.
+     * - Assigned flow: task must be 'Complete'; saves edits, sets status → 'Exported'.
+     * - Self-created Head flow: task must be 'Pending'; saves and sets status → 'Complete'
+     *   (the blade treats 'Complete' on a self-created task as the exported/locked state).
+     */
+    public function exportPr(Request $request, $task_id)
+    {
+        $user = Auth::user();
+        $task = Task::findOrFail($task_id);
+
+        $this->authorizeTask($task);
+
+        // Determine flow: self-created = Head assigned the task to themselves
+        $isSelfCreated = ($task->assigned_by === $task->assigned_to);
+
+        // Guard: assigned tasks must be Complete; self-created tasks must be Pending
+        $allowedStatus = $isSelfCreated ? 'Pending' : 'Complete';
+        if ($task->task_status !== $allowedStatus) {
+            return response()->json([
+                'success' => false,
+                'message' => $isSelfCreated
+                    ? 'Only pending self-created purchase requests can be exported directly.'
+                    : 'Only completed purchase requests can be exported.',
+            ], 400);
+        }
+
+        // Validate (strict for export)
+        $validator = $this->validatePr($request, 'submit');
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            // Assigned → 'Exported'; Self-created → 'Complete' (blade shows this as "Exported")
+            $finalPrStatus   = $isSelfCreated ? 'Complete'  : 'Exported';
+            $finalTaskStatus = $isSelfCreated ? 'Complete'  : 'Exported';
+
+            DB::transaction(function () use ($request, $user, $task, $finalPrStatus, $finalTaskStatus) {
+                // Save/update the PR data with the resolved status
+                $pr = $this->saveOrUpdatePr($request, $user, $task, $finalPrStatus);
+
+                // Get Head's designation for the approval field
+                $activeRoleId = session('active_role_id');
+                $headRole = $user->roles->where('gen_role', 'Head')->first()
+                          ?? $user->roles->where('role_id', $activeRoleId)->first()
+                          ?? $user->roles->first();
+                $designation = $headRole?->role_name ?? 'Department Head';
+
+                // Stamp the approval
+                $pr->update([
+                    'pr_approved_by'              => $user->user_id,
+                    'pr_approved_by_designation'  => $designation,
+                ]);
+
+                // Link PR to task if not already linked
+                if (!$task->pr_id_fk) {
+                    $task->update(['pr_id_fk' => $pr->pr_id]);
+                }
+
+                // Finalize the task status
+                $task->update(['task_status' => $finalTaskStatus]);
+            });
+
+            session()->flash('success', 'Purchase Request exported and locked.');
+
+            return response()->json([
+                'success'      => true,
+                'message'      => 'Purchase Request exported successfully.',
+                'redirect'     => route('show.create.pr', $task_id),
+                'download_url' => route('export.pr.download', $task_id),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('PR Export Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while exporting the PR. Please try again.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Download the Exported PR as PDF using the Excel template.
+     */
+    public function downloadPdf($task_id)
+    {
+        $user = Auth::user();
+        $task = Task::findOrFail($task_id);
+
+        $this->authorizeTask($task);
+
+        // Assigned tasks use 'Exported'; self-created Head tasks use 'Complete' as their final state
+        $isSelfCreated = ($task->assigned_by === $task->assigned_to);
+        $allowedStatuses = $isSelfCreated ? ['Complete'] : ['Exported'];
+        if (!in_array($task->task_status, $allowedStatuses)) {
+            abort(403, 'Purchase Request must be exported before download.');
+        }
+
+        $pr = PrParent::with(['prItems.prSpecs', 'department', 'requestor', 'approver'])
+            ->findOrFail($task->pr_id_fk);
+
+        $templatePath = base_path('procurement_documents/Purchase Request Excel Template (2).xlsx');
+
+        if (!file_exists($templatePath)) {
+            return redirect()->back()->with('error', 'Excel template not found.');
+        }
+
+        try {
+            $spreadsheet = IOFactory::load($templatePath);
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // 1. General Styling & Page Setup
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial Narrow');
+            $sheet->getPageSetup()->setFitToPage(true);
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(1);
+            $sheet->getPageSetup()->setPrintArea('A1:G54');
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+            $sheet->getPageSetup()->setHorizontalCentered(true);
+
+            // Equal Margins (0.5 inches on all sides)
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setBottom(0.5);
+            $sheet->getPageMargins()->setLeft(0.5);
+            $sheet->getPageMargins()->setRight(0.5);
+
+            // 2. Institutional Header Row Height Adjustment (Rows 1-5)
+            $headerRowHeights = [
+                1 => 10,
+                2 => 14,
+                3 => 14,
+                4 => 14,
+                5 => 14,
+                6 => 0,   // Remove unnecessary row/border
+                7 => 12,  // Blank Gap row
+            ];
+            foreach ($headerRowHeights as $row => $height) {
+                $sheet->getRowDimension($row)->setRowHeight($height);
+            }
+
+            // 3. Header Data Mapping (Form Info)
+            $sheet->setCellValue('B8', $pr->department->dep_name ?? 'N/A');
+            $sheet->setCellValue('F8', $pr->pr_no ?? 'N/A');
+            $sheet->setCellValue('B9', $pr->pr_section ?? 'N/A');
+            $sheet->setCellValue('F9', $pr->pr_date ? \Carbon\Carbon::parse($pr->pr_date)->format('M d, Y') : 'N/A');
+
+            // Set Form Info (A8:G9) styles
+            $sheet->getStyle('A8:G9')->getFont()->setSize(11);
+
+            // 4. Items mapping (Row 12-47) - Expanded to match new template
+            $currRow = 12;
+            $items = $pr->prItems;
+
+            $sheet->getStyle('A12:G47')->getFont()->setSize(10); 
+
+            foreach ($items as $item) {
+                if ($currRow > 47) break; 
+
+                $sheet->setCellValue('A' . $currRow, $item->pr_items_quantity);
+                $sheet->setCellValue('B' . $currRow, $item->pr_items_unit);
+
+                // Description + Specs (joined with commas, no wrapping)
+                $description = $item->pr_items_descrip;
+                if ($item->prSpecs->isNotEmpty()) {
+                    $specs = $item->prSpecs->pluck('pr_spec_spec')->join(', ');
+                    $description .= ", " . $specs;
+                }
+                $sheet->setCellValue('C' . $currRow, $description);
+                $sheet->getStyle('C' . $currRow)->getAlignment()->setWrapText(false);
+
+                $sheet->setCellValue('E' . $currRow, $item->pr_items_cost);
+                $sheet->getStyle('E' . $currRow)->getNumberFormat()->setFormatCode('#,##0.00');
+
+                $sheet->setCellValue('G' . $currRow, "=A{$currRow}*E{$currRow}");
+                $sheet->getStyle('G' . $currRow)->getNumberFormat()->setFormatCode('#,##0.00');
+
+                $currRow++;
+            }
+
+            // 5. Grand Total Row (Row 48)
+            $sheet->setCellValue('F48', '=SUM(G12:G47)');
+            $sheet->getStyle('F48')->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('F48')->getFont()->setBold(true);
+
+            // 6. Footer (Rows 50-53)
+            $sheet->setCellValue('C50', $pr->pr_purpose ?? 'N/A');
+
+            // Name Formatter Helper
+            $formatName = function ($user) {
+                if (!$user) return 'N/A';
+                $mi = $user->user_middlename ? substr($user->user_middlename, 0, 1) . '.' : '';
+                return trim($user->user_firstname . ' ' . $mi . ' ' . $user->user_lastname . ' ' . ($user->user_suffix ?? ''));
+            };
+
+            $requestorName = strtoupper($formatName($pr->requestor));
+            $departmentHeadName = strtoupper($formatName($pr->approver));
+
+            // Footer names and designations
+            $sheet->setCellValue('C52', $requestorName);
+            $sheet->setCellValue('D52', $departmentHeadName);
+            $sheet->getStyle('C52:D52')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
+            $sheet->getStyle('C52:D52')->getFont()->setSize(10)->setBold(false);
+
+            $sheet->setCellValue('C53', $pr->pr_designation ?? 'Section Head');
+            $sheet->setCellValue('D53', $pr->pr_approved_by_designation ?? 'Department Head');
+            $sheet->getStyle('C53:D53')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
+            $sheet->getStyle('C53:D53')->getFont()->setSize(9);
+
+            // 6.1 Unique Code (Row 54)
+            $sheet->setCellValue('G54', $pr->pr_unique_code ?? 'N/A');
+            $sheet->getStyle('G54')->getFont()->setSize(8);
+            $sheet->getStyle('G54')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+            // 7. Apply Thick Borders
+            $thickStyle = [
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                    ],
+                ],
+            ];
+            $sheet->getStyle('A1:G5')->applyFromArray($thickStyle);   // Header Box (1-5)
+            $sheet->getStyle('A8:G9')->applyFromArray($thickStyle);   // Form Info Box (8-9)
+            $sheet->getStyle('A11:G47')->applyFromArray($thickStyle); // Items Table (11-47)
+            $sheet->getStyle('A48:G48')->applyFromArray($thickStyle); // Total Row (48)
+            $sheet->getStyle('A50:G53')->applyFromArray($thickStyle); // Footer (50-53)
+
+            // 8. Final Calculation
+            Calculation::getInstance($spreadsheet)->clearCalculationCache();
+            $sheet->getCell('F48')->getCalculatedValue();
+
+            // Export to PDF using mPDF
+            $pdfWriter = new Mpdf($spreadsheet);
+            $pdfWriter->setPreCalculateFormulas(true);
+            $filename = "PR_" . str_replace('-', '_', $pr->pr_no ?: 'EXPORT') . ".pdf";
+
+            return response()->streamDownload(function () use ($pdfWriter) {
+                $pdfWriter->save('php://output');
+            }, $filename, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('PR PDF Export Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to generate PDF. Details: ' . $e->getMessage());
         }
     }
 }

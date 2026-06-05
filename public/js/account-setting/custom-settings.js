@@ -10,16 +10,28 @@
     function initSettingsModalInteractions() {
         var searchInput = document.getElementById('modal-app-search');
         var planItems = document.querySelectorAll('.app-plan-item');
-        var setApp2026Btn = document.getElementById('btn-set-app-2026');
+        var setAppBtns = document.querySelectorAll('.btn-set-app');
         
         var alertBox = document.getElementById('settings-app-alert-box');
         var alertIconWrapper = document.getElementById('settings-app-alert-icon-wrapper');
         var alertText = document.getElementById('settings-app-alert-text');
 
-        // 1. Restore Persistent State from localStorage
-        var savedAppState = localStorage.getItem('itrac_active_app_state');
-        if (savedAppState === 'active_2026' && alertBox && alertIconWrapper && alertText) {
-            applyActiveAPPState(false); // Restore instantly without animations
+        // 1. Sync localStorage state with backend-rendered state
+        var isBackendActive = alertBox && alertBox.classList.contains('settings-app-success-alert');
+        
+        if (!isBackendActive) {
+            // No active APP is set on the backend, clear local storage
+            localStorage.removeItem('itrac_active_app_id');
+            localStorage.removeItem('itrac_active_app_title');
+        } else {
+            // Sync local storage with backend-rendered active APP
+            var activeBtn = document.querySelector('.btn-set-app.active-set');
+            if (activeBtn) {
+                var activeAppId = activeBtn.getAttribute('data-app-id');
+                var activeAppTitle = activeBtn.getAttribute('data-app-title');
+                localStorage.setItem('itrac_active_app_id', activeAppId);
+                localStorage.setItem('itrac_active_app_title', activeAppTitle);
+            }
         }
 
         // 2. Real-time Search Filter
@@ -47,45 +59,81 @@
             });
         }
 
-        // 3. Simulated APP Setting Click Flow
-        if (setApp2026Btn) {
-            setApp2026Btn.addEventListener('click', function() {
-                var button = this;
+        // 3. Dynamic APP Setting Click Flow
+        setAppBtns.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var btn = this;
+                var appId = btn.getAttribute('data-app-id');
+                var appTitle = btn.getAttribute('data-app-title');
                 
                 // Add elegant micro-animation state
-                button.disabled = true;
-                button.style.width = button.offsetWidth + 'px'; // Lock width to prevent text wrap
-                button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 12px; height: 12px; border-width: 2px;"></span>';
+                btn.disabled = true;
+                var originalWidth = btn.offsetWidth;
+                btn.style.width = originalWidth + 'px'; // Lock width to prevent text wrap
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 12px; height: 12px; border-width: 2px;"></span>';
                 
-                setTimeout(function() {
-                    // Apply visual state transition
-                    applyActiveAPPState(true);
-                    
-                    // Save state persistently
-                    localStorage.setItem('itrac_active_app_state', 'active_2026');
+                fetch('/account-settings/set-active-app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ app_id: appId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        setTimeout(function() {
+                            // Reset all set buttons inside modal first
+                            setAppBtns.forEach(function(b) {
+                                b.classList.remove('active-set');
+                                b.textContent = 'Set APP';
+                            });
 
-                    // Close modal smoothly
-                    var modalEl = document.getElementById('setAppModal');
-                    if (modalEl) {
-                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        }
+                            // Mark this one as active-set
+                            btn.classList.add('active-set');
+                            btn.textContent = 'Active';
+
+                            // Apply visual state transition on the main card alert box
+                            applyActiveAPPState(appTitle, true);
+                            
+                            // Save state persistently
+                            localStorage.setItem('itrac_active_app_id', appId);
+                            localStorage.setItem('itrac_active_app_title', appTitle);
+
+                            // Close modal smoothly
+                            var modalEl = document.getElementById('setAppModal');
+                            if (modalEl) {
+                                var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                                if (modalInstance) {
+                                    modalInstance.hide();
+                                }
+                            }
+
+                            // Reload page to reflect changes
+                            window.location.reload();
+
+                        }, 600); // Elegant simulated latency delay
+                    } else {
+                        alert(data.message || 'Failed to set active APP.');
+                        btn.disabled = false;
+                        btn.textContent = 'Set APP';
                     }
-
-                    // Reset button after modal closes
-                    setTimeout(function() {
-                        button.disabled = false;
-                        button.innerHTML = 'Set APP';
-                    }, 500);
-
-                }, 600); // Elegant simulated latency delay
+                })
+                .catch(error => {
+                    console.error('Error setting active APP:', error);
+                    alert('An error occurred. Please try again.');
+                    btn.disabled = false;
+                    btn.textContent = 'Set APP';
+                });
             });
-        }
+        });
 
         // Helper to apply active card state
-        function applyActiveAPPState(animate) {
+        function applyActiveAPPState(title, animate) {
             if (!alertBox || !alertIconWrapper || !alertText) return;
+
+            var displayText = title + ' is currently active';
 
             if (animate) {
                 alertBox.style.transition = 'all 0.3s ease';
@@ -94,13 +142,13 @@
                 setTimeout(function() {
                     alertBox.classList.add('settings-app-success-alert');
                     alertIconWrapper.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
-                    alertText.innerHTML = 'Annual Procurement Plan for Year F.Y. 2026 is currently active';
+                    alertText.innerHTML = displayText;
                     alertBox.style.opacity = '1';
                 }, 300);
             } else {
                 alertBox.classList.add('settings-app-success-alert');
                 alertIconWrapper.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
-                alertText.innerHTML = 'Annual Procurement Plan for Year F.Y. 2026 is currently active';
+                alertText.innerHTML = displayText;
             }
         }
     }

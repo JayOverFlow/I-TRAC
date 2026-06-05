@@ -2,6 +2,6 @@
 @extends('layouts.head-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'Tasks | I-TRAC')
+@section('title', 'Purchase Request | I-TRAC')
 
 @include('general-pages.tasks')

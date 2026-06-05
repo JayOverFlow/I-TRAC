@@ -1,6 +1,337 @@
+/* Purchase Request / Tasks Custom Styles */
+
+.badge-status-pending {
+    background-color: #FFF0F0;
+    color: #FF5A5A;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+.badge-status-completed {
+    background-color: #EAF9EA;
+    color: #4CAF50;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+.btn-dark-red {
+    background-color: #8B0000 !important;
+    border-color: #8B0000 !important;
+    color: white !important;
+}
+
+.btn-dark-red:hover {
+    background-color: #a00000 !important;
+    border-color: #a00000 !important;
+}
+
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.form-check-input:checked {
+    background-color: #8B0000;
+    border-color: #8B0000;
+}
+
 /* DARK MODE SPECIFIC OVERRIDES */
 body.dark .btn-close svg,
 body.dark .btn-close svg line {
     color: #ffffff !important;
     stroke: #ffffff !important;
 }
+
+/* Dark mode table overrides */
+body.dark .widget-content-area {
+    background-color: #0e1726 !important;
+    border: 1px solid #19273f !important;
+}
+
+body.dark .black-text {
+    color: #bfc9d4 !important;
+}
+
+body.dark .table > tbody > tr > td {
+    color: #bfc9d4 !important;
+}
+
+body.dark .badge-status-pending {
+    background-color: rgba(255, 90, 90, 0.15);
+    color: #FF5A5A;
+}
+
+body.dark .badge-status-completed {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+}
+
+body.dark .btn-outline-secondary {
+    border-color: #19273f !important;
+    background-color: #1b2e4b !important;
+    color: #bfc9d4 !important;
+}
+
+body.dark .btn-outline-secondary:hover {
+    background-color: #19273f !important;
+    color: #fff !important;
+}
+
+body.dark .input-group-text,
+body.dark #custom-search-input,
+body.dark #custom-status-filter {
+    background-color: #1b2e4b !important;
+    border-color: #19273f !important;
+    color: #bfc9d4 !important;
+}
+
+body.dark #custom-search-input::placeholder {
+    color: #888ea8 !important;
+}
+
+/* Purchase Request Header & Title Styling */
+.tasks-header-title {
+    color: #8B0000;
+    font-family: 'Nunito', sans-serif;
+}
+body.dark .tasks-header-title {
+    color: #ff5a5a !important;
+}
+
+.tasks-budget-label {
+    font-size: 0.9rem;
+}
+.tasks-budget-amount {
+    color: #333333;
+}
+body.dark .tasks-budget-amount {
+    color: #bfc9d4 !important;
+}
+
+/* Make DataTable-injected custom-buttons container horizontal */
+.custom-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── Search & Filter height alignment ──────────────────────────── */
+#tasks-search-input,
+#tasks-status-filter {
+    height: 38px !important;
+    font-size: 11px !important;
+    border: 1px solid #e0e6ed !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+#tasks-search-input {
+    width: 240px !important;
+    padding-left: 34px !important;
+}
+#tasks-status-filter {
+    width: 140px !important;
+}
+
+/* ── Dark mode: top-section title & budget ─────────────────────── */
+body.dark .custom-title h5 {
+    color: #F3F4F6 !important;
+}
+body.dark .custom-title .text-muted {
+    color: #A1A1AA !important;
+}
+body.dark .custom-title span[style*="515365"] {
+    color: #F3F4F6 !important;
+}
+
+/* ── Dark mode: search input ───────────────────────────────────── */
+body.dark #tasks-search-input {
+    background-color: #15181D !important;
+    border-color: #2A2F38 !important;
+    color: #F3F4F6 !important;
+}
+body.dark #tasks-search-input::placeholder {
+    color: #A1A1AA !important;
+}
+body.dark .search-input-container svg {
+    stroke: #A1A1AA;
+}
+
+/* ── Dark mode: status dropdown ────────────────────────────────── */
+body.dark #tasks-status-filter {
+    background-color: #15181D !important;
+    border-color: #2A2F38 !important;
+    color: #F3F4F6 !important;
+}
+
+/* ── Dark mode: delete button ──────────────────────────────────── */
+body.dark .btn-tasks-delete {
+    background-color: #2A2F38 !important;
+    border-color: #2A2F38 !important;
+    color: #A1A1AA !important;
+}
+body.dark .btn-tasks-delete:hover {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+}
+body.dark .btn-tasks-delete svg {
+    stroke: #A1A1AA;
+}
+
+/* ── Dark mode: pagination info ────────────────────────────────── */
+body.dark div.dataTables_wrapper div.dataTables_info {
+    color: #61b6cd !important;
+    border-color: #2A2F38 !important;
+}
+
+/* ── Dark mode: table widget area ─────────────────────────────── */
+body.dark .widget-content-area {
+    background-color: #15181D !important;
+    border: 1px solid #15181D !important;
+}
+body.dark .black-text {
+    color: #F3F4F6 !important;
+}
+body.dark .table > tbody > tr > td {
+    color: #A1A1AA !important;
+}
+body.dark .table > tbody > tr {
+    border-color: #1D2127 !important;
+}
+body.dark .dataTable.table-striped tbody tr:nth-of-type(odd) td {
+    background-color: rgba(3, 3, 5, 0.122) !important;
+    color: #fff !important;
+}
+body.dark table.dt-table-hover tbody tr:hover {
+    background: rgba(3, 3, 5, 0.122) !important;
+}
+
+/* ── Dark mode: status badges ──────────────────────────────────── */
+body.dark .badge-status-pending {
+    background-color: rgba(255, 90, 90, 0.15);
+    color: #FF5A5A;
+}
+body.dark .badge-status-completed {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+}
+
+/* ── Dark mode: modal ──────────────────────────────────────────── */
+body.dark .btn-close svg,
+body.dark .btn-close svg line {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* ── Allocated Budget Card (red gradient, matches assign-pr) ────────────── */
+.allocated-budget-card {
+    background: linear-gradient(135deg, #C60202 0%, #930000 100%) !important;
+}
+
+/* ── APP Checklist Breadcrumb Bar ───────────────────────────────────────── */
+.archive-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+.archive-back-link {
+    color: #515365;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+}
+.archive-back-link:hover {
+    color: #8B0000;
+}
+.breadcrumb-separator {
+    color: #888ea8;
+    font-size: 12px;
+}
+.breadcrumb-current {
+    color: #8B0000;
+}
+
+/* ── Dark mode: APP checklist breadcrumb bar ────────────────────────────── */
+body.dark #app-checklist-breadcrumb-bar {
+    background-color: transparent !important;
+    border: none !important;
+}
+body.dark .archive-back-link {
+    color: #A1A1AA !important;
+}
+body.dark .archive-back-link:hover {
+    color: #ff5a5a !important;
+}
+body.dark .breadcrumb-separator {
+    color: #555f6e !important;
+}
+body.dark .breadcrumb-current {
+    color: #ff5a5a !important;
+}
+
+/* ── Dark mode: APP checklist DataTable ─────────────────────────────────── */
+body.dark #app-items-config th {
+    color: #bfc9d4 !important;
+}
+body.dark #app-items-config td {
+    color: #A1A1AA !important;
+}
+
+/* ── Dark mode: APP checklist card wrapper ──────────────────────────────── */
+body.dark #app-checklist-panel .card:not(.allocated-budget-card) {
+    background-color: #15181D !important;
+    border: 1px solid #1D2127 !important;
+}
+body.dark #app-checklist-panel .red-text-2 {
+    color: #ff5a5a !important;
+}
+body.dark #app-checklist-panel .black-text {
+    color: #bfc9d4 !important;
+}
+
+/* ── Assign Purchase Request Modal Styles ─────────────────────────── */
+#user-search-input:focus {
+    border-color: #C62742 !important;
+    box-shadow: 0 0 0 0.25rem rgba(198, 0, 0, 0.25) !important;
+    outline: none !important;
+}
+
+.user-list-table td {
+    border-bottom: none !important;
+}
+
+/* DARK MODE OVERRIDES */
+body.dark #exampleModalCenter .modal-content {
+    background-color: #0e1726 !important;
+}
+
+body.dark #exampleModalCenter .modal-title {
+    color: #bfc9d4 !important;
+}
+
+body.dark #exampleModalCenter .user-list-table th,
+body.dark #exampleModalCenter .user-list-table td {
+    color: #bfc9d4 !important;
+}
+
+body.dark #exampleModalCenter #user-search-input {
+    background-color: #1b2e4b !important;
+    border-color: #19273f !important;
+    color: #bfc9d4 !important;
+}
+
+body.dark #exampleModalCenter #user-search-input::placeholder {
+    color: #888ea8 !important;
+}
+
+body.dark #exampleModalCenter .user-list-item.active {
+    background-color: #1D2127 !important;
+}
+

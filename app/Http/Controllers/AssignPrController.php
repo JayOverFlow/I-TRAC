@@ -65,16 +65,22 @@ class AssignPrController extends Controller
             'item_ids.*'  => 'integer|exists:app_items_tbl,app_item_id',
         ]);
 
+        $user = auth()->user();
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
+
         $headUserId  = auth()->user()->user_id;
         $assignedTo  = $request->assigned_to;
         $itemIds     = $request->item_ids;
 
         // Create ONE task for all selected items
         $task = Task::create([
-            'assigned_by' => $headUserId,
-            'assigned_to' => $assignedTo,
-            'task_type'   => 'Purchase Request',
-            'task_status' => 'Pending',
+            'assigned_by'    => $headUserId,
+            'assigned_to'    => $assignedTo,
+            'task_type'      => 'Purchase Request',
+            'task_status'    => 'Pending',
+            'task_dep_id_fk' => $dep_id,
         ]);
 
         // Link the items to the task via pivot

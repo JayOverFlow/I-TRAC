@@ -241,7 +241,7 @@ $(document).ready(function() {
         var formData = new FormData(form);
 
         // Disable buttons to prevent double-submission
-        $('#submit-pr-btn, #pr-form button[type="submit"]').prop('disabled', true);
+        $('#submit-pr-btn, #export-pr-btn, #pr-form button[type="submit"]').prop('disabled', true);
 
         fetch(actionUrl, {
             method: 'POST',
@@ -258,8 +258,25 @@ $(document).ready(function() {
         })
         .then(function(result) {
             if (result.ok && result.data.success) {
-                // Success — redirect if URL provided, otherwise show toast
-                if (result.data.redirect) {
+                // Success — download file if download_url provided, then redirect/show toast
+                if (result.data.download_url) {
+                    // Trigger download via a hidden iframe so it does not get cancelled by the redirect
+                    var $iframe = $('<iframe>', {
+                        src: result.data.download_url,
+                        style: 'display:none'
+                    }).appendTo('body');
+
+                    // Clean up iframe after a few seconds
+                    setTimeout(function() {
+                        $iframe.remove();
+                    }, 5000);
+
+                    if (result.data.redirect) {
+                        setTimeout(function() {
+                            window.location.href = result.data.redirect;
+                        }, 1000);
+                    }
+                } else if (result.data.redirect) {
                     window.location.href = result.data.redirect;
                 } else {
                     showToast(result.data.message || 'Saved!', 'success');
@@ -281,12 +298,21 @@ $(document).ready(function() {
             showToast('Network error. Check your connection.', 'error');
         })
         .finally(function() {
-            $('#submit-pr-btn, #pr-form button[type="submit"]').prop('disabled', false);
+            $('#submit-pr-btn, #export-pr-btn, #pr-form button[type="submit"]').prop('disabled', false);
         });
     }
 
     // ─── Submit button — strict validation ────────────────────────────────
     $(document).on('click', '#submit-pr-btn', function(e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        if (url) {
+            submitPrForm('submit', url);
+        }
+    });
+
+    // ─── Export button — strict validation and PDF trigger ────────────────
+    $(document).on('click', '#export-pr-btn', function(e) {
         e.preventDefault();
         var url = $(this).data('url');
         if (url) {

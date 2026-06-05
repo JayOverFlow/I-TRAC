@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ─── Flatpickr init ──────────────────────────────────────────────────────
     if (typeof flatpickr !== "undefined") {
-        flatpickr(".flatpickr-date");
+        flatpickr(".flatpickr-date:not([disabled])");
     }
 
     // ─── Utility: total amount ────────────────────────────────────────────────

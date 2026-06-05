@@ -64,7 +64,19 @@
 
         <!--  BEGIN NAVBAR  -->
         <div class="sidebar-wrapper sidebar-theme">
-            @include('partials.head-nav-bar')
+            @php
+                $allRoles = auth()->user()->roles;
+                $activeRoleId = session('active_role_id') ?? ($allRoles->first()?->role_id ?? null);
+                $activeRole = $allRoles->where('role_id', $activeRoleId)->first() ?? $allRoles->first();
+                $userRoleGen = $activeRole?->gen_role ?? auth()->user()->user_type;
+            @endphp
+            @if ($userRoleGen === 'Procurement')
+                @include('partials.procurement-nav-bar')
+            @elseif ($userRoleGen === 'Supply')
+                @include('partials.supply-nav-bar')
+            @else
+                @include('partials.head-nav-bar')
+            @endif
         </div>
         <!--  END NAVBAR  -->
 

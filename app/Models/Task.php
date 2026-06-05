@@ -19,7 +19,14 @@ class Task extends Model
         'task_type',
         'is_deleted',
         'task_status',
+        'task_dep_id_fk',
     ];
+
+    // The department this task belongs to
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'task_dep_id_fk', 'dep_id');
+    }
 
     // The head user who created the task
     public function assignedBy()

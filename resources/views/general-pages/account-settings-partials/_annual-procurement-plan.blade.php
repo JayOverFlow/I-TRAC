@@ -6,17 +6,16 @@
             <thead>
                 <tr>
                     <th class="fw-bold black-text text-nowrap text-center" style="width: 15%">APP-ID</th>
-                    <th class="fw-bold black-text" style="width: 50%">Title</th>
+                    <th class="fw-bold black-text" style="width: 40%">Title</th>
                     <th class="fw-bold black-text text-center" style="width: 25%">Date Created</th>
                     <th class="fw-bold black-text text-nowrap text-center" style="width: 10%">Status</th>
+                    <th class="fw-bold black-text text-nowrap text-center" style="width: 10%">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($apps as $app)
                     @php
-                        $targetRoute = $app->app_status === 'Done'
-                            ? route('show.assign.pr', $app->app_id)
-                            : route('show.create-app', $app->app_id);
+                        $targetRoute = route('show.create-app', $app->app_id);
                     @endphp
                     <tr>
                         <td class="text-center" style="cursor: pointer;"
@@ -28,12 +27,18 @@
                         <td class="text-center" style="cursor: pointer;"
                             onclick="window.location='{{ $targetRoute }}'">
                             {{ $app->created_at ? $app->created_at->format('Y-m-d') : 'N/A' }}</td>
-                        <td class="text-center">
+                        <td class="text-center" style="cursor: pointer;"
+                            onclick="window.location='{{ $targetRoute }}'">
                             @if ($app->app_status === 'Done')
                                 <span class="badge bg-success" style="font-size: 0.78rem;">Done</span>
                             @else
                                 <span class="badge bg-warning" style="font-size: 0.78rem;">Draft</span>
                             @endif
+                        </td>
+                        <td class="text-center">
+                            <button class="btn p-0 shadow-none bg-transparent border-0 d-flex align-items-center justify-content-center mx-auto" onclick="event.stopPropagation();" title="Delete APP">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
                         </td>
                     </tr>
                 @endforeach
@@ -50,17 +55,7 @@
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
     <style>
-        body.dark .import-btn {
-            background-color: #1b2e4b !important;
-            border-color: #1b2e4b !important;
-            color: #bfc9d4 !important;
-        }
-        body.dark .import-btn svg path {
-            stroke: #bfc9d4 !important;
-        }
-        body.dark .import-btn span {
-            color: #bfc9d4 !important;
-        }
+        /* Placeholder for any future specific APP tab styles */
     </style>
 @endpush
 
@@ -68,7 +63,7 @@
     <script src="{{ asset('js/head/dashboard/page-specific/datatables.js') }}"></script>
     <script>
         $('#zero-config').DataTable({
-            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'<'custom-buttons'>>>>" +
+            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'<'custom-title'>><'col-12 col-sm-6 d-flex gap-3 justify-content-sm-end justify-content-center mt-sm-0 mt-3'<'custom-buttons'>f>>>" +
                 "<'table-responsive'tr>" +
                 "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
             "oLanguage": {
@@ -82,6 +77,7 @@
                 "sLengthMenu": "Results :  _MENU_",
             },
             initComplete: function() {
+                $('.custom-title').html('<h5 class="fw-bold mb-0" style="color: #8B0000;">Annual Procurement Plan</h5>');
                 $('.custom-buttons').html(`
                     <div class="d-flex gap-2">
                         <button class="btn btn-dark-red d-flex align-items-center px-4 py-2 border-0" style="border-radius: 8px;" onclick="window.location='{{ route('show.create-app') }}'">
@@ -94,15 +90,6 @@
                                 <line x1="7" y1="16" x2="17" y2="16" stroke="white" stroke-width="2"/>
                             </svg>
                             <span class="fw-bold">Create</span>
-                        </button>
-                        <button class="btn btn-white import-btn d-flex align-items-center px-4 py-2 border border-secondary shadow-sm" style="border-radius: 8px;" onclick="window.location='{{ route('show.import.app') }}'" disabled>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
-                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M14 2V8H20" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 18V12" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 15L12 18L15 15" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span class="fw-bold black-text">Import</span>
                         </button>
                     </div>
                 `);

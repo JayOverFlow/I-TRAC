@@ -13,6 +13,7 @@ class CreateAppController extends Controller
     public function showCreateApp($app_id = null)
     {
         $app_data = null;
+        $isReadOnly = false;
         if ($app_id) {
             $app_data = AppParent::with('appItems')->findOrFail($app_id);
 
@@ -26,18 +27,15 @@ class CreateAppController extends Controller
                 abort(403, 'Unauthorized access to this APP record.');
             }
 
-            // If status is already Done, redirect they should be sent directly to assign-pr
-            if ($app_data->app_status === 'Done') {
-                return redirect()->route('show.assign.pr', $app_id);
-            }
+            $isReadOnly = ($app_data->app_status === 'Done');
         }
 
         $breadcrumbs = [
             ['title' => 'Account Settings', 'url' => route('account.settings')],
-            ['title' => 'Create APP', 'url' => '']
+            ['title' => $isReadOnly ? 'View APP' : 'Create APP', 'url' => '']
         ];
 
-        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs'));
+        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs', 'isReadOnly'));
     }
 
     public function createApp(Request $request)
@@ -140,10 +138,29 @@ class CreateAppController extends Controller
                 abort(403, 'Unauthorized access.');
             }
 
+            // Prevent editing if already marked as Done
+            if ($app->app_status === 'Done') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Completed Annual Procurement Plans cannot be modified.',
+                ], 400);
+            }
+
             // Update status and ensure unique code exists
             $appData = [
                 'app_status' => $intent === 'done' ? 'Done' : 'Draft',
             ];
+
+            // Set app_title if not already present
+            if (!$app->app_title) {
+                $appVersion = AppParent::where('app_dep_id_fk', $app->app_dep_id_fk)
+                    ->where('app_id', '<=', $app->app_id)
+                    ->count();
+                $appData['app_title'] = $appVersion <= 1
+                    ? "Annual Procurement Plan for Fiscal Year 2026"
+                    : "Annual Procurement Plan for Fiscal Year 2026 Version " . $appVersion;
+            }
+
             if (!$app->app_unique_code) {
                 $year = date('Y');
                 $appCount = AppParent::where('app_dep_id_fk', $app->app_dep_id_fk)
@@ -162,7 +179,12 @@ class CreateAppController extends Controller
                 ->count() + 1;
             $appUniqueCode = 'APP-' . $year . '-' . str_pad($appCount, 2, '0', STR_PAD_LEFT);
 
+            $appTitle = $appCount === 1
+                ? "Annual Procurement Plan for Fiscal Year 2026"
+                : "Annual Procurement Plan for Fiscal Year 2026 Version " . $appCount;
+
             $app = AppParent::create([
+                'app_title'           => $appTitle,
                 'saved_by_user_id_fk' => $user->user_id,
                 'app_dep_id_fk'       => $depId,
                 'app_unique_code'     => $appUniqueCode,
@@ -171,7 +193,11 @@ class CreateAppController extends Controller
         }
 
 
+        $totalEstiBudget = 0;
         foreach ($request->input('items', []) as $item) {
+            $estiBudget = isset($item['esti_budget']) ? (float)$item['esti_budget'] : 0;
+            $totalEstiBudget += $estiBudget;
+
             AppItem::create([
                 'app_id_fk'              => $app->app_id,
                 'app_item_proj_title'    => $item['proj_title']   ?? null,
@@ -189,15 +215,19 @@ class CreateAppController extends Controller
             ]);
         }
 
+        // Set allocated budget (app_total) dynamically: set to Estimated Budget sum if Done, 0 if Draft
+        $allocatedBudget = ($intent === 'done') ? $totalEstiBudget : 0;
+        $app->update([
+            'app_total' => $allocatedBudget,
+        ]);
+
         $message = $intent === 'done'
             ? 'Annual Procurement Plan submitted successfully!'
             : 'Draft saved successfully!';
 
         session()->flash('success', $message);
 
-        $redirectUrl = $intent === 'done'
-            ? route('show.assign.pr', $app->app_id)
-            : route('show.create-app', $app->app_id);
+        $redirectUrl = route('account.settings') . '#pane-animated-underline-annual-procurement-plan';
 
         return response()->json([
             'success'  => true,
