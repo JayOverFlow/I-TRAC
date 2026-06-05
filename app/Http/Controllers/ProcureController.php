@@ -47,13 +47,13 @@ class ProcureController extends Controller
             $prCode = 'PR-' . substr($prCode, 2, 6) . '-' . substr($prCode, 8);
         }
 
-        // Find the PR with the given unique code that is 'Approved'
+        // Find the PR with the given unique code that is 'Exported'
         $pr = \App\Models\PrParent::where('pr_unique_code', $prCode)
-            ->where('pr_status', 'Approved')
+            ->where('pr_status', 'Exported')
             ->first();
 
         if (!$pr) {
-            return redirect(url()->previous() . '#animated-underline-purchase-request')->with('error', "Purchase Request '$prCode' not found or not yet approved.");
+            return redirect(url()->previous() . '#animated-underline-purchase-request')->with('error', "Purchase Request '$prCode' not found or not yet exported.");
         }
 
         // Check if it's already retrieved

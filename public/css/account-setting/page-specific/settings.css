@@ -690,6 +690,13 @@ body:not(.dark) .custom-modal-header .modal-title {
     transform: translateY(0);
 }
 
+.btn-set-app.active-set {
+    background-color: var(--brand-red) !important;
+    color: #ffffff !important;
+    border-color: var(--brand-red) !important;
+    box-shadow: 0 4px 8px rgba(140, 4, 4, 0.15) !important;
+}
+
 .btn-set-app-disabled {
     background-color: #f1f2f3 !important;
     border: 1px solid #e0e6ed !important;

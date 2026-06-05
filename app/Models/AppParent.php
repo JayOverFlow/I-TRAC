@@ -23,6 +23,7 @@ class AppParent extends Model
         'app_dep_id_fk',
         'app_status',
         'app_unique_code',
+        'app_total',
     ];
 
     public function appItems()

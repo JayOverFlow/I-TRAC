@@ -101,8 +101,12 @@
             function activateTabFromHash() {
                 var hash = window.location.hash || localStorage.getItem('active_account_settings_tab');
                 if (hash) {
-                    // Try to find a button whose ID matches [hash]-tab
-                    var tabButtonId = hash.substring(1) + '-tab';
+                    var tabId = hash.substring(1);
+                    // Strip 'pane-' prefix if present to find the correct tab button ID
+                    if (tabId.indexOf('pane-') === 0) {
+                        tabId = tabId.substring(5);
+                    }
+                    var tabButtonId = tabId + '-tab';
                     var tabTriggerEl = document.getElementById(tabButtonId);
 
                     if (tabTriggerEl) {

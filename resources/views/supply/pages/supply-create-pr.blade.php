@@ -2,6 +2,8 @@
 @extends('layouts.supply-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'Purchase Request | I-TRAC')
+@section('title', 'Create Purchase Request | I-TRAC')
 
-@include('general-pages.tasks')
+@section('content')
+    @include('general-pages.create-pr')
+@endsection

@@ -20,7 +20,7 @@
         @csrf
         @php
             $rowIndex = 0;
-            $isReadOnly = !in_array($task->task_status, ['Pending', 'Rejected']);
+            $isReadOnly = $task->task_status !== 'Pending';
         @endphp
 
         <div class="card allocated-budget-card mb-3">
@@ -30,7 +30,7 @@
                 </div>
                 <div>
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP
-                        {{ number_format($pr?->prItems->sum('pr_items_total_cost') ?? 0, 2) }}</h5>
+                        {{ number_format($pr?->app ? $pr->app->app_total : 0, 2) }}</h5>
 
                     <div class="text-end">
                         <button type="submit" id="save-changes-pr-btn"

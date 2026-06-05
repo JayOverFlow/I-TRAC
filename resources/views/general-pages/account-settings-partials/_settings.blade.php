@@ -93,11 +93,15 @@
                     
                     <div class="app-card-divider"></div>
                     
-                    <div id="settings-app-alert-box" class="settings-alert-box">
+                    <div id="settings-app-alert-box" class="settings-alert-box {{ isset($activeApp) && $activeApp ? 'settings-app-success-alert' : '' }}">
                         <div id="settings-app-alert-icon-wrapper" class="alert-icon-wrapper">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            @if(isset($activeApp) && $activeApp)
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            @else
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            @endif
                         </div>
-                        <span id="settings-app-alert-text" class="alert-text">No APP is set</span>
+                        <span id="settings-app-alert-text" class="alert-text">{{ isset($activeApp) && $activeApp ? $activeApp->app_title . ' is currently active' : 'No APP is set' }}</span>
                     </div>
                 </div>
 
@@ -825,77 +829,27 @@
             </div>
             <div class="modal-body custom-modal-body">
                 <div class="app-plans-list">
-                    <!-- F.Y. 2026 Active Plan -->
-                    <div class="app-plan-item" data-search="2026">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2026</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                    @forelse($apps ?? [] as $app)
+                        <div class="app-plan-item" data-search="{{ strtolower($app->app_title . ' ' . $app->app_unique_code) }}">
+                            <div class="plan-details">
+                                <h4 class="plan-title">{{ $app->app_title }}</h4>
+                                <p class="plan-subtitle">{{ $app->app_unique_code }} | {{ \Carbon\Carbon::parse($app->created_at)->format('m/d/Y') }}</p>
+                            </div>
+                            @if($app->app_status === 'Done')
+                                @if(isset($activeAppId) && $app->app_id == $activeAppId)
+                                    <button type="button" class="btn btn-set-app active-set" data-app-id="{{ $app->app_id }}" data-app-title="{{ $app->app_title }}">Active</button>
+                                @else
+                                    <button type="button" class="btn btn-set-app" data-app-id="{{ $app->app_id }}" data-app-title="{{ $app->app_title }}">Set APP</button>
+                                @endif
+                            @else
+                                <button type="button" class="btn btn-set-app-disabled" disabled>Draft</button>
+                            @endif
                         </div>
-                        <button type="button" class="btn btn-set-app active-set" id="btn-set-app-2026">Set APP</button>
-                    </div>
-
-                    <!-- F.Y. 2026 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2026">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2026</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
+                    @empty
+                        <div class="text-center p-5">
+                            <p class="text-muted mb-0" style="font-size: 0.9rem;">No Annual Procurement Plans found.</p>
                         </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
-
-                    <!-- F.Y. 2024 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2024">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2024</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
-                        </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
-
-                    <!-- F.Y. 2023 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2023">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2023</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
-                        </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
-
-                    <!-- F.Y. 2022 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2022">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2022</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
-                        </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
-
-                    <!-- F.Y. 2021 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2021">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2021</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
-                        </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
-
-                    <!-- F.Y. 2020 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2020">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2020</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
-                        </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
-
-                    <!-- F.Y. 2019 Disabled Plan -->
-                    <div class="app-plan-item" data-search="2019">
-                        <div class="plan-details">
-                            <h4 class="plan-title">Annual Procurement Plan for Year F.Y. 2019</h4>
-                            <p class="plan-subtitle">APP-0000 | 01/02/2026</p>
-                        </div>
-                        <button type="button" class="btn btn-set-app-disabled" disabled>Disabled</button>
-                    </div>
+                    @endforelse
 
                     <!-- Empty State -->
                     <div id="modal-search-empty-state" class="text-center p-5" style="display: none;">

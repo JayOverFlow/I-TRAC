@@ -31,7 +31,11 @@
                     @endif
                 </div>
                 <div>
-                    <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
+                    @php
+                        $pr = $po->purchaseRequest;
+                        $allocated_budget = ($pr && $pr->app) ? $pr->app->app_total : 0;
+                    @endphp
+                    <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP {{ number_format($allocated_budget, 2) }}</h5>
 
                     <div class="text-end">
                         @if ($isDone)

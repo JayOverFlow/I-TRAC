@@ -26,12 +26,25 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
+                            <img src="{{ asset('img/SchoolYear.svg') }}" alt="School Year">
+                        </div>
+                        <div class="col-8 text-end">
+                            <h5 class="card-title fw-bold">Fiscal Year</h5>
+                            <h5 class="mb-0 fw-bold">{{ $fiscalYear ?? '—' }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="card h-100">
+                    <div class="card-body row p-4">
+                        <div class="col-4">
                             <img src="{{ asset('img/DepBudget.svg') }}" alt="Department">
                         </div>
                         <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold mb-0">Department Budget</h5>
-                            <p class="my-0 text-decoration-underline">user_department</p>
-                            <h5 class="mb-0 fw-bold">₱<span>204,534.00</span></h5>
+                            <h5 class="card-title fw-bold mb-0">Office Budget</h5>
+                            <h5 class="mb-0 fw-bold">₱<span>{{ number_format($departmentBudget, 2) }}</span></h5>
                         </div>  
                     </div>
                 </div>
@@ -45,21 +58,7 @@
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Utilized Budget</h5>
-                            <h5 class="mb-0 fw-bold">₱<span>204,534.00</span></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-4">
-                <div class="card h-100">
-                    <div class="card-body row p-4">
-                        <div class="col-4">
-                            <img src="{{ asset('img/SchoolYear.svg') }}" alt="School Year">
-                        </div>
-                        <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">School Year</h5>
-                            <h5 class="mb-0 fw-bold">2026</span></h5>
+                            <h5 class="mb-0 fw-bold">₱<span>—</span></h5>
                         </div>
                     </div>
                 </div>

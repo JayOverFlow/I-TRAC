@@ -47,6 +47,19 @@ class ImportAppController extends Controller
 
         DB::beginTransaction();
         try {
+            $year = date('Y');
+            $existingCount = DB::table('app_tbl')
+                ->where('app_dep_id_fk', $depId)
+                ->whereYear('created_at', $year)
+                ->count();
+            $appCount = $existingCount + 1;
+
+            $appTitle = $appCount === 1
+                ? "Annual Procurement Plan for Fiscal Year 2026"
+                : "Annual Procurement Plan for Fiscal Year 2026 Version " . $appCount;
+
+            $appUniqueCode = 'APP-' . $year . '-' . str_pad($appCount, 2, '0', STR_PAD_LEFT);
+
             // This should be handled by a model
             $appId = DB::table('app_tbl')->insertGetId([
                 'app_status'                => 'Draft',
@@ -55,6 +68,8 @@ class ImportAppController extends Controller
                 'app_recommending_by_name'  => $userId,
                 'app_approved_by_name'      => $userId,
                 'app_dep_id_fk'             => $depId,
+                'app_title'                 => $appTitle,
+                'app_unique_code'           => $appUniqueCode,
             ]);
 
             $insertedCount = 0;

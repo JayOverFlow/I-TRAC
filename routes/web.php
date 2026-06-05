@@ -12,7 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
 use App\Http\Controllers\CreatePrController;
 use App\Http\Controllers\CreatePoController;
-use App\Http\Controllers\PrReviewController;
+
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\PoReviewController;
 use App\Http\Controllers\DeliveryAttachmentController;
@@ -37,14 +37,7 @@ Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
     });
 
-    Route::controller(PrReviewController::class)->group(function () {
-        Route::get('/pr-review/{task_id}', 'showPrReview')->name('show.pr.review');
-        Route::get('/pr-review/{task_id}/edit', 'editPrReview')->name('edit.pr.review');
-        Route::post('/pr-review/{task_id}/update', 'updatePrReview')->name('update.pr.review');
-        Route::post('/pr-review/{task_id}/approve', 'approvePr')->name('approve.pr');
-        Route::post('/pr-review/{task_id}/reject', 'rejectPr')->name('reject.pr');
-        Route::get('/pr-review/{task_id}/export', 'exportPdf')->name('export.pr.pdf');
-    });
+
 
     Route::controller(PrPreviewController::class)->group(function () {
         Route::get('/pr-preview/{pr_id}', 'showPrPreview')->name('show.pr.preview');
@@ -104,6 +97,7 @@ Route::middleware('auth')->group(function () {
     // Tasks
     Route::controller(TaskController::class)->group(function () {
         Route::get('/tasks', 'showTasks')->name('show.tasks');
+        Route::post('/tasks/create-from-app-items', 'createFromAppItems')->name('tasks.create-from-app-items');
     });
 
     // Import APP
@@ -126,6 +120,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/create-pr/{task_id}', 'saveDraft')->name('draft.pr');
         Route::post('/submit-pr/{task_id}', 'submitPr')->name('submit.pr');
         Route::post('/cancel-pr/{task_id}', 'cancelPr')->name('cancel.pr');
+        Route::post('/create-pr/{task_id}/export', 'exportPr')->name('export.pr.from_form');
+        Route::get('/create-pr/{task_id}/download-pdf', 'downloadPdf')->name('export.pr.download');
     });
 
     // Account Settings
@@ -136,6 +132,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/account-settings/update-avatar', 'updateAvatar')->name('account.settings.update.avatar');
         Route::delete('/account-settings/delete-avatar', 'deleteAvatar')->name('account.settings.delete.avatar');
         Route::get('/account-settings/archive/app-data/{app_id}', 'getArchiveAppData')->name('account.settings.archive.app-data');
+        Route::post('/account-settings/set-active-app', 'setActiveApp')->name('account.settings.set-active-app');
     });
 
     // Chat System

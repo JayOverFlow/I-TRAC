@@ -24,6 +24,22 @@ class AccountSettingsController extends Controller
         // Resolve the active department ID from the active role context to scope records.
         $depId = $userRole ? $userRole->role_dep_id_fk : null;
 
+        $activeAppId = session('active_app_id_' . $depId);
+        
+        // Fallback to the latest Done APP of this department if none set in session
+        if (!$activeAppId && $depId) {
+            $latestDoneApp = AppParent::where('app_dep_id_fk', $depId)
+                ->where('app_status', 'Done')
+                ->orderByDesc('created_at')
+                ->first();
+            if ($latestDoneApp) {
+                $activeAppId = $latestDoneApp->app_id;
+                session(['active_app_id_' . $depId => $activeAppId]);
+            }
+        }
+
+        $activeApp = $activeAppId ? AppParent::find($activeAppId) : null;
+
         // Use switch statement or conditional structure to redirect user
         if ($genRole === 'Head') {
             // Retrieve only the Annual Procurement Plans (APPs) that belong strictly to the active department context.
@@ -36,7 +52,7 @@ class AccountSettingsController extends Controller
             }
             $apps = $appsQuery->get();
 
-            return view('head.pages.head-account-settings', compact('user', 'apps'));
+            return view('head.pages.head-account-settings', compact('user', 'apps', 'activeAppId', 'activeApp'));
         } elseif ($genRole === 'Procurement') {
             // Procurement/Supply users can filter their plans by the active department if one exists.
             $appsQuery = AppParent::query();
@@ -50,7 +66,7 @@ class AccountSettingsController extends Controller
             // Fetch PRs retrieved by this user
             $loadedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
             
-            return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs'));
+            return view('procurement.pages.procurement-account-settings', compact('user', 'apps', 'loadedPrs', 'activeAppId', 'activeApp'));
         } elseif ($genRole === 'Supply') {
             $appsQuery = AppParent::query();
             if ($depId) {
@@ -59,7 +75,7 @@ class AccountSettingsController extends Controller
                 $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
             }
             $apps = $appsQuery->get();
-            return view('supply.pages.supply-account-settings', compact('user', 'apps'));
+            return view('supply.pages.supply-account-settings', compact('user', 'apps', 'activeAppId', 'activeApp'));
         } elseif ($genRole === 'Unassigned') {
             return view('unassigned.pages.unassigned-account-settings', compact('user'));
         }
@@ -209,6 +225,39 @@ class AccountSettingsController extends Controller
             'app_unique_code' => $app->app_unique_code,
             'appItems' => $app->appItems,
             'purchaseOrders' => $purchaseOrders
+        ]);
+    }
+
+    /**
+     * Set the active APP for the user's department context in session.
+     */
+    public function setActiveApp(Request $request)
+    {
+        $request->validate([
+            'app_id' => 'required|integer|exists:app_tbl,app_id',
+        ]);
+
+        $user = Auth::user();
+        $activeRoleId = session('active_role_id');
+        $userRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $depId = $userRole ? $userRole->role_dep_id_fk : null;
+
+        // Verify that this APP belongs to the user's department
+        $app = AppParent::findOrFail($request->input('app_id'));
+        if ($depId && $app->app_dep_id_fk !== $depId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized APP selection.',
+            ], 403);
+        }
+
+        // Store active APP in the session (scoped to department/role context)
+        session(['active_app_id_' . $depId => $app->app_id]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Active Annual Procurement Plan set successfully.',
+            'app_title' => $app->app_title,
         ]);
     }
 }

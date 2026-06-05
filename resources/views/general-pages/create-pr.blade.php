@@ -15,11 +15,34 @@
     @csrf
     <input type="hidden" name="_intent" id="pr-intent" value="draft">
     @php
+        $user = auth()->user();
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
+
+        // Check if the viewer is a Head in ANY of their roles (not just the active one)
+        $isHead = $user->roles->contains('gen_role', 'Head');
+
         $rowIndex = 0;
-        $isReadOnly = !in_array($task->task_status, ['Pending', 'Rejected']);
+        $taskStatus = $task->task_status;
+
+        // Is this an assigned task (assigner ≠ assignee)?
+        $isAssigned = ($task->assigned_by !== $task->assigned_to);
+
+        // Is the current viewer the one who assigned this task?
+        $isViewer_Assigner = ($task->assigned_by === $user->user_id);
+
+        // Head can edit if: viewer is the assigner, task is assigned (not self-created), and status is Complete
+        $canHeadEdit = $isViewer_Assigner && $isAssigned && ($taskStatus === 'Complete');
+
+        // Self-created: the Head assigned the task to themselves
+        $isSelfCreatedHead = $isViewer_Assigner && !$isAssigned;
+
+        // For self-created tasks, the Head can export directly from Pending
+        $isReadOnly = ($taskStatus !== 'Pending') && !$canHeadEdit && !($isSelfCreatedHead && $taskStatus === 'Pending');
     @endphp
 
-    @if ($task->task_status === 'Submitted' && $pr && $pr->submitted_at)
+    @if ($taskStatus === 'Complete' && $pr && $pr->submitted_at && !$isViewer_Assigner)
         @php
             $deadline = \Carbon\Carbon::parse($pr->submitted_at)->addDays(3);
             $now = now();
@@ -43,14 +66,33 @@
                 <h5 class="fw-bold red-text-2">PURCHASE REQUEST</h5>
             </div>
             <div>
-                <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP 12,345.00</h5>
+                @php
+                    $app = $task->appItems->first()?->app;
+                    $allocated_budget = $app ? $app->app_total : 0;
+                @endphp
+                <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP {{ number_format($allocated_budget, 2) }}</h5>
 
                 <div class="text-end">
-                    @if (!$isReadOnly)
-                        <button type="button" id="submit-pr-btn" data-url="{{ route('submit.pr', $task->task_id) }}"
+                    @if ($canHeadEdit)
+                        {{-- Head is viewing completed assigned task: editable, shows "Marked as Complete" and "Export" --}}
+                        <div class="d-flex align-items-center gap-2 justify-content-end">
+                            <div class="badge bg-success p-2 px-3">
+                                <h6 class="mb-0 text-white">
+                                    <i class="fas fa-check-circle me-1"></i> Marked as Complete
+                                </h6>
+                            </div>
+                            <button type="button" id="export-pr-btn" data-url="{{ route('export.pr.from_form', $task->task_id) }}"
+                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
+                                <span>Export</span>
+                            </button>
+                        </div>
+                    @elseif ($isSelfCreatedHead && $taskStatus === 'Pending')
+                        {{-- Head self-created: skip Complete, export directly --}}
+                        <button type="button" id="export-pr-btn" data-url="{{ route('export.pr.from_form', $task->task_id) }}"
                             class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                             <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
-                            <span>Submit</span>
+                            <span>Export</span>
                         </button>
 
                         <button type="submit"
@@ -58,31 +100,59 @@
                             <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                             <span class="fw-bold">Save as Draft</span>
                         </button>
-                    @else
+                    @elseif (!$isReadOnly)
+                        {{-- Subordinate or non-self-created: show Complete + Save as Draft --}}
+                        <button type="button" id="submit-pr-btn" data-url="{{ route('submit.pr', $task->task_id) }}"
+                            class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                            <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
+                            <span>Complete</span>
+                        </button>
+
+                        <button type="submit"
+                            class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                            <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
+                            <span class="fw-bold">Save as Draft</span>
+                        </button>
+                    @elseif ($taskStatus === 'Complete' && !$isSelfCreatedHead)
+                        {{-- Subordinate completed; Head has not yet exported --}}
+                        @php
+                            $deadline =
+                                $pr && $pr->submitted_at
+                                    ? \Carbon\Carbon::parse($pr->submitted_at)->addDays(3)
+                                    : null;
+                            $canCancel = $deadline && now()->lessThan($deadline);
+                        @endphp
                         <div class="d-flex align-items-center gap-2 justify-content-end">
-                            <div
-                                class="badge {{ $task->task_status == 'Submitted' ? 'bg-info' : 'bg-success' }} p-2 px-3">
+                            <div class="badge bg-success p-2 px-3">
                                 <h6 class="mb-0 text-white">
-                                    <i class="fas fa-check-circle me-1"></i> Purchase Request {{ $task->task_status }}
+                                    <i class="fas fa-check-circle me-1"></i> Marked as Complete
                                 </h6>
                             </div>
-
-                            @if ($task->task_status === 'Submitted')
-                                @php
-                                    $deadline =
-                                        $pr && $pr->submitted_at
-                                            ? \Carbon\Carbon::parse($pr->submitted_at)->addDays(3)
-                                            : null;
-                                    $canCancel = $deadline && now()->lessThan($deadline);
-                                @endphp
-                                    <button type="button" id="cancel-pr-btn"
-                                        data-url="{{ route('cancel.pr', $task->task_id) }}"
-                                        class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-3"
-                                        {{ !$canCancel ? 'disabled' : '' }}>
-                                        <img src="{{ asset('img/Cancel.svg') }}" width="18" height="18">
-                                        <span class="fw-bold black-text"> Cancel Submission</span>
-                                    </button>
-                            @endif
+                            <button type="button" id="cancel-pr-btn"
+                                data-url="{{ route('cancel.pr', $task->task_id) }}"
+                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-3"
+                                {{ !$canCancel ? 'disabled' : '' }}>
+                                <img src="{{ asset('img/Cancel.svg') }}" width="18" height="18">
+                                <span class="fw-bold black-text"> Cancel</span>
+                            </button>
+                        </div>
+                    @elseif ($taskStatus === 'Exported' || ($isSelfCreatedHead && $taskStatus === 'Complete'))
+                        {{-- PR has been exported — fully locked for everyone --}}
+                        <div class="d-flex align-items-center gap-2 justify-content-end">
+                            <div class="badge bg-dark p-2 px-3">
+                                <h6 class="mb-0 text-white">
+                                    <i class="fas fa-file-export me-1"></i> Exported
+                                </h6>
+                            </div>
+                        </div>
+                    @else
+                        {{-- Fallback for any other read-only status --}}
+                        <div class="d-flex align-items-center gap-2 justify-content-end">
+                            <div class="badge bg-info p-2 px-3">
+                                <h6 class="mb-0 text-white">
+                                    <i class="fas fa-info-circle me-1"></i> {{ $taskStatus }}
+                                </h6>
+                            </div>
                         </div>
                     @endif
                 </div>
