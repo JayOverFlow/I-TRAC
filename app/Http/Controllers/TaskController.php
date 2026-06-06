@@ -46,14 +46,13 @@ class TaskController extends Controller
         // Retrieve active APP and calculate budget dynamically
         $activeAppId = $depId ? session('active_app_id_' . $depId) : null;
         
-        // Fallback to the latest Done APP of this department if none set in session
+        // Fetch active APP of this department from database if none set in session
         if (!$activeAppId && $depId) {
-            $latestDoneApp = \App\Models\AppParent::where('app_dep_id_fk', $depId)
-                ->where('app_status', 'Done')
-                ->orderByDesc('created_at')
+            $dbActiveApp = \App\Models\AppParent::where('app_dep_id_fk', $depId)
+                ->where('is_active', true)
                 ->first();
-            if ($latestDoneApp) {
-                $activeAppId = $latestDoneApp->app_id;
+            if ($dbActiveApp) {
+                $activeAppId = $dbActiveApp->app_id;
                 session(['active_app_id_' . $depId => $activeAppId]);
             }
         }

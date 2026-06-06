@@ -26,14 +26,13 @@ class AccountSettingsController extends Controller
 
         $activeAppId = session('active_app_id_' . $depId);
         
-        // Fallback to the latest Done APP of this department if none set in session
+        // Fetch active APP of this department from database if none set in session
         if (!$activeAppId && $depId) {
-            $latestDoneApp = AppParent::where('app_dep_id_fk', $depId)
-                ->where('app_status', 'Done')
-                ->orderByDesc('created_at')
+            $dbActiveApp = AppParent::where('app_dep_id_fk', $depId)
+                ->where('is_active', true)
                 ->first();
-            if ($latestDoneApp) {
-                $activeAppId = $latestDoneApp->app_id;
+            if ($dbActiveApp) {
+                $activeAppId = $dbActiveApp->app_id;
                 session(['active_app_id_' . $depId => $activeAppId]);
             }
         }
@@ -250,6 +249,15 @@ class AccountSettingsController extends Controller
                 'message' => 'Unauthorized APP selection.',
             ], 403);
         }
+
+        // Persist the active selection in the database under a transaction
+        \Illuminate\Support\Facades\DB::transaction(function () use ($app, $depId) {
+            AppParent::where('app_dep_id_fk', $depId)
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
+
+            $app->update(['is_active' => true]);
+        });
 
         // Store active APP in the session (scoped to department/role context)
         session(['active_app_id_' . $depId => $app->app_id]);
