@@ -29,8 +29,8 @@
                     <h5 class="fw-bold red-text-2">PURCHASE REQUEST</h5>
                 </div>
                 <div>
-                    <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP
-                        {{ number_format($pr?->app ? $pr->app->app_total : 0, 2) }}</h5>
+                    <h5 class="card-title mb-3 black-text" id="allocated-budget-title" data-budget="{{ $allocatedBudget }}">ALLOCATED BUDGET: PHP
+                        {{ number_format($allocatedBudget, 2) }}</h5>
 
                     <div class="text-end">
                         <button type="submit" id="save-changes-pr-btn"
@@ -48,6 +48,17 @@
                 </div>
             </div>
         </div>
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

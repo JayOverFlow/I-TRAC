@@ -42,7 +42,17 @@ class PrReviewController extends Controller
             ['title' => 'PR Review', 'url' => '']
         ];
 
-        return view('head.pages.head-pr-review', compact('task', 'pr', 'groupedItems', 'breadcrumbs'));
+        // Resolve original task to get allocated budget
+        $originalTask = Task::where('pr_id_fk', $pr->pr_id)
+            ->where('task_type', 'Purchase Request')
+            ->first();
+
+        $allocatedBudget = 0;
+        if ($originalTask) {
+            $allocatedBudget = $originalTask->appItems->sum('app_items_esti_budget');
+        }
+
+        return view('head.pages.head-pr-review', compact('task', 'pr', 'groupedItems', 'breadcrumbs', 'allocatedBudget'));
     }
 
     /**
@@ -82,7 +92,12 @@ class PrReviewController extends Controller
             ['title' => 'Edit', 'url' => '']
         ];
 
-        return view('head.pages.head-edit-submitted-pr', compact('task', 'pr', 'groupedItems', 'savedItemsGrouped', 'breadcrumbs'));
+        $allocatedBudget = 0;
+        if ($originalTask) {
+            $allocatedBudget = $originalTask->appItems->sum('app_items_esti_budget');
+        }
+
+        return view('head.pages.head-edit-submitted-pr', compact('task', 'pr', 'groupedItems', 'savedItemsGrouped', 'breadcrumbs', 'allocatedBudget'));
     }
 
     /**
@@ -95,6 +110,62 @@ class PrReviewController extends Controller
 
         if ($task->task_type !== 'PR Review' || $task->assigned_to !== $user->user_id) {
             abort(403, 'Unauthorized action.');
+        }
+
+        // Validate the head's submitted form inputs
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'pr_section'            => 'required|string|min:5|max:50',
+            'pr_purpose'            => 'required|string|min:5|max:50',
+            'pr_no'                 => 'nullable|string|min:5|max:20',
+            'items'                 => 'required|array|min:1',
+            'items.*.unit'          => 'required|string|min:1|max:20',
+            'items.*.description'   => 'required|string|min:5|max:50',
+            'items.*.quantity'      => 'required|integer|min:1|max:9999999',
+            'items.*.cost'          => 'required|numeric|min:1|max:9999999',
+            'items.*.specification' => 'nullable|string|min:5|max:1000',
+        ]);
+
+        // Validate against the original task's budget limit
+        $validator->after(function ($validator) use ($request, $task) {
+            $originalTask = Task::where('pr_id_fk', $task->pr_id_fk)
+                ->where('task_type', 'Purchase Request')
+                ->first();
+
+            $budgetLimit = 0;
+            if ($originalTask) {
+                $budgetLimit = $originalTask->appItems->sum('app_items_esti_budget');
+            } else {
+                $pr = PrParent::find($task->pr_id_fk);
+                if ($pr && $pr->app) {
+                    $budgetLimit = $pr->app->app_total;
+                }
+            }
+
+            $totalAmount = 0;
+            $items = $request->input('items', []);
+
+            foreach ($items as $index => $row) {
+                if (empty($row['description']) && empty($row['quantity'])) {
+                    continue;
+                }
+                $qty = (int) ($row['quantity'] ?? 0);
+                $cost = (float) ($row['cost'] ?? 0);
+                $totalAmount += $qty * $cost;
+
+                if ($cost > $budgetLimit) {
+                    $validator->errors()->add("items.{$index}.cost", "The unit cost exceeds the allocated budget of PHP " . number_format($budgetLimit, 2));
+                }
+            }
+
+            if ($totalAmount > $budgetLimit) {
+                $validator->errors()->add("general_budget", "The total amount of the Purchase Request (PHP " . number_format($totalAmount, 2) . ") exceeds the allocated budget of PHP " . number_format($budgetLimit, 2));
+            }
+        });
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         try {
@@ -112,7 +183,8 @@ class PrReviewController extends Controller
                 // Delete old items and specs to recreate them
                 $pr->prItems()->delete();
 
-                // Insert items and specs
+                // Insert items and specs, calculating pr_total
+                $prTotal = 0;
                 foreach ($request->input('items', []) as $row) {
                     $appItemId = $row['app_item_id'] ?? null;
 
@@ -122,6 +194,7 @@ class PrReviewController extends Controller
 
                     $qty  = (int)   ($row['quantity'] ?? 0);
                     $cost = (float) ($row['cost']     ?? 0);
+                    $prTotal += $qty * $cost;
 
                     $prItem = PrItem::create([
                         'pr_id_fk'            => $pr->pr_id,
@@ -139,6 +212,9 @@ class PrReviewController extends Controller
                         ]);
                     }
                 }
+
+                // Update the pr_total column
+                $pr->update(['pr_total' => $prTotal]);
             });
 
             return redirect()->route('show.pr.review', $task_id)
