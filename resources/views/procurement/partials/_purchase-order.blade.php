@@ -2,7 +2,7 @@
 <div class="tab-pane fade" id="pane-animated-underline-purchase-order" role="tabpanel"
     aria-labelledby="animated-underline-purchase-order-tab">
     <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
-        <table id="po-table" class="table table-striped dt-table-hover" style="width:100%">
+        <table id="po-table" class="table dt-table-hover" style="width:100%">
             <thead>
                 <tr>
                     <th class="fw-bold black-text text-nowrap text-center" style="width: 20%">PO-ID</th>
@@ -48,7 +48,7 @@
     <script src="{{ asset('js/head/dashboard/page-specific/datatables.js') }}"></script>
     <script>
         $('#po-table').DataTable({
-            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'f><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'>>>" +
                 "<'table-responsive'tr>" +
                 "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
             "oLanguage": {

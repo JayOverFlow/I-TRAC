@@ -1,3 +1,18 @@
 .nav.nav-pills {
   background: #DFCDBC !important;
 }
+
+body.dark #pr-search-input {
+    border: 1px solid #2a2f38 !important;
+    background-color: #15181d !important;
+    color: #f3f4f6 !important;
+}
+
+body.dark #pr-search-input::placeholder {
+    color: #A1A1AA !important;
+}
+
+body.dark .search-input-container svg {
+    color: #A1A1AA !important;
+    stroke: #A1A1AA !important;
+}

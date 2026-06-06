@@ -92,7 +92,7 @@ body.dark .table-hover:not(.table-dark) tbody tr:hover {
 body.dark .table-hover.non-hover:not(.table-dark) tbody tr:hover {
 }
 body.dark div.dataTables_wrapper div.dataTables_info {
-  color: #61b6cd;
+  color: #bfc9d4;
 }
 body.dark div.dataTables_wrapper div.dataTables_filter label {
 }

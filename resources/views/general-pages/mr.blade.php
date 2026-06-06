@@ -75,7 +75,7 @@
     </div>
 
     <div class="widget-content widget-content-area br-8 mt-3 p-0">
-        <table id="zero-config" class="table table-striped dt-table-hover" style="width:100%">
+        <table id="zero-config" class="table dt-table-hover" style="width:100%">
             <thead>
                 <tr>
                     <th class="fw-bold text-nowrap text-center" style="width: 1%">MR-ID</th>
