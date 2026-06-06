@@ -2,7 +2,7 @@
 <div class="tab-pane fade show active" id="pane-animated-underline-purchase-request" role="tabpanel"
     aria-labelledby="animated-underline-purchase-request-tab">
     <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
-        <table id="pr-table" class="table table-striped dt-table-hover" style="width:100%"
+        <table id="pr-table" class="table dt-table-hover" style="width:100%"
             data-route="{{ route('procure.retrieve.pr') }}">
             <thead>
                 <tr>
@@ -84,7 +84,7 @@
     <script>
         $(document).ready(function() {
             var table = $('#pr-table').DataTable({
-                "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'<'#custom-search-box'>>>>" +
+                "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'<'#custom-search-box'>><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'>>>" +
                     "<'table-responsive'tr>" +
                     "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
                 "oLanguage": {

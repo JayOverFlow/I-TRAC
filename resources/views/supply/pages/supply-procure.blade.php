@@ -19,8 +19,7 @@
     <div class="procure-container layout-top-spacing w-100">
         <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing p-0">
             <div class="widget-content widget-content-area br-8">
-                <h4 class="fw-bold red-text px-0">Purchase Orders</h4>
-                <table id="po-table" class="table table-striped dt-table-hover" style="width:100%"
+                <table id="po-table" class="table dt-table-hover" style="width:100%"
                     data-route="{{ route('procure.retrieve.po') }}">
                     <thead>
                         <tr>

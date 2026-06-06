@@ -74,7 +74,7 @@
     <div id="pr-list-panel">
         <!-- Purchase Request Table Section -->
         <div class="widget-content widget-content-area br-8 mt-3 p-0 pt-1">
-            <table id="zero-config" class="table table-striped dt-table-hover" style="width:100%">
+            <table id="zero-config" class="table dt-table-hover" style="width:100%">
                 <thead>
                     @if($isHead)
                         <tr>
@@ -134,7 +134,7 @@
                                 <span class="{{ $badgeClass }}">{{ $displayStatus }}</span>
                             </td>
                             <td class="text-center" onclick="event.stopPropagation();">
-                                <button class="btn btn-sm btn-outline-danger btn-delete-task-single" data-task-id="{{ $task->task_id }}" style="padding: 5px 8px; border: none; background: transparent;">
+                                <button class="btn bg-transparent p-0 border-0 shadow-none btn-delete-task-single" data-task-id="{{ $task->task_id }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                                 </button>
                             </td>
@@ -169,7 +169,7 @@
         <div class="card px-0">
             <div class="card-body px-0">
                 <h5 class="card-title red-text-2 fw-bold px-2 ms-4">ANNUAL PROCUREMENT PLAN</h5>
-                <table id="app-items-config" class="table table-striped dt-table-hover border-top-0" style="width:100%; border-top: none !important;">
+                <table id="app-items-config" class="table dt-table-hover border-top-0" style="width:100%; border-top: none !important;">
                     <thead>
                         <tr>
                             <th></th>
@@ -326,7 +326,7 @@
                         // Left: title + budget + filters
                         $('.custom-title').html(`
                             <div>
-                                <h5 class="fw-bold mb-1" style="color: #8B0000;">Purchase Request</h5>
+                                <h4 class="fw-bold mb-1 red-text-2">Purchase Request</h4>
                                 <p class="mb-2 text-muted" style="font-size: 13px;">
                                     Allocated Budget: <span class="fw-bold" style="color: #515365;">&#8369; {{ number_format($departmentBudget ?? 0, 2) }}</span>
                                 </p>
@@ -369,7 +369,7 @@
                         // Subordinate title only
                         $('.custom-title').html(`
                             <div>
-                                <h5 class="fw-bold mb-0" style="color: #8B0000;">Purchase Request</h5>
+                                <h4 class="fw-bold mb-0 red-text-2">Purchase Request</h4>
                             </div>
                         `);
                     }
