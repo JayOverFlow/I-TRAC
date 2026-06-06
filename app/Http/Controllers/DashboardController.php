@@ -20,6 +20,7 @@ class DashboardController extends Controller
         $depName = 'N/A';
         $departmentBudget = 0;
         $fiscalYear = '—';
+        $subordinates = collect();
 
         if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
             $depName = $activeRole && $activeRole->department ? $activeRole->department->dep_name : ($user->departments()->first()?->dep_name ?? 'N/A');
@@ -49,12 +50,25 @@ class DashboardController extends Controller
                     }
                     $departmentBudget = $activeApp->app_total ?? $activeApp->appItems->sum('app_items_esti_budget');
                 }
+
+                if ($userRole === 'Head') {
+                    $subordinates = \DB::table('users as u')
+                        ->join('user_departments_tbl as ud', 'u.user_id', '=', 'ud.user_id_fk')
+                        ->leftJoin('roles_tbl as r', 'r.role_id', '=', 'ud.role_id_fk')
+                        ->where('ud.department_id_fk', $depId)
+                        ->where(function($query) {
+                            $query->where('r.gen_role', 'Unassigned')
+                                  ->orWhereNull('ud.role_id_fk');
+                        })
+                        ->select('u.user_id', 'u.user_tupid', 'u.user_firstname', 'u.user_lastname', 'u.user_email', 'u.user_type', 'r.role_name')
+                        ->get();
+                }
             }
         }
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear')),
+            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
             'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear')),
             'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear')),
             default       => view('errors.403'),
