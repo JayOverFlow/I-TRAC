@@ -74,46 +74,43 @@
             <thead>
                 <tr>
                     <th class="fw-bold">TUPT-ID</th>
-                    <th class="fw-bold">Full Name</th>
-                    <th class="fw-bold">Status</th>
+                    <th class="fw-bold">First Name</th>
+                    <th class="fw-bold">Last Name</th>
+                    <th class="fw-bold">Role</th>
+                    <th class="fw-bold">TUP Email</th>
+                    <th class="fw-bold text-center" style="width: 80px;">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
-                <tr>
-                    <td>tup_id</td>
-                    <td>full_name</td>
-                    <td>Status</td>
-                </tr>
+                @forelse($subordinates as $sub)
+                    <tr>
+                        <td class="align-middle">{{ $sub->user_tupid }}</td>
+                        <td class="align-middle">{{ $sub->user_firstname }}</td>
+                        <td class="align-middle">{{ $sub->user_lastname }}</td>
+                        <td class="align-middle">
+                            @if(!empty($sub->role_name))
+                                {{ $sub->user_type }} - {{ $sub->role_name }}
+                            @else
+                                {{ $sub->user_type }}
+                            @endif
+                        </td>
+                        <td class="align-middle">{{ $sub->user_email }}</td>
+                        <td class="text-center align-middle">
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-link text-decoration-none p-0" type="button" id="actionMenu-{{ $sub->user_id }}" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false" style="color: var(--black-color, #3b3f5c); border: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionMenu-{{ $sub->user_id }}">
+                                    <li><span class="dropdown-item-text text-muted">No Actions Programmed</span></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">No subordinates found.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -141,8 +138,11 @@
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
             "pageLength": 5,
+            "columnDefs": [
+                { "orderable": false, "targets": 5 }
+            ],
             "initComplete": function () {
-                $('.assigned-title').html('<h5 class="fw-bold mb-0 red-text-2">Assigned</h5>');
+                $('.assigned-title').html('<h5 class="fw-bold mb-0 red-text-2">Subordinates</h5>');
             }
         });
     </script>
