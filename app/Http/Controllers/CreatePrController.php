@@ -97,7 +97,7 @@ class CreatePrController extends Controller
      * Build validation rules & messages based on intent.
      * Submit = strict (all required). Draft = lenient.
      */
-    private function validatePr(Request $request, string $intent): \Illuminate\Validation\Validator
+    private function validatePr(Request $request, string $intent, Task $task): \Illuminate\Validation\Validator
     {
         if ($intent === 'submit') {
             $rules = [
@@ -153,7 +153,33 @@ class CreatePrController extends Controller
             'items.*.specification.max'    => 'Specification must not exceed 1000 characters.',
         ];
 
-        return Validator::make($request->all(), $rules, $messages);
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Add custom budget limits validation hook
+        $validator->after(function ($validator) use ($request, $task) {
+            $budgetLimit = $task->appItems->sum('app_items_esti_budget');
+            $totalAmount = 0;
+            $items = $request->input('items', []);
+
+            foreach ($items as $index => $row) {
+                if (empty($row['description']) && empty($row['quantity'])) {
+                    continue;
+                }
+                $qty = (int) ($row['quantity'] ?? 0);
+                $cost = (float) ($row['cost'] ?? 0);
+                $totalAmount += $qty * $cost;
+
+                if ($cost > $budgetLimit) {
+                    $validator->errors()->add("items.{$index}.cost", "The unit cost exceeds the allocated budget of PHP " . number_format($budgetLimit, 2));
+                }
+            }
+
+            if ($totalAmount > $budgetLimit) {
+                $validator->errors()->add("general_budget", "The total amount of the Purchase Request (PHP " . number_format($totalAmount, 2) . ") exceeds the allocated budget of PHP " . number_format($budgetLimit, 2));
+            }
+        });
+
+        return $validator;
     }
 
     /**
@@ -175,7 +201,7 @@ class CreatePrController extends Controller
         }
 
         // Validate (lenient for drafts)
-        $validator = $this->validatePr($request, 'draft');
+        $validator = $this->validatePr($request, 'draft', $task);
 
         if ($validator->fails()) {
             return response()->json([
@@ -231,7 +257,7 @@ class CreatePrController extends Controller
         }
 
         // Validate (strict for completion)
-        $validator = $this->validatePr($request, 'submit');
+        $validator = $this->validatePr($request, 'submit', $task);
 
         if ($validator->fails()) {
             return response()->json([
@@ -347,6 +373,7 @@ class CreatePrController extends Controller
         }
 
         // Insert items and specs
+        $prTotal = 0;
         foreach ($request->input('items', []) as $row) {
 
             $appItemId = $row['app_item_id'] ?? null;
@@ -358,6 +385,7 @@ class CreatePrController extends Controller
 
             $qty  = (int)   ($row['quantity'] ?? 0);
             $cost = (float) ($row['cost']     ?? 0);
+            $prTotal += $qty * $cost;
 
             $prItem = PrItem::create([
                 'pr_id_fk'            => $pr->pr_id,
@@ -375,6 +403,9 @@ class CreatePrController extends Controller
                 ]);
             }
         }
+
+        // Update the pr_total column with the calculated grand total
+        $pr->update(['pr_total' => $prTotal]);
 
         return $pr;
     }
@@ -447,7 +478,7 @@ class CreatePrController extends Controller
         }
 
         // Validate (strict for export)
-        $validator = $this->validatePr($request, 'submit');
+        $validator = $this->validatePr($request, 'submit', $task);
 
         if ($validator->fails()) {
             return response()->json([

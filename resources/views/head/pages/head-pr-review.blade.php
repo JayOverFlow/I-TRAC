@@ -30,7 +30,7 @@
 
             <div>
                 <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP
-                    {{ number_format($pr->app ? $pr->app->app_total : 0, 2) }}</h5>
+                    {{ number_format($allocatedBudget, 2) }}</h5>
 
                 <div class="text-end">
                     @if ($task->task_status === 'Pending')

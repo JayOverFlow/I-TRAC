@@ -67,10 +67,10 @@
             </div>
             <div>
                 @php
-                    $app = $task->appItems->first()?->app;
-                    $allocated_budget = $app ? $app->app_total : 0;
+                    // Calculate allocated budget as the sum of assigned APP items' budgets
+                    $allocated_budget = $task->appItems->sum('app_items_esti_budget') ?? 0;
                 @endphp
-                <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP {{ number_format($allocated_budget, 2) }}</h5>
+                <h5 class="card-title mb-3 black-text" id="allocated-budget-title" data-budget="{{ $allocated_budget }}">ALLOCATED BUDGET: PHP {{ number_format($allocated_budget, 2) }}</h5>
 
                 <div class="text-end">
                     @if ($canHeadEdit)

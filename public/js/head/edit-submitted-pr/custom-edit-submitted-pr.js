@@ -130,14 +130,55 @@ $(document).ready(function() {
                 maximumFractionDigits: 2
             }));
         });
-        $('#grand-total-amount').text('₱ ' + totalAmount.toLocaleString('en-US', {
+        var grandTotalEl = $('#grand-total-amount');
+        grandTotalEl.text('₱ ' + totalAmount.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }));
+
+        // Retrieve allocated budget and apply text-danger class if total exceeds it
+        var allocatedBudget = parseFloat($('#allocated-budget-title').attr('data-budget')) || 0;
+        if (totalAmount > allocatedBudget) {
+            grandTotalEl.addClass('text-danger');
+        } else {
+            grandTotalEl.removeClass('text-danger');
+        }
     }
 
     // Generate initial values
     updateTotals();
+
+    // Enforce budget limits on form submission
+    $('#pr-form').on('submit', function(e) {
+        var allocatedBudget = parseFloat($('#allocated-budget-title').attr('data-budget')) || 0;
+        var totalAmount = 0;
+        var costExceeded = false;
+
+        $('.pr-card').each(function() {
+            $(this).find('tr.pr-item-row').each(function() {
+                var qty = parseFloat($(this).find('.qty-input').val()) || 0;
+                var cost = parseFloat($(this).find('.cost-input').val()) || 0;
+                totalAmount += qty * cost;
+
+                if (cost > allocatedBudget) {
+                    costExceeded = true;
+                    $(this).find('.cost-input').addClass('is-invalid');
+                }
+            });
+        });
+
+        if (costExceeded) {
+            e.preventDefault();
+            alert('A unit cost exceeds the allocated budget of PHP ' + allocatedBudget.toLocaleString('en-US', { minimumFractionDigits: 2 }));
+            return;
+        }
+
+        if (totalAmount > allocatedBudget) {
+            e.preventDefault();
+            alert('The total amount of the Purchase Request (PHP ' + totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ') exceeds the allocated budget of PHP ' + allocatedBudget.toLocaleString('en-US', { minimumFractionDigits: 2 }));
+            return;
+        }
+    });
 });
 
 $(document).on('click', '.btn-group .dropdown-item', function(e) {
