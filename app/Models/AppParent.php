@@ -24,6 +24,11 @@ class AppParent extends Model
         'app_status',
         'app_unique_code',
         'app_total',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function appItems()
