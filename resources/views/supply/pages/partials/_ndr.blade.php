@@ -65,17 +65,8 @@
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm"
-                                    name="items[{{ $index }}][description]" value="{{ $item->ndr_items_descrip }}">
-                                @if($item->ndrSpecs->isNotEmpty())
-                                    <div class="text-muted small ps-3 mt-1">
-                                        <strong>Specifications:</strong>
-                                        <ul class="mb-0">
-                                            @foreach($item->ndrSpecs as $spec)
-                                                <li>{{ $spec->ndr_spec_description }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
+                                    name="items[{{ $index }}][description]"
+                                    value="{{ implode(', ', array_filter(array_merge([$item->ndr_items_descrip], $item->ndrSpecs->pluck('ndr_spec_description')->toArray()))) }}">
                             </td>
                             <td class="px-1 text-center">
                                 <input type="text" class="form-control form-control-sm text-center"

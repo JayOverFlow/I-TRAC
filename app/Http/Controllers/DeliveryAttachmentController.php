@@ -28,6 +28,17 @@ class DeliveryAttachmentController extends Controller
             'ndrReports.reporter'
         ])->findOrFail($po_id);
 
+        // Redirect to PO Review if no delivery attachments have been generated
+        if (!$po->iarReports()->exists() && 
+            !$po->risSlips()->exists() && 
+            !$po->icsSlips()->exists() && 
+            !$po->parReceipts()->exists() && 
+            !$po->rsmiReports()->exists() && 
+            !$po->rspiReports()->exists() &&
+            !$po->ndrReports()->exists()) {
+            return redirect()->route('show.po.review', ['po_id' => $po_id]);
+        }
+
         $breadcrumbs = [
             ['title' => 'Procurement', 'url' => route('show.procure')],
             ['title' => 'Delivery Attachment', 'url' => '']

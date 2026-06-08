@@ -36,7 +36,6 @@ class PoReviewController extends Controller
         
         // Redirect if delivery attachments already exist
         if ($po->iarReports()->exists() || 
-            $po->ndrReports()->exists() || 
             $po->risSlips()->exists() || 
             $po->icsSlips()->exists() || 
             $po->parReceipts()->exists() || 
@@ -178,6 +177,8 @@ class PoReviewController extends Controller
                             'ris_stock_no' => $item->po_items_stockno,
                             'ris_unit' => $item->po_items_unit,
                             'ris_items_descrip' => $item->po_items_descrip,
+                            'ris_quantity' => $qty,
+                            'ris_stock_available' => 'Yes',
                             'ris_issued_quantity' => $qty,
                         ]);
 
@@ -307,7 +308,7 @@ class PoReviewController extends Controller
                             'ris_unit' => $item->po_items_unit,
                             'ris_items_descrip' => $item->po_items_descrip,
                             'ris_quantity' => $qty,
-                            'ris_stock_available' => $qty,
+                            'ris_stock_available' => 'Yes',
                             'ris_issued_quantity' => $qty,
                         ]);
 
