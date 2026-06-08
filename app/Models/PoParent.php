@@ -102,4 +102,20 @@ class PoParent extends Model
     {
         return $this->hasMany(Ndr::class, 'po_id_fk', 'po_id');
     }
+
+    /**
+     * Check if the Purchase Order has any delivery attachments.
+     * Checks loaded relations to prevent N+1 query issues.
+     *
+     * @return bool
+     */
+    public function hasDeliveryAttachment()
+    {
+        return ($this->relationLoaded('iarReports') ? $this->iarReports->isNotEmpty() : $this->iarReports()->exists()) ||
+               ($this->relationLoaded('risSlips') ? $this->risSlips->isNotEmpty() : $this->risSlips()->exists()) ||
+               ($this->relationLoaded('icsSlips') ? $this->icsSlips->isNotEmpty() : $this->icsSlips()->exists()) ||
+               ($this->relationLoaded('parReceipts') ? $this->parReceipts->isNotEmpty() : $this->parReceipts()->exists()) ||
+               ($this->relationLoaded('rsmiReports') ? $this->rsmiReports->isNotEmpty() : $this->rsmiReports()->exists()) ||
+               ($this->relationLoaded('rspiReports') ? $this->rspiReports->isNotEmpty() : $this->rspiReports()->exists());
+    }
 }

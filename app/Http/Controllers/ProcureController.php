@@ -26,7 +26,16 @@ class ProcureController extends Controller
 
         if ($userRole === 'Supply') {
             // Fetch only Retrieved Purchase Orders
-            $pos = PoParent::with('purchaseRequest.app')->where('retrieved_by', $user->user_id)->get();
+            $pos = PoParent::with([
+                'purchaseRequest.app',
+                'iarReports',
+                'ndrReports',
+                'risSlips',
+                'icsSlips',
+                'parReceipts',
+                'rsmiReports',
+                'rspiReports'
+            ])->where('retrieved_by', $user->user_id)->get();
             
             return view('supply.pages.supply-procure', compact('user', 'pos'));
         }

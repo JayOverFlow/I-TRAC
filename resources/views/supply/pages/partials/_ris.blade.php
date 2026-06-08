@@ -131,13 +131,13 @@
                             <td class="px-1 text-center">
                                 <div class="form-check form-check-danger form-check-inline m-0">
                                     <input class="form-check-input" type="radio" name="items[{{ $index }}][is_available]"
-                                        id="ris-available-yes-{{ $index }}" value="1" {{ $item->ris_stock_available > 0 ? 'checked' : '' }}>
+                                        id="ris-available-yes-{{ $index }}" value="1" {{ $item->ris_stock_available === 'Yes' ? 'checked' : '' }}>
                                 </div>
                             </td>
                             <td class="px-1 text-center">
                                 <div class="form-check form-check-danger form-check-inline m-0">
                                     <input class="form-check-input" type="radio" name="items[{{ $index }}][is_available]"
-                                        id="ris-available-no-{{ $index }}" value="0" {{ $item->ris_stock_available == 0 ? 'checked' : '' }}>
+                                        id="ris-available-no-{{ $index }}" value="0" {{ $item->ris_stock_available === 'No' ? 'checked' : '' }}>
                                 </div>
                             </td>
                             <td class="px-1">

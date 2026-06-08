@@ -18,21 +18,6 @@
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/ics.css') }}">
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/rspi.css') }}">
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/partials/par.css') }}">
-    
-    <style>
-        .document-node {
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .document-node:hover {
-            background-color: rgba(220, 53, 69, 0.08);
-        }
-        .document-node.active-doc {
-            background-color: rgba(220, 53, 69, 0.15);
-            font-weight: bold;
-            color: #dc3545;
-        }
-    </style>
 @endpush
 
 @php
@@ -62,6 +47,24 @@
         $firstItem = $ris->risItems->first();
         return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
     });
+
+    // Check if each folder has contents
+    $hasSupply = $supplyIars->isNotEmpty() || $supplyRiss->isNotEmpty() || $po->rsmiReports->isNotEmpty();
+    $hasSemiExpendable = $semiExpendableIars->isNotEmpty() || $semiExpendableRiss->isNotEmpty() || $po->icsSlips->isNotEmpty() || $po->rspiReports->isNotEmpty();
+    $hasEquipment = $equipmentIars->isNotEmpty() || $po->parReceipts->isNotEmpty();
+    $hasNotDelivered = $po->ndrReports->isNotEmpty();
+
+    // Determine the first non-empty folder to expand by default
+    $firstOpenFolder = null;
+    if ($hasSupply) {
+        $firstOpenFolder = 'supply';
+    } elseif ($hasSemiExpendable) {
+        $firstOpenFolder = 'semi-expendable';
+    } elseif ($hasEquipment) {
+        $firstOpenFolder = 'equipment';
+    } elseif ($hasNotDelivered) {
+        $firstOpenFolder = 'not-delivered';
+    }
 @endphp
 
 @section('content')
@@ -203,10 +206,11 @@
                         <h5 class="card-title">Delivery Attachments</h5>
                         <ul class="treeview folder-structure" id="treeviewFolderStructureEx">
                             {{-- Supply and Materials Folder --}}
+                            @if($hasSupply)
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderSupplyHeading">
-                                    <div class="tv-collapsible" data-bs-toggle="collapse" data-bs-target="#folderSupply"
-                                        aria-expanded="true" aria-controls="folderSupply">
+                                    <div class="tv-collapsible {{ $firstOpenFolder === 'supply' ? '' : 'collapsed' }}" data-bs-toggle="collapse" data-bs-target="#folderSupply"
+                                        aria-expanded="{{ $firstOpenFolder === 'supply' ? 'true' : 'false' }}" aria-controls="folderSupply">
                                         <div class="icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                 class="icon icon-tabler icon-tabler-folder" width="24" height="24"
@@ -221,7 +225,7 @@
                                         <p class="title">Supply and Materials</p>
                                     </div>
                                 </div>
-                                <div id="folderSupply" class="treeview-collapse collapse show"
+                                <div id="folderSupply" class="treeview-collapse collapse {{ $firstOpenFolder === 'supply' ? 'show' : '' }}"
                                     aria-labelledby="folderSupplyHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($supplyIars as $iar)
@@ -265,12 +269,14 @@
                                     </ul>
                                 </div>
                             </li>
+                            @endif
 
                             {{-- Semi-Expendable Folder --}}
+                            @if($hasSemiExpendable)
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderSemiExpendableHeading">
-                                    <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
-                                        data-bs-target="#folderSemiExpendable" aria-expanded="false"
+                                    <div class="tv-collapsible {{ $firstOpenFolder === 'semi-expendable' ? '' : 'collapsed' }}" data-bs-toggle="collapse"
+                                        data-bs-target="#folderSemiExpendable" aria-expanded="{{ $firstOpenFolder === 'semi-expendable' ? 'true' : 'false' }}"
                                         aria-controls="folderSemiExpendable">
                                         <div class="icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -286,7 +292,7 @@
                                         <p class="title">Semi-Expendable</p>
                                     </div>
                                 </div>
-                                <div id="folderSemiExpendable" class="treeview-collapse collapse"
+                                <div id="folderSemiExpendable" class="treeview-collapse collapse {{ $firstOpenFolder === 'semi-expendable' ? 'show' : '' }}"
                                     aria-labelledby="folderSemiExpendableHeading"
                                     data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
@@ -344,12 +350,14 @@
                                     </ul>
                                 </div>
                             </li>
+                            @endif
 
                             {{-- Equipment Folder --}}
+                            @if($hasEquipment)
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderEquipmentHeading">
-                                    <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
-                                        data-bs-target="#folderEquipment" aria-expanded="false"
+                                    <div class="tv-collapsible {{ $firstOpenFolder === 'equipment' ? '' : 'collapsed' }}" data-bs-toggle="collapse"
+                                        data-bs-target="#folderEquipment" aria-expanded="{{ $firstOpenFolder === 'equipment' ? 'true' : 'false' }}"
                                         aria-controls="folderEquipment">
                                         <div class="icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -365,7 +373,7 @@
                                         <p class="title">Equipment</p>
                                     </div>
                                 </div>
-                                <div id="folderEquipment" class="treeview-collapse collapse"
+                                <div id="folderEquipment" class="treeview-collapse collapse {{ $firstOpenFolder === 'equipment' ? 'show' : '' }}"
                                     aria-labelledby="folderEquipmentHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($equipmentIars as $iar)
@@ -396,12 +404,14 @@
                                     </ul>
                                 </div>
                             </li>
+                            @endif
 
                             {{-- Not Delivered Folder --}}
+                            @if($hasNotDelivered)
                             <li class="tv-item tv-folder">
                                 <div class="tv-header" id="folderNotDeliveredHeading">
-                                    <div class="tv-collapsible collapsed" data-bs-toggle="collapse"
-                                        data-bs-target="#folderNotDelivered" aria-expanded="false"
+                                    <div class="tv-collapsible {{ $firstOpenFolder === 'not-delivered' ? '' : 'collapsed' }}" data-bs-toggle="collapse"
+                                        data-bs-target="#folderNotDelivered" aria-expanded="{{ $firstOpenFolder === 'not-delivered' ? 'true' : 'false' }}"
                                         aria-controls="folderNotDelivered">
                                         <div class="icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -417,7 +427,7 @@
                                         <p class="title">Not Delivered</p>
                                     </div>
                                 </div>
-                                <div id="folderNotDelivered" class="treeview-collapse collapse"
+                                <div id="folderNotDelivered" class="treeview-collapse collapse {{ $firstOpenFolder === 'not-delivered' ? 'show' : '' }}"
                                     aria-labelledby="folderNotDeliveredHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($po->ndrReports as $ndr)
@@ -429,12 +439,13 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>NDR - {{ $ndr->ndr_no }}</p>
+                                                <p>NDR</p>
                                             </li>
                                         @endforeach
                                     </ul>
                                 </div>
                             </li>
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -486,6 +497,8 @@
             @foreach($po->ndrReports as $ndr)
                 @include('supply.pages.partials._ndr', ['ndr' => $ndr])
             @endforeach
+
+
         </div>
     </div>
 @endsection
