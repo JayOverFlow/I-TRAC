@@ -51,7 +51,7 @@ class DashboardController extends Controller
                     $departmentBudget = $activeApp->app_total ?? $activeApp->appItems->sum('app_items_esti_budget');
                 }
 
-                if ($userRole === 'Head') {
+                if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
                     $subordinates = \DB::table('users as u')
                         ->join('user_departments_tbl as ud', 'u.user_id', '=', 'ud.user_id_fk')
                         ->leftJoin('roles_tbl as r', 'r.role_id', '=', 'ud.role_id_fk')
@@ -69,8 +69,8 @@ class DashboardController extends Controller
         // Redirect user based on role
         return match ($userRole) {
             'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
-            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear')),
-            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear')),
+            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
+            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
             default       => view('errors.403'),
         };
     }
