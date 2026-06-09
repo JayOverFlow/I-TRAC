@@ -73,7 +73,14 @@
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Received by:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="requested_by" value="{{ $ris->receiver ? $ris->receiver->user_fullname : '' }}">
+                        <select class="form-select form-select-sm ms-2 w-75" name="requested_by">
+                            <option value="">Select User</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->user_id }}" {{ ($ris->receiver && $ris->receiver->user_id == $user->user_id) ? 'selected' : '' }}>
+                                    {{ $user->user_fullname }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -131,13 +138,13 @@
                             <td class="px-1 text-center">
                                 <div class="form-check form-check-danger form-check-inline m-0">
                                     <input class="form-check-input" type="radio" name="items[{{ $index }}][is_available]"
-                                        id="ris-available-yes-{{ $index }}" value="1" {{ $item->ris_stock_available === 'Yes' ? 'checked' : '' }}>
+                                        id="ris-available-yes-{{ $index }}" value="1">
                                 </div>
                             </td>
                             <td class="px-1 text-center">
                                 <div class="form-check form-check-danger form-check-inline m-0">
                                     <input class="form-check-input" type="radio" name="items[{{ $index }}][is_available]"
-                                        id="ris-available-no-{{ $index }}" value="0" {{ $item->ris_stock_available === 'No' ? 'checked' : '' }}>
+                                        id="ris-available-no-{{ $index }}" value="0">
                                 </div>
                             </td>
                             <td class="px-1">

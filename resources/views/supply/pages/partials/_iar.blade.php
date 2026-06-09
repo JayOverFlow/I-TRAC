@@ -96,10 +96,10 @@
 
                     <div class="row align-items-center mb-3">
                         <div class="col-4">
-                            <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
+                            <h6 class="mb-0 black-text fw-bold">Property and Supply Office:</h6>
                         </div>
                         <div class="col-8">
-                            <h6 class="mb-0">Supply Officer</h6>
+                            <h6 class="mb-0">{{ $headPropertySupply ? $headPropertySupply->user_fullname : '' }}</h6>
                         </div>
                     </div>
                 </div>
