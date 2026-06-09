@@ -188,11 +188,18 @@ $(document).ready(function() {
             // Item fields: items.0.unit → index=0, field=unit
             var parts = key.split('.');
             if (parts.length < 3) return;
-            var idx = parseInt(parts[1], 10);
+            var idx = parts[1];
             var field = parts[2];
 
-            var row = rows.eq(idx);
-            if (!row.length) return;
+            var row;
+            if (/^\d+$/.test(idx)) {
+                row = rows.eq(parseInt(idx, 10));
+            } else {
+                // Find row dynamically via the custom string key
+                var inputEl = $('#pr-form [name^="items[' + idx + ']"]').first();
+                row = inputEl.closest('tr.pr-item-row');
+            }
+            if (!row || !row.length) return;
 
             var input = row.find('[data-field="' + field + '"]');
             if (!input.length) return;
@@ -324,6 +331,7 @@ $(document).ready(function() {
 
             if (result.status === 422 && result.data.errors) {
                 // Validation errors — show inline per field
+                console.warn('PR Validation Errors:', result.data.errors);
                 showFieldErrors(result.data.errors);
                 if (result.data.errors.general_budget) {
                     showToast(result.data.errors.general_budget[0], 'error');

@@ -39,11 +39,12 @@ class DeliveryAttachmentController extends Controller
             return redirect()->route('show.po.review', ['po_id' => $po_id]);
         }
 
-        $breadcrumbs = [
-            ['title' => 'Procurement', 'url' => route('show.procure')],
-            ['title' => 'Delivery Attachment', 'url' => '']
-        ];
+        $headPropertySupply = \App\Models\User::whereHas('roles', function ($query) {
+            $query->where('roles_tbl.role_id', 10);
+        })->first();
 
-        return view('supply.pages.supply-delivery-attachment', compact('po', 'breadcrumbs'));
+        $users = \App\Models\User::all();
+
+        return view('supply.pages.supply-delivery-attachment', compact('po', 'breadcrumbs', 'headPropertySupply', 'users'));
     }
 }

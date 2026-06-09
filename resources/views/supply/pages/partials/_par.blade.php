@@ -48,16 +48,19 @@
                 <div class="col-md-6">
                     <div class="row align-items-center mb-5">
                         <div class="col-4">
+                            <h6 class="mb-0 black-text fw-bold">Received by:</h6>
+                        </div>
+                        <div class="col-8">
+                            <h6 class="mb-0">{{ $par->receiver ? $par->receiver->user_fullname : '' }}</h6>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mb-5">
+                        <div class="col-4">
                             <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
                         </div>
                         <div class="col-8">
                             <h6 class="mb-0">{{ $par->receiver && $par->receiver->departments->isNotEmpty() ? $par->receiver->departments->first()->dep_name : 'Faculty / Staff' }}</h6>
                         </div>
-                    </div>
-                    <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Received by:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="received_by" value="{{ $par->receiver ? $par->receiver->user_fullname : '' }}"
-                            placeholder="Received User">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date:</h6>
@@ -68,22 +71,22 @@
                 <div class="col-md-6">
                     <div class="row align-items-center mb-5">
                         <div class="col-4">
-                            <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
-                        </div>
-                        <div class="col-8">
-                            <h6 class="mb-0">Supply Officer</h6>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-5">
-                        <div class="col-4">
                             <h6 class="mb-0 black-text fw-bold">Issued by:</h6>
                         </div>
                         <div class="col-8">
                             <h6 class="mb-0">{{ $par->issuer ? $par->issuer->user_fullname : 'Supply Officer' }}</h6>
                         </div>
                     </div>
+                    <div class="row align-items-center mb-5">
+                        <div class="col-4">
+                            <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
+                        </div>
+                        <div class="col-8">
+                            <h6 class="mb-0">Supply Officer</h6>
+                        </div>
+                    </div>
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 mt-2 pt-1 black-text fw-bold">Date:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Date:</h6>
                         <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="date" value="{{ $par->par_issued_by_date }}" placeholder="Select Date..">
                     </div>
                 </div>
