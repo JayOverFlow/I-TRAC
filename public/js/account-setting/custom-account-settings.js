@@ -6,59 +6,141 @@ $(document).ready(function() {
         const route = $('#pr-table').data('route');
         const csrf = $('meta[name="csrf-token"]').attr('content');
 
-        // Inject custom search and retrieve form
+        // Inject custom search and retrieve form with partitioned input fields
         searchBox.html(`
             <form id="retrieve-pr-form" action="${route}" method="POST" class="custom-search-wrapper">
                 <input type="hidden" name="_token" value="${csrf}">
                 <div class="search-input-container">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" name="pr_unique_code" id="pr-search-input" class="form-control" placeholder="Search or Enter PR Code...">
+                    <div class="code-mask-input-group">
+                        <span class="code-static-prefix">PR</span>
+                        <span class="code-dash">-</span>
+                        <input type="text" class="code-digit-input code-office-id" placeholder="00" maxlength="4">
+                        <span class="code-dash">-</span>
+                        <input type="text" class="code-digit-input code-app-code" placeholder="000000" maxlength="6">
+                        <span class="code-dash">-</span>
+                        <input type="text" class="code-digit-input code-pr-count" placeholder="000" maxlength="3">
+                    </div>
+                    <input type="hidden" name="pr_unique_code" id="pr-search-input">
                 </div>
                 <button type="submit" id="retrieve-btn" class="btn btn-red" disabled>Retrieve</button>
             </form>
         `);
 
-        // Link custom input to DataTable search and button state with automatic formatting
-        $('#pr-search-input').on('input', function() {
-            let val = $(this).val().toUpperCase();
-            
-            // Strip all non-alphanumeric characters
-            let clean = val.replace(/[^A-Z0-9]/g, '');
-            
-            // Ensure the input always starts with PR
-            if (clean.length > 0 && !clean.startsWith('PR')) {
-                if (clean.startsWith('P')) {
-                    clean = 'PR' + clean.substring(1);
-                } else {
-                    clean = 'PR' + clean;
+        const $officeInput = searchBox.find('.code-office-id');
+        const $appInput = searchBox.find('.code-app-code');
+        const $countInput = searchBox.find('.code-pr-count');
+        const $hiddenInput = $('#pr-search-input');
+        const $retrieveBtn = $('#retrieve-btn');
+
+        // Restrict input to digits only
+        searchBox.on('keypress keydown', '.code-digit-input', function(e) {
+            // Allow control keys (backspace, tab, delete, arrows)
+            if (e.key === 'Backspace' || e.key === 'Tab' || e.key === 'Delete' || 
+                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                return;
+            }
+            // Transition to next field on dash, space, or Enter
+            if (e.key === '-' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                const $inputs = searchBox.find('.code-digit-input');
+                const idx = $inputs.index(this);
+                if (idx < $inputs.length - 1) {
+                    $inputs.eq(idx + 1).focus().select();
                 }
+                return;
             }
-            
-            // Format to: PR-YYYYVV-XXX (e.g. PR-202601-001)
-            let formatted = '';
-            if (clean.length > 0) {
-                formatted += 'PR';
-            }
-            if (clean.length > 2) {
-                formatted += '-' + clean.substring(2, 8);
-            }
-            if (clean.length > 8) {
-                formatted += '-' + clean.substring(8, 11);
-            }
-            
-            // Update input value and cursor position smoothly
-            $(this).val(formatted);
-            
-            // Filter DataTable
-            table.search(formatted).draw();
-            
-            // Enable/Disable Retrieve button based on the completed new format: PR-DDDDDD-DDD
-            const prRegex = /^PR-\d{6}-\d{3}$/;
-            if (prRegex.test(formatted)) {
-                $('#retrieve-btn').prop('disabled', false);
-            } else {
-                $('#retrieve-btn').prop('disabled', true);
+            // Block non-digit keys
+            if (!/^\d$/.test(e.key)) {
+                e.preventDefault();
             }
         });
+
+        // Auto-focus transitions
+        searchBox.on('input', '.code-digit-input', function() {
+            // Clean non-digits just in case
+            $(this).val($(this).val().replace(/\D/g, ''));
+
+            const $inputs = searchBox.find('.code-digit-input');
+            const idx = $inputs.index(this);
+            const val = $(this).val();
+            const maxLen = parseInt($(this).attr('maxlength'));
+
+            // Auto-focus next field when current field reaches its maximum length
+            if (val.length >= maxLen && idx < $inputs.length - 1) {
+                $inputs.eq(idx + 1).focus().select();
+            }
+
+            updatePrCode();
+        });
+
+        // Auto-focus previous field on Backspace in empty field
+        searchBox.on('keydown', '.code-digit-input', function(e) {
+            if (e.key === 'Backspace' && $(this).val() === '') {
+                const $inputs = searchBox.find('.code-digit-input');
+                const idx = $inputs.index(this);
+                if (idx > 0) {
+                    $inputs.eq(idx - 1).focus().select();
+                }
+            }
+        });
+
+        // Intelligent copy-paste handler
+        searchBox.on('paste', '.code-digit-input', function(e) {
+            e.preventDefault();
+            const pastedText = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+            const digits = pastedText.replace(/\D/g, '');
+
+            if (digits.length >= 9) {
+                // E.g., PR-3-202601-001 -> digits: 3202601001
+                const prCount = digits.substring(digits.length - 3);
+                const appCode = digits.substring(digits.length - 9, digits.length - 3);
+                const officeId = digits.substring(0, digits.length - 9);
+
+                $officeInput.val(officeId);
+                $appInput.val(appCode);
+                $countInput.val(prCount);
+
+                updatePrCode();
+                $countInput.focus();
+            } else {
+                // If pasted text is just a number, populate current field
+                $(this).val(digits.substring(0, $(this).attr('maxlength')));
+                updatePrCode();
+            }
+        });
+
+        // Reconstruct the full code and update Datatable search + Submit button state
+        function updatePrCode() {
+            const officeVal = $officeInput.val();
+            const appVal = $appInput.val();
+            const countVal = $countInput.val();
+
+            // Construct formatted code: PR-{officeId}-{appCode}-{prCount}
+            // If fields are partially filled, format with empty segments to allow search filtering
+            let formatted = 'PR';
+            if (officeVal || appVal || countVal) {
+                formatted += '-' + officeVal;
+            }
+            if (appVal || countVal) {
+                formatted += '-' + appVal;
+            }
+            if (countVal) {
+                formatted += '-' + countVal;
+            }
+
+            $hiddenInput.val(formatted);
+
+            // Filter DataTable with the active code/partial code
+            table.search(formatted).draw();
+
+            // Validate full format: PR-{officeId}-{6-digits}-{3-digits}
+            const prRegex = /^PR-\d+-\d{6}-\d{3}$/;
+            if (prRegex.test(formatted)) {
+                $retrieveBtn.prop('disabled', false);
+            } else {
+                $retrieveBtn.prop('disabled', true);
+            }
+        }
     }
 });

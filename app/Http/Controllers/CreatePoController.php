@@ -48,15 +48,26 @@ class CreatePoController extends Controller
         // Resolve parent PR
         $pr = PrParent::findOrFail($pr_id);
 
-        // Generate sequential unique code (PO-[Clean PR Code]-[PO Count] format)
+        // Generate sequential unique code (PO-{dep_id}-{cleanPrCodeWithoutDepId}-{poCount} format)
         if ($pr && $pr->pr_unique_code) {
-            $cleanPrCode = str_replace(['PR', '-'], '', $pr->pr_unique_code);
+            // Split code to extract department ID and the pure sequential part
+            $parts = explode('-', $pr->pr_unique_code);
+            if (count($parts) >= 4) {
+                // E.g., PR-3-202601-001 -> Parts: [PR, 3, 202601, 001]
+                $depId = $parts[1];
+                $cleanPrCodeWithoutDepId = $parts[2] . $parts[3]; // '202601001'
+            } else {
+                // Fallback for older PR code formats that didn't include a department ID
+                $depId = $pr->pr_department;
+                $cleanPrCodeWithoutDepId = str_replace(['PR', '-'], '', $pr->pr_unique_code);
+            }
             $poCount = PoParent::where('pr_id_fk', $pr_id)->count() + 1;
-            $uniqueCode = 'PO-' . $cleanPrCode . '-' . str_pad($poCount, 3, '0', STR_PAD_LEFT);
+            $uniqueCode = 'PO-' . $depId . '-' . $cleanPrCodeWithoutDepId . '-' . str_pad($poCount, 3, '0', STR_PAD_LEFT);
         } else {
+            $depId = $pr ? $pr->pr_department : 'UNKNOWN';
             $lastPo = PoParent::orderBy('po_id', 'desc')->first();
             $nextNum = $lastPo ? ($lastPo->po_id + 1) : 1;
-            $uniqueCode = 'PO-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+            $uniqueCode = 'PO-' . $depId . '-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
         }
 
         $po = PoParent::create([
