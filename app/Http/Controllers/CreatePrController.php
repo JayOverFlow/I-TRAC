@@ -689,7 +689,7 @@ class CreatePrController extends Controller
             // Export to PDF using mPDF
             $pdfWriter = new Mpdf($spreadsheet);
             $pdfWriter->setPreCalculateFormulas(true);
-            $filename = "PR_" . str_replace('-', '_', $pr->pr_no ?: 'EXPORT') . ".pdf";
+            $filename = ($pr->pr_unique_code ?: 'PR_EXPORT') . ".pdf";
 
             return response()->streamDownload(function () use ($pdfWriter) {
                 $pdfWriter->save('php://output');

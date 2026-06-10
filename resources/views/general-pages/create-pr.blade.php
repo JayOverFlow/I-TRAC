@@ -137,13 +137,18 @@
                             </button>
                         </div>
                     @elseif ($taskStatus === 'Exported' || ($isSelfCreatedHead && $taskStatus === 'Complete'))
-                        {{-- PR has been exported — fully locked for everyone --}}
+                        {{-- PR has been exported — fully locked for everyone, with re-download option --}}
                         <div class="d-flex align-items-center gap-2 justify-content-end">
                             <div class="badge bg-dark p-2 px-3">
                                 <h6 class="mb-0 text-white">
                                     <i class="fas fa-file-export me-1"></i> Exported
                                 </h6>
                             </div>
+                            <a href="{{ route('export.pr.download', $task->task_id) }}"
+                               class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
+                                <span>Export Again</span>
+                            </a>
                         </div>
                     @else
                         {{-- Fallback for any other read-only status --}}

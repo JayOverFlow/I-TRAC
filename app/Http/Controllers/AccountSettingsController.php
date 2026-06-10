@@ -210,19 +210,41 @@ class AccountSettingsController extends Controller
     {
         $app = AppParent::with(['appItems'])->findOrFail($app_id);
         
-        // Eager load PRs and their POs
-        $appWithPos = AppParent::with(['purchaseRequests.purchaseOrders'])->findOrFail($app_id);
+        // Eager load PRs and their POs, and relations to get requestor details
+        $appWithPrs = AppParent::with(['purchaseRequests.purchaseOrders', 'purchaseRequests.requestor', 'purchaseRequests.savedBy'])->findOrFail($app_id);
+        
+        $purchaseRequests = $appWithPrs->purchaseRequests;
         
         $purchaseOrders = collect();
-        foreach ($appWithPos->purchaseRequests as $pr) {
+        foreach ($purchaseRequests as $pr) {
             foreach ($pr->purchaseOrders as $po) {
                 $purchaseOrders->push($po);
             }
         }
 
+        // Map PRs to include formatted requested_by and required columns
+        $formattedPrs = $purchaseRequests->map(function ($pr) {
+            $requestorName = '-';
+            if ($pr->requestor) {
+                $requestorName = $pr->requestor->user_fullname;
+            } elseif ($pr->savedBy) {
+                $requestorName = $pr->savedBy->user_fullname;
+            }
+            
+            return [
+                'pr_id' => $pr->pr_id,
+                'pr_no' => $pr->pr_no,
+                'pr_unique_code' => $pr->pr_unique_code,
+                'pr_purpose' => $pr->pr_purpose,
+                'pr_total' => $pr->pr_total,
+                'requested_by' => $requestorName,
+            ];
+        });
+
         return response()->json([
             'app_unique_code' => $app->app_unique_code,
             'appItems' => $app->appItems,
+            'purchaseRequests' => $formattedPrs,
             'purchaseOrders' => $purchaseOrders
         ]);
     }

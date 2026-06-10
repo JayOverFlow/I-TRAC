@@ -311,15 +311,17 @@ $(document).ready(function() {
                         style: 'display:none'
                     }).appendTo('body');
 
-                    // Clean up iframe after a few seconds
-                    setTimeout(function() {
-                        $iframe.remove();
-                    }, 5000);
-
+                    // Wait long enough for mPDF to generate the PDF before redirecting
+                    // (mPDF Excel-to-PDF conversion typically takes 2-5 seconds)
                     if (result.data.redirect) {
                         setTimeout(function() {
+                            $iframe.remove();
                             window.location.href = result.data.redirect;
-                        }, 1000);
+                        }, 5000);
+                    } else {
+                        setTimeout(function() {
+                            $iframe.remove();
+                        }, 10000);
                     }
                 } else if (result.data.redirect) {
                     window.location.href = result.data.redirect;

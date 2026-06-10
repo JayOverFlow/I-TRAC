@@ -244,6 +244,7 @@
                             </div>
                             <div class="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3">
                                 <div class="dataTables_filter d-flex align-items-center justify-content-sm-end justify-content-center gap-2">
+                                    <button class="btn btn-sm px-3" id="btn-view-app-prs" style="background-color: #900b09; color: white; border: none; box-shadow: none; font-weight: 500; border-radius: 6px;">View PRs</button>
                                     <button class="btn btn-sm px-3" id="btn-view-app-pos" style="background-color: #900b09; color: white; border: none; box-shadow: none; font-weight: 500; border-radius: 6px;">View POs</button>
                                     <div class="position-relative">
                                         <input type="search" class="form-control form-control-sm archive-search-input" placeholder="Search..." aria-controls="zero-config" style="padding-right: 32px; width: 200px; font-size: 0.85rem;">
@@ -430,6 +431,60 @@
                 </div>
 
             </div> <!-- End settings-view-archive-app-project -->
+
+            <!-- LEVEL 4 (PRs): Archive PRs View -->
+            <div id="settings-view-archive-prs" class="settings-view-pane" style="display: none;">
+                <div class="widget-content widget-content-area br-8 p-0">
+                    <!-- Top Section -->
+                    <div class="dt--top-section" style="margin: 0; padding: 20px 21px 20px 21px;">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 d-flex justify-content-sm-start align-items-center">
+                                <div class="dataTables_length">
+                                    <label>
+                                        <div class="archive-breadcrumb">
+                                            <a href="javascript:void(0);" id="btn-archive-level4-pr-back-1" class="text-decoration-none archive-back-link">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                                                Archive
+                                            </a>
+                                            <span class="breadcrumb-separator">&gt;</span>
+                                            <a href="javascript:void(0);" id="btn-archive-level4-pr-back-2" class="text-decoration-none archive-back-link">Annual Procurement Plan</a>
+                                            <span class="breadcrumb-separator">&gt;</span>
+                                            <a href="javascript:void(0);" id="btn-archive-level4-pr-back-3" class="text-decoration-none archive-back-link">APP-2026-01</a>
+                                            <span class="breadcrumb-separator">&gt;</span>
+                                            <span class="breadcrumb-current fw-bold red-text-2">Purchase Requests</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3">
+                                <div class="dataTables_filter">
+                                    <div class="position-relative">
+                                        <input type="search" class="form-control form-control-sm archive-search-input" placeholder="Search PRs..." aria-controls="zero-config" style="padding-right: 32px; width: 200px; font-size: 0.85rem;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888ea8;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Responsive Section -->
+                    <div class="table-responsive">
+                        <table class="table table-striped dt-table-hover dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="fw-bold sorting" style="width: 20%">PR number</th>
+                                    <th class="fw-bold sorting" style="width: 40%">Purpose</th>
+                                    <th class="fw-bold text-nowrap text-end sorting" style="width: 20%">Allocated Budget</th>
+                                    <th class="fw-bold sorting" style="width: 20%">Requested by</th>
+                                </tr>
+                            </thead>
+                            <tbody id="archive-prs-tbody">
+                                <!-- Dynamically populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> <!-- End settings-view-archive-prs -->
 
             <!-- LEVEL 4: Archive POs View -->
             <div id="settings-view-archive-pos" class="settings-view-pane" style="display: none;">

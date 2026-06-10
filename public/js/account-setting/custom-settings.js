@@ -185,6 +185,11 @@
         var viewLevel4BackBtn1 = document.getElementById('btn-archive-level4-back-1');
         var viewLevel4BackBtn2 = document.getElementById('btn-archive-level4-back-2');
         var viewLevel4BackBtn3 = document.getElementById('btn-archive-level4-back-3');
+
+        // Level 4 back buttons (PR List)
+        var viewLevel4PrBackBtn1 = document.getElementById('btn-archive-level4-pr-back-1');
+        var viewLevel4PrBackBtn2 = document.getElementById('btn-archive-level4-pr-back-2');
+        var viewLevel4PrBackBtn3 = document.getElementById('btn-archive-level4-pr-back-3');
         
         // Level 5 back buttons (PO Details)
         var viewLevel5BackBtn1 = document.getElementById('btn-archive-level5-back-1');
@@ -193,6 +198,7 @@
         var viewLevel5BackBtn4 = document.getElementById('btn-archive-level5-back-4');
 
         var btnViewAppPos = document.getElementById('btn-view-app-pos');
+        var btnViewAppPrs = document.getElementById('btn-view-app-prs');
         
         // Clickable rows
         var archiveClickableRowsLevel1 = document.querySelectorAll('#settings-view-archive-apps .archive-clickable-row');
@@ -343,6 +349,35 @@
                             }
                         }
 
+                        // Populate Level 4 (PRs)
+                        var tbodyPRs = document.getElementById('archive-prs-tbody');
+                        if (tbodyPRs) {
+                            tbodyPRs.innerHTML = '';
+                            if (data.purchaseRequests && data.purchaseRequests.length > 0) {
+                                data.purchaseRequests.forEach(pr => {
+                                    var tr = document.createElement('tr');
+                                    tr.className = 'archive-pr-clickable-row archive-pr-dynamic-row';
+                                    tr.setAttribute('data-pr-id', pr.pr_id);
+                                    
+                                    var formattedBudget = '₱ ' + parseFloat(pr.pr_total || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                    
+                                    tr.innerHTML = `
+                                        <td>${pr.pr_no || pr.pr_unique_code || '-'}</td>
+                                        <td>${pr.pr_purpose || '-'}</td>
+                                        <td class="text-end fw-bold">${formattedBudget}</td>
+                                        <td>${pr.requested_by || '-'}</td>
+                                    `;
+                                    tr.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        // Specific PR click actions can be added here in the future
+                                    });
+                                    tbodyPRs.appendChild(tr);
+                                });
+                            } else {
+                                tbodyPRs.innerHTML = '<tr><td colspan="4" class="text-center">No purchase requests found for this APP.</td></tr>';
+                            }
+                        }
+
                         // Update all breadcrumbs to show selected APP code
                         var appBreadcrumbs = document.querySelectorAll('.archive-back-link');
                         appBreadcrumbs.forEach(link => {
@@ -380,6 +415,14 @@
                 navigateToSettingsView('settings-view-archive-pos');
             });
         }
+
+        // PR Flow interactions
+        if (btnViewAppPrs) {
+            btnViewAppPrs.addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateToSettingsView('settings-view-archive-prs');
+            });
+        }
         
         archiveClickableRowsPO.forEach(function(row) {
             row.addEventListener('click', function(e) {
@@ -392,6 +435,11 @@
         if (viewLevel4BackBtn1) { viewLevel4BackBtn1.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-main'); }); }
         if (viewLevel4BackBtn2) { viewLevel4BackBtn2.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-apps'); }); }
         if (viewLevel4BackBtn3) { viewLevel4BackBtn3.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-projects'); }); }
+
+        // Level 4 (PRs) Back Navigation
+        if (viewLevel4PrBackBtn1) { viewLevel4PrBackBtn1.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-main'); }); }
+        if (viewLevel4PrBackBtn2) { viewLevel4PrBackBtn2.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-apps'); }); }
+        if (viewLevel4PrBackBtn3) { viewLevel4PrBackBtn3.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-projects'); }); }
         
         // Level 5 Back Navigation
         if (viewLevel5BackBtn1) { viewLevel5BackBtn1.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-main'); }); }
