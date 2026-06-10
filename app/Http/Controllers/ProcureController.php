@@ -56,9 +56,11 @@ class ProcureController extends Controller
             $prCode = 'PR-' . substr($prCode, 2, 6) . '-' . substr($prCode, 8);
         }
 
-        // Find the PR with the given unique code that is 'Exported'
+        // Find the PR with the given unique code that is exported
+        // Note: Self-created Head PRs use 'Complete' as their exported state,
+        //       while assigned PRs use 'Exported'
         $pr = \App\Models\PrParent::where('pr_unique_code', $prCode)
-            ->where('pr_status', 'Exported')
+            ->whereIn('pr_status', ['Exported', 'Complete'])
             ->first();
 
         if (!$pr) {
