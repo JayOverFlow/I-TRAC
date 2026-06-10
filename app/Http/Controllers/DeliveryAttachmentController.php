@@ -45,6 +45,6 @@ class DeliveryAttachmentController extends Controller
 
         $users = \App\Models\User::all();
 
-        return view('supply.pages.supply-delivery-attachment', compact('po', 'breadcrumbs', 'headPropertySupply', 'users'));
+        return view('supply.pages.supply-delivery-attachment', compact('po', 'headPropertySupply', 'users'));
     }
 }

@@ -13,6 +13,7 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/supply/procure/custom-procure.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom-code-input.css') }}">
 @endpush
 
 @section('content')
