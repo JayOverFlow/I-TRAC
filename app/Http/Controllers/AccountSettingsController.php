@@ -208,7 +208,7 @@ class AccountSettingsController extends Controller
      */
     public function getArchiveAppData($app_id)
     {
-        $app = AppParent::with(['appItems'])->findOrFail($app_id);
+        $app = AppParent::with(['appItems.assignedUser'])->findOrFail($app_id);
         
         // Eager load PRs and their POs, and relations to get requestor details
         $appWithPrs = AppParent::with([
@@ -289,9 +289,16 @@ class AccountSettingsController extends Controller
             ];
         });
 
+        $formattedAppItems = $app->appItems->map(function ($item) {
+            $attributes = $item->toArray();
+            $attributes['assigned_to_name'] = $item->assignedUser ? $item->assignedUser->user_fullname : '-';
+            return $attributes;
+        });
+
         return response()->json([
             'app_unique_code' => $app->app_unique_code,
-            'appItems' => $app->appItems,
+            'app_created_at' => $app->created_at ? $app->created_at->format('m/d/Y') : '-',
+            'appItems' => $formattedAppItems,
             'purchaseRequests' => $formattedPrs,
             'purchaseOrders' => $purchaseOrders
         ]);

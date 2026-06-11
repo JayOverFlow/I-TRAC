@@ -33,4 +33,9 @@ class AppItem extends Model
     {
         return $this->belongsTo(AppParent::class, 'app_id_fk', 'app_id');
     }
+
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'app_items_assigned_to', 'user_id');
+    }
 }
