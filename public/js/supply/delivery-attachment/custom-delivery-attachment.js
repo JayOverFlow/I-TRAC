@@ -23,4 +23,20 @@ $(document).ready(function() {
         // Show targeted document view container
         $('#' + targetId).removeClass('d-none').show();
     });
+
+    // Automatically click and expand the folder for active document on page load/redirect
+    var activeDoc = $('#treeviewFolderStructureEx').data('active-document');
+    if (activeDoc) {
+        var docNode = $('[data-target="' + activeDoc + '"]');
+        if (docNode.length) {
+            docNode.click();
+            // Also expand parent folder if collapsed
+            var folderCollapse = docNode.closest('.treeview-collapse');
+            if (folderCollapse.length && !folderCollapse.hasClass('show')) {
+                var collapsibleTrigger = $('[data-bs-target="#' + folderCollapse.attr('id') + '"]');
+                collapsibleTrigger.removeClass('collapsed').attr('aria-expanded', 'true');
+                folderCollapse.addClass('show');
+            }
+        }
+    }
 });

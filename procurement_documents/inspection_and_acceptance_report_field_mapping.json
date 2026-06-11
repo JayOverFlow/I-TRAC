@@ -1,0 +1,348 @@
+{
+  "meta": {
+    "document_type": "Inspection and Acceptance Report",
+    "abbreviation": "IAR",
+    "form_code": "FM-SUP-007",
+    "form_revision": "REV 0",
+    "form_date": "09NOV2016",
+    "institution": "Technological University of the Philippines",
+    "campus": "Taguig City",
+    "source_sheet_for_mapping": "IAR with Mapping",
+    "template_sheet": "IAR",
+    "notes": "The 'IAR with Mapping' sheet was used as primary reference. Two mapping errors were detected and corrected — see known_issues. Use this JSON as the ground truth for the AI agent."
+  },
+
+  "static_regions": {
+    "description": "Fixed institutional content. These cells must NOT be overwritten when filling the form.",
+    "cells": [
+      { "cell": "A2:C2", "value": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES" },
+      { "cell": "A3:C3", "value": "TAGUIG CITY" },
+      { "cell": "D3:F3", "value": "INSPECTION and" },
+      { "cell": "D4:F4", "value": "ACCEPTANCE REPORT" },
+      { "cell": "A5:C5", "value": "The Technological University of the Philippines shall be a premiere state" },
+      { "cell": "A6:C6", "value": "univrsity with recognized excellence in engineering and technology education" },
+      { "cell": "D6:F6", "value": "FM-SUP-007          REV 0          09NOV2016" },
+      { "cell": "A7:C7", "value": "at par with the leading universities in the ASEAN region" },
+      { "cell": "A8",    "value": "Fund Cluster :" },
+      { "cell": "A9",    "value": "Supplier :" },
+      { "cell": "E9",    "value": "IAR No. :" },
+      { "cell": "A10",   "value": "PO No. / Date :" },
+      { "cell": "E10",   "value": "Date :" },
+      { "cell": "A11",   "value": "Requisitioning Office / Dep't. :" },
+      { "cell": "E11",   "value": "Invoice No. :" },
+      { "cell": "A12",   "value": "Responsibility  Center  Code :" },
+      { "cell": "E12",   "value": "Date :" },
+      { "cell": "A13",   "value": "Stock/ Property No." },
+      { "cell": "B13:D13", "value": "Description" },
+      { "cell": "E13",   "value": "Unit" },
+      { "cell": "F13",   "value": "Quantity" },
+      { "cell": "A43:C43", "value": "INSPECTION" },
+      { "cell": "D43:F43", "value": "ACCEPTANCE" },
+      { "cell": "A45",   "value": "Date Inspected:" },
+      { "cell": "D45",   "value": "Date Received:" },
+      { "cell": "A47:C47", "value": "Inspected, verified, and found in order as to" },
+      { "cell": "D47",   "value": "Complete" },
+      { "cell": "E47",   "value": "Partial" },
+      { "cell": "A48:C48", "value": "quantity and specification" },
+      { "cell": "E48",   "value": "(Pls. specify quantity)" },
+      { "cell": "A52:C52", "value": "Inspection Officer" },
+      { "cell": "D52:F52", "value": "Property and Supply Office" }
+    ]
+  },
+
+  "field_mapping": {
+
+    "header_section": {
+      "description": "Form-level header fields (rows 8–12). Written once per IAR document.",
+      "fields": [
+        {
+          "field_key": "iar_fund_cluster",
+          "label": "Fund Cluster",
+          "cell": "B8",
+          "data_type": "string",
+          "required": true,
+          "example": "01 101 101",
+          "notes": "Budget fund cluster code. Label 'Fund Cluster :' is at A8. CORRECTED from mapping sheet — see known_issues KI-001."
+        },
+        {
+          "field_key": "iar_supplier",
+          "label": "Supplier",
+          "cell": "B9",
+          "merged_range": "B9:D9",
+          "data_type": "string",
+          "required": true,
+          "example": "ABC Trading Corporation",
+          "notes": "Full name of the supplier or vendor. Label 'Supplier :' is at A9. This field was MISSING from the mapping sheet — added by structural inference. See known_issues KI-002."
+        },
+        {
+          "field_key": "iar_no",
+          "label": "IAR No.",
+          "cell": "F9",
+          "data_type": "string",
+          "required": true,
+          "example": "2024-001",
+          "notes": "Unique IAR document control number. Label 'IAR No. :' is at E9."
+        },
+        {
+          "field_key": "iar_po_no",
+          "label": "PO No.",
+          "cell": "B10",
+          "data_type": "string",
+          "required": true,
+          "example": "PO-2024-055",
+          "notes": "Purchase Order number. Label 'PO No. / Date :' is at A10."
+        },
+        {
+          "field_key": "iar_po_no_date",
+          "label": "PO Date",
+          "cell": "C10",
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "required": true,
+          "example": "01/15/2024",
+          "notes": "Date of the Purchase Order. Placed in column C, adjacent to iar_po_no in column B."
+        },
+        {
+          "field_key": "iar_date",
+          "label": "IAR Date",
+          "cell": "F10",
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "required": true,
+          "example": "01/20/2024",
+          "notes": "Date of this IAR document. Label 'Date :' is at E10."
+        },
+        {
+          "field_key": "iar_office",
+          "label": "Requisitioning Office / Dept.",
+          "cell": "C11",
+          "data_type": "string",
+          "required": true,
+          "example": "College of Engineering",
+          "notes": "Name of the office or department that requested the items. Label is at A11."
+        },
+        {
+          "field_key": "iar_invoice_no",
+          "label": "Invoice No.",
+          "cell": "F11",
+          "data_type": "string",
+          "required": true,
+          "example": "INV-2024-1234",
+          "notes": "Supplier's official invoice number. Label 'Invoice No. :' is at E11."
+        },
+        {
+          "field_key": "iar_center_code",
+          "label": "Responsibility Center Code",
+          "cell": "C12",
+          "data_type": "string",
+          "required": true,
+          "example": "10-001-01",
+          "notes": "Budget responsibility center identifier code. Label is at A12."
+        },
+        {
+          "field_key": "iar_invoice_date",
+          "label": "Invoice Date",
+          "cell": "F12",
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "required": true,
+          "example": "01/18/2024",
+          "notes": "Date of the supplier's invoice. Label 'Date :' is at E12."
+        }
+      ]
+    },
+
+    "item_table": {
+      "description": "Repeatable line-item rows. Column headers are at row 13. First data row is row 14. Rows 15–42 are the repeatable region. Maximum capacity: 29 items total (row 14 + rows 15–42).",
+      "table_header_row": 13,
+      "first_item_row": 14,
+      "repeat_range": {
+        "start_row": 15,
+        "end_row": 42,
+        "cell_range": "A15:F42",
+        "max_additional_rows": 28,
+        "total_item_capacity": 29
+      },
+      "columns": [
+        {
+          "field_key": "iar_stock_no",
+          "label": "Stock / Property No.",
+          "column": "A",
+          "data_type": "string",
+          "required": false,
+          "example": "STK-2024-001",
+          "notes": "Stock number or property tracking number. Leave blank if not applicable."
+        },
+        {
+          "field_key": "iar_items_descrip",
+          "label": "Item Description",
+          "column": "B",
+          "merged_columns": "B:D",
+          "data_type": "string",
+          "required": true,
+          "example": "Bond Paper",
+          "notes": "Common name or general description of the item. Columns B–D are merged; always write to column B."
+        },
+        {
+          "field_key": "iar_spec_description",
+          "label": "Item Specification",
+          "column": "B",
+          "merged_columns": "B:D",
+          "data_type": "string",
+          "required": false,
+          "example": "Short, 70gsm, 500 sheets per ream",
+          "notes": "Technical specifications of the item. Shares the same merged B:D cell as iar_items_descrip. Combine both into one cell value — see combined_cell_format below."
+        },
+        {
+          "field_key": "iar_unit",
+          "label": "Unit",
+          "column": "E",
+          "data_type": "string",
+          "required": true,
+          "example": "ream",
+          "notes": "Unit of measure. Common values: pcs, sets, reams, boxes, units, liters, meters, rolls."
+        },
+        {
+          "field_key": "iar_quantity",
+          "label": "Quantity",
+          "column": "F",
+          "data_type": "number",
+          "required": true,
+          "example": 10,
+          "notes": "Numeric quantity of the item received and inspected."
+        }
+      ],
+      "combined_cell_format": {
+        "description": "iar_items_descrip and iar_spec_description share the same merged B:D cell. The AI agent must write both as a single combined string.",
+        "recommended_format": "{iar_items_descrip}\n{iar_spec_description}",
+        "example_combined_value": "Bond Paper\nShort, 70gsm, 500 sheets per ream",
+        "notes": "Use a newline character (\\n) as the separator. If no spec is provided, write iar_items_descrip alone."
+      },
+      "item_object_schema": {
+        "description": "Structure for each item entry the AI agent should produce.",
+        "schema": {
+          "iar_stock_no": "string | null",
+          "iar_items_descrip": "string",
+          "iar_spec_description": "string | null",
+          "iar_unit": "string",
+          "iar_quantity": "number"
+        },
+        "example": {
+          "iar_stock_no": null,
+          "iar_items_descrip": "Bond Paper",
+          "iar_spec_description": "Short, 70gsm, 500 sheets per ream",
+          "iar_unit": "ream",
+          "iar_quantity": 10
+        }
+      }
+    },
+
+    "inspection_acceptance_section": {
+      "description": "Inspection and Acceptance footer (rows 43–52). Filled after physical inspection and formal receipt of items.",
+      "fields": [
+        {
+          "field_key": "iar_date_inspected",
+          "label": "Date Inspected",
+          "cell": "B45",
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "required": true,
+          "example": "01/22/2024",
+          "notes": "Date when items were physically inspected by the Inspection Officer. Label 'Date Inspected:' is at A45. Falls under the INSPECTION section (A43)."
+        },
+        {
+          "field_key": "iar_date_accepted",
+          "label": "Date Received / Accepted",
+          "cell": "E45",
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "required": true,
+          "example": "01/22/2024",
+          "notes": "Date when items were formally received and accepted by the Property and Supply Office. Label 'Date Received:' is at D45. Falls under the ACCEPTANCE section (D43)."
+        },
+        {
+          "field_key": "iar_acceptance_type",
+          "label": "Acceptance Type",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "complete",
+              "label": "Complete",
+              "indicator_cell": "D47",
+              "notes": "Mark or tick D47 when full delivery was received."
+            },
+            {
+              "value": "partial",
+              "label": "Partial",
+              "indicator_cell": "E47",
+              "partial_quantity_cell": "E48",
+              "notes": "Mark or tick E47 when only a portion was received. Write the partial quantity received at E48."
+            }
+          ],
+          "notes": "Indicates whether items were received in full (Complete) or in part (Partial)."
+        },
+        {
+          "field_key": "iar_inspected_by",
+          "label": "Inspected By",
+          "cell": "A51",
+          "merged_range": "A51:C51",
+          "data_type": "string",
+          "required": true,
+          "example": "JUAN DELA CRUZ",
+          "notes": "Full name (in caps) of the Inspection Officer who verified the items. Merged cell A51:C51. Static role label 'Inspection Officer' is at A52 — do not overwrite."
+        },
+        {
+          "field_key": "iar_accepted_by",
+          "label": "Accepted By",
+          "cell": "D51",
+          "merged_range": "D51:F51",
+          "data_type": "string",
+          "required": true,
+          "default_value": "RONNIE A. RAMOS",
+          "example": "RONNIE A. RAMOS",
+          "notes": "Full name (in caps) of the accepting officer from the Property and Supply Office. Merged cell D51:F51. Pre-filled as 'RONNIE A. RAMOS' in the blank template. Static role label 'Property and Supply Office' is at D52 — do not overwrite."
+        }
+      ]
+    }
+  },
+
+  "known_issues": [
+    {
+      "issue_id": "KI-001",
+      "severity": "high",
+      "source": "IAR with Mapping sheet",
+      "description": "iar_fund_cluster placeholder is misplaced.",
+      "mapping_sheet_cell": "B9",
+      "corrected_cell": "B8",
+      "rationale": "The label 'Fund Cluster :' is at A8. Standard form layout places the value in the same row at B8. The mapping sheet incorrectly placed the placeholder at B9, which is the same row as the 'Supplier :' label.",
+      "corrective_action": "Write iar_fund_cluster to B8. Free up B9 for the iar_supplier field."
+    },
+    {
+      "issue_id": "KI-002",
+      "severity": "high",
+      "source": "IAR with Mapping sheet",
+      "description": "iar_supplier field is entirely absent from the mapping sheet.",
+      "rationale": "The blank IAR template has 'Supplier :' at A9 with B9 left empty for the supplier name. Because the mapping sheet misplaced iar_fund_cluster at B9, the supplier field was never defined.",
+      "corrective_action": "Add iar_supplier targeting cell B9 (merged range B9:D9). Treat it as a required string field."
+    },
+    {
+      "issue_id": "KI-003",
+      "severity": "low",
+      "source": "IAR with Mapping sheet",
+      "description": "Only 4 rows in the item table range (rows 20, 22, 34, 41) have explicit B:D merged cells. Row 14 and all other item rows do not.",
+      "rationale": "The template was likely partially set up. When programmatically writing items to rows 14–42, the merge must be applied per row before writing the description value, or the fill script must handle writing to column B alone.",
+      "corrective_action": "When filling item rows, apply a B:D merge to each row before writing. Alternatively, write only to column B — the data will still display but without the visual merge formatting on unmerged rows."
+    }
+  ],
+
+  "ai_agent_fill_guide": {
+    "description": "Step-by-step fill order recommended for an AI agent to avoid overwriting merged cells or static regions.",
+    "steps": [
+      { "step": 1, "section": "header_section", "action": "Write all 10 header fields (iar_fund_cluster through iar_invoice_date) to their respective cells." },
+      { "step": 2, "section": "item_table", "action": "For each item in the list: write to row 14 first, then rows 15–42 sequentially. For each row, apply B:D merge before writing the combined iar_items_descrip + iar_spec_description value to column B." },
+      { "step": 3, "section": "inspection_acceptance_section", "action": "Write iar_date_inspected to B45, iar_date_accepted to E45, acceptance type indicator to D47 or E47, iar_inspected_by to A51, and iar_accepted_by to D51." },
+      { "step": 4, "note": "Do NOT write to any cell listed in static_regions. Preserve all merged cell ranges defined in the template." }
+    ]
+  }
+}

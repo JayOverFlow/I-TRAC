@@ -1,13 +1,15 @@
 <div class="col-md-9 iar-container document-view-container" id="doc-iar-{{ $iar->iar_id }}" style="display: none;">
-    <div class="card shadow-sm border-0 mb-3">
-        <div class="card-body px-0 pb-0">
+    <form action="{{ route('save.iar', $iar->iar_id) }}" method="POST">
+        @csrf
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body px-0 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3 px-3">
                 <h5 class="fw-bold red-text-2 ms-1 mb-0">Inspection and Acceptance Report</h5>
                 <div class="">
-                    <button type="button" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                    <a href="{{ route('export.iar.pdf', $iar->iar_id) }}" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                         <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                         <span>Export as PDF</span>
-                    </button>
+                    </a>
                     <button type="submit" class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                         <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                         <span class="fw-bold">Save as Draft</span>
@@ -120,6 +122,7 @@
                         @foreach($iar->iarItems as $index => $item)
                         <tr>
                             <td class="px-1">
+                                <input type="hidden" name="items[{{ $index }}][iar_items_id]" value="{{ $item->iar_items_id }}">
                                 <input type="text" class="form-control form-control-sm text-center"
                                     name="items[{{ $index }}][stock_no]"
                                     value="{{ $item->iar_stock_no }}">
@@ -154,6 +157,7 @@
             <div class="text-center my-2">
                 <button type="button" class="btn border-0 bg-transparent text-black fw-bold add-item-btn">+ Add Item</button>
             </div>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
