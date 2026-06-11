@@ -208,21 +208,98 @@ class AccountSettingsController extends Controller
      */
     public function getArchiveAppData($app_id)
     {
-        $app = AppParent::with(['appItems'])->findOrFail($app_id);
+        $app = AppParent::with(['appItems.assignedUser'])->findOrFail($app_id);
         
-        // Eager load PRs and their POs
-        $appWithPos = AppParent::with(['purchaseRequests.purchaseOrders'])->findOrFail($app_id);
+        // Eager load PRs and their POs, and relations to get requestor details
+        $appWithPrs = AppParent::with([
+            'purchaseRequests.prItems.prSpecs',
+            'purchaseRequests.approver',
+            'purchaseRequests.department',
+            'purchaseRequests.purchaseOrders.poItems.poSpecs',
+            'purchaseRequests.purchaseOrders.iarReports.iarItems.poItem',
+            'purchaseRequests.purchaseOrders.risSlips.risItems.poItem',
+            'purchaseRequests.purchaseOrders.risSlips.receiver',
+            'purchaseRequests.purchaseOrders.icsSlips.icsItems',
+            'purchaseRequests.purchaseOrders.icsSlips.receiver',
+            'purchaseRequests.purchaseOrders.parReceipts.parItems',
+            'purchaseRequests.purchaseOrders.parReceipts.receiver',
+            'purchaseRequests.purchaseOrders.rsmiReports.rsmiItems',
+            'purchaseRequests.purchaseOrders.rspiReports.rspiItems',
+            'purchaseRequests.purchaseOrders.ndrReports.ndrItems',
+            'purchaseRequests.purchaseOrders.ndrReports.reporter',
+            'purchaseRequests.requestor',
+            'purchaseRequests.savedBy'
+        ])->findOrFail($app_id);
+        
+        $purchaseRequests = $appWithPrs->purchaseRequests;
         
         $purchaseOrders = collect();
-        foreach ($appWithPos->purchaseRequests as $pr) {
+        foreach ($purchaseRequests as $pr) {
             foreach ($pr->purchaseOrders as $po) {
                 $purchaseOrders->push($po);
             }
         }
 
+        // Map PRs to include formatted requested_by and required columns
+        $formattedPrs = $purchaseRequests->map(function ($pr) {
+            $requestorName = '-';
+            if ($pr->requestor) {
+                $requestorName = $pr->requestor->user_fullname;
+            } elseif ($pr->savedBy) {
+                $requestorName = $pr->savedBy->user_fullname;
+            }
+            
+            $approvedByName = '-';
+            if ($pr->approver) {
+                $approvedByName = $pr->approver->user_fullname;
+            }
+
+            $departmentName = '-';
+            if ($pr->department) {
+                $departmentName = $pr->department->dep_name;
+            }
+            
+            return [
+                'pr_id' => $pr->pr_id,
+                'pr_no' => $pr->pr_no,
+                'pr_unique_code' => $pr->pr_unique_code,
+                'pr_purpose' => $pr->pr_purpose,
+                'pr_total' => $pr->pr_total,
+                'requested_by' => $requestorName,
+                'pr_date' => $pr->pr_date ? \Carbon\Carbon::parse($pr->pr_date)->format('F d, Y') : '-',
+                'pr_section' => $pr->pr_section || '-',
+                'pr_department_name' => $departmentName,
+                'pr_designation' => $pr->pr_designation || '-',
+                'pr_approved_by_name' => $approvedByName,
+                'pr_approved_by_designation' => $pr->pr_approved_by_designation || '-',
+                'pr_items' => $pr->prItems->map(function ($item) {
+                    return [
+                        'pr_items_quantity' => $item->pr_items_quantity,
+                        'pr_items_unit' => $item->pr_items_unit,
+                        'pr_items_cost' => $item->pr_items_cost,
+                        'pr_items_descrip' => $item->pr_items_descrip,
+                        'pr_items_total_cost' => $item->pr_items_total_cost,
+                        'pr_specs' => $item->prSpecs->map(function ($spec) {
+                            return [
+                                'pr_spec_spec' => $spec->pr_spec_spec
+                            ];
+                        })
+                    ];
+                })
+            ];
+        });
+
+        $formattedAppItems = $app->appItems->map(function ($item) {
+            $attributes = $item->toArray();
+            $attributes['assigned_to_name'] = $item->assignedUser ? $item->assignedUser->user_fullname : '-';
+            return $attributes;
+        });
+
         return response()->json([
             'app_unique_code' => $app->app_unique_code,
-            'appItems' => $app->appItems,
+            'app_created_at' => $app->created_at ? $app->created_at->format('m/d/Y') : '-',
+            'appItems' => $formattedAppItems,
+            'purchaseRequests' => $formattedPrs,
             'purchaseOrders' => $purchaseOrders
         ]);
     }

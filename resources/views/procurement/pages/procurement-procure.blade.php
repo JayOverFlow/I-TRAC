@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/apexcharts.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dash_1.css') }}">
     <link rel="stylesheet" href="{{ asset('css/procurement/procure/custom-procure.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom-code-input.css') }}">
 
     <!-- DARK MODE SPECIFIC css -->
 @endpush

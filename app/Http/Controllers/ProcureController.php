@@ -51,14 +51,17 @@ class ProcureController extends Controller
 
         $prCode = trim($request->pr_unique_code);
 
-        // Self-healing: If user submitted PR202601001 instead of PR-202601-001
-        if (preg_match('/^PR\d{9}$/i', $prCode)) {
-            $prCode = 'PR-' . substr($prCode, 2, 6) . '-' . substr($prCode, 8);
+        // Self-healing: If user submitted PR3202601001 or just 3202601001
+        // Normalizes to PR-{dep_id}-{APP}-{PR} format
+        if (preg_match('/^(?:PR)?(\d+)(20\d{4})(\d{3})$/i', $prCode, $matches)) {
+            $prCode = 'PR-' . $matches[1] . '-' . $matches[2] . '-' . $matches[3];
         }
 
-        // Find the PR with the given unique code that is 'Exported'
+        // Find the PR with the given unique code that is exported
+        // Note: Self-created Head PRs use 'Complete' as their exported state,
+        //       while assigned PRs use 'Exported'
         $pr = \App\Models\PrParent::where('pr_unique_code', $prCode)
-            ->where('pr_status', 'Exported')
+            ->whereIn('pr_status', ['Exported', 'Complete'])
             ->first();
 
         if (!$pr) {
@@ -86,9 +89,10 @@ class ProcureController extends Controller
 
         $poCode = trim($request->po_unique_code);
 
-        // Self-healing: If user submitted PO202601001001 instead of PO-202601001-001
-        if (preg_match('/^PO\d{12}$/i', $poCode)) {
-            $poCode = 'PO-' . substr($poCode, 2, 9) . '-' . substr($poCode, 11);
+        // Self-healing: If user submitted PO3202601001001 or just 3202601001001
+        // Normalizes to PO-{dep_id}-{PR}-{PO} format
+        if (preg_match('/^(?:PO)?(\d+)(20\d{4})(\d{3})(\d{3})$/i', $poCode, $matches)) {
+            $poCode = 'PO-' . $matches[1] . '-' . $matches[2] . $matches[3] . '-' . $matches[4];
         }
 
         $po = PoParent::where('po_unique_code', $poCode)
