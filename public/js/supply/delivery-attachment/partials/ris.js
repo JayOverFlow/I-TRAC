@@ -57,7 +57,28 @@ $(document).ready(function() {
         tbody.append(newRow);
     });
 
-    // ─── 3. Remove Item Row (Scope-Locked to RIS Table) ───────────────────────
+    // ─── 3. Allow Radio Buttons to be Deselected (to reset to NULL) ───────────
+    $(document).on('mousedown', '.ris-container input[type="radio"]', function() {
+        var radio = $(this);
+        radio.data('already-checked', radio.prop('checked'));
+    });
+
+    $(document).on('click', '.ris-container input[type="radio"]', function() {
+        var radio = $(this);
+        if (radio.data('already-checked')) {
+            radio.prop('checked', false);
+            radio.data('already-checked', false);
+            radio.trigger('change');
+        } else {
+            var name = radio.attr('name');
+            if (name) {
+                $('input[name="' + name + '"]').data('already-checked', false);
+            }
+            radio.data('already-checked', true);
+        }
+    });
+
+    // ─── 4. Remove Item Row (Scope-Locked to RIS Table) ───────────────────────
     $(document).on('click', '.ris-container .remove-row-btn', function(e) {
         e.preventDefault();
         var tbody = $(this).closest('tbody');

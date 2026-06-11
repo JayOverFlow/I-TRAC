@@ -307,8 +307,6 @@ class PoReviewController extends Controller
                             'ris_stock_no' => $item->po_items_stockno,
                             'ris_unit' => $item->po_items_unit,
                             'ris_items_descrip' => $item->po_items_descrip,
-                            'ris_quantity' => $qty,
-                            'ris_stock_available' => 'Yes',
                             'ris_issued_quantity' => $qty,
                         ]);
 
