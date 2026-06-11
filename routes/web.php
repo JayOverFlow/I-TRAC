@@ -76,6 +76,8 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
 
     Route::controller(DeliveryAttachmentController::class)->group(function () {
         Route::get('/delivery-attachment/{po_id}', 'showDeliveryAttachment')->name('show.delivery.attachment');
+        Route::post('/delivery-attachment/iar/{iar_id}/save', 'saveIar')->name('save.iar');
+        Route::get('/delivery-attachment/iar/{iar_id}/export', 'exportIar')->name('export.iar.pdf');
     });
 });
 

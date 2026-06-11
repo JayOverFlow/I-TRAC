@@ -204,7 +204,7 @@
                 <div class="card shadow-sm border-0 mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Delivery Attachments</h5>
-                        <ul class="treeview folder-structure" id="treeviewFolderStructureEx">
+                        <ul class="treeview folder-structure" id="treeviewFolderStructureEx" data-active-document="{{ session('active_document') }}">
                             {{-- Supply and Materials Folder --}}
                             @if($hasSupply)
                             <li class="tv-item tv-folder">
