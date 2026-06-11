@@ -11,6 +11,14 @@
     aria-labelledby="animated-underline-settings-tab">
 
     @if($hasPremiumSettings)
+        <style>
+            .archive-clickable-row,
+            .archive-po-clickable-row,
+            .archive-pr-clickable-row,
+            .archive-project-dynamic-row {
+                cursor: pointer !important;
+            }
+        </style>
         <div class="settings-view-container">
             <!-- LEVEL 0: Main Settings View -->
             <div id="settings-view-main" class="settings-view-pane active">
@@ -168,7 +176,7 @@
 
                     <!-- Table Responsive Section -->
                     <div class="table-responsive">
-                        <table class="table table-striped dt-table-hover dataTable" style="width:100%">
+                        <table class="table dt-table-hover" style="width:100%">
                             <thead>
                                 <tr>
                                     <th class="fw-bold sorting" style="width: 20%">APP-Code</th>
@@ -257,13 +265,12 @@
 
                     <!-- Table Responsive Section -->
                     <div class="table-responsive">
-                        <table class="table table-striped dt-table-hover dataTable" style="width:100%">
+                        <table class="table dt-table-hover" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th class="fw-bold sorting" style="width: 15%">APP Project-Code</th>
-                                    <th class="fw-bold sorting" style="width: 50%">Project Title</th>
-                                    <th class="fw-bold sorting" style="width: 20%">Assigned to</th>
-                                    <th class="fw-bold text-nowrap text-center sorting" style="width: 15%">Date Created</th>
+                                    <th class="fw-bold sorting" style="width: 20%">APP Project-Code</th>
+                                    <th class="fw-bold sorting" style="width: 60%">Project Title</th>
+                                    <th class="fw-bold text-nowrap text-center sorting" style="width: 20%">Date Created</th>
                                 </tr>
                             </thead>
                             <tbody id="archive-app-projects-tbody">
@@ -469,7 +476,7 @@
 
                     <!-- Table Responsive Section -->
                     <div class="table-responsive">
-                        <table class="table table-striped dt-table-hover dataTable" style="width:100%">
+                        <table class="table dt-table-hover" style="width:100%">
                             <thead>
                                 <tr>
                                     <th class="fw-bold sorting" style="width: 20%">PR number</th>
@@ -523,7 +530,7 @@
 
                     <!-- Table Responsive Section -->
                     <div class="table-responsive">
-                        <table class="table table-striped dt-table-hover dataTable" style="width:100%">
+                        <table class="table dt-table-hover" style="width:100%">
                             <thead>
                                 <tr>
                                     <th class="fw-bold sorting" style="width: 15%">PO Number</th>
@@ -569,18 +576,6 @@
                             <div class="card-body">
                                 <h5 class="card-title" style="color: #6a768c; font-size: 1.1rem; font-weight: 500; margin-bottom: 20px;">File Hierarchy</h5>
                                 <ul class="treeview folder-structure" id="archiveTreeview">
-                                    <li class="tv-item tv-file">
-                                        <span class="icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                        </span>
-                                        <p>Purchase Request</p>
-                                    </li>
-                                    <li class="tv-item tv-file">
-                                        <span class="icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                        </span>
-                                        <p>Purchase Order</p>
-                                    </li>
                                     <li class="tv-item tv-folder">
                                         <div class="tv-header" id="archiveFolderDeliveryHeading">
                                             <div class="tv-collapsible" data-bs-toggle="collapse" data-bs-target="#archiveFolderDelivery" aria-expanded="true" aria-controls="archiveFolderDelivery">
@@ -591,99 +586,8 @@
                                             </div>
                                         </div>
                                         <div id="archiveFolderDelivery" class="treeview-collapse collapse show" aria-labelledby="archiveFolderDeliveryHeading" data-bs-parent="#archiveTreeview">
-                                            <ul class="treeview">
-                                                <li class="tv-item tv-folder">
-                                                    <div class="tv-header" id="archiveFolderEquipHeading">
-                                                        <div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderEquip" aria-expanded="false" aria-controls="archiveFolderEquip">
-                                                            <div class="icon">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>
-                                                            </div>
-                                                            <p class="title">Equipment</p>
-                                                        </div>
-                                                    </div>
-                                                    <div id="archiveFolderEquip" class="treeview-collapse collapse" aria-labelledby="archiveFolderEquipHeading" data-bs-parent="#archiveFolderDelivery">
-                                                        <ul class="treeview">
-                                                            <li class="tv-item tv-file">
-                                                                <span class="icon">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                                                </span>
-                                                                <p>Inspection and Acceptance Report</p>
-                                                            </li>
-                                                            <li class="tv-item tv-file">
-                                                                <span class="icon">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                                                </span>
-                                                                <p>Property Acknowledgement Receipt</p>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </li>
-                                                <li class="tv-item tv-folder">
-                                                    <div class="tv-header" id="archiveFolderSemiHeading">
-                                                        <div class="tv-collapsible show" data-bs-toggle="collapse" data-bs-target="#archiveFolderSemi" aria-expanded="true" aria-controls="archiveFolderSemi">
-                                                            <div class="icon">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>
-                                                            </div>
-                                                            <p class="title">Semi-Expendable</p>
-                                                        </div>
-                                                    </div>
-                                                    <div id="archiveFolderSemi" class="treeview-collapse collapse show" aria-labelledby="archiveFolderSemiHeading" data-bs-parent="#archiveFolderDelivery">
-                                                        <ul class="treeview">
-                                                            <li class="tv-item tv-file">
-                                                                <span class="icon">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                                                </span>
-                                                                <p>Inspection and Acceptance Report</p>
-                                                            </li>
-                                                            <li class="tv-item tv-file">
-                                                                <span class="icon">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                                                </span>
-                                                                <p class="red-text-2 fw-bold">Requisition and Issue Slip</p>
-                                                            </li>
-                                                            <li class="tv-item tv-file">
-                                                                <span class="icon">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                                                </span>
-                                                                <p>Inventory Custodian Slip</p>
-                                                            </li>
-                                                            <li class="tv-item tv-file">
-                                                                <span class="icon">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>
-                                                                </span>
-                                                                <p>Report of Semi Expendable property issued</p>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </li>
-                                                <li class="tv-item tv-folder">
-                                                    <div class="tv-header" id="archiveFolderSupplyHeading">
-                                                        <div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderSupply" aria-expanded="false" aria-controls="archiveFolderSupply">
-                                                            <div class="icon">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>
-                                                            </div>
-                                                            <p class="title">Supply and Materials</p>
-                                                        </div>
-                                                    </div>
-                                                    <div id="archiveFolderSupply" class="treeview-collapse collapse" aria-labelledby="archiveFolderSupplyHeading" data-bs-parent="#archiveFolderDelivery">
-                                                        <ul class="treeview">
-                                                            <!-- more files -->
-                                                        </ul>
-                                                    </div>
-                                                </li>
-                                                <li class="tv-item tv-folder">
-                                                    <div class="tv-header" id="archiveFolderNotHeading">
-                                                        <div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderNot" aria-expanded="false" aria-controls="archiveFolderNot">
-                                                            <div class="icon">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>
-                                                            </div>
-                                                            <p class="title">Not Delivered</p>
-                                                        </div>
-                                                    </div>
-                                                    <div id="archiveFolderNot" class="treeview-collapse collapse" aria-labelledby="archiveFolderNotHeading" data-bs-parent="#archiveFolderDelivery">
-                                                        <ul class="treeview"></ul>
-                                                    </div>
-                                                </li>
+                                            <ul class="treeview" id="archive-delivery-attachments-list">
+                                                <!-- Dynamically populated via JS -->
                                             </ul>
                                         </div>
                                     </li>
@@ -699,110 +603,157 @@
                                 <h5 class="fw-bold red-text-2 mb-3">Purchase Order</h5>
                                 <hr class="m-0 p-0 mb-4">
                                 
-                                <h6 class="fw-bold red-text-2 mb-4">Title: PO_ArmChairs_Ariado</h6>
+                                <h6 class="fw-bold red-text-2 mb-4" id="archive-po-detail-title-heading">Title: -</h6>
                                 
                                 <div class="row g-2 mb-4">
                                     <div class="col-md-7">
                                         <div class="row mb-3">
                                             <div class="col-4 app-detail-label">Supplier:</div>
-                                            <div class="col-8 app-detail-value">SOLID STEEL MACHINERY AND TOOLS INC.</div>
+                                            <div class="col-8 app-detail-value" id="archive-po-detail-supplier">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-4 app-detail-label">Address:</div>
-                                            <div class="col-8 app-detail-value">#67 Sen. Gil J. Puyat Ave., Makati City</div>
+                                            <div class="col-8 app-detail-value" id="archive-po-detail-address">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-4 app-detail-label">Tel No.:</div>
-                                            <div class="col-8 app-detail-value">0933-5522253</div>
+                                            <div class="col-8 app-detail-value" id="archive-po-detail-tele">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-4 app-detail-label">TIN:</div>
-                                            <div class="col-8 app-detail-value">007-877-300-000</div>
+                                            <div class="col-8 app-detail-value" id="archive-po-detail-tin">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-4 app-detail-label">Place of Delivery:</div>
-                                            <div class="col-8 app-detail-value">TUP-Taguig Supply Office</div>
+                                            <div class="col-8 app-detail-value" id="archive-po-detail-place-delivery">-</div>
                                         </div>
                                         <div class="row mb-1">
                                             <div class="col-4 app-detail-label">Date of Delivery:</div>
-                                            <div class="col-8 app-detail-value"></div>
+                                            <div class="col-8 app-detail-value" id="archive-po-detail-date-delivery">-</div>
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <div class="row mb-3">
                                             <div class="col-5 app-detail-label">Mode of Procurement:</div>
-                                            <div class="col-7 app-detail-value">Shopping Under Section 52. 1. b</div>
+                                            <div class="col-7 app-detail-value" id="archive-po-detail-mode">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-5 app-detail-label">TUP-Taguig TIN:</div>
-                                            <div class="col-7 app-detail-value">000-824-548-001</div>
+                                            <div class="col-7 app-detail-value" id="archive-po-detail-tuptin">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-5 app-detail-label">Delivery Term:</div>
-                                            <div class="col-7 app-detail-value">30 Calendar Days</div>
+                                            <div class="col-7 app-detail-value" id="archive-po-detail-delivery-term">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-5 app-detail-label">Payment Term:</div>
-                                            <div class="col-7 app-detail-value">DOST Funds</div>
+                                            <div class="col-7 app-detail-value" id="archive-po-detail-payment-term">-</div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-5 app-detail-label">P.O. No.:</div>
-                                            <div class="col-7 app-detail-value">2025-02-01</div>
+                                            <div class="col-7 app-detail-value" id="archive-po-detail-po-no">-</div>
                                         </div>
                                         <div class="row mb-1">
                                             <div class="col-5 app-detail-label">Date:</div>
-                                            <div class="col-7 app-detail-value">February 10, 2025</div>
+                                            <div class="col-7 app-detail-value" id="archive-po-detail-date">-</div>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <hr class="m-0 p-0 mb-4">
-                                <h6 class="fw-bold mb-3" style="color: #3b3f5c;">Supply and Materials</h6>
-                                
-                                <div class="table-responsive">
-                                    <table class="table table-borderless table-sm">
-                                        <thead style="background-color: #f1f2f3;">
-                                            <tr>
-                                                <th class="text-center" style="width: 10%;">Stock</th>
-                                                <th class="text-center" style="width: 10%;">Unit</th>
-                                                <th style="width: 40%;">Article</th>
-                                                <th class="text-center" style="width: 10%;">Qty.</th>
-                                                <th class="text-end" style="width: 15%;">Unit Cost</th>
-                                                <th class="text-end" style="width: 15%;">Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="text-center"></td>
-                                                <td class="text-center app-detail-value" style="font-weight: 500;">pc</td>
-                                                <td>
-                                                    <span class="app-detail-value" style="font-size: 0.8rem;">Mobile TV Cart Set</span><br>
-                                                    <small class="app-detail-label" style="font-size: 0.75rem;">Processor: Custom NVIDIA chip (with AI + ray tracing support)<br>Size: 7.9-inch LCD touchscreen<br>Refresh rate: Up to 120Hz with VRR<br>Internal storage: 256 GB (UFS)</small>
-                                                </td>
-                                                <td class="text-center app-detail-value" style="font-weight: 500;">5</td>
-                                                <td class="text-end app-detail-value" style="font-weight: 500;">₱ 21,500.00</td>
-                                                <td class="text-end app-detail-value" style="font-weight: 500;">₱ 21,500.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center"></td>
-                                                <td class="text-center app-detail-value" style="font-weight: 500;">pc</td>
-                                                <td>
-                                                    <span class="app-detail-value" style="font-size: 0.8rem;">Mobile TV Cart Set</span>
-                                                </td>
-                                                <td class="text-center app-detail-value" style="font-weight: 500;">5</td>
-                                                <td class="text-end app-detail-value" style="font-weight: 500;">₱ 21,500.00</td>
-                                                <td class="text-end app-detail-value" style="font-weight: 500;">₱ 21,500.00</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div id="archive-po-items-tables-container">
+                                    <!-- Dynamically populated via JS -->
                                 </div>
-                                <hr class="m-0 p-0 mb-4">
-                                <h6 class="fw-bold mb-3" style="color: #3b3f5c;">Equipment</h6>
                             </div>
                         </div>
                     </div>
                 </div>
             </div> <!-- End settings-view-archive-po-details -->
+            
+            <!-- LEVEL 5: Archive PR Details (Form Viewer) -->
+            <div id="settings-view-archive-pr-details" class="settings-view-pane" style="display: none;">
+                <!-- Breadcrumbs -->
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <div class="archive-breadcrumb" style="padding-top: 5px;">
+                        <a href="javascript:void(0);" id="btn-archive-pr-level5-back-1" class="text-decoration-none archive-back-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                            Archive
+                        </a>
+                        <span class="breadcrumb-separator">&gt;</span>
+                        <a href="javascript:void(0);" id="btn-archive-pr-level5-back-2" class="text-decoration-none archive-back-link">Annual Procurement Plan</a>
+                        <span class="breadcrumb-separator">&gt;</span>
+                        <a href="javascript:void(0);" id="btn-archive-pr-level5-back-3" class="text-decoration-none archive-back-link">APP-2026-01</a>
+                        <span class="breadcrumb-separator">&gt;</span>
+                        <a href="javascript:void(0);" id="btn-archive-pr-level5-back-4" class="text-decoration-none archive-back-link">Purchase Requests</a>
+                        <span class="breadcrumb-separator">&gt;</span>
+                        <span class="breadcrumb-current fw-bold red-text-2" id="archive-pr-detail-breadcrumb-no">PR_Details</span>
+                    </div>
+                </div>
+
+                <!-- Section 2: Form Viewer (Full Width) -->
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <div class="card shadow-sm border-0 mb-3 h-100">
+                            <div class="card-body">
+                                <h5 class="fw-bold red-text-2 mb-3">Purchase Request</h5>
+                                <hr class="m-0 p-0 mb-4">
+                                
+                                <h6 class="fw-bold red-text-2 mb-4" id="archive-pr-detail-no-heading">PR No.: -</h6>
+                                
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="row mb-3">
+                                            <div class="col-4 app-detail-label">Department:</div>
+                                            <div class="col-8 app-detail-value" id="archive-pr-detail-department">-</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-4 app-detail-label">Section:</div>
+                                            <div class="col-8 app-detail-value" id="archive-pr-detail-section">-</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-4 app-detail-label">Purpose:</div>
+                                            <div class="col-8 app-detail-value" id="archive-pr-detail-purpose">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row mb-3">
+                                            <div class="col-5 app-detail-label">PR Date:</div>
+                                            <div class="col-7 app-detail-value" id="archive-pr-detail-date">-</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-5 app-detail-label">Requested By:</div>
+                                            <div class="col-7 app-detail-value" id="archive-pr-detail-requestor">-</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-5 app-detail-label">Approved By:</div>
+                                            <div class="col-7 app-detail-value" id="archive-pr-detail-approved-by">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <hr class="m-0 p-0 mb-4">
+                                
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-borderless table-sm">
+                                        <thead style="background-color: #f1f2f3;">
+                                            <tr>
+                                                <th class="text-center" style="width: 10%;">Qty.</th>
+                                                <th class="text-center" style="width: 10%;">Unit</th>
+                                                <th style="width: 50%;">Item Description / Specifications</th>
+                                                <th class="text-end" style="width: 15%;">Unit Cost</th>
+                                                <th class="text-end" style="width: 15%;">Total Cost</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="archive-pr-items-tbody">
+                                            <!-- Dynamically populated via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End settings-view-archive-pr-details -->
 
         </div> <!-- End settings-view-container -->
     @else

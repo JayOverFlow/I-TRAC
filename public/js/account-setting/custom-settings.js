@@ -283,8 +283,7 @@
                                     tr.innerHTML = `
                                         <td>${data.app_unique_code}</td>
                                         <td>${item.app_item_proj_title}</td>
-                                        <td>${item.app_items_assigned_to || '-'}</td>
-                                        <td class="text-center">-</td>
+                                        <td class="text-center">${data.app_created_at || '-'}</td>
                                     `;
                                     tr.addEventListener('click', function(e) {
                                         e.preventDefault();
