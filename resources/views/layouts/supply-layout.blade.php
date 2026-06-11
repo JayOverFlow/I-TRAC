@@ -96,11 +96,7 @@
 
             </div>
             <!--  BEGIN FOOTER  -->
-            <div class="footer-wrapper">
-                <div class="footer-section f-section-2">
-                    <p class="">Developed and Maintained by Elite</p>
-                </div>
-            </div>
+            @include('partials.footer')
             <!--  END FOOTER  -->
         </div>
         <!--  END CONTENT AREA  -->

@@ -1828,3 +1828,182 @@ body.dark .swal2-popup {
     background-color: #15181D !important;
     border: 1px solid #2a2f38 !important;
 }
+
+/* Custom Footer Styling with SVG Background & Branding */
+.footer-wrapper,
+body.dark .footer-wrapper {
+    background: url('/img/itrac-footer.svg') no-repeat center center !important;
+    background-size: 100% 100% !important;
+    width: 100% !important;
+    aspect-ratio: 1535 / 391 !important;
+    padding: 0 !important;
+    margin: 30px auto 0 auto !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+}
+
+/* Hide default template footer sections */
+.footer-wrapper .footer-section,
+body.dark .footer-wrapper .footer-section {
+    display: none !important;
+}
+
+/* Branding Content positioning and styling */
+.footer-content-left {
+    padding-left: 100px;
+    max-width: 48%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: 'Nunito', sans-serif;
+    color: #ffffff !important;
+}
+
+.footer-tagline {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.footer-logo-container {
+    margin-bottom: 20px;
+}
+
+.footer-logo {
+    height: 76px;
+    width: auto;
+    display: block;
+}
+
+.footer-description {
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85) !important;
+    margin-bottom: 35px;
+    margin-top: 0;
+}
+
+.footer-divider {
+    width: 125%;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 100%);
+    margin-bottom: 20px;
+}
+
+.footer-copyright {
+    font-size: 0.825rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7) !important;
+    margin: 0;
+}
+
+/* Responsive adjustments for mid-sized displays */
+@media (max-width: 1400px) {
+    .footer-content-left {
+        padding-left: 100px;
+    }
+    .footer-logo {
+        height: 66px;
+    }
+    .footer-tagline {
+        font-size: 0.9rem;
+    }
+    .footer-description {
+        font-size: 0.875rem;
+        margin-bottom: 25px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .footer-content-left {
+        padding-left: 75px;
+    }
+    .footer-logo {
+        height: 56px;
+    }
+    .footer-tagline {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+    }
+    .footer-description {
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+    }
+    .footer-divider {
+        margin-bottom: 15px;
+    }
+    .footer-copyright {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .footer-content-left {
+        padding-left: 50px;
+    }
+    .footer-logo {
+        height: 46px;
+    }
+    .footer-tagline {
+        font-size: 0.7rem;
+    }
+    .footer-description {
+        font-size: 0.7rem;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+    .footer-divider {
+        margin-bottom: 10px;
+    }
+    .footer-copyright {
+        font-size: 0.65rem;
+    }
+}
+
+/* Mobile responsive fallback layout */
+@media (max-width: 767px) {
+    .footer-wrapper,
+    body.dark .footer-wrapper {
+        aspect-ratio: auto !important;
+        height: auto !important;
+        padding: 50px 24px !important;
+        background: linear-gradient(135deg, #B71919 0%, #440303 100%) !important;
+    }
+    .footer-content-left {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+    .footer-logo {
+        height: 54px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .footer-divider {
+        width: 100% !important;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%) !important;
+        margin-bottom: 15px;
+    }
+    .footer-tagline {
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+    }
+    .footer-description {
+        font-size: 0.85rem;
+        margin-bottom: 25px;
+    }
+}
+
+/* Push footer below the fold globally by ensuring content area is at least 100vh */
+.layout-px-spacing {
+    min-height: 100vh !important;
+}
