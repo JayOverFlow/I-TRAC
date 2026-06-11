@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\PoParent;
 use App\Models\Iar;
 use App\Models\IarItem;
+use App\Models\Ris;
+use App\Models\RisItem;
 use App\Services\IarPdfExportService;
 use Illuminate\Support\Facades\DB;
 
@@ -145,6 +147,94 @@ class DeliveryAttachmentController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to save Inspection and Acceptance Report: ' . $e->getMessage())
                 ->with('active_document', 'doc-iar-' . $iar->iar_id);
+        }
+    }
+
+    public function saveRis($ris_id, Request $request)
+    {
+        $ris = Ris::findOrFail($ris_id);
+
+        $validated = $request->validate([
+            'ris_fund_cluster' => 'nullable|string|max:100',
+            'ris_no' => 'nullable|string|max:50',
+            'ris_center_code' => 'nullable|string|max:50',
+            'ris_received_by' => 'nullable|integer|exists:users,user_id',
+            'ris_received_date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.ris_items_id' => 'nullable|integer',
+            'items.*.ris_stock_no' => 'nullable|string|max:50',
+            'items.*.ris_unit' => 'nullable|string|max:20',
+            'items.*.ris_items_descrip' => 'nullable|string|max:255',
+            'items.*.ris_quantity' => 'nullable|integer',
+            'items.*.ris_stock_available' => 'nullable|in:Yes,No',
+            'items.*.ris_issued_quantity' => 'nullable|integer',
+            'items.*.ris_issued_remarks' => 'nullable|string|max:255',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $ris->update([
+                'ris_fund_cluster' => $validated['ris_fund_cluster'] ?? null,
+                'ris_no' => $validated['ris_no'] ?? null,
+                'ris_center_code' => $validated['ris_center_code'] ?? null,
+                'ris_received_by' => $validated['ris_received_by'] ?? null,
+                'ris_received_date' => $validated['ris_received_date'] ?? null,
+            ]);
+
+            $incomingItemIds = [];
+
+            foreach ($validated['items'] as $itemData) {
+                if (!empty($itemData['ris_items_id'])) {
+                    // Update existing item
+                    $risItem = RisItem::where('ris_id_fk', $ris->ris_id)
+                        ->findOrFail($itemData['ris_items_id']);
+                    
+                    $risItem->update([
+                        'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
+                        'ris_unit' => $itemData['ris_unit'] ?? null,
+                        'ris_items_descrip' => $itemData['ris_items_descrip'] ?? null,
+                        'ris_quantity' => $itemData['ris_quantity'] ?? null,
+                        'ris_stock_available' => $itemData['ris_stock_available'] ?? null,
+                        'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
+                        'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
+                    ]);
+                    
+                    $incomingItemIds[] = $risItem->ris_items_id;
+                } else {
+                    // Create new item
+                    $risItem = RisItem::create([
+                        'ris_id_fk' => $ris->ris_id,
+                        'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
+                        'ris_unit' => $itemData['ris_unit'] ?? null,
+                        'ris_items_descrip' => $itemData['ris_items_descrip'] ?? null,
+                        'ris_quantity' => $itemData['ris_quantity'] ?? null,
+                        'ris_stock_available' => $itemData['ris_stock_available'] ?? null,
+                        'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
+                        'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
+                    ]);
+                    
+                    $incomingItemIds[] = $risItem->ris_items_id;
+                }
+
+                // Delete specs associated with this item to prevent duplicates
+                $risItem->risSpecs()->delete();
+            }
+
+            // Delete items that were removed in the UI (not present in incoming request)
+            RisItem::where('ris_id_fk', $ris->ris_id)
+                ->whereNotIn('ris_items_id', $incomingItemIds)
+                ->delete();
+
+            DB::commit();
+
+            return redirect()->back()
+                ->with('success', 'Requisition and Issue Slip saved successfully.')
+                ->with('active_document', 'doc-ris-' . $ris->ris_id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Failed to save Requisition and Issue Slip: ' . $e->getMessage())
+                ->with('active_document', 'doc-ris-' . $ris->ris_id);
         }
     }
 }
