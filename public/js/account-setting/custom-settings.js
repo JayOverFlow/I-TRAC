@@ -197,6 +197,12 @@
         var viewLevel5BackBtn3 = document.getElementById('btn-archive-level5-back-3');
         var viewLevel5BackBtn4 = document.getElementById('btn-archive-level5-back-4');
 
+        // Level 5 back buttons (PR Details)
+        var viewPrLevel5BackBtn1 = document.getElementById('btn-archive-pr-level5-back-1');
+        var viewPrLevel5BackBtn2 = document.getElementById('btn-archive-pr-level5-back-2');
+        var viewPrLevel5BackBtn3 = document.getElementById('btn-archive-pr-level5-back-3');
+        var viewPrLevel5BackBtn4 = document.getElementById('btn-archive-pr-level5-back-4');
+
         var btnViewAppPos = document.getElementById('btn-view-app-pos');
         var btnViewAppPrs = document.getElementById('btn-view-app-prs');
         
@@ -340,6 +346,241 @@
                                         var level5Breadcrumb = document.querySelector('#settings-view-archive-po-details .breadcrumb-current');
                                         if (level5Breadcrumb) level5Breadcrumb.textContent = po.po_title || po.po_no;
                                         
+                                        // Populate PO Details fields
+                                        document.getElementById('archive-po-detail-title-heading').textContent = 'Title: ' + (po.po_title || '-');
+                                        document.getElementById('archive-po-detail-supplier').textContent = po.po_supplier || '-';
+                                        document.getElementById('archive-po-detail-address').textContent = po.po_address || '-';
+                                        document.getElementById('archive-po-detail-tele').textContent = po.po_tele || '-';
+                                        document.getElementById('archive-po-detail-tin').textContent = po.po_tin || '-';
+                                        document.getElementById('archive-po-detail-place-delivery').textContent = po.po_place_delivery || '-';
+                                        document.getElementById('archive-po-detail-date-delivery').textContent = po.po_date_delivery || '-';
+                                        document.getElementById('archive-po-detail-mode').textContent = po.po_mode || '-';
+                                        document.getElementById('archive-po-detail-tuptin').textContent = po.po_tuptin || '-';
+                                        document.getElementById('archive-po-detail-delivery-term').textContent = po.po_delivery_term || '-';
+                                        document.getElementById('archive-po-detail-payment-term').textContent = po.po_payment_term || '-';
+                                        document.getElementById('archive-po-detail-po-no').textContent = po.po_no || po.po_unique_code || '-';
+                                        document.getElementById('archive-po-detail-date').textContent = po.po_date || '-';
+
+                                        // Group and render PO items by category
+                                        var items = po.po_items || po.poItems || [];
+                                        var grouped = {};
+                                        items.forEach(function(item) {
+                                            var cat = item.po_items_category || 'Supply and Materials';
+                                            if (!grouped[cat]) grouped[cat] = [];
+                                            grouped[cat].push(item);
+                                        });
+
+                                        var itemsHtml = '';
+                                        for (var catName in grouped) {
+                                            if (grouped.hasOwnProperty(catName)) {
+                                                var catItems = grouped[catName];
+                                                var rowsHtml = '';
+                                                catItems.forEach(function(item) {
+                                                    var stock = item.po_items_stockno || '';
+                                                    var unit = item.po_items_unit || '';
+                                                    var desc = item.po_items_descrip || '';
+                                                    var qty = item.po_items_quantity || 0;
+                                                    var cost = parseFloat(item.po_items_cost || 0);
+                                                    var amount = parseFloat(item.po_items_amount || (qty * cost));
+                                                    
+                                                    var specs = item.po_specs || item.poSpecs || [];
+                                                    var specsHtml = specs.map(function(s) { return s.po_spec_description; }).filter(Boolean).join('<br>');
+                                                    var articleContent = '<span class="app-detail-value" style="font-size: 0.8rem;">' + desc + '</span>' +
+                                                        (specsHtml ? '<br><small class="app-detail-label" style="font-size: 0.75rem;">' + specsHtml + '</small>' : '');
+                                                    
+                                                    rowsHtml += '<tr>' +
+                                                        '<td class="text-center app-detail-value" style="font-weight: 500;">' + stock + '</td>' +
+                                                        '<td class="text-center app-detail-value" style="font-weight: 500;">' + unit + '</td>' +
+                                                        '<td>' + articleContent + '</td>' +
+                                                        '<td class="text-center app-detail-value" style="font-weight: 500;">' + qty + '</td>' +
+                                                        '<td class="text-end app-detail-value" style="font-weight: 500;">₱ ' + cost.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+                                                        '<td class="text-end app-detail-value" style="font-weight: 500;">₱ ' + amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+                                                        '</tr>';
+                                                });
+                                                
+                                                itemsHtml += '<h6 class="fw-bold mb-3" style="color: #3b3f5c;">' + catName + '</h6>' +
+                                                    '<div class="table-responsive mb-4">' +
+                                                    '<table class="table table-borderless table-sm">' +
+                                                    '<thead style="background-color: #f1f2f3;">' +
+                                                    '<tr>' +
+                                                    '<th class="text-center" style="width: 10%;">Stock</th>' +
+                                                    '<th class="text-center" style="width: 10%;">Unit</th>' +
+                                                    '<th style="width: 40%;">Article</th>' +
+                                                    '<th class="text-center" style="width: 10%;">Qty.</th>' +
+                                                    '<th class="text-end" style="width: 15%;">Unit Cost</th>' +
+                                                    '<th class="text-end" style="width: 15%;">Amount</th>' +
+                                                    '</tr>' +
+                                                    '</thead>' +
+                                                    '<tbody>' +
+                                                    rowsHtml +
+                                                    '</tbody>' +
+                                                    '</table>' +
+                                                    '</div>';
+                                            }
+                                        }
+                                        document.getElementById('archive-po-items-tables-container').innerHTML = itemsHtml || '<div class="text-center p-3 text-muted">No items found for this PO.</div>';
+
+                                        // Render Delivery Attachments tree
+                                        var iarReports = po.iar_reports || po.iarReports || [];
+                                        var risSlips = po.ris_slips || po.risSlips || [];
+                                        var icsSlips = po.ics_slips || po.icsSlips || [];
+                                        var parReceipts = po.par_receipts || po.parReceipts || [];
+                                        var rsmiReports = po.rsmi_reports || po.rsmiReports || [];
+                                        var rspiReports = po.rspi_reports || po.rspiReports || [];
+                                        var ndrReports = po.ndr_reports || po.ndrReports || [];
+
+                                        function getDocCategory(doc, itemsKey) {
+                                            var items = doc[itemsKey] || [];
+                                            if (items.length > 0) {
+                                                var poItem = items[0].po_item || items[0].poItem;
+                                                if (poItem) {
+                                                    return poItem.po_items_category;
+                                                }
+                                            }
+                                            return null;
+                                        }
+
+                                        var supplyIars = iarReports.filter(function(iar) {
+                                            return getDocCategory(iar, 'iar_items') === 'Supply and Materials' || getDocCategory(iar, 'iarItems') === 'Supply and Materials';
+                                        });
+                                        var semiExpendableIars = iarReports.filter(function(iar) {
+                                            return getDocCategory(iar, 'iar_items') === 'Semi-Expendable' || getDocCategory(iar, 'iarItems') === 'Semi-Expendable';
+                                        });
+                                        var equipmentIars = iarReports.filter(function(iar) {
+                                            return getDocCategory(iar, 'iar_items') === 'Equipment' || getDocCategory(iar, 'iarItems') === 'Equipment';
+                                        });
+
+                                        var supplyRiss = risSlips.filter(function(ris) {
+                                            return getDocCategory(ris, 'ris_items') === 'Supply and Materials' || getDocCategory(ris, 'risItems') === 'Supply and Materials';
+                                        });
+                                        var semiExpendableRiss = risSlips.filter(function(ris) {
+                                            return getDocCategory(ris, 'ris_items') === 'Semi-Expendable' || getDocCategory(ris, 'risItems') === 'Semi-Expendable';
+                                        });
+
+                                        var hasSupply = supplyIars.length > 0 || supplyRiss.length > 0 || rsmiReports.length > 0;
+                                        var hasSemiExpendable = semiExpendableIars.length > 0 || semiExpendableRiss.length > 0 || icsSlips.length > 0 || rspiReports.length > 0;
+                                        var hasEquipment = equipmentIars.length > 0 || parReceipts.length > 0;
+                                        var hasNotDelivered = ndrReports.length > 0;
+
+                                        var treeHtml = '';
+
+                                        function getFileLiHtml(docName) {
+                                            return '<li class="tv-item tv-file">' +
+                                                '<span class="icon">' +
+                                                '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path></svg>' +
+                                                '</span>' +
+                                                '<p>' + docName + '</p>' +
+                                                '</li>';
+                                        }
+
+                                        // 1. Supply and Materials
+                                        if (hasSupply) {
+                                            var supplyFilesHtml = '';
+                                            supplyIars.forEach(function() { supplyFilesHtml += getFileLiHtml('IAR'); });
+                                            supplyRiss.forEach(function(ris) { supplyFilesHtml += getFileLiHtml('RIS - ' + (ris.ris_office || 'Office')); });
+                                            rsmiReports.forEach(function() { supplyFilesHtml += getFileLiHtml('RSMI'); });
+
+                                            treeHtml += '<li class="tv-item tv-folder">' +
+                                                '<div class="tv-header" id="archiveFolderSupplyHeading">' +
+                                                '<div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderSupply" aria-expanded="false" aria-controls="archiveFolderSupply">' +
+                                                '<div class="icon">' +
+                                                '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>' +
+                                                '</div>' +
+                                                '<p class="title">Supply and Materials</p>' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '<div id="archiveFolderSupply" class="treeview-collapse collapse" aria-labelledby="archiveFolderSupplyHeading" data-bs-parent="#archiveFolderDelivery">' +
+                                                '<ul class="treeview">' +
+                                                supplyFilesHtml +
+                                                '</ul>' +
+                                                '</div>' +
+                                                '</li>';
+                                        }
+
+                                        // 2. Semi-Expendable
+                                        if (hasSemiExpendable) {
+                                            var semiFilesHtml = '';
+                                            semiExpendableIars.forEach(function() { semiFilesHtml += getFileLiHtml('IAR'); });
+                                            semiExpendableRiss.forEach(function(ris) {
+                                                var receiverName = (ris.receiver && ris.receiver.user_fullname) ? ris.receiver.user_fullname : 'User';
+                                                semiFilesHtml += getFileLiHtml('RIS - ' + receiverName);
+                                            });
+                                            icsSlips.forEach(function(ics) {
+                                                var receiverName = (ics.receiver && ics.receiver.user_fullname) ? ics.receiver.user_fullname : 'User';
+                                                semiFilesHtml += getFileLiHtml('ICS - ' + receiverName);
+                                            });
+                                            rspiReports.forEach(function() { semiFilesHtml += getFileLiHtml('RSPI'); });
+
+                                            treeHtml += '<li class="tv-item tv-folder">' +
+                                                '<div class="tv-header" id="archiveFolderSemiHeading">' +
+                                                '<div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderSemi" aria-expanded="false" aria-controls="archiveFolderSemi">' +
+                                                '<div class="icon">' +
+                                                '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>' +
+                                                '</div>' +
+                                                '<p class="title">Semi-Expendable</p>' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '<div id="archiveFolderSemi" class="treeview-collapse collapse" aria-labelledby="archiveFolderSemiHeading" data-bs-parent="#archiveFolderDelivery">' +
+                                                '<ul class="treeview">' +
+                                                semiFilesHtml +
+                                                '</ul>' +
+                                                '</div>' +
+                                                '</li>';
+                                        }
+
+                                        // 3. Equipment
+                                        if (hasEquipment) {
+                                            var equipFilesHtml = '';
+                                            equipmentIars.forEach(function() { equipFilesHtml += getFileLiHtml('IAR'); });
+                                            parReceipts.forEach(function(par) {
+                                                var receiverName = (par.receiver && par.receiver.user_fullname) ? par.receiver.user_fullname : 'User';
+                                                equipFilesHtml += getFileLiHtml('PAR - ' + receiverName);
+                                            });
+
+                                            treeHtml += '<li class="tv-item tv-folder">' +
+                                                '<div class="tv-header" id="archiveFolderEquipHeading">' +
+                                                '<div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderEquip" aria-expanded="false" aria-controls="archiveFolderEquip">' +
+                                                '<div class="icon">' +
+                                                '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>' +
+                                                '</div>' +
+                                                '<p class="title">Equipment</p>' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '<div id="archiveFolderEquip" class="treeview-collapse collapse" aria-labelledby="archiveFolderEquipHeading" data-bs-parent="#archiveFolderDelivery">' +
+                                                '<ul class="treeview">' +
+                                                equipFilesHtml +
+                                                '</ul>' +
+                                                '</div>' +
+                                                '</li>';
+                                        }
+
+                                        // 4. Not Delivered
+                                        if (hasNotDelivered) {
+                                            var ndrFilesHtml = '';
+                                            ndrReports.forEach(function() { ndrFilesHtml += getFileLiHtml('NDR'); });
+
+                                            treeHtml += '<li class="tv-item tv-folder">' +
+                                                '<div class="tv-header" id="archiveFolderNotHeading">' +
+                                                '<div class="tv-collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#archiveFolderNot" aria-expanded="false" aria-controls="archiveFolderNot">' +
+                                                '<div class="icon">' +
+                                                '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>' +
+                                                '</div>' +
+                                                '<p class="title">Not Delivered</p>' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '<div id="archiveFolderNot" class="treeview-collapse collapse" aria-labelledby="archiveFolderNotHeading" data-bs-parent="#archiveFolderDelivery">' +
+                                                '<ul class="treeview">' +
+                                                ndrFilesHtml +
+                                                '</ul>' +
+                                                '</div>' +
+                                                '</li>';
+                                        }
+
+                                        var attachmentsListEl = document.getElementById('archive-delivery-attachments-list');
+                                        if (attachmentsListEl) {
+                                            attachmentsListEl.innerHTML = treeHtml || '<li class="p-3 text-muted" style="list-style-type: none; font-size: 0.85rem;">No delivery attachments generated.</li>';
+                                        }
+
                                         navigateToSettingsView('settings-view-archive-po-details');
                                     });
                                     tbodyPOs.appendChild(tr);
@@ -369,7 +610,46 @@
                                     `;
                                     tr.addEventListener('click', function(e) {
                                         e.preventDefault();
-                                        // Specific PR click actions can be added here in the future
+                                        
+                                        // Update Level 5 PR breadcrumbs
+                                        var prBreadcrumb = document.getElementById('archive-pr-detail-breadcrumb-no');
+                                        if (prBreadcrumb) prBreadcrumb.textContent = pr.pr_no || pr.pr_unique_code;
+
+                                        // Populate PR details fields
+                                        document.getElementById('archive-pr-detail-no-heading').textContent = 'PR No.: ' + (pr.pr_no || pr.pr_unique_code || '-');
+                                        document.getElementById('archive-pr-detail-department').textContent = pr.pr_department_name || '-';
+                                        document.getElementById('archive-pr-detail-section').textContent = pr.pr_section || '-';
+                                        document.getElementById('archive-pr-detail-purpose').textContent = pr.pr_purpose || '-';
+                                        document.getElementById('archive-pr-detail-date').textContent = pr.pr_date || '-';
+                                        document.getElementById('archive-pr-detail-requestor').textContent = pr.requested_by || '-';
+                                        document.getElementById('archive-pr-detail-approved-by').textContent = pr.pr_approved_by_name || '-';
+
+                                        // Render PR items without category grouping
+                                        var items = pr.pr_items || [];
+                                        var rowsHtml = '';
+                                        items.forEach(function(item) {
+                                            var qty = item.pr_items_quantity || 0;
+                                            var unit = item.pr_items_unit || '';
+                                            var desc = item.pr_items_descrip || '';
+                                            var cost = parseFloat(item.pr_items_cost || 0);
+                                            var total = parseFloat(item.pr_items_total_cost || (qty * cost));
+                                            
+                                            var specs = item.pr_specs || [];
+                                            var specsHtml = specs.map(function(s) { return s.pr_spec_spec; }).filter(Boolean).join('<br>');
+                                            var descriptionContent = '<span class="app-detail-value" style="font-size: 0.8rem;">' + desc + '</span>' +
+                                                (specsHtml ? '<br><small class="app-detail-label" style="font-size: 0.75rem;">' + specsHtml + '</small>' : '');
+                                                
+                                            rowsHtml += '<tr>' +
+                                                '<td class="text-center app-detail-value" style="font-weight: 500;">' + qty + '</td>' +
+                                                '<td class="text-center app-detail-value" style="font-weight: 500;">' + unit + '</td>' +
+                                                '<td>' + descriptionContent + '</td>' +
+                                                '<td class="text-end app-detail-value" style="font-weight: 500;">₱ ' + cost.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+                                                '<td class="text-end app-detail-value" style="font-weight: 500;">₱ ' + total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>' +
+                                                '</tr>';
+                                        });
+                                        document.getElementById('archive-pr-items-tbody').innerHTML = rowsHtml || '<tr><td colspan="5" class="text-center p-3 text-muted">No items found for this PR.</td></tr>';
+
+                                        navigateToSettingsView('settings-view-archive-pr-details');
                                     });
                                     tbodyPRs.appendChild(tr);
                                 });
@@ -446,6 +726,12 @@
         if (viewLevel5BackBtn2) { viewLevel5BackBtn2.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-apps'); }); }
         if (viewLevel5BackBtn3) { viewLevel5BackBtn3.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-projects'); }); }
         if (viewLevel5BackBtn4) { viewLevel5BackBtn4.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-pos'); }); }
+
+        // Level 5 PR Back Navigation
+        if (viewPrLevel5BackBtn1) { viewPrLevel5BackBtn1.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-main'); }); }
+        if (viewPrLevel5BackBtn2) { viewPrLevel5BackBtn2.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-apps'); }); }
+        if (viewPrLevel5BackBtn3) { viewPrLevel5BackBtn3.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-projects'); }); }
+        if (viewPrLevel5BackBtn4) { viewPrLevel5BackBtn4.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-prs'); }); }
     }
 
     function navigateToSettingsView(targetViewId) {
