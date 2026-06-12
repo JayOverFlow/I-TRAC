@@ -93,31 +93,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td class="px-1">
                     <input type="hidden" name="items[${newIndex}][rsmi_items_id]" value="">
                     <input type="text" class="form-control form-control-sm text-center"
-                        name="items[${newIndex}][ris_no]">
+                        name="items[${newIndex}][rsmi_ris_no]">
                 </td>
                 <td class="px-1">
                     <input type="text" class="form-control form-control-sm text-center"
-                        name="items[${newIndex}][responsibility_center_code]">
+                        name="items[${newIndex}][rsmi_center_code]">
                 </td>
                 <td class="px-1">
                     <input type="text" class="form-control form-control-sm text-center"
-                        name="items[${newIndex}][stock_no]">
+                        name="items[${newIndex}][rsmi_stock_no]">
                 </td>
                 <td class="px-1">
                     <input type="text" class="form-control form-control-sm"
-                        name="items[${newIndex}][item_description]">
+                        name="items[${newIndex}][rsmi_items_descrip]">
                 </td>
                 <td class="px-1">
                     <input type="text" class="form-control form-control-sm text-center"
-                        name="items[${newIndex}][unit]">
+                        name="items[${newIndex}][rsmi_unit]">
                 </td>
                 <td class="px-1">
                     <input type="text" class="form-control form-control-sm text-center qty-input"
-                        name="items[${newIndex}][qty_issued]" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        name="items[${newIndex}][rsmi_quantity]" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </td>
                 <td class="px-1">
                     <input type="text" class="form-control form-control-sm text-center unit-cost-input"
-                        name="items[${newIndex}][unit_cost]" data-field="unit_cost"
+                        name="items[${newIndex}][rsmi_unit_cost]" data-field="rsmi_unit_cost"
                         oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                 </td>
                 <td class="px-1 text-center">

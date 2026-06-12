@@ -266,18 +266,18 @@ class DeliveryAttachmentController extends Controller
         $rsmi = Rsmi::findOrFail($rsmi_id);
 
         $validated = $request->validate([
-            'fund_cluster' => 'nullable|string|max:100',
-            'serial_no' => 'nullable|string|max:50',
-            'date' => 'nullable|date',
+            'rsmi_fund_cluster' => 'nullable|string|max:100',
+            'rsmi_serial_no' => 'nullable|string|max:50',
+            'rsmi_date' => 'nullable|date',
             'items' => 'required|array|min:1',
             'items.*.rsmi_items_id' => 'nullable|integer',
-            'items.*.ris_no' => 'nullable|string|max:50',
-            'items.*.responsibility_center_code' => 'nullable|string|max:50',
-            'items.*.stock_no' => 'nullable|string|max:50',
-            'items.*.item_description' => 'nullable|string|max:255',
-            'items.*.unit' => 'nullable|string|max:20',
-            'items.*.qty_issued' => 'nullable|integer',
-            'items.*.unit_cost' => 'nullable|numeric',
+            'items.*.rsmi_ris_no' => 'nullable|string|max:50',
+            'items.*.rsmi_center_code' => 'nullable|string|max:50',
+            'items.*.rsmi_stock_no' => 'nullable|string|max:50',
+            'items.*.rsmi_items_descrip' => 'nullable|string|max:255',
+            'items.*.rsmi_unit' => 'nullable|string|max:20',
+            'items.*.rsmi_quantity' => 'nullable|integer',
+            'items.*.rsmi_unit_cost' => 'nullable|numeric',
         ]);
 
         DB::beginTransaction();
@@ -286,8 +286,8 @@ class DeliveryAttachmentController extends Controller
             $incomingItemIds = [];
 
             foreach ($validated['items'] as $itemData) {
-                $qty = isset($itemData['qty_issued']) ? intval($itemData['qty_issued']) : 0;
-                $unitCost = isset($itemData['unit_cost']) ? floatval($itemData['unit_cost']) : 0;
+                $qty = isset($itemData['rsmi_quantity']) ? intval($itemData['rsmi_quantity']) : 0;
+                $unitCost = isset($itemData['rsmi_unit_cost']) ? floatval($itemData['rsmi_unit_cost']) : 0;
                 $amount = $qty * $unitCost;
                 $rsmiTotal += $amount;
 
@@ -297,11 +297,11 @@ class DeliveryAttachmentController extends Controller
                         ->findOrFail($itemData['rsmi_items_id']);
 
                     $rsmiItem->update([
-                        'rsmi_ris_no' => $itemData['ris_no'] ?? null,
-                        'rsmi_center_code' => $itemData['responsibility_center_code'] ?? null,
-                        'rsmi_stock_no' => $itemData['stock_no'] ?? null,
-                        'rsmi_items_descrip' => $itemData['item_description'] ?? null,
-                        'rsmi_unit' => $itemData['unit'] ?? null,
+                        'rsmi_ris_no' => $itemData['rsmi_ris_no'] ?? null,
+                        'rsmi_center_code' => $itemData['rsmi_center_code'] ?? null,
+                        'rsmi_stock_no' => $itemData['rsmi_stock_no'] ?? null,
+                        'rsmi_items_descrip' => $itemData['rsmi_items_descrip'] ?? null,
+                        'rsmi_unit' => $itemData['rsmi_unit'] ?? null,
                         'rsmi_quantity' => $qty,
                         'rsmi_unit_cost' => $unitCost,
                         'rsmi_amount' => $amount,
@@ -312,11 +312,11 @@ class DeliveryAttachmentController extends Controller
                     // Create new item
                     $rsmiItem = RsmiItem::create([
                         'rsmi_id_fk' => $rsmi->rsmi_id,
-                        'rsmi_ris_no' => $itemData['ris_no'] ?? null,
-                        'rsmi_center_code' => $itemData['responsibility_center_code'] ?? null,
-                        'rsmi_stock_no' => $itemData['stock_no'] ?? null,
-                        'rsmi_items_descrip' => $itemData['item_description'] ?? null,
-                        'rsmi_unit' => $itemData['unit'] ?? null,
+                        'rsmi_ris_no' => $itemData['rsmi_ris_no'] ?? null,
+                        'rsmi_center_code' => $itemData['rsmi_center_code'] ?? null,
+                        'rsmi_stock_no' => $itemData['rsmi_stock_no'] ?? null,
+                        'rsmi_items_descrip' => $itemData['rsmi_items_descrip'] ?? null,
+                        'rsmi_unit' => $itemData['rsmi_unit'] ?? null,
                         'rsmi_quantity' => $qty,
                         'rsmi_unit_cost' => $unitCost,
                         'rsmi_amount' => $amount,
@@ -330,9 +330,9 @@ class DeliveryAttachmentController extends Controller
 
             // Update RSMI Header
             $rsmi->update([
-                'rsmi_fund_cluster' => $validated['fund_cluster'] ?? null,
-                'rsmi_serial_no' => $validated['serial_no'] ?? null,
-                'rsmi_date' => $validated['date'] ?? null,
+                'rsmi_fund_cluster' => $validated['rsmi_fund_cluster'] ?? null,
+                'rsmi_serial_no' => $validated['rsmi_serial_no'] ?? null,
+                'rsmi_date' => $validated['rsmi_date'] ?? null,
                 'rsmi_total' => $rsmiTotal,
             ]);
 
