@@ -1,30 +1,36 @@
-.card-budget{
+.card-budget {
     /* background: linear-gradient(45deg, #C60202, #930000) !important; */
     border: none;
 }
 
-.w-6  {
-    width: 6% !important; 
-    }
-.w-13 { 
-    width: 13% !important; 
+.w-6 {
+    width: 6% !important;
 }
-.w-45 { 
-    width: 45% !important; 
+
+.w-13 {
+    width: 13% !important;
 }
-.article-cell-wrapper{
+
+.w-45 {
+    width: 45% !important;
+}
+
+.article-cell-wrapper {
     width: 100%;
 }
+
 .specification-box-container {
     width: 100%;
 }
-.add-specification-btn{
+
+.add-specification-btn {
     cursor: pointer;
 }
 
-.choose-btn, #btndefault{
+.choose-btn,
+#btndefault {
     width: 150px;
-    height:50px;
+    height: 50px;
     border: 1px solid #BFC9D4 !important;
     border-radius: 6px !important;
     background-color: #FFFFFF !important;
@@ -34,18 +40,20 @@
     display: none !important;
 }
 
-.dropdown-btn{
+.dropdown-btn {
     width: 10px;
-    height:10px;
-   
+    height: 10px;
+
 }
 
 .pr-specification-row td {
-    border-top: none !important; /* Seamless look */
+    border-top: none !important;
+    /* Seamless look */
     padding-top: 0 !important;
 }
 
-.card-pad,.card-body{
+.card-pad,
+.card-body {
     padding: 25px 30px !important;
 }
 
@@ -53,14 +61,16 @@
     object-fit: cover;
 }
 
-.avatar-img, .avatar-add {
+.avatar-img,
+.avatar-add {
     width: 35px;
     height: 35px;
     object-fit: cover;
 }
 
 .ms-n2 {
-    margin-left: -10px !important; /* This creates the overlapping effect */
+    margin-left: -10px !important;
+    /* This creates the overlapping effect */
 }
 
 .avatar-add {
@@ -73,6 +83,7 @@
 .collapse-toggle .arrow-icon {
     transition: transform 0.3s ease;
 }
+
 .collapse-toggle.rotate-arrow .arrow-icon {
     transform: rotate(180deg);
 }
@@ -106,13 +117,15 @@ thead.bg-transparent th {
 
 .specification-arrow {
     transition: transform 0.3s ease;
-    transform: rotate(180deg); /* Default open state */
+    transform: rotate(180deg);
+    /* Default open state */
 }
 
 .specification-body {
     border: 1px solid #bfc9d4;
     border-top: none;
-    display: block; /* Default open state */
+    display: block;
+    /* Default open state */
 }
 
 .remove-specification-btn {
@@ -174,4 +187,173 @@ body.dark .specification-body textarea {
 
 body.dark .specification-body textarea:focus {
     color: #ffffff !important;
+}
+
+/* Vertical Stepper Styling */
+.stepper-card {
+    border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.stepper-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #9b2c2c;
+    /* custom project red */
+    margin-bottom: 1.5rem;
+}
+
+.stepper-container {
+    position: relative;
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+}
+
+.stepper-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding-bottom: 2rem;
+}
+
+.stepper-item:last-child {
+    padding-bottom: 0;
+}
+
+/* Vertical connector line */
+.stepper-line {
+    position: absolute;
+    left: 14px;
+    top: 28px;
+    bottom: -10px;
+    width: 2px;
+    background-color: #e5e7eb;
+    z-index: 1;
+}
+
+.stepper-item:last-child .stepper-line {
+    display: none;
+}
+
+/* Circle indicator */
+.stepper-circle {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    /* Default historical grey circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+/* Active and Completed States */
+.stepper-circle.active-latest {
+    background-color: #84cc16;
+    /* Lime green */
+    box-shadow: 0 0 0 4px rgba(132, 204, 22, 0.2);
+}
+
+.stepper-circle.active-historic {
+    background-color: #e5e7eb;
+    /* Historic completed lime green */
+}
+
+.stepper-circle.pending {
+    background-color: #f3f4f6;
+    /* Pending unreached grey */
+    border: 2px dashed #d1d5db;
+}
+
+/* Stepper Content */
+.stepper-content {
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.stepper-prefix {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-bottom: 0px;
+    line-height: 1.2;
+}
+
+.stepper-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #4b5563;
+    /* Charcoal */
+    line-height: 1.3;
+}
+
+.stepper-item.latest .stepper-label {
+    color: #84cc16;
+    /* Lime green */
+}
+
+.stepper-item.pending .stepper-label {
+    color: #9ca3af;
+    /* Light grey */
+}
+
+.stepper-date {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 1px;
+}
+
+/* DARK MODE OVERRIDES */
+body.dark .stepper-card {
+    background-color: #1b2e4b !important;
+    box-shadow: none !important;
+}
+
+body.dark .stepper-title {
+    color: #888ea8;
+}
+
+body.dark .stepper-circle {
+    background-color: #3b3f5c;
+}
+
+body.dark .stepper-circle.active-latest {
+    background-color: #84cc16;
+}
+
+body.dark .stepper-circle.active-historic {
+    background-color: #3b3f5c;
+}
+
+body.dark .stepper-circle.pending {
+    background-color: #191e3a;
+    border: 2px dashed #3b3f5c;
+}
+
+body.dark .stepper-line {
+    background-color: #191e3a;
+}
+
+body.dark .stepper-label {
+    color: #bfc9d4;
+}
+
+body.dark .stepper-item.latest .stepper-label {
+    color: #84cc16;
+}
+
+body.dark .stepper-item.pending .stepper-label {
+    color: #506690;
+}
+
+body.dark .stepper-prefix,
+body.dark .stepper-date {
+    color: #506690;
 }

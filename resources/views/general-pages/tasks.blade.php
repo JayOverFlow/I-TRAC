@@ -199,7 +199,7 @@
                                 <td>
                                     {{ $appItem->app_item_proj_title ?: '---' }}
                                     @if($isUsed)
-                                        <span class="badge ms-1" style="background-color: #6c757d; font-size: 10px;">Already Created</span>
+                                        <span class="badge ms-1" style="background-color: #6c757d; font-size: 10px;">Item Assigned</span>
                                     @endif
                                 </td>
                                 <td>{{ $appItem->app_items_gen_desc ?: '---' }}</td>

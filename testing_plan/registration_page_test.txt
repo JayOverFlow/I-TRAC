@@ -92,7 +92,6 @@ Pass/Fail: ____________________
 Notes:*
 
 Bugs:
-- eye is not working
 -Session persists (preferred in most cases)
 *The system remembers the user’s progress
 *After refresh, the user is still on Step 4

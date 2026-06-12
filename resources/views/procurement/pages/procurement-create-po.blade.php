@@ -111,6 +111,7 @@
                             <div class="col-8">
                                 <input type="text" name="po_tin" data-field="po_tin"
                                     class="form-control form-control-sm w-100"
+                                    placeholder="XXX-XXX-XXX-XXX"
                                     value="{{ $po->po_tin }}" {{ $isDone ? 'disabled' : '' }}>
                                 <span class="field-error d-none"></span>
                             </div>
@@ -185,6 +186,7 @@
                             <div class="col-8">
                                 <input type="text" name="po_tuptin" data-field="po_tuptin"
                                     class="form-control form-control-sm w-100"
+                                    placeholder="XXX-XXX-XXX-XXX"
                                     value="{{ $po->po_tuptin }}" {{ $isDone ? 'disabled' : '' }}>
                                 <span class="field-error d-none"></span>
                             </div>

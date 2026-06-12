@@ -80,9 +80,7 @@ Notes:
 - 
 
 Bugs:
-- Wrong Validation - Case B (Unregistered Email): Enter an email that is not in the system.Expected: Error message "Email or password is invalid" appears. Pero yung nakalagay ay All fields is required.
-- Register Anchor is not working
-- Case A (Empty Fields): Leave both Email and Password blank. Click "LOG IN". mas okay kung mag red yung mga fields. pero may validation message nmn na All fields are required.
--  wrong validation. kapag gumamit ng ibang domain dapat yung message ay invalid email/password. Case C (Invalid Email Format): Enter "user@com" or "user@domain".
-- kapag nakalogin ka na at nag punta ka sa login ay retain yung account na naka sign in
+-
+
+
 
