@@ -102,13 +102,29 @@ class PoReviewController extends Controller
 
             // 1. Supply and Materials
             if (count($supplyItems) > 0) {
+                $deptNames = [];
+                foreach ($supplyItems as $itemData) {
+                    if (isset($itemData['distributions']) && is_array($itemData['distributions'])) {
+                        foreach ($itemData['distributions'] as $dist) {
+                            if (!empty($dist['dept_name'])) {
+                                $deptNames[] = trim($dist['dept_name']);
+                            }
+                        }
+                    }
+                }
+                $uniqueDepts = array_unique($deptNames);
+                $iarOffice = implode(', ', $uniqueDepts);
+
+                if (empty($iarOffice)) {
+                    $iarOffice = $po->purchaseRequest->department->dep_name ?? '';
+                }
+
                 $iar = Iar::create([
                     'iar_po_id_fk' => $po->po_id,
-                    'iar_fund_cluster' => $po->po_fund_cluster,
                     'iar_supplier' => $po->po_supplier,
                     'iar_po_no' => $po->po_no,
                     'iar_po_no_date' => $po->po_no . ' / ' . $po->po_date,
-                    'iar_office' => $po->purchaseRequest->department->dep_name ?? '',
+                    'iar_office' => $iarOffice,
                     'iar_acceptance_type' => 'Complete',
                     'iar_accepted_by' => auth()->user()->user_id ?? null,
                 ]);
