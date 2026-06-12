@@ -20,6 +20,7 @@ class DeliveryAttachmentController extends Controller
             'risSlips.risItems.risSpecs',
             'risSlips.requester',
             'risSlips.receiver',
+            'risSlips.department.users',
             'rsmiReports.rsmiItems.rsmiSpecs',
             'rsmiReports.user',
             'icsSlips.icsItems.icsSpecs',
@@ -35,13 +36,15 @@ class DeliveryAttachmentController extends Controller
         ])->findOrFail($po_id);
 
         // Redirect to PO Review if no delivery attachments have been generated
-        if (!$po->iarReports()->exists() && 
-            !$po->risSlips()->exists() && 
-            !$po->icsSlips()->exists() && 
-            !$po->parReceipts()->exists() && 
-            !$po->rsmiReports()->exists() && 
+        if (
+            !$po->iarReports()->exists() &&
+            !$po->risSlips()->exists() &&
+            !$po->icsSlips()->exists() &&
+            !$po->parReceipts()->exists() &&
+            !$po->rsmiReports()->exists() &&
             !$po->rspiReports()->exists() &&
-            !$po->ndrReports()->exists()) {
+            !$po->ndrReports()->exists()
+        ) {
             return redirect()->route('show.po.review', ['po_id' => $po_id]);
         }
 
@@ -51,7 +54,9 @@ class DeliveryAttachmentController extends Controller
 
         $users = \App\Models\User::all();
 
-        return view('supply.pages.supply-delivery-attachment', compact('po', 'headPropertySupply', 'users'));
+        $departments = \App\Models\Department::with('users')->get();
+
+        return view('supply.pages.supply-delivery-attachment', compact('po', 'headPropertySupply', 'users', 'departments'));
     }
 
     public function exportIar($iar_id)
@@ -105,14 +110,14 @@ class DeliveryAttachmentController extends Controller
                     // Update existing item
                     $iarItem = IarItem::where('iar_id_fk', $iar->iar_id)
                         ->findOrFail($itemData['iar_items_id']);
-                    
+
                     $iarItem->update([
                         'iar_stock_no' => $itemData['stock_no'] ?? null,
                         'iar_items_descrip' => $itemData['description'] ?? null,
                         'iar_unit' => $itemData['unit'] ?? null,
                         'iar_quantity' => $itemData['quantity'] ?? null,
                     ]);
-                    
+
                     $incomingItemIds[] = $iarItem->iar_items_id;
                 } else {
                     // Create new item
@@ -123,7 +128,7 @@ class DeliveryAttachmentController extends Controller
                         'iar_unit' => $itemData['unit'] ?? null,
                         'iar_quantity' => $itemData['quantity'] ?? null,
                     ]);
-                    
+
                     $incomingItemIds[] = $iarItem->iar_items_id;
                 }
 
@@ -188,7 +193,7 @@ class DeliveryAttachmentController extends Controller
                     // Update existing item
                     $risItem = RisItem::where('ris_id_fk', $ris->ris_id)
                         ->findOrFail($itemData['ris_items_id']);
-                    
+
                     $risItem->update([
                         'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
                         'ris_unit' => $itemData['ris_unit'] ?? null,
@@ -198,7 +203,7 @@ class DeliveryAttachmentController extends Controller
                         'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
                         'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
                     ]);
-                    
+
                     $incomingItemIds[] = $risItem->ris_items_id;
                 } else {
                     // Create new item
@@ -212,7 +217,7 @@ class DeliveryAttachmentController extends Controller
                         'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
                         'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
                     ]);
-                    
+
                     $incomingItemIds[] = $risItem->ris_items_id;
                 }
 

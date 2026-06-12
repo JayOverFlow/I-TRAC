@@ -36,4 +36,20 @@ class Department extends Model
     {
         return $this->hasMany(Department::class, 'parent_dep_id', 'dep_id');
     }
+
+    /**
+     * Relationship: RIS slips associated with this department
+     */
+    public function risSlips()
+    {
+        return $this->hasMany(Ris::class, 'ris_office', 'dep_name');
+    }
+
+    /**
+     * Relationship: Users belonging to this department
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_departments_tbl', 'department_id_fk', 'user_id_fk');
+    }
 }

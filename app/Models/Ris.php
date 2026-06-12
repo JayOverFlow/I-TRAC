@@ -61,4 +61,9 @@ class Ris extends Model
     {
         return $this->belongsTo(User::class, 'ris_received_by', 'user_id');
     }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'ris_office', 'dep_name');
+    }
 }

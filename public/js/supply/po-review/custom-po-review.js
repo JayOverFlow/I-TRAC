@@ -324,8 +324,8 @@ $(document).ready(function() {
             const qty = parseInt($(this).find('.dept-qty').val(), 10) || 0;
             total += qty;
 
-            const name = $(this).find('.dept-name').val().trim();
-            if (qty > 0 && name.length < 2) {
+            const deptId = $(this).find('.dept-name').val();
+            if (qty > 0 && !deptId) {
                 allDeptsValid = false;
             }
         });
@@ -339,6 +339,36 @@ $(document).ready(function() {
         } else {
             $('#assign-check-icon').attr('src', '/img/gray-check.svg');
         }
+    }
+
+    // Update department dropdown options to disable already selected departments
+    function updateDeptOptions() {
+        const selectedDepts = [];
+        // Collect all currently selected department values
+        $('#assign-dept-tbody .dept-name').each(function () {
+            const val = $(this).val();
+            if (val) {
+                selectedDepts.push(val);
+            }
+        });
+
+        // For each select, enable all options except those selected in other rows
+        $('#assign-dept-tbody .dept-name').each(function () {
+            const currentSelect = $(this);
+            const currentVal = currentSelect.val();
+
+            currentSelect.find('option').each(function () {
+                const optVal = $(this).val();
+                if (!optVal) return; // Skip placeholder option
+
+                // Disable if selected in another row
+                if (selectedDepts.includes(optVal) && optVal !== currentVal) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+        });
     }
 
     // Open modal — only wired to Supply and Materials assign buttons
@@ -357,18 +387,29 @@ $(document).ready(function() {
 
         // Clone the input row template, then empty the tbody
         const rowTemplate = $('#assign-dept-tbody .dept-row:first').clone();
-        rowTemplate.find('input').val('');
+        rowTemplate.find('input, select').val('');
         $('#assign-dept-tbody').empty();
 
         // Check for existing distribution rows in the table
         const existingRows = $(`.qty-distribution-row[data-item-id="${currentItemId}"]`);
         if (existingRows.length > 0) {
             existingRows.each(function () {
+                const deptId = $(this).attr('data-dept-id');
                 const name = $(this).find('.qty-dept-name').text().trim();
                 const qtyVal  = $(this).find('.qty-dept-qty').text().trim();
                 
                 const newRow = rowTemplate.clone();
-                newRow.find('.dept-name').val(name);
+                if (deptId) {
+                    newRow.find('.dept-name').val(deptId);
+                } else {
+                    // Fallback to match option text if data-dept-id is not set
+                    newRow.find('.dept-name option').each(function() {
+                        if ($(this).text().trim() === name) {
+                            $(this).prop('selected', true);
+                            return false;
+                        }
+                    });
+                }
                 newRow.find('.dept-qty').val(qtyVal);
                 $('#assign-dept-tbody').append(newRow);
             });
@@ -378,6 +419,7 @@ $(document).ready(function() {
         }
 
         updateTotalAssigned();
+        updateDeptOptions();
 
         new bootstrap.Modal(document.getElementById('assignDeptModal')).show();
     });
@@ -385,8 +427,9 @@ $(document).ready(function() {
     // Add a department row
     $(document).on('click', '#add-dept-row-btn', function () {
         const clone = $('#assign-dept-tbody .dept-row:first').clone();
-        clone.find('input').val('');
+        clone.find('input, select').val('');
         $('#assign-dept-tbody').append(clone);
+        updateDeptOptions();
     });
 
     // Remove a department row (keep at least one)
@@ -394,6 +437,7 @@ $(document).ready(function() {
         if ($('#assign-dept-tbody .dept-row').length > 1) {
             $(this).closest('.dept-row').remove();
             updateTotalAssigned();
+            updateDeptOptions();
         }
     });
 
@@ -409,17 +453,22 @@ $(document).ready(function() {
         updateTotalAssigned();
     });
 
-    $(document).on('input', '#assign-dept-tbody .dept-name', function () {
+    $(document).on('change', '#assign-dept-tbody .dept-name', function () {
         updateTotalAssigned();
+        updateDeptOptions();
     });
 
     // Confirm Assign — render distribution summary below the item's spec rows
     $(document).on('click', '#confirm-assign-btn', function () {
         const distributions = [];
         $('#assign-dept-tbody .dept-row').each(function () {
-            const name = $(this).find('.dept-name').val().trim();
+            const selectEl = $(this).find('.dept-name');
+            const deptId = selectEl.val();
+            const name = selectEl.find('option:selected').text().trim();
             const qty  = parseInt($(this).find('.dept-qty').val(), 10) || 0;
-            if (name.length >= 2 && qty > 0) distributions.push({ name, qty });
+            if (deptId && qty > 0) {
+                distributions.push({ deptId, name, qty });
+            }
         });
 
         if (!distributions.length) return;
@@ -445,6 +494,7 @@ $(document).ready(function() {
                 const rowClone = document.importNode(rowTemplate.content, true);
                 const tr = $(rowClone).find('.qty-distribution-row');
                 tr.attr('data-item-id', currentItemId);
+                tr.attr('data-dept-id', d.deptId);
                 tr.find('.qty-dept-name').text(d.name);
                 tr.find('.qty-dept-qty').text(d.qty);
                 rowsToInsert.push(rowClone);
@@ -649,6 +699,7 @@ $(document).ready(function() {
                 let qty = parseInt(distRow.find('.qty-dept-qty').text().trim(), 10) || 0;
                 let name = distRow.find('.qty-dept-name').text().trim();
                 let userId = distRow.attr('data-user-id');
+                let deptId = distRow.attr('data-dept-id');
 
                 if (userId) {
                     distributions.push({
@@ -658,6 +709,7 @@ $(document).ready(function() {
                     });
                 } else {
                     distributions.push({
+                        dept_id: deptId,
                         dept_name: name,
                         qty: qty
                     });
@@ -674,8 +726,10 @@ $(document).ready(function() {
         // Disable button to prevent duplicate submissions
         $('#generate-btn').prop('disabled', true);
 
+        const poId = $('[data-po-id]').data('po-id');
+
         $.ajax({
-            url: `/po-review/${window.poId}/generate-attachments`,
+            url: `/po-review/${poId}/generate-attachments`,
             method: 'POST',
             contentType: 'application/json',
             headers: {
