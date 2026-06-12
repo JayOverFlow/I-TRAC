@@ -67,7 +67,13 @@ class CreatePrController extends Controller
         $savedItemsGrouped = collect();
 
         if ($task->pr_id_fk) {
-            $existingPr = PrParent::with(['prItems.prSpecs'])->find($task->pr_id_fk);
+            $existingPr = PrParent::with([
+                'prItems.prSpecs',
+                'purchaseOrders.iarReports',
+                'purchaseOrders.risSlips',
+                'purchaseOrders.icsSlips',
+                'purchaseOrders.parReceipts'
+            ])->find($task->pr_id_fk);
 
             if ($existingPr) {
                 $pr = $existingPr;

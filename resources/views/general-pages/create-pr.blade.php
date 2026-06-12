@@ -19,6 +19,7 @@
         $activeRoleId = session('active_role_id');
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $userRole = $activeRole?->gen_role;
+        $roleName = $activeRole?->role_name ?? '';
 
         // Check if the viewer is a Head in ANY of their roles (not just the active one)
         $isHead = $user->roles->contains('gen_role', 'Head');
@@ -40,7 +41,154 @@
 
         // For self-created tasks, the Head can export directly from Pending
         $isReadOnly = ($taskStatus !== 'Pending') && !$canHeadEdit && !($isSelfCreatedHead && $taskStatus === 'Pending');
+
+        // Only Head, Program Chair, Dean, Supply, and Procurement see the stepper
+        $isAuthorized = in_array($userRole, ['Head', 'Supply', 'Procurement']);
+
+        // Stepper variables setup
+        $firstPo = null;
+        $prReceivedDate = null;
+        $poCreatedDate = null;
+        $isDelivered = false;
+        $deliveryDate = null;
+        $isReceivedByEndUser = false;
+        $receivedDate = null;
+
+        if ($pr) {
+            $firstPo = $pr->purchaseOrders->first();
+            
+            // Step 3 Date (RECEIVED BY PROCUREMENT)
+            if ($pr->retrieved_by) {
+                if ($firstPo) {
+                    $prReceivedDate = $firstPo->created_at ? \Carbon\Carbon::parse($firstPo->created_at)->format('d M, Y') : null;
+                }
+                if (!$prReceivedDate && $pr->submitted_at) {
+                    $prReceivedDate = \Carbon\Carbon::parse($pr->submitted_at)->addDay()->format('d M, Y');
+                }
+            }
+
+            // Step 4 Date (PO CREATED)
+            if ($firstPo) {
+                $poCreatedDate = \Carbon\Carbon::parse($firstPo->created_at ?? $firstPo->po_date)->format('d M, Y');
+            }
+
+            // Step 5 (DELIVERED) & Step 6 (RECEIVED BY END USER)
+            foreach ($pr->purchaseOrders as $po) {
+                if (!$isDelivered && $po->iarReports->isNotEmpty()) {
+                    $isDelivered = true;
+                    $iar = $po->iarReports->first();
+                    $deliveryDate = $iar->created_at ? \Carbon\Carbon::parse($iar->created_at)->format('d M, Y') : null;
+                }
+                if (!$isReceivedByEndUser && ($po->risSlips->isNotEmpty() || $po->icsSlips->isNotEmpty() || $po->parReceipts->isNotEmpty())) {
+                    $isReceivedByEndUser = true;
+                    $doc = $po->risSlips->first() ?? $po->icsSlips->first() ?? $po->parReceipts->first();
+                    $receivedDate = $doc->created_at ? \Carbon\Carbon::parse($doc->created_at)->format('d M, Y') : null;
+                }
+            }
+        }
+
+        $steps = [
+            [
+                'prefix' => 'Purchase Request:',
+                'label' => 'CREATED',
+                'active' => $pr ? true : false,
+                'date' => $pr ? \Carbon\Carbon::parse($pr->created_at ?? $pr->pr_date)->format('d M, Y') : null,
+            ],
+            [
+                'prefix' => 'Purchase Request:',
+                'label' => 'SUBMITTED',
+                'active' => ($pr && $pr->submitted_at) ? true : false,
+                'date' => ($pr && $pr->submitted_at) ? \Carbon\Carbon::parse($pr->submitted_at)->format('d M, Y') : null,
+            ],
+            [
+                'prefix' => 'Purchase Request:',
+                'label' => 'RECEIVED BY PROCUREMENT OFFICE',
+                'active' => ($pr && $pr->retrieved_by) ? true : false,
+                'date' => $prReceivedDate,
+            ],
+            [
+                'prefix' => 'Purchase Order:',
+                'label' => 'CREATED',
+                'active' => $firstPo ? true : false,
+                'date' => $poCreatedDate,
+            ],
+            [
+                'prefix' => 'Purchase Request:',
+                'label' => 'DELIVERED',
+                'active' => $isDelivered,
+                'date' => $deliveryDate,
+            ],
+            [
+                'prefix' => 'Purchase Order:',
+                'label' => 'RECEIVED ITEM BY END USER',
+                'active' => $isReceivedByEndUser,
+                'date' => $receivedDate,
+            ],
+        ];
+
+        $latestActiveIndex = -1;
+        foreach ($steps as $index => $step) {
+            if ($step['active']) {
+                $latestActiveIndex = $index;
+            }
+        }
     @endphp
+
+    @if ($isAuthorized)
+        <div class="row w-100 mx-0 px-0">
+            <!-- Left Column: Stepper -->
+            <div class="col-xl-3 col-lg-4 col-md-5 col-12 mb-4 px-1">
+                <div class="card stepper-card">
+                    <div class="card-body">
+                        <h5 class="stepper-title text-center text-md-start">Purchase Request Status</h5>
+                        <ul class="stepper-container">
+                            @foreach ($steps as $index => $step)
+                                @php
+                                    $isLatest = ($index === $latestActiveIndex);
+                                    $isActive = $step['active'];
+                                    
+                                    $itemClass = '';
+                                    $circleClass = '';
+                                    if ($isLatest) {
+                                        $itemClass = 'latest';
+                                        $circleClass = 'active-latest';
+                                    } elseif ($isActive) {
+                                        $itemClass = 'completed';
+                                        $circleClass = 'active-historic';
+                                    } else {
+                                        $itemClass = 'pending';
+                                        $circleClass = 'pending';
+                                    }
+                                @endphp
+                                <li class="stepper-item {{ $itemClass }}">
+                                    @if ($index < count($steps) - 1)
+                                        <div class="stepper-line"></div>
+                                    @endif
+                                    <div class="stepper-circle {{ $circleClass }}">
+                                        @if ($isActive)
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                    <div class="stepper-content">
+                                        <span class="stepper-prefix">{{ $step['prefix'] }}</span>
+                                        <span class="stepper-label">{{ $step['label'] }}</span>
+                                        @if ($step['date'])
+                                            <span class="stepper-date">{{ $step['date'] }}</span>
+                                        @else
+                                            <span class="stepper-date">Pending</span>
+                                        @endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: PR Form -->
+            <div class="col-xl-9 col-lg-8 col-md-7 col-12 px-1">
+    @endif
 
     @if ($taskStatus === 'Complete' && $pr && $pr->submitted_at && !$isViewer_Assigner)
         @php
@@ -413,6 +561,11 @@
         <h5 class="fw-bold ps-2 pe-5">Total Amount</h5>
         <h5 class="ps-2 pe-2" id="grand-total-amount">₱0.00</h5>
     </div>
+
+    @if ($isAuthorized)
+            </div>
+        </div>
+    @endif
 
 </form>
 
