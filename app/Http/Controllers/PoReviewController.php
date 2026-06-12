@@ -27,6 +27,7 @@ use App\Models\ParItemSpec;
 use App\Models\Ndr;
 use App\Models\NdrItem;
 use App\Models\NdrItemSpec;
+use App\Models\Department;
 use Illuminate\Support\Facades\DB;
 
 class PoReviewController extends Controller
@@ -50,13 +51,34 @@ class PoReviewController extends Controller
         ];
         
         $users = User::all();
+        $departments = Department::orderBy('dep_name')->get();
         
-        return view('supply.pages.supply-po-review', compact('po', 'breadcrumbs', 'users'));
+        return view('supply.pages.supply-po-review', compact('po', 'breadcrumbs', 'users', 'departments'));
     }
 
     public function generateAttachments($po_id, Request $request) {
         $po = PoParent::findOrFail($po_id);
         $itemsData = $request->input('items', []);
+
+        // Collect all department IDs from the request distributions beforehand
+        $deptIds = [];
+        foreach ($itemsData as $entry) {
+            if (($entry['category'] ?? '') === 'Supply and Materials') {
+                foreach ($entry['distributions'] ?? [] as $dist) {
+                    if (!empty($dist['dept_id'])) {
+                        $deptIds[] = $dist['dept_id'];
+                    }
+                }
+            }
+        }
+        
+        // Query all departments at once to avoid N+1 queries
+        $departments = [];
+        if (!empty($deptIds)) {
+            $departments = Department::whereIn('dep_id', array_unique($deptIds))
+                ->get()
+                ->keyBy('dep_id');
+        }
 
         DB::beginTransaction();
         try {
@@ -106,8 +128,15 @@ class PoReviewController extends Controller
                 foreach ($supplyItems as $itemData) {
                     if (isset($itemData['distributions']) && is_array($itemData['distributions'])) {
                         foreach ($itemData['distributions'] as $dist) {
-                            if (!empty($dist['dept_name'])) {
-                                $deptNames[] = trim($dist['dept_name']);
+                            $deptName = '';
+                            if (!empty($dist['dept_id']) && isset($departments[$dist['dept_id']])) {
+                                $deptName = $departments[$dist['dept_id']]->dep_name;
+                            }
+                            if (empty($deptName) && !empty($dist['dept_name'])) {
+                                $deptName = trim($dist['dept_name']);
+                            }
+                            if (!empty($deptName)) {
+                                $deptNames[] = $deptName;
                             }
                         }
                     }
@@ -153,7 +182,16 @@ class PoReviewController extends Controller
                 $deptDists = [];
                 foreach ($supplyItems as $itemData) {
                     foreach ($itemData['distributions'] as $dist) {
-                        $deptName = $dist['dept_name'] ?? 'Unknown';
+                        $deptName = '';
+                        if (!empty($dist['dept_id']) && isset($departments[$dist['dept_id']])) {
+                            $deptName = $departments[$dist['dept_id']]->dep_name;
+                        }
+                        if (empty($deptName) && !empty($dist['dept_name'])) {
+                            $deptName = trim($dist['dept_name']);
+                        }
+                        if (empty($deptName)) {
+                            $deptName = 'Unknown';
+                        }
                         $deptDists[$deptName][] = [
                             'item' => $itemData['item'],
                             'qty' => $dist['qty']

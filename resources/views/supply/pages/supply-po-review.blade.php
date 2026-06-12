@@ -12,7 +12,7 @@
 @endpush
 
 @section('content')
-    <div class="card shadow-sm border-0 mb-3 p-0">
+    <div class="card shadow-sm border-0 mb-3 p-0" data-po-id="{{ $po->po_id }}">
         <div class="card-body px-0">
             <div class="d-flex justify-content-start ms-4">
                 {{-- Back Button --}}
@@ -565,7 +565,12 @@
                         <tbody id="assign-dept-tbody">
                             <tr class="dept-row align-middle">
                                 <td class="px-2">
-                                    <input type="text" class="form-control form-control-sm dept-name" placeholder="Enter Department">
+                                    <select class="form-select form-select-sm dept-name">
+                                        <option value="" selected disabled>Select Department</option>
+                                        @foreach($departments as $dept)
+                                            <option value="{{ $dept->dep_id }}">{{ $dept->dep_name }}</option>
+                                        @endforeach
+                                    </select>
                                 </td>
                                 <td class="px-2">
                                     <input type="text" class="form-control form-control-sm dept-qty text-center">
@@ -710,10 +715,6 @@
 @endsection
 
 @push('js')
-    <!-- Page SPECIFIC css -->
-    <script>
-        window.poId = "{{ $po->po_id }}";
-    </script>
     <!-- CUSTOM css -->
     <script src="{{ asset('js/supply/po-review/custom-po-review.js') }}"></script>
 @endpush

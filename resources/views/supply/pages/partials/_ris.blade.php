@@ -77,11 +77,15 @@
                             <h6 class="mb-2 black-text fw-bold">Received by:</h6>
                             <select class="form-select form-select-sm ms-2 w-75" name="ris_received_by">
                                 <option value="">Select User</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->user_id }}" {{ ($ris->receiver && $ris->receiver->user_id == $user->user_id) ? 'selected' : '' }}>
-                                        {{ $user->user_fullname }}
-                                    </option>
-                                @endforeach
+                                @if($ris->department)
+                                    @foreach($ris->department->users as $user)
+                                        <option value="{{ $user->user_id }}" {{ ($ris->receiver && $ris->receiver->user_id == $user->user_id) ? 'selected' : '' }}>
+                                            {{ $user->user_fullname }}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="">No department assigned</option>
+                                @endif
                             </select>
                         </div>
                     </div>
