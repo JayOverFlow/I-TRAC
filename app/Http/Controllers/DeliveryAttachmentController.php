@@ -9,6 +9,7 @@ use App\Models\IarItem;
 use App\Models\Ris;
 use App\Models\RisItem;
 use App\Services\IarPdfExportService;
+use App\Services\RisPdfExportService;
 use Illuminate\Support\Facades\DB;
 
 class DeliveryAttachmentController extends Controller
@@ -65,6 +66,21 @@ class DeliveryAttachmentController extends Controller
 
         $pdfService = app(IarPdfExportService::class);
         return $pdfService->export($iar);
+    }
+
+    public function exportRis($ris_id)
+    {
+        $ris = Ris::with([
+            'risItems.risSpecs',
+            'purchaseOrder',
+            'requester',
+            'receiver',
+            'issuer',
+            'approver'
+        ])->findOrFail($ris_id);
+
+        $pdfService = app(RisPdfExportService::class);
+        return $pdfService->export($ris);
     }
 
     public function saveIar($iar_id, Request $request)

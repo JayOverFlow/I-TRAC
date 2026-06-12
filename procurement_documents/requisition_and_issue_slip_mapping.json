@@ -1,0 +1,442 @@
+{
+  "_meta": {
+    "document_title": "RIS Template – Explicit Field Mapping",
+    "form_name": "Requisition and Issue Slip",
+    "form_code": "FM-SUP-002",
+    "form_revision": "REV 0",
+    "form_date": "09NOV2016",
+    "issuing_institution": "Technological University of the Philippines – Taguig City",
+    "source_file": "RIS_Template.xlsx",
+    "sheets": {
+      "RIS": "Blank print-ready template (no placeholders)",
+      "RIS with Mapping": "Same layout with placeholder tokens injected into data-entry cells"
+    },
+    "effective_data_range": "A1:I61",
+    "item_table_range": "A12:I54",
+    "item_table_repeatable": true,
+    "item_table_max_rows_per_page": 43,
+    "notes": [
+      "Columns D and J–O are either structurally empty or used solely for merged-cell span; they carry no standalone data.",
+      "The mapping sheet uses row 12 as a single representative row showing all item-table placeholders. In production, rows 12–54 are the repeatable data rows.",
+      "Column D is spanned by C:D merges throughout the item table (Description field). No separate D column data exists.",
+      "Rows beyond 65 in the sheet contain residual row-height metadata artifacts from the source file; they are not part of the form layout."
+    ]
+  },
+
+  "regions": {
+
+    "header_branding": {
+      "description": "Institutional identity block; fully static, never data-injected.",
+      "type": "static",
+      "cells": {
+        "A1:D1": { "content": "(blank / logo placeholder)", "merged": true },
+        "E1:I1": { "content": "(blank / logo placeholder)", "merged": true },
+        "A2:D2": { "content": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES", "merged": true },
+        "E2:I2": { "content": "(blank)", "merged": true },
+        "A3:D3": { "content": "TAGUIG CITY", "merged": true },
+        "E3:I3": { "content": "REQUISITION AND ISSUE SLIP", "merged": true },
+        "A4:D4": {
+          "content": "The Technological University of the Philippines shall be a premiere state",
+          "merged": true
+        },
+        "E4:I4": { "content": "FM-SUP-002       REV 0       09NOV2016", "merged": true },
+        "A5:D5": {
+          "content": "university with recognized excellence in engineering and technology",
+          "merged": true
+        },
+        "E5:I5": { "content": "(blank)", "merged": true },
+        "A6:D6": {
+          "content": "education at par with the leading universities in the ASEAN region.",
+          "merged": true
+        },
+        "E6:I6": { "content": "(blank)", "merged": true }
+      }
+    },
+
+    "document_header_fields": {
+      "description": "Administrative identifiers filled per transaction.",
+      "type": "field_mapped",
+      "fields": {
+        "ris_fund_cluster": {
+          "label": "Fund Cluster",
+          "label_cell": "A7:B7",
+          "value_cell": "C7:D7",
+          "merged_value_cell": true,
+          "data_type": "string",
+          "required": true,
+          "example": "101 – General Fund"
+        },
+        "ris_division": {
+          "label": "Division",
+          "label_cell": "A8",
+          "value_cell": "B8:D8",
+          "merged_value_cell": true,
+          "data_type": "string",
+          "required": true,
+          "example": "Administrative Division"
+        },
+        "ris_center_code": {
+          "label": "Responsibility Center Code",
+          "label_cell": "E8:H8",
+          "value_cell": "I8",
+          "merged_value_cell": false,
+          "data_type": "string",
+          "required": true,
+          "example": "10001"
+        },
+        "ris_office": {
+          "label": "Office",
+          "label_cell": "A9",
+          "value_cell": "B9:D9",
+          "merged_value_cell": true,
+          "data_type": "string",
+          "required": true,
+          "example": "Office of the University President"
+        },
+        "ris_no": {
+          "label": "RIS Number",
+          "label_cell": "E9:F9",
+          "value_cell": "G9:I9",
+          "merged_value_cell": true,
+          "data_type": "string",
+          "required": true,
+          "example": "RIS-2024-001"
+        }
+      }
+    },
+
+    "item_table": {
+      "description": "Repeatable line-item table for requisitioned and issued stock. One row = one item.",
+      "type": "repeatable_table",
+      "range": "A12:I54",
+      "header_row": 11,
+      "data_rows_start": 12,
+      "data_rows_end": 54,
+      "max_rows": 43,
+      "header_group_row": 10,
+      "header_groups": {
+        "A10:E10": { "label": "Requisition", "merged": true },
+        "F10:G10": { "label": "Stock Available?", "merged": true },
+        "H10:I10": { "label": "Issue", "merged": true }
+      },
+      "columns": {
+        "A": {
+          "header": "Stock No.",
+          "placeholder": "ris_stock_no",
+          "data_type": "string",
+          "example": "STO-2024-00123",
+          "notes": "Inventory stock number from the supply catalogue."
+        },
+        "B": {
+          "header": "Unit",
+          "placeholder": "ris_unit",
+          "data_type": "string",
+          "example": "pc",
+          "notes": "Unit of measure (e.g. pc, ream, box, set, liter)."
+        },
+        "C_D": {
+          "header": "Description",
+          "placeholder": "ris_items_descrip + ris_spec_description",
+          "cell_range": "C:D",
+          "merged_per_row": true,
+          "merge_pattern": "C{n}:D{n}",
+          "data_type": "string",
+          "composition": "Primary item description followed by optional specification detail, separated by a comma or newline.",
+          "sub_fields": {
+            "ris_items_descrip": {
+              "description": "Short item name / catalogue description.",
+              "data_type": "string",
+              "example": "Bond Paper, Short"
+            },
+            "ris_spec_description": {
+              "description": "Additional specification or brand qualifier (optional).",
+              "data_type": "string",
+              "example": "sub-20, 8.5x11, white"
+            }
+          },
+          "example": "Bond Paper, Short, sub-20, 8.5x11, white"
+        },
+        "E": {
+          "header": "Qty. (Requisition)",
+          "placeholder": "ris_quantity",
+          "data_type": "integer",
+          "example": 10,
+          "notes": "Quantity requested by the requisitioning unit."
+        },
+        "F": {
+          "header": "Yes (Stock Available?)",
+          "placeholder": "ris_stock_available",
+          "data_type": "string",
+          "allowed_values": ["X", ""],
+          "condition": "Mark 'X' when stock is available.",
+          "example": "X",
+          "notes": "Mutually exclusive with column G. Only one of F or G should be 'X' per row."
+        },
+        "G": {
+          "header": "No (Stock Available?)",
+          "placeholder": "ris_stock_available",
+          "data_type": "string",
+          "allowed_values": ["X", ""],
+          "condition": "Mark 'X' when stock is NOT available.",
+          "example": "",
+          "notes": "Mutually exclusive with column F. Shares the same source field; value placement (F vs G) is determined by availability status."
+        },
+        "H": {
+          "header": "Qty. (Issue)",
+          "placeholder": "ris_issued_quantity",
+          "data_type": "integer",
+          "example": 8,
+          "notes": "Actual quantity issued by the supply office. May differ from ris_quantity."
+        },
+        "I": {
+          "header": "Remarks",
+          "placeholder": "ris_issued_remarks",
+          "data_type": "string",
+          "example": "2 pcs on back-order",
+          "notes": "Free-text remarks from the issuing officer."
+        }
+      },
+      "merged_cell_pattern_per_row": {
+        "description": "Each data row (rows 12–54) repeats the same C:D column merge.",
+        "pattern": "C{row}:D{row}",
+        "example_merges": ["C12:D12", "C13:D13", "C14:D14"]
+      }
+    },
+
+    "purpose_field": {
+      "description": "Single free-text field stating the purpose of the requisition, placed below the item table.",
+      "type": "field_mapped",
+      "cells": {
+        "A55": { "content": "Purpose:", "type": "static_label" },
+        "B55:I55": {
+          "placeholder": "ris_purpose",
+          "merged": true,
+          "data_type": "string",
+          "example": "For use in the conduct of the Annual General Assembly on 15 March 2024."
+        }
+      }
+    },
+
+    "signatory_block": {
+      "description": "Four-party signature section: Requested By, Approved By, Issued By, Received By.",
+      "type": "field_mapped",
+      "layout_rows": "57–61",
+      "row_56_note": "B56:I56 is a merged blank spacer row between item table and signatory area.",
+      "static_labels": {
+        "C57": "Requested by:",
+        "D57": "Approved by:",
+        "E57:G57": { "content": "Issued by:", "merged": true },
+        "H57:I57": { "content": "Received by:", "merged": true },
+        "A58:B58": { "content": "Signature :", "merged": true },
+        "A59:B59": { "content": "Printed Name :", "merged": true },
+        "A60:B60": { "content": "Designation :", "merged": true },
+        "A61:B61": { "content": "Date :", "merged": true }
+      },
+      "fields": {
+        "ris_requested_by": {
+          "label": "Requested by – Printed Name",
+          "value_cell": "C59",
+          "data_type": "string",
+          "example": "Juan dela Cruz"
+        },
+        "ris_requested_by_role": {
+          "label": "Requested by – Designation",
+          "placeholder_in_sheet": "ris_requested_by (user_role)",
+          "value_cell": "C60",
+          "data_type": "string",
+          "example": "Administrative Aide III"
+        },
+        "ris_requested_date": {
+          "label": "Requested by – Date",
+          "value_cell": "C61",
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "example": "03/01/2024"
+        },
+        "ris_approved_by": {
+          "label": "Approved by – Printed Name",
+          "value_cell": "D59",
+          "data_type": "string",
+          "static_override": "GLENN N. ORTIZ, PECE, ASEAN ENGR.",
+          "notes": "Pre-filled in the blank RIS template. Inject only if approval authority changes.",
+          "example": "Glenn N. Ortiz, PECE, ASEAN Engr."
+        },
+        "ris_approved_by_designation": {
+          "label": "Approved by – Designation",
+          "value_cell": "D60",
+          "data_type": "string",
+          "static_value": "CAO / ADAF",
+          "notes": "Static in both template sheets; treat as static unless instructed otherwise."
+        },
+        "ris_issued_by": {
+          "label": "Issued by – Printed Name",
+          "value_cell": "E59:G59",
+          "merged": true,
+          "data_type": "string",
+          "example": "Maria Santos"
+        },
+        "ris_issued_by_designation": {
+          "label": "Issued by – Designation",
+          "value_cell": "E60:G60",
+          "merged": true,
+          "data_type": "string",
+          "static_value": "AOV - Supply Office",
+          "notes": "Static in both template sheets."
+        },
+        "ris_received_by": {
+          "label": "Received by – Printed Name",
+          "value_cell": "H59:I59",
+          "merged": true,
+          "data_type": "string",
+          "example": "Pedro Reyes"
+        },
+        "ris_received_by_role": {
+          "label": "Received by – Designation",
+          "placeholder_in_sheet": "ris_received_by (user_role)",
+          "value_cell": "H60:I60",
+          "merged": true,
+          "data_type": "string",
+          "example": "Clerk II"
+        },
+        "ris_received_date": {
+          "label": "Received by – Date",
+          "value_cell": "H61:I61",
+          "merged": true,
+          "data_type": "date",
+          "format": "MM/DD/YYYY",
+          "example": "03/05/2024"
+        }
+      }
+    }
+  },
+
+  "merged_cells_summary": {
+    "description": "All merged cell ranges present in both sheets (layouts are identical).",
+    "header_branding": [
+      "A1:D1", "E1:I1",
+      "A2:D2", "E2:I2",
+      "A3:D3", "E3:I3",
+      "A4:D4", "E4:I4",
+      "A5:D5", "E5:I5",
+      "A6:D6", "E6:I6"
+    ],
+    "document_header": [
+      "A7:B7", "C7:D7",
+      "B8:D8", "E8:H8",
+      "B9:D9", "E9:F9", "G9:I9"
+    ],
+    "table_column_group_headers": [
+      "A10:E10", "F10:G10", "H10:I10"
+    ],
+    "item_table_description_column": {
+      "pattern": "C{n}:D{n} for n = 11 to 54",
+      "explicit_list": [
+        "C11:D11", "C12:D12", "C13:D13", "C14:D14", "C15:D15",
+        "C16:D16", "C17:D17", "C18:D18", "C19:D19", "C20:D20",
+        "C21:D21", "C22:D22", "C23:D23", "C24:D24", "C25:D25",
+        "C26:D26", "C27:D27", "C28:D28", "C29:D29", "C30:D30",
+        "C31:D31", "C32:D32", "C33:D33", "C34:D34", "C35:D35",
+        "C36:D36", "C37:D37", "C38:D38", "C39:D39", "C40:D40",
+        "C41:D41", "C42:D42", "C43:D43", "C44:D44", "C45:D45",
+        "C46:D46", "C47:D47", "C48:D48", "C49:D49", "C50:D50",
+        "C51:D51", "C52:D52", "C53:D53", "C54:D54"
+      ]
+    },
+    "purpose_and_spacer": [
+      "B55:I55", "B56:I56"
+    ],
+    "signatory_block": [
+      "A57:B57", "E57:G57", "H57:I57",
+      "A58:B58", "E58:G58", "H58:I58",
+      "A59:B59", "E59:G59", "H59:I59",
+      "A60:B60", "E60:G60", "H60:I60",
+      "A61:B61", "E61:G61", "H61:I61"
+    ]
+  },
+
+  "known_issues": [
+    {
+      "id": "ISSUE-001",
+      "severity": "medium",
+      "location": "Columns F and G (Stock Available? Yes / No)",
+      "description": "Both F and G share the same logical source field `ris_stock_available`. The template uses column position (F = Yes, G = No) rather than a boolean value to encode availability. An AI agent must split the boolean into two separate write targets instead of writing to a single cell.",
+      "recommendation": "When injecting, evaluate the boolean: if true write 'X' to column F and leave G blank; if false leave F blank and write 'X' to G."
+    },
+    {
+      "id": "ISSUE-002",
+      "severity": "low",
+      "location": "C:D column (Description) throughout item table",
+      "description": "Every Description cell is a C:D horizontal merge. Agents must write to the anchor cell C{row}; writing to D{row} on a merged cell will raise an openpyxl error.",
+      "recommendation": "Always target the left-most cell of a merge range (e.g., C12, not D12)."
+    },
+    {
+      "id": "ISSUE-003",
+      "severity": "low",
+      "location": "ris_approved_by (D59) and Designation (D60)",
+      "description": "The blank RIS sheet pre-fills 'GLENN N. ORTIZ, PECE, ASEAN ENGR.' and 'CAO / ADAF' as hard-coded values. The mapping sheet lists `ris_approved_by` as a placeholder, implying it could be overridden, but in practice it is institutional-static for this form version.",
+      "recommendation": "Treat D59 and D60 as static unless a dynamic approver override is explicitly required."
+    },
+    {
+      "id": "ISSUE-004",
+      "severity": "low",
+      "location": "Issued by – Designation (E60:G60)",
+      "description": "'AOV - Supply Office' is hardcoded in the blank template but listed as a placeholder in the mapping sheet. Same static-vs-dynamic ambiguity as ISSUE-003.",
+      "recommendation": "Treat as static unless overridden."
+    },
+    {
+      "id": "ISSUE-005",
+      "severity": "informational",
+      "location": "Rows 65–8615 (beyond the form layout)",
+      "description": "The workbook contains hundreds of rows with residual row-height formatting artifacts (height=13.7 or 19.5). These are carry-over formatting from the source document and do not represent additional form content.",
+      "recommendation": "Ignore all rows beyond row 61 when parsing or writing data."
+    }
+  ],
+
+  "injection_example": {
+    "description": "A fully populated sample showing one item-table row and all header/footer fields.",
+    "document_header": {
+      "ris_fund_cluster": "101 – General Fund",
+      "ris_division": "Administrative Division",
+      "ris_center_code": "10001",
+      "ris_office": "Office of the Vice President for Finance",
+      "ris_no": "RIS-2024-0042"
+    },
+    "items": [
+      {
+        "row": 12,
+        "ris_stock_no": "STO-2024-00123",
+        "ris_unit": "ream",
+        "ris_items_descrip": "Bond Paper, Short",
+        "ris_spec_description": "sub-20, 8.5x11, white",
+        "ris_quantity": 10,
+        "ris_stock_available_yes": "X",
+        "ris_stock_available_no": "",
+        "ris_issued_quantity": 10,
+        "ris_issued_remarks": ""
+      },
+      {
+        "row": 13,
+        "ris_stock_no": "STO-2024-00456",
+        "ris_unit": "box",
+        "ris_items_descrip": "Ballpen, Black",
+        "ris_spec_description": "0.5mm, retractable",
+        "ris_quantity": 5,
+        "ris_stock_available_yes": "",
+        "ris_stock_available_no": "X",
+        "ris_issued_quantity": 0,
+        "ris_issued_remarks": "Out of stock; back-order filed"
+      }
+    ],
+    "purpose": "For use during the University Council Meeting on 20 March 2024.",
+    "signatories": {
+      "ris_requested_by": "Juan dela Cruz",
+      "ris_requested_by_role": "Administrative Aide III",
+      "ris_requested_date": "03/01/2024",
+      "ris_approved_by": "Glenn N. Ortiz, PECE, ASEAN Engr.",
+      "ris_issued_by": "Maria Santos",
+      "ris_received_by": "Pedro Reyes",
+      "ris_received_by_role": "Clerk II",
+      "ris_received_date": "03/05/2024"
+    }
+  }
+}
