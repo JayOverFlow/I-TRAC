@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="px-1">
+                    <input type="hidden" name="items[${newIndex}][rsmi_items_id]" value="">
                     <input type="text" class="form-control form-control-sm text-center"
                         name="items[${newIndex}][ris_no]">
                 </td>
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         name="items[${newIndex}][stock_no]">
                 </td>
                 <td class="px-1">
-                    <input type="text" class="form-control form-control-sm text-center"
+                    <input type="text" class="form-control form-control-sm"
                         name="items[${newIndex}][item_description]">
                 </td>
                 <td class="px-1">
@@ -131,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </td>
             `;
             tableBody.appendChild(tr);
+            updateRowIndices();
         });
     }
 });
