@@ -285,6 +285,22 @@ class CreatePrController extends Controller
 
                 // Mark the task as Complete — the Head views this task directly; no review task needed
                 $task->update(['task_status' => 'Complete']);
+
+                // Notify the Head (assigned_by) that the PR has been submitted
+                if ($task->assigned_by && $task->assigned_by !== $task->assigned_to) {
+                    $submitterName = $user->user_fullname_no_middle ?? 'A team member';
+                    \App\Models\Task::create([
+                        'assigned_by'      => $task->assigned_to,
+                        'assigned_to'      => $task->assigned_by,
+                        'task_description' => "{$submitterName} has submitted a Purchase Request.",
+                        'created_at'       => now(),
+                        'pr_id_fk'         => $pr->pr_id ?? $task->pr_id_fk,
+                        'task_type'        => 'PR Submitted',
+                        'is_deleted'       => 0,
+                        'task_status'      => 'Pending',
+                        'task_dep_id_fk'   => $task->task_dep_id_fk,
+                    ]);
+                }
             });
 
             session()->flash('success', 'Purchase Request marked as complete.');

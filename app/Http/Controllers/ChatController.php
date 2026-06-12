@@ -74,10 +74,10 @@ class ChatController extends Controller
         }
 
         $users = User::where('user_id', '!=', $authUserId)
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('user_firstname', 'LIKE', "%{$query}%")
-                  ->orWhere('user_middlename', 'LIKE', "%{$query}%")
-                  ->orWhere('user_lastname', 'LIKE', "%{$query}%");
+                    ->orWhere('user_middlename', 'LIKE', "%{$query}%")
+                    ->orWhere('user_lastname', 'LIKE', "%{$query}%");
             })
             ->limit(20)
             ->get();
@@ -111,10 +111,10 @@ class ChatController extends Controller
 
         // Fetch messages
         $messages = Message::where(function ($query) use ($authUserId, $userId) {
-                $query->where('sender_id', $authUserId)->where('receiver_id', $userId);
-            })->orWhere(function ($query) use ($authUserId, $userId) {
-                $query->where('sender_id', $userId)->where('receiver_id', $authUserId);
-            })
+            $query->where('sender_id', $authUserId)->where('receiver_id', $userId);
+        })->orWhere(function ($query) use ($authUserId, $userId) {
+            $query->where('sender_id', $userId)->where('receiver_id', $authUserId);
+        })
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -144,5 +144,107 @@ class ChatController extends Controller
             'success' => true,
             'message' => $message
         ]);
+    }
+
+    /**
+     * Get unread counts + top 3 newest unread messages and unread notifications.
+     * Notifications = tasks assigned to the user that have not been read yet.
+     */
+    public function getUnreadCount()
+    {
+        $userId = Auth::id();
+
+        // Unread messages = messages received where read_at is null
+        $unreadMessagesCount = Message::where('receiver_id', $userId)
+            ->whereNull('read_at')
+            ->count();
+
+        // Unread notifications = tasks assigned to user that have NOT been read yet
+        $unreadNotificationsCount = \App\Models\Task::where('assigned_to', $userId)
+            ->whereNull('read_at')
+            ->count();
+
+        // Top 3 newest messages (whether read or unread)
+        $recentMessages = Message::where('receiver_id', $userId)
+            ->with('sender')
+            ->latest('message_id')
+            ->take(3)
+            ->get()
+            ->map(function ($msg) {
+                return [
+                    'id'           => $msg->message_id,
+                    'sender_name'  => $msg->sender->user_fullname_no_middle ?? 'User',
+                    'sender_avatar'=> $msg->sender->user_profile_photo
+                                        ? asset($msg->sender->user_profile_photo)
+                                        : asset('img/profiles/blank.avif'),
+                    'message'      => $msg->message,
+                    'time'         => $msg->created_at ? $msg->created_at->diffForHumans() : '',
+                ];
+            });
+
+        // Top 3 newest notifications (whether read or unread)
+        // Covers: PR Assignment, PR Submitted, PO Submitted notification types
+        $recentNotifications = \App\Models\Task::where('assigned_to', $userId)
+            ->with('assignedBy')
+            ->latest('task_id')
+            ->take(3)
+            ->get()
+            ->map(function ($task) {
+                $type = $task->task_type;
+                // Derive a clean label per type
+                $typeLabel = match($type) {
+                    'PR Submitted'  => 'PR Submitted',
+                    'PO Submitted'  => 'PO Submitted',
+                    'PR Assignment' => 'PR Assigned',
+                    'Purchase Request' => 'PR Assigned',
+                    default         => 'Notification',
+                };
+                return [
+                    'task_id'          => $task->task_id,
+                    'task_description' => $task->task_description,
+                    'task_type'        => $type,
+                    'type_label'       => $typeLabel,
+                    'time'             => $task->created_at
+                                            ? \Carbon\Carbon::parse($task->created_at)->diffForHumans()
+                                            : '',
+                    'assigned_by_name' => $task->assignedBy->user_fullname_no_middle ?? 'System',
+                    'url'              => route('show.tasks'),
+                ];
+            });
+
+        return response()->json([
+            'unread_messages'      => $unreadMessagesCount,
+            'unread_notifications' => $unreadNotificationsCount,
+            'total_unread'         => $unreadMessagesCount + $unreadNotificationsCount,
+            'messages_list'        => $recentMessages,
+            'notifications_list'   => $recentNotifications,
+        ]);
+    }
+
+    /**
+     * Mark all unread notifications (tasks) for the current user as read.
+     */
+    public function markNotificationsRead()
+    {
+        \App\Models\Task::where('assigned_to', Auth::id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark a single notification (task) as read by task_id.
+     */
+    public function markSingleNotificationRead(Request $request)
+    {
+        $taskId = $request->input('task_id');
+
+        \App\Models\Task::where('task_id', $taskId)
+            ->where('assigned_to', Auth::id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
     }
 }
