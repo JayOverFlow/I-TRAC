@@ -255,6 +255,28 @@ class CreatePoController extends Controller
                         }
                     }
                 }
+
+                // Notify the PR owner/Head when the PO is submitted (Done)
+                if ($intent === 'Done') {
+                    $pr = \App\Models\PrParent::find($po->pr_id_fk);
+                    $procurementUser = \Illuminate\Support\Facades\Auth::user();
+                    $procurementName = $procurementUser->user_fullname_no_middle ?? 'Procurement';
+
+                    // Notify the person who saved/owns the PR (typically the Head)
+                    if ($pr && $pr->saved_by_user_id_fk && $pr->saved_by_user_id_fk !== $procurementUser->user_id) {
+                        \App\Models\Task::create([
+                            'assigned_by'      => $procurementUser->user_id,
+                            'assigned_to'      => $pr->saved_by_user_id_fk,
+                            'task_description' => "{$procurementName} has submitted a Purchase Order for PR #{$pr->pr_unique_code}.",
+                            'created_at'       => now(),
+                            'pr_id_fk'         => $pr->pr_id,
+                            'task_type'        => 'PO Submitted',
+                            'is_deleted'       => 0,
+                            'task_status'      => 'Pending',
+                            'task_dep_id_fk'   => $pr->pr_department,
+                        ]);
+                    }
+                }
             });
 
             $message = $intent === 'Done'

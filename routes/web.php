@@ -144,6 +144,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/chat/search-users', 'searchUsers')->name('chat.search');
         Route::get('/chat/messages/{userId}', 'getMessages')->name('chat.messages');
         Route::post('/chat/messages', 'sendMessage')->name('chat.send');
+        Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread.count');
+        Route::post('/notifications/mark-read', 'markNotificationsRead')->name('notifications.mark.read');
+        Route::post('/notifications/mark-single-read', 'markSingleNotificationRead')->name('notifications.mark.single.read');
     });
 });
 
