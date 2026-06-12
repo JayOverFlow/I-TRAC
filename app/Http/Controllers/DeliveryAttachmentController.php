@@ -8,6 +8,8 @@ use App\Models\Iar;
 use App\Models\IarItem;
 use App\Models\Ris;
 use App\Models\RisItem;
+use App\Models\Rsmi;
+use App\Models\RsmiItem;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use Illuminate\Support\Facades\DB;
@@ -256,6 +258,99 @@ class DeliveryAttachmentController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to save Requisition and Issue Slip: ' . $e->getMessage())
                 ->with('active_document', 'doc-ris-' . $ris->ris_id);
+        }
+    }
+
+    public function saveRsmi($rsmi_id, Request $request)
+    {
+        $rsmi = Rsmi::findOrFail($rsmi_id);
+
+        $validated = $request->validate([
+            'fund_cluster' => 'nullable|string|max:100',
+            'serial_no' => 'nullable|string|max:50',
+            'date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.rsmi_items_id' => 'nullable|integer',
+            'items.*.ris_no' => 'nullable|string|max:50',
+            'items.*.responsibility_center_code' => 'nullable|string|max:50',
+            'items.*.stock_no' => 'nullable|string|max:50',
+            'items.*.item_description' => 'nullable|string|max:255',
+            'items.*.unit' => 'nullable|string|max:20',
+            'items.*.qty_issued' => 'nullable|integer',
+            'items.*.unit_cost' => 'nullable|numeric',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $rsmiTotal = 0;
+            $incomingItemIds = [];
+
+            foreach ($validated['items'] as $itemData) {
+                $qty = isset($itemData['qty_issued']) ? intval($itemData['qty_issued']) : 0;
+                $unitCost = isset($itemData['unit_cost']) ? floatval($itemData['unit_cost']) : 0;
+                $amount = $qty * $unitCost;
+                $rsmiTotal += $amount;
+
+                if (!empty($itemData['rsmi_items_id'])) {
+                    // Update existing item
+                    $rsmiItem = RsmiItem::where('rsmi_id_fk', $rsmi->rsmi_id)
+                        ->findOrFail($itemData['rsmi_items_id']);
+
+                    $rsmiItem->update([
+                        'rsmi_ris_no' => $itemData['ris_no'] ?? null,
+                        'rsmi_center_code' => $itemData['responsibility_center_code'] ?? null,
+                        'rsmi_stock_no' => $itemData['stock_no'] ?? null,
+                        'rsmi_items_descrip' => $itemData['item_description'] ?? null,
+                        'rsmi_unit' => $itemData['unit'] ?? null,
+                        'rsmi_quantity' => $qty,
+                        'rsmi_unit_cost' => $unitCost,
+                        'rsmi_amount' => $amount,
+                    ]);
+
+                    $incomingItemIds[] = $rsmiItem->rsmi_items_id;
+                } else {
+                    // Create new item
+                    $rsmiItem = RsmiItem::create([
+                        'rsmi_id_fk' => $rsmi->rsmi_id,
+                        'rsmi_ris_no' => $itemData['ris_no'] ?? null,
+                        'rsmi_center_code' => $itemData['responsibility_center_code'] ?? null,
+                        'rsmi_stock_no' => $itemData['stock_no'] ?? null,
+                        'rsmi_items_descrip' => $itemData['item_description'] ?? null,
+                        'rsmi_unit' => $itemData['unit'] ?? null,
+                        'rsmi_quantity' => $qty,
+                        'rsmi_unit_cost' => $unitCost,
+                        'rsmi_amount' => $amount,
+                    ]);
+
+                    $incomingItemIds[] = $rsmiItem->rsmi_items_id;
+                }
+
+                $rsmiItem->rsmiSpecs()->delete();
+            }
+
+            // Update RSMI Header
+            $rsmi->update([
+                'rsmi_fund_cluster' => $validated['fund_cluster'] ?? null,
+                'rsmi_serial_no' => $validated['serial_no'] ?? null,
+                'rsmi_date' => $validated['date'] ?? null,
+                'rsmi_total' => $rsmiTotal,
+            ]);
+
+            // Remove deleted items
+            RsmiItem::where('rsmi_id_fk', $rsmi->rsmi_id)
+                ->whereNotIn('rsmi_items_id', $incomingItemIds)
+                ->delete();
+
+            DB::commit();
+
+            return redirect()->back()
+                ->with('success', 'Report of Supplies and Materials Issued saved successfully.')
+                ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Failed to save Report of Supplies and Materials Issued: ' . $e->getMessage())
+                ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
         }
     }
 }
