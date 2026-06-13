@@ -6,10 +6,10 @@
                 <div class="d-flex justify-content-between align-items-center mb-3 px-3">
                     <h5 class="fw-bold red-text-2 ms-1 mb-0">Report of Supplies and Materials Issued</h5>
                     <div class="">
-                        <button type="button" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                        <a href="{{ route('export.rsmi.pdf', $rsmi->rsmi_id) }}" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                             <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                             <span>Export as PDF</span>
-                        </button>
+                        </a>
                         <button type="submit" class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
                             <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                             <span class="fw-bold">Save as Draft</span>

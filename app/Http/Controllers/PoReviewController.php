@@ -32,31 +32,35 @@ use Illuminate\Support\Facades\DB;
 
 class PoReviewController extends Controller
 {
-    public function showPoReview($po_id) { 
+    public function showPoReview($po_id)
+    {
         $po = PoParent::with(['poItems.poSpecs', 'savedBy'])->findOrFail($po_id);
-        
+
         // Redirect if delivery attachments already exist
-        if ($po->iarReports()->exists() || 
-            $po->risSlips()->exists() || 
-            $po->icsSlips()->exists() || 
-            $po->parReceipts()->exists() || 
-            $po->rsmiReports()->exists() || 
-            $po->rspiReports()->exists()) {
+        if (
+            $po->iarReports()->exists() ||
+            $po->risSlips()->exists() ||
+            $po->icsSlips()->exists() ||
+            $po->parReceipts()->exists() ||
+            $po->rsmiReports()->exists() ||
+            $po->rspiReports()->exists()
+        ) {
             return redirect()->route('show.delivery.attachment', ['po_id' => $po_id]);
         }
-        
+
         $breadcrumbs = [
             ['title' => 'Procurement', 'url' => route('show.procure')],
             ['title' => 'PO Review', 'url' => '']
         ];
-        
+
         $users = User::all();
         $departments = Department::orderBy('dep_name')->get();
-        
+
         return view('supply.pages.supply-po-review', compact('po', 'breadcrumbs', 'users', 'departments'));
     }
 
-    public function generateAttachments($po_id, Request $request) {
+    public function generateAttachments($po_id, Request $request)
+    {
         $po = PoParent::findOrFail($po_id);
         $itemsData = $request->input('items', []);
 
@@ -71,7 +75,7 @@ class PoReviewController extends Controller
                 }
             }
         }
-        
+
         // Query all departments at once to avoid N+1 queries
         $departments = [];
         if (!empty($deptIds)) {
@@ -93,7 +97,7 @@ class PoReviewController extends Controller
                 $dists = $entry['distributions'] ?? [];
 
                 $poItem = PoItem::with('poSpecs')->where('po_id_fk', $po->po_id)->findOrFail($itemId);
-                
+
                 // Update category in DB
                 $poItem->update([
                     'po_items_category' => $category
@@ -212,6 +216,7 @@ class PoReviewController extends Controller
                     $ris = Ris::create([
                         'po_id_fk' => $po->po_id,
                         'ris_fund_cluster' => $po->po_fund_cluster,
+                        'ris_division' => $deptName,
                         'ris_office' => $deptName,
                         'ris_purpose' => $po->purchaseRequest->pr_purpose ?? '',
                         'ris_requested_by' => auth()->user()->user_id ?? null,
@@ -532,7 +537,6 @@ class PoReviewController extends Controller
                 'message' => 'Delivery Attachments generated successfully.',
                 'redirect' => route('show.delivery.attachment', ['po_id' => $po->po_id])
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([

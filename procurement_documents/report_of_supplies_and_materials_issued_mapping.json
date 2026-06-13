@@ -1,0 +1,657 @@
+{
+  "$description": "Explicit field/data mapping context for the RSMI (Report of Supplies and Materials Issued) Excel template. Generated for use as AI agent context when injecting data into the 'RSMI' sheet, using 'RSMI with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+
+  "meta": {
+    "source_file": "RSMI_Template.xlsx",
+    "form_title": "REPORT OF SUPPLIES AND MATERIALS ISSUED",
+    "form_code": "FM-SUP-006",
+    "form_revision": "REV 0",
+    "form_revision_date": "2016-11-09",
+    "issuing_organization": "Technological University of the Philippines, Taguig City",
+    "sheets": {
+      "RSMI": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it).",
+        "used_range": "A1:Q95",
+        "form_visual_area": "A1:I53"
+      },
+      "RSMI with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'RSMI', but single-value (header/footer) cells contain text placeholders (e.g. 'rsmi_fund_cluster') instead of blank cells. Used only to identify WHICH cells correspond to which data fields. The repeating item table and the recapitulation table do NOT contain placeholders in this sheet - their mapping must be done by cell coordinate/offset instead.",
+        "used_range": "A1:Q95",
+        "form_visual_area": "A1:I53"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across columns A-I; columns J-Q are unused by the form but fall inside the sheet's used range due to stray cells (see issues).",
+      "Two copies of the same logo image (image1.jpeg) are embedded: one anchored at ~A1 (the letterhead logo, part of the static header) and one anchored at ~A106, far below the visible form (a stray duplicate - see issues)."
+    ]
+  },
+
+  "static_regions": [
+    {
+      "range": "A1:D1",
+      "merged": true,
+      "value": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES",
+      "purpose": "Letterhead - institution name"
+    },
+    {
+      "range": "A2:D2",
+      "merged": true,
+      "value": "TAGUIG CITY",
+      "purpose": "Letterhead - campus/branch"
+    },
+    {
+      "range": "E1:I1",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row to the right of the letterhead logo"
+    },
+    {
+      "range": "E2:I2",
+      "merged": true,
+      "value": "REPORT OF SUPPLIES",
+      "purpose": "Form title, line 1"
+    },
+    {
+      "range": "E3:I3",
+      "merged": true,
+      "value": "AND MATERIALS ISSUED",
+      "purpose": "Form title, line 2"
+    },
+    {
+      "range": "A3:D3",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row under the letterhead"
+    },
+    {
+      "range": "A4:D4 / A5:D5 / A6:D6",
+      "merged": true,
+      "value": "The Technological University of the Philippines shall be a premiere state university with recognized excellence in engineering and technology education at par with the leading universities in the ASEAN region.",
+      "purpose": "University vision statement, wrapped across 3 merged rows (A4:D4, A5:D5, A6:D6)"
+    },
+    {
+      "range": "E4:I4",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer beside the vision statement"
+    },
+    {
+      "range": "E5:I5",
+      "merged": true,
+      "value": "FM-SUP-006          REV 0          09NOV2016",
+      "purpose": "Form control footer - form code, revision number, revision date (static document metadata, not user data)"
+    },
+    {
+      "range": "E6:I6",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer beside the vision statement"
+    },
+    {
+      "range": "A7",
+      "merged": false,
+      "value": "Fund Cluster :",
+      "purpose": "Label for header field 'fund_cluster'"
+    },
+    {
+      "range": "F7",
+      "merged": false,
+      "value": "Serial No. :",
+      "purpose": "Label for header field 'serial_no'"
+    },
+    {
+      "range": "A8",
+      "merged": false,
+      "value": "P.O. No. :",
+      "purpose": "Label for header field 'po_no'"
+    },
+    {
+      "range": "F8",
+      "merged": false,
+      "value": "Date :",
+      "purpose": "Label for header field 'date'"
+    },
+    {
+      "range": "A9:G9",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer area on the left of the 'To be filled up by...' note"
+    },
+    {
+      "range": "H9:I9",
+      "merged": true,
+      "value": "To be filled up by the Accounting Division/Unit",
+      "purpose": "Static instructional note (small font), not a data field"
+    },
+    {
+      "range": "A10:I10",
+      "merged": "D10:E10 only",
+      "value": {
+        "A10": "RIS No.",
+        "B10": "Responsibi-lity Center Code",
+        "C10": "Stock No.",
+        "D10:E10": "Item",
+        "F10": "Unit",
+        "G10": "Quantity Issued",
+        "H10": "Unit Cost",
+        "I10": "Amount"
+      },
+      "purpose": "Column headers for the Item Table (row 10). Note the typo/hyphenation in B10 ('Responsibi-lity')."
+    },
+    {
+      "range": "F41:H41",
+      "merged": true,
+      "value": "TOTAL",
+      "purpose": "Label for the item table grand total row"
+    },
+    {
+      "range": "A42:B42",
+      "merged": true,
+      "value": "Recapitulation",
+      "purpose": "Section title for the left half of the Recapitulation table"
+    },
+    {
+      "range": "G42:I42",
+      "merged": true,
+      "value": "Recapitulation",
+      "purpose": "Section title for the right half of the Recapitulation table"
+    },
+    {
+      "range": "A43:I43",
+      "merged": false,
+      "value": {
+        "A43": "Stock No.",
+        "B43": "Quantity",
+        "C43": null,
+        "D43": null,
+        "E43": null,
+        "F43": null,
+        "G43": "Unit Cost",
+        "H43": "Total Cost",
+        "I43": "UACS Object Code"
+      },
+      "purpose": "Column headers for the Recapitulation table (row 43). Columns C-F have no header text (see issues)."
+    },
+    {
+      "range": "A52:E52",
+      "merged": true,
+      "value": "AOV - Property and Supply Office",
+      "purpose": "Static signatory/position label, left footer block"
+    },
+    {
+      "range": "F52:H52",
+      "merged": true,
+      "value": "Accounting Staff",
+      "purpose": "Static signatory/position label, right footer block"
+    },
+    {
+      "range": "I52",
+      "merged": false,
+      "value": "Date",
+      "purpose": "Static column label, right footer block"
+    },
+    {
+      "range": "I51",
+      "merged": false,
+      "value": "_____",
+      "purpose": "Static underscore characters forming a short signature/date line"
+    }
+  ],
+
+  "field_mapping": {
+
+    "header_info": {
+      "description": "Single-occurrence key/value fields at the top of the form. Each field has exactly one placeholder, found in the 'RSMI with Mapping' sheet.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "fund_cluster",
+          "placeholder": "rsmi_fund_cluster",
+          "cell": "B7",
+          "merged_range": "B7:C7",
+          "label_cell": "A7",
+          "label_text": "Fund Cluster :",
+          "data_type": "string",
+          "cell_number_format": "@ (text)"
+        },
+        {
+          "field": "serial_no",
+          "placeholder": "rsmi_serial_no",
+          "cell": "H7",
+          "merged_range": "H7:I7",
+          "label_cell": "F7",
+          "label_text": "Serial No. :",
+          "data_type": "string",
+          "cell_number_format": "mm-dd-yy (see issues - mismatched format for a serial number field)"
+        },
+        {
+          "field": "po_no",
+          "placeholder": "rsmi_po_no",
+          "cell": "B8",
+          "merged_range": "B8:C8",
+          "label_cell": "A8",
+          "label_text": "P.O. No. :",
+          "data_type": "string",
+          "cell_number_format": "mm-dd-yy (see issues - mismatched format for a P.O. number field)"
+        },
+        {
+          "field": "date",
+          "placeholder": "rsmi_date",
+          "cell": "H8",
+          "merged_range": "H8:I8",
+          "label_cell": "F8",
+          "label_text": "Date :",
+          "data_type": "date",
+          "cell_number_format": "mm-dd-yy"
+        }
+      ]
+    },
+
+    "item_table": {
+      "description": "Repeating line-item table. The header row (row 10) is static. Each data row (11-40) represents one issued item/supply line. No inline placeholders exist for this table in 'RSMI with Mapping' - mapping is by column letter + row offset.",
+      "section_type": "table",
+      "repeatable": true,
+      "header_row": 10,
+      "data_range": "A11:I40",
+      "max_data_rows": 30,
+      "row_pattern": "Each data row N (11 <= N <= 40) is one item record. Columns D and E are merged per row (DN:EN) into a single 'Item' description cell.",
+      "columns": [
+        {
+          "column": "A",
+          "field": "ris_no",
+          "suggested_placeholder": "rsmi_item_ris_no",
+          "header_label": "RIS No.",
+          "data_type": "string",
+          "notes": "Rows 11-13 carry a 'mm-dd-yy' number format inherited from the template; rows 14-40 are 'General'. See issues - RIS No. is normally an alphanumeric reference, not a date."
+        },
+        {
+          "column": "B",
+          "field": "responsibility_center_code",
+          "suggested_placeholder": "rsmi_item_responsibility_center_code",
+          "header_label": "Responsibi-lity Center Code",
+          "data_type": "string"
+        },
+        {
+          "column": "C",
+          "field": "stock_no",
+          "suggested_placeholder": "rsmi_item_stock_no",
+          "header_label": "Stock No.",
+          "data_type": "string"
+        },
+        {
+          "column": "D:E (merged per row)",
+          "field": "item_description",
+          "suggested_placeholder": "rsmi_item_description",
+          "header_label": "Item",
+          "data_type": "string"
+        },
+        {
+          "column": "F",
+          "field": "unit",
+          "suggested_placeholder": "rsmi_item_unit",
+          "header_label": "Unit",
+          "data_type": "string",
+          "notes": "Unit of measure, e.g. 'pc', 'box', 'ream'."
+        },
+        {
+          "column": "G",
+          "field": "quantity_issued",
+          "suggested_placeholder": "rsmi_item_quantity_issued",
+          "header_label": "Quantity Issued",
+          "data_type": "number"
+        },
+        {
+          "column": "H",
+          "field": "unit_cost",
+          "suggested_placeholder": "rsmi_item_unit_cost",
+          "header_label": "Unit Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00"
+        },
+        {
+          "column": "I",
+          "field": "amount",
+          "suggested_placeholder": "rsmi_item_amount",
+          "header_label": "Amount",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00",
+          "notes": "Typically quantity_issued * unit_cost, but this document does not define how it is computed (no validation rules per scope)."
+        }
+      ]
+    },
+
+    "totals": {
+      "description": "Grand total of the item table.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "total_amount",
+          "placeholder": "rsmi_total",
+          "cell": "I41",
+          "label_cell": "F41",
+          "label_merged_range": "F41:H41",
+          "label_text": "TOTAL",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00",
+          "notes": "In the unmapped 'RSMI' sheet this cell contains the live formula '=SUM(I11:I40)'. In 'RSMI with Mapping' the formula has been replaced by the text placeholder 'rsmi_total'. See issues for the two possible handling approaches."
+        }
+      ]
+    },
+
+    "recapitulation_table": {
+      "description": "This table is always null",
+      "section_type": "table",
+      "repeatable": true,
+      "mapping_status": "unmapped_in_source_workbook",
+      "header_rows": "42-43",
+      "data_range": "A44:I50",
+      "max_data_rows": 7,
+      "columns": [
+        {
+          "column": "A",
+          "field": "stock_no",
+          "suggested_placeholder": "rsmi_recap_stock_no",
+          "header_label": "Stock No.",
+          "data_type": "string"
+        },
+        {
+          "column": "B",
+          "field": "quantity",
+          "suggested_placeholder": "rsmi_recap_quantity",
+          "header_label": "Quantity",
+          "data_type": "number"
+        },
+        {
+          "column": "C-F",
+          "field": null,
+          "suggested_placeholder": null,
+          "header_label": null,
+          "data_type": null,
+          "notes": "No header label and no number formatting in this span. Likely a visual gap between the two halves of the Recapitulation table. Purpose not defined in the source workbook."
+        },
+        {
+          "column": "G",
+          "field": "unit_cost",
+          "suggested_placeholder": "rsmi_recap_unit_cost",
+          "header_label": "Unit Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 on rows 45-47 only; General on rows 44, 48-50 (see issues)"
+        },
+        {
+          "column": "H",
+          "field": "total_cost",
+          "suggested_placeholder": "rsmi_recap_total_cost",
+          "header_label": "Total Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 on rows 45-47 only; General on rows 44, 48-50 (see issues)"
+        },
+        {
+          "column": "I",
+          "field": "uacs_object_code",
+          "suggested_placeholder": "rsmi_recap_uacs_object_code",
+          "header_label": "UACS Object Code",
+          "data_type": "string"
+        }
+      ]
+    },
+
+    "signatory_footer": {
+      "description": "Bottom block of the form (rows 49-53), split into a left block (columns A-E) and a right block (columns F-I). Only one placeholder ('rsmi_user_id_fk') exists here; the remaining cells are either static labels or blank lines whose intended purpose is not explicit.",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "left_block": {
+        "range": "A49:E53",
+        "rows": {
+          "A49:E49": {"value": null, "role": "blank_line_above_signature"},
+          "A50:E50": {"value": null, "role": "blank_line_above_signature"},
+          "A51:E51": {
+            "value": "rsmi_user_id_fk",
+            "role": "data_field",
+            "field": "user_id_fk",
+            "placeholder": "rsmi_user_id_fk",
+            "data_type": "string",
+            "notes": "Name suggests this is a foreign-key reference to a user/employee record (e.g. the person who released/issued the items). Whether the printed cell should show the raw FK, or a resolved display name, is not specified."
+          },
+          "A52:E52": {"value": "AOV - Property and Supply Office", "role": "static_label", "purpose": "Position/office title printed under the signature line"},
+          "A53:E53": {"value": null, "role": "blank_line"}
+        }
+      },
+      "right_block": {
+        "range": "F49:I53",
+        "rows": {
+          "F49:I49": {"value": null, "role": "blank_line_above_signature"},
+          "F50:I50": {"value": null, "role": "blank_line_above_signature"},
+          "F51:H51": {"value": "<whitespace string>", "role": "unclear", "notes": "Contains only space characters; possibly an intentional blank signature line, possibly leftover formatting cruft."},
+          "I51": {"value": "_____", "role": "static_label", "purpose": "Short underscore line, possibly for a date entry"},
+          "F52:H52": {"value": "Accounting Staff", "role": "static_label", "purpose": "Position/office title printed under the signature line"},
+          "I52": {"value": "Date", "role": "static_label", "purpose": "Column label for a date entry"},
+          "F53:I53": {"value": null, "role": "blank_line"}
+        }
+      },
+      "notes": "No placeholder is provided for any value in the right block, and no placeholder/label clarifies what should be written above 'AOV - Property and Supply Office' in the left block (i.e., what A49/A50 are for). Treat this section as having a single confirmed field (user_id_fk)."
+    }
+  },
+
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'RSMI' and 'RSMI with Mapping' (identical in both sheets).",
+    "ranges": [
+      {"range": "A1:D1", "section": "letterhead"},
+      {"range": "A2:D2", "section": "letterhead"},
+      {"range": "E1:I1", "section": "letterhead (spacer)"},
+      {"range": "E2:I2", "section": "form_title"},
+      {"range": "E3:I3", "section": "form_title"},
+      {"range": "A3:D3", "section": "letterhead (spacer)"},
+      {"range": "A4:D4", "section": "vision_statement"},
+      {"range": "A5:D5", "section": "vision_statement"},
+      {"range": "A6:D6", "section": "vision_statement"},
+      {"range": "E4:I4", "section": "vision_statement (spacer)"},
+      {"range": "E5:I5", "section": "form_control_footer"},
+      {"range": "E6:I6", "section": "vision_statement (spacer)"},
+      {"range": "B7:C7", "section": "header_info.fund_cluster"},
+      {"range": "H7:I7", "section": "header_info.serial_no"},
+      {"range": "B8:C8", "section": "header_info.po_no"},
+      {"range": "H8:I8", "section": "header_info.date"},
+      {"range": "A9:G9", "section": "spacer"},
+      {"range": "H9:I9", "section": "instructional_note"},
+      {"range": "D10:E10", "section": "item_table.header (Item)"},
+      {"range": "D11:E11 .. D40:E40", "section": "item_table.data (Item description, one per data row, 30 ranges)"},
+      {"range": "D41:E41", "section": "item_table (trailing merge in TOTAL row, no content)"},
+      {"range": "F41:H41", "section": "totals.label (TOTAL)"},
+      {"range": "A42:B42", "section": "recapitulation_table.title (left)"},
+      {"range": "G42:I42", "section": "recapitulation_table.title (right)"},
+      {"range": "A49:E49", "section": "signatory_footer.left_block (blank)"},
+      {"range": "A50:E50", "section": "signatory_footer.left_block (blank)"},
+      {"range": "A51:E51", "section": "signatory_footer.left_block (user_id_fk)"},
+      {"range": "A52:E52", "section": "signatory_footer.left_block (label)"},
+      {"range": "A53:E53", "section": "signatory_footer.left_block (blank)"},
+      {"range": "F49:I49", "section": "signatory_footer.right_block (blank)"},
+      {"range": "F50:I50", "section": "signatory_footer.right_block (blank)"},
+      {"range": "F51:H51", "section": "signatory_footer.right_block (whitespace)"},
+      {"range": "F52:H52", "section": "signatory_footer.right_block (label)"},
+      {"range": "F53:I53", "section": "signatory_footer.right_block (blank)"}
+    ],
+    "note": "D11:E11 through D40:E40 (30 ranges) plus D41:E41 follow the same pattern and are summarized as one entry above to keep this document concise."
+  },
+
+  "data_types": {
+    "string": [
+      "rsmi_fund_cluster", "rsmi_serial_no", "rsmi_po_no", "rsmi_user_id_fk",
+      "item_table.ris_no", "item_table.responsibility_center_code", "item_table.stock_no",
+      "item_table.item_description", "item_table.unit",
+      "recapitulation_table.stock_no", "recapitulation_table.uacs_object_code"
+    ],
+    "date": [
+      "rsmi_date"
+    ],
+    "number": [
+      "item_table.quantity_issued", "item_table.unit_cost", "item_table.amount",
+      "rsmi_total",
+      "recapitulation_table.quantity", "recapitulation_table.unit_cost", "recapitulation_table.total_cost"
+    ],
+    "currency_formatted_number (#,##0.00)": [
+      "item_table.unit_cost", "item_table.amount", "rsmi_total",
+      "recapitulation_table.unit_cost (rows 45-47 only)", "recapitulation_table.total_cost (rows 45-47 only)"
+    ]
+  },
+
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "header_info.serial_no / header_info.po_no",
+      "description": "Cells H7 (rsmi_serial_no) and B8 (rsmi_po_no) carry a 'mm-dd-yy' number format, even though Serial No. and P.O. No. are normally alphanumeric/text values. This formatting appears to be inherited/leftover and does not match the field's expected content."
+    },
+    {
+      "id": "ISS-02",
+      "area": "item_table.ris_no (column A)",
+      "description": "Column A of the item table has a 'mm-dd-yy' number format only on rows 11-13; rows 14-40 are 'General'. The format is also inconsistent with 'RIS No.' typically being an alphanumeric reference rather than a date."
+    },
+    {
+      "id": "ISS-03",
+      "area": "totals (rsmi_total / I41)",
+      "description": "In the unmapped 'RSMI' sheet, I41 contains a live formula '=SUM(I11:I40)'. In 'RSMI with Mapping', this formula is overwritten by the text placeholder 'rsmi_total'. Two handling approaches are possible: (a) the AI agent computes the sum of the injected item amounts and writes it as a value, or (b) the placeholder is skipped/removed for I41 and the original SUM formula is preserved so Excel recalculates it automatically. This document does not decide between the two."
+    },
+    {
+      "id": "ISS-04",
+      "area": "recapitulation_table",
+      "description": "No placeholders exist for the Recapitulation table (rows 44-50) in 'RSMI with Mapping'. The table is fully unmapped: it is unclear whether/how it should be populated, and what relationship (if any) it has to the item table (e.g., per-Stock-No or per-UACS-code aggregation)."
+    },
+    {
+      "id": "ISS-05",
+      "area": "recapitulation_table number formats",
+      "description": "The '#,##0.00' currency format for the Unit Cost and Total Cost columns (G, H) is applied only to rows 45-47 of the 7-row data range (44-50). Rows 44, 48, 49 and 50 default to 'General' format, which is inconsistent."
+    },
+    {
+      "id": "ISS-06",
+      "area": "recapitulation_table header (row 43)",
+      "description": "Row 43 only defines header labels for columns A, B, G, H, I. Columns C-F have no header text and no special formatting - likely a visual gap between the two halves of the table, but its purpose is not defined."
+    },
+    {
+      "id": "ISS-07",
+      "area": "signatory_footer",
+      "description": "Only one field (rsmi_user_id_fk, cell A51) has a placeholder in the footer block (rows 49-53). The remaining blank merged ranges (A49:E50, A53:E53, F49:I50, F53:I53) and the whitespace-filled cell F51:H51 have no labels or placeholders, so their intended purpose (additional signature lines, dates, second signatory, etc.) cannot be determined from the workbook alone."
+    },
+    {
+      "id": "ISS-08",
+      "area": "stray cells outside form area",
+      "description": "Several cells well outside the form's visual area (A1:I53) contain only whitespace strings and should be treated as artifacts, not content: L17 (' '), L20 (a ~250-character space string), Q24 (' '), C70 (' '), C73 (a ~250-character space string). An AI agent scanning the sheet for non-empty cells should ignore these."
+    },
+    {
+      "id": "ISS-09",
+      "area": "duplicate logo image",
+      "description": "The workbook embeds the same image (image1.jpeg, the university logo) twice: once anchored near A1 (part of the static letterhead) and once anchored near A106, far below the visible form. The second instance appears to be a stray duplicate left over from editing."
+    },
+    {
+      "id": "ISS-10",
+      "area": "user-specified item table range vs. observed structure",
+      "description": "The brief describes the item list table as 'A12:F54, repeatable'. The actual workbook structure shows two distinct repeatable tables: the Item Table (header row 10, data rows 11-40, columns A-I with D:E merged per row) and the separate Recapitulation table (header rows 42-43, data rows 44-50, columns A-B and G-I). Neither matches 'A12:F54' exactly. This document maps both tables as they actually exist in the file; confirm which table(s) the AI agent should treat as 'the' repeatable item table."
+    },
+    {
+      "id": "ISS-11",
+      "area": "item_table header label (B10)",
+      "description": "The header label 'Responsibi-lity Center Code' contains a hyphenation artifact ('Responsibi-lity' instead of 'Responsibility'). Cosmetic, but relevant if header text is ever used as a lookup key."
+    }
+  ],
+
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive, and how it maps onto the sheet. Field names follow the suggested_placeholder values above. This is illustrative only - no validation rules are implied.",
+    "example_payload": {
+      "rsmi_fund_cluster": "01",
+      "rsmi_serial_no": "2026-06-0042",
+      "rsmi_po_no": "PO-2026-00187",
+      "rsmi_date": "2026-06-12",
+      "item_table": [
+        {
+          "rsmi_item_ris_no": "RIS-2026-0091",
+          "rsmi_item_responsibility_center_code": "RC-001",
+          "rsmi_item_stock_no": "10-01-02-001",
+          "rsmi_item_description": "Bond paper, A4, 80gsm, 500 sheets/ream",
+          "rsmi_item_unit": "ream",
+          "rsmi_item_quantity_issued": 10,
+          "rsmi_item_unit_cost": 250.00,
+          "rsmi_item_amount": 2500.00
+        },
+        {
+          "rsmi_item_ris_no": "RIS-2026-0091",
+          "rsmi_item_responsibility_center_code": "RC-001",
+          "rsmi_item_stock_no": "10-01-03-014",
+          "rsmi_item_description": "Ballpoint pen, black, 0.5mm",
+          "rsmi_item_unit": "box",
+          "rsmi_item_quantity_issued": 5,
+          "rsmi_item_unit_cost": 120.00,
+          "rsmi_item_amount": 600.00
+        }
+      ],
+      "rsmi_total": 3100.00,
+      "recapitulation_table": [
+        {
+          "rsmi_recap_stock_no": "10-01-02-001",
+          "rsmi_recap_quantity": 10,
+          "rsmi_recap_unit_cost": 250.00,
+          "rsmi_recap_total_cost": 2500.00,
+          "rsmi_recap_uacs_object_code": "50203010-00"
+        },
+        {
+          "rsmi_recap_stock_no": "10-01-03-014",
+          "rsmi_recap_quantity": 5,
+          "rsmi_recap_unit_cost": 120.00,
+          "rsmi_recap_total_cost": 600.00,
+          "rsmi_recap_uacs_object_code": "50203010-00"
+        }
+      ],
+      "rsmi_user_id_fk": "EMP-00231"
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'RSMI' sheet, assuming item_table rows are written starting at row 11 and recapitulation_table rows starting at row 44.",
+      "header_info": {
+        "B7": "01",
+        "H7": "2026-06-0042",
+        "B8": "PO-2026-00187",
+        "H8": "2026-06-12"
+      },
+      "item_table_row_1 (sheet row 11)": {
+        "A11": "RIS-2026-0091",
+        "B11": "RC-001",
+        "C11": "10-01-02-001",
+        "D11:E11": "Bond paper, A4, 80gsm, 500 sheets/ream",
+        "F11": "ream",
+        "G11": 10,
+        "H11": 250.00,
+        "I11": 2500.00
+      },
+      "item_table_row_2 (sheet row 12)": {
+        "A12": "RIS-2026-0091",
+        "B12": "RC-001",
+        "C12": "10-01-03-014",
+        "D12:E12": "Ballpoint pen, black, 0.5mm",
+        "F12": "box",
+        "G12": 5,
+        "H12": 120.00,
+        "I12": 600.00
+      },
+      "totals": {
+        "I41": 3100.00
+      },
+      "recapitulation_table_row_1 (sheet row 44)": {
+        "A44": "10-01-02-001",
+        "B44": 10,
+        "G44": 250.00,
+        "H44": 2500.00,
+        "I44": "50203010-00"
+      },
+      "recapitulation_table_row_2 (sheet row 45)": {
+        "A45": "10-01-03-014",
+        "B45": 5,
+        "G45": 120.00,
+        "H45": 600.00,
+        "I45": "50203010-00"
+      },
+      "signatory_footer": {
+        "A51": "EMP-00231"
+      }
+    }
+  }
+}
