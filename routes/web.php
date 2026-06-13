@@ -79,6 +79,8 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::post('/delivery-attachment/iar/{iar_id}/save', 'saveIar')->name('save.iar');
         Route::get('/delivery-attachment/iar/{iar_id}/export', 'exportIar')->name('export.iar.pdf');
         Route::post('/delivery-attachment/ris/{ris_id}/save', 'saveRis')->name('save.ris');
+        Route::get('/delivery-attachment/ris/{ris_id}/export', 'exportRis')->name('export.ris.pdf');
+        Route::post('/delivery-attachment/rsmi/{rsmi_id}/save', 'saveRsmi')->name('save.rsmi');
     });
 });
 
