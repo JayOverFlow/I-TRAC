@@ -45,7 +45,7 @@ class IarPdfExportService
         $sheet->getPageMargins()->setTop(0.2);
         $sheet->getPageMargins()->setBottom(0.2);
         $sheet->getPageMargins()->setLeft(0.2);
-        $sheet->getPageMargins()->setRight(0);
+        $sheet->getPageMargins()->setRight(0.2);
         $sheet->getPageMargins()->setHeader(0);
         $sheet->getPageMargins()->setFooter(0);
 
