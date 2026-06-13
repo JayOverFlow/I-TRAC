@@ -12,6 +12,7 @@ use App\Models\Rsmi;
 use App\Models\RsmiItem;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
+use App\Services\RsmiPdfExportService;
 use Illuminate\Support\Facades\DB;
 
 class DeliveryAttachmentController extends Controller
@@ -83,6 +84,18 @@ class DeliveryAttachmentController extends Controller
 
         $pdfService = app(RisPdfExportService::class);
         return $pdfService->export($ris);
+    }
+
+    public function exportRsmi($rsmi_id)
+    {
+        $rsmi = Rsmi::with([
+            'rsmiItems.rsmiSpecs',
+            'purchaseOrder',
+            'user'
+        ])->findOrFail($rsmi_id);
+
+        $pdfService = app(RsmiPdfExportService::class);
+        return $pdfService->export($rsmi);
     }
 
     public function saveIar($iar_id, Request $request)

@@ -48,19 +48,6 @@ class RisPdfExportService
         $sheet->getPageMargins()->setHeader(0);
         $sheet->getPageMargins()->setFooter(0);
 
-        // Increase column widths by 50%
-        foreach (range('A', 'I') as $col) {
-            $colDimension = $sheet->getColumnDimension($col);
-            $width = $colDimension->getWidth();
-            if ($width < 0) {
-                $width = $sheet->getDefaultColumnDimension()->getWidth();
-            }
-            if ($width <= 0) {
-                $width = 8.43;
-            }
-            $colDimension->setWidth($width * 1.50);
-        }
-
         // Helper for dates formatting
         $formatDate = function ($date) {
             if (!$date) return '';
