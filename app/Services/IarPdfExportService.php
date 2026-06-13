@@ -33,7 +33,7 @@ class IarPdfExportService
         $sheet->getPageSetup()->setFitToPage(true);
         $sheet->getPageSetup()->setFitToWidth(1);
         $sheet->getPageSetup()->setFitToHeight(1);
-        $sheet->getPageSetup()->setPrintArea('A1:F53');
+        $sheet->getPageSetup()->setPrintArea('A2:F53');
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
@@ -42,10 +42,10 @@ class IarPdfExportService
         $sheet->getPageSetup()->setVerticalCentered(true);
 
         // Set Margins sides to 0
-        $sheet->getPageMargins()->setTop(0);
-        $sheet->getPageMargins()->setBottom(0);
-        $sheet->getPageMargins()->setLeft(0.8);
-        $sheet->getPageMargins()->setRight(0.8);
+        $sheet->getPageMargins()->setTop(0.2);
+        $sheet->getPageMargins()->setBottom(0.2);
+        $sheet->getPageMargins()->setLeft(0.2);
+        $sheet->getPageMargins()->setRight(0);
         $sheet->getPageMargins()->setHeader(0);
         $sheet->getPageMargins()->setFooter(0);
 
