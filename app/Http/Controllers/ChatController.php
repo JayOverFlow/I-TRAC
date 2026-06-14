@@ -179,6 +179,7 @@ class ChatController extends Controller
                                         : asset('img/profiles/blank.avif'),
                     'message'      => $msg->message,
                     'time'         => $msg->created_at ? $msg->created_at->diffForHumans() : '',
+                    'is_read'      => !is_null($msg->read_at),
                 ];
             });
 
@@ -209,6 +210,7 @@ class ChatController extends Controller
                                             : '',
                     'assigned_by_name' => $task->assignedBy->user_fullname_no_middle ?? 'System',
                     'url'              => route('show.tasks'),
+                    'is_read'          => !is_null($task->read_at),
                 ];
             });
 
