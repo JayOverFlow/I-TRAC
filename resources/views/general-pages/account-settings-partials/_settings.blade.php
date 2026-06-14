@@ -77,17 +77,10 @@
                     </div>
                 </div>
 
-                <!-- FAQS CARD -->
-                <div class="settings-card faqs-card">
-                    <div class="card-content-inline">
-                        <div class="card-text-group">
-                            <h3>FAQs</h3>
-                            <p class="settings-description">Your Profile will be visible to anyone on the network.</p>
-                        </div>
-                        <div class="card-action-link">
-                            <a href="#" class="learn-more-link">Learn more <span class="arrow-icon">&gt;</span></a>
-                        </div>
-                    </div>
+                <!-- MANUAL BOOKLET CARD -->
+                <div class="settings-card manual-booklet-card">
+                    <h3>Manual Booklet</h3>
+                    <p class="manual-booklet-text">Click <a href="#" class="manual-booklet-link"><i><u>I-TRAC Manual Booklet</u></i></a> to download.</p>
                 </div>
 
             </div>
@@ -760,11 +753,88 @@
 
         </div> <!-- End settings-view-container -->
     @else
-        <!-- Placeholder for Unassigned and general roles -->
-        <div class="settings-placeholder-container">
-            <div class="settings-placeholder-card">
-                <h3>Settings Customize</h3>
-                <p>Customization settings options are tailored to your department's specific procurement role. Features for your account role will be available in the next release.</p>
+        <div class="settings-view-container">
+            <div id="settings-view-main-non-premium" class="settings-view-pane active">
+                <div class="settings-container">
+                    
+                    <!-- LEFT COLUMN (Theme, Notifications) -->
+                    <div class="settings-left-col">
+                        
+                        <!-- CHOOSE THEME CARD -->
+                        <div class="settings-card choose-theme-card">
+                            <div class="settings-card-header">
+                                <h3>Choose Theme</h3>
+                            </div>
+                            
+                            <div class="theme-options">
+                                <!-- Light Mode Option -->
+                                <div class="theme-option">
+                                    <label class="theme-option-label">
+                                        <input type="radio" name="theme_selection" value="light" checked style="display:none;">
+                                        <span class="custom-radio"></span>
+                                        <div class="theme-thumbnail-wrapper">
+                                            <img src="{{ asset('img/light-mode.svg') }}" alt="Light Mode" class="theme-thumbnail">
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- Dark Mode Option -->
+                                <div class="theme-option">
+                                    <label class="theme-option-label">
+                                        <input type="radio" name="theme_selection" value="dark" style="display:none;">
+                                        <span class="custom-radio"></span>
+                                        <div class="theme-thumbnail-wrapper">
+                                            <img src="{{ asset('img/dark-mode.svg') }}" alt="Dark Mode" class="theme-thumbnail">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOTIFICATION CARD -->
+                        <div class="settings-card notification-card">
+                            <div class="card-content-inline">
+                                <div class="card-text-group">
+                                    <h3>Notification</h3>
+                                    <p class="settings-description">Enable all notifications</p>
+                                </div>
+                                <div class="toggle-switch-wrapper">
+                                    <input type="checkbox" id="notification-toggle" class="switch-input" checked>
+                                    <label class="switch-label" for="notification-toggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN (Manual Booklet, Promo Banner) -->
+                    <div class="settings-right-col">
+                        
+                        <!-- MANUAL BOOKLET CARD -->
+                        <div class="settings-card manual-booklet-card">
+                            <h3>Manual Booklet</h3>
+                            <p class="manual-booklet-text">Click <a href="#" class="manual-booklet-link"><i><u>I-TRAC Manual Booklet</u></i></a> to download.</p>
+                        </div>
+
+                        <!-- RED PROMOTION BANNER -->
+                        <div class="promo-banner">
+                            <!-- Integrated Background SVG with 3D Phone that overflows -->
+                            <img src="{{ asset('img/mobile-3d-bg.svg') }}" alt="I-TRAC Mobile App" class="promo-bg-image">
+                            
+                            <!-- Content overlay -->
+                            <div class="promo-content">
+                                <div class="promo-left">
+                                    <!-- Download Now button is omitted for non-premium/unassigned roles -->
+                                </div>
+                                <div class="promo-right"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
         </div>
     @endif
