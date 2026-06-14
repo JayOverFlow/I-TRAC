@@ -71,22 +71,32 @@
                     </div>
                 </div>
                 <hr class="m-0 p-0">
+                @php
+                    $firstItem = $ris->risItems->first();
+                    $isSemiExpendable = $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
+                @endphp
                 <div class="row g-4 ms-3 mt-0 mb-1">
                     <div class="col-md-6">
                         <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Received by:</h6>
-                            <select class="form-select form-select-sm ms-2 w-75" name="ris_received_by">
-                                <option value="">Select User</option>
-                                @if($ris->department)
-                                    @foreach($ris->department->users as $user)
-                                        <option value="{{ $user->user_id }}" {{ ($ris->receiver && $ris->receiver->user_id == $user->user_id) ? 'selected' : '' }}>
-                                            {{ $user->user_fullname }}
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <option value="">No department assigned</option>
-                                @endif
-                            </select>
+                            @if($isSemiExpendable)
+                                <h6 class="mb-3 black-text fw-bold">Received by:</h6>
+                                <h6 class="ms-2 mb-2">{{ $ris->receiver ? $ris->receiver->user_fullname : 'No user assigned' }}</h6>
+                                <input type="hidden" name="ris_received_by" value="{{ $ris->receiver ? $ris->receiver->user_id : '' }}">
+                            @else
+                                <h6 class="mb-2 black-text fw-bold">Received by:</h6>
+                                <select class="form-select form-select-sm ms-2 w-75" name="ris_received_by">
+                                    <option value="">Select User</option>
+                                    @if($ris->department)
+                                        @foreach($ris->department->users as $user)
+                                            <option value="{{ $user->user_id }}" {{ ($ris->receiver && $ris->receiver->user_id == $user->user_id) ? 'selected' : '' }}>
+                                                {{ $user->user_fullname }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <option value="">No department assigned</option>
+                                    @endif
+                                </select>
+                            @endif
                         </div>
                     </div>
 

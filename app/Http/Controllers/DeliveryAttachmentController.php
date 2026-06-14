@@ -10,6 +10,8 @@ use App\Models\Ris;
 use App\Models\RisItem;
 use App\Models\Rsmi;
 use App\Models\RsmiItem;
+use App\Models\Ics;
+use App\Models\IcsItem;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
@@ -22,6 +24,7 @@ class DeliveryAttachmentController extends Controller
         $po = PoParent::with([
             'iarReports.iarItems.iarSpecs',
             'risSlips.risItems.risSpecs',
+            'risSlips.risItems.poItem',
             'risSlips.requester',
             'risSlips.receiver',
             'risSlips.department.users',
@@ -190,6 +193,9 @@ class DeliveryAttachmentController extends Controller
     {
         $ris = Ris::findOrFail($ris_id);
 
+        $firstItem = $ris->risItems->first();
+        $isSemiExpendable = $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
+
         $validated = $request->validate([
             'ris_fund_cluster' => 'nullable|string|max:100',
             'ris_no' => 'nullable|string|max:50',
@@ -209,11 +215,16 @@ class DeliveryAttachmentController extends Controller
 
         DB::beginTransaction();
         try {
+            $receivedBy = $validated['ris_received_by'] ?? null;
+            if ($isSemiExpendable) {
+                $receivedBy = $ris->ris_received_by;
+            }
+
             $ris->update([
                 'ris_fund_cluster' => $validated['ris_fund_cluster'] ?? null,
                 'ris_no' => $validated['ris_no'] ?? null,
                 'ris_center_code' => $validated['ris_center_code'] ?? null,
-                'ris_received_by' => $validated['ris_received_by'] ?? null,
+                'ris_received_by' => $receivedBy,
                 'ris_received_date' => $validated['ris_received_date'] ?? null,
             ]);
 
@@ -364,6 +375,97 @@ class DeliveryAttachmentController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to save Report of Supplies and Materials Issued: ' . $e->getMessage())
                 ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
+        }
+    }
+
+    public function saveIcs($ics_id, Request $request)
+    {
+        $ics = Ics::findOrFail($ics_id);
+
+        $validated = $request->validate([
+            'ics_fund_cluster' => 'nullable|string|max:100',
+            'ics_no' => 'nullable|string|max:50',
+            'ics_code_no' => 'nullable|string|max:50',
+            'ics_received_from_date' => 'nullable|date',
+            'ics_received_by_date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.ics_items_id' => 'nullable|integer',
+            'items.*.ics_quantity' => 'nullable|integer',
+            'items.*.ics_unit' => 'nullable|string|max:20',
+            'items.*.ics_unit_cost' => 'nullable|numeric',
+            'items.*.ics_items_descrip' => 'nullable|string|max:255',
+            'items.*.ics_inventory_item_no' => 'nullable|string|max:50',
+            'items.*.ics_estimated_useful_life' => 'nullable|string|max:50',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $ics->update([
+                'ics_fund_cluster' => $validated['ics_fund_cluster'] ?? null,
+                'ics_no' => $validated['ics_no'] ?? null,
+                'ics_code_no' => $validated['ics_code_no'] ?? null,
+                'ics_received_from_date' => $validated['ics_received_from_date'] ?? null,
+                'ics_received_by_date' => $validated['ics_received_by_date'] ?? null,
+            ]);
+
+            $incomingItemIds = [];
+
+            foreach ($validated['items'] as $itemData) {
+                $qty = isset($itemData['ics_quantity']) ? intval($itemData['ics_quantity']) : 0;
+                $unitCost = isset($itemData['ics_unit_cost']) ? floatval($itemData['ics_unit_cost']) : 0;
+                $totalCost = $qty * $unitCost;
+
+                if (!empty($itemData['ics_items_id'])) {
+                    // Update existing item
+                    $icsItem = IcsItem::where('ics_id_fk', $ics->ics_id)
+                        ->findOrFail($itemData['ics_items_id']);
+
+                    $icsItem->update([
+                        'ics_quantity' => $qty,
+                        'ics_unit' => $itemData['ics_unit'] ?? null,
+                        'ics_unit_cost' => $unitCost,
+                        'ics_total_cost' => $totalCost,
+                        'ics_items_descrip' => $itemData['ics_items_descrip'] ?? null,
+                        'ics_inventory_item_no' => $itemData['ics_inventory_item_no'] ?? null,
+                        'ics_estimated_useful_life' => $itemData['ics_estimated_useful_life'] ?? null,
+                    ]);
+
+                    $incomingItemIds[] = $icsItem->ics_items_id;
+                } else {
+                    // Create new item
+                    $icsItem = IcsItem::create([
+                        'ics_id_fk' => $ics->ics_id,
+                        'ics_quantity' => $qty,
+                        'ics_unit' => $itemData['ics_unit'] ?? null,
+                        'ics_unit_cost' => $unitCost,
+                        'ics_total_cost' => $totalCost,
+                        'ics_items_descrip' => $itemData['ics_items_descrip'] ?? null,
+                        'ics_inventory_item_no' => $itemData['ics_inventory_item_no'] ?? null,
+                        'ics_estimated_useful_life' => $itemData['ics_estimated_useful_life'] ?? null,
+                    ]);
+
+                    $incomingItemIds[] = $icsItem->ics_items_id;
+                }
+
+                // Since description and specifications are consolidated, clear/delete specs to prevent duplication
+                $icsItem->icsSpecs()->delete();
+            }
+
+            // Delete items that were removed in the UI (not present in incoming request)
+            IcsItem::where('ics_id_fk', $ics->ics_id)
+                ->whereNotIn('ics_items_id', $incomingItemIds)
+                ->delete();
+
+            DB::commit();
+
+            return redirect()->back()
+                ->with('success', 'Inventory Custodian Slip saved successfully.')
+                ->with('active_document', 'doc-ics-' . $ics->ics_id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Failed to save Inventory Custodian Slip: ' . $e->getMessage())
+                ->with('active_document', 'doc-ics-' . $ics->ics_id);
         }
     }
 }
