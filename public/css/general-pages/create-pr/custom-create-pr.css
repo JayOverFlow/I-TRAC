@@ -312,7 +312,7 @@ body.dark .specification-body textarea:focus {
 
 /* DARK MODE OVERRIDES */
 body.dark .stepper-card {
-    background-color: #1b2e4b !important;
+    background-color: #1D2127 !important;
     box-shadow: none !important;
 }
 
@@ -321,7 +321,7 @@ body.dark .stepper-title {
 }
 
 body.dark .stepper-circle {
-    background-color: #3b3f5c;
+    background-color: #2a2f38;
 }
 
 body.dark .stepper-circle.active-latest {
@@ -329,16 +329,16 @@ body.dark .stepper-circle.active-latest {
 }
 
 body.dark .stepper-circle.active-historic {
-    background-color: #3b3f5c;
+    background-color: #2a2f38;
 }
 
 body.dark .stepper-circle.pending {
-    background-color: #191e3a;
-    border: 2px dashed #3b3f5c;
+    background-color: #15181D;
+    border: 2px dashed #2a2f38;
 }
 
 body.dark .stepper-line {
-    background-color: #191e3a;
+    background-color: #15181D;
 }
 
 body.dark .stepper-label {
@@ -350,10 +350,10 @@ body.dark .stepper-item.latest .stepper-label {
 }
 
 body.dark .stepper-item.pending .stepper-label {
-    color: #506690;
+    color: #6B7280;
 }
 
 body.dark .stepper-prefix,
 body.dark .stepper-date {
-    color: #506690;
+    color: #6B7280;
 }
