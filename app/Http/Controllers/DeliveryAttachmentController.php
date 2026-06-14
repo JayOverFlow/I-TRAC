@@ -21,6 +21,7 @@ use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
 use App\Services\IcsPdfExportService;
 use App\Services\RspiPdfExportService;
+use App\Services\ParPdfExportService;
 use Illuminate\Support\Facades\DB;
 
 class DeliveryAttachmentController extends Controller
@@ -130,6 +131,19 @@ class DeliveryAttachmentController extends Controller
 
         $pdfService = app(RspiPdfExportService::class);
         return $pdfService->export($rspi);
+    }
+
+    public function exportPar($par_id)
+    {
+        $par = Par::with([
+            'parItems.parSpecs',
+            'purchaseOrder',
+            'receiver.departments',
+            'issuer.roles'
+        ])->findOrFail($par_id);
+
+        $pdfService = app(ParPdfExportService::class);
+        return $pdfService->export($par);
     }
 
     public function saveIar($iar_id, Request $request)
