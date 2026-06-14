@@ -6,18 +6,18 @@ var App = function() {
         sm: 576
     };
     var Dom = {
-        main: document.querySelector('html, body'),
+        get main() { return document.querySelector('html, body'); },
         id: {
-            container: document.querySelector("#container"),
+            get container() { return document.querySelector("#container"); },
         },
         class: {
-            navbar: document.querySelector(".navbar"),
-            overlay: document.querySelector('.overlay'),
-            search: document.querySelector('.toggle-search'),
-            searchOverlay: document.querySelector('.search-overlay'),
-            searchForm: document.querySelector('.search-form-control'),
-            mainContainer: document.querySelector('.main-container'),
-            mainHeader: document.querySelector('.header.navbar')
+            get navbar() { return document.querySelector(".navbar"); },
+            get overlay() { return document.querySelector('.overlay'); },
+            get search() { return document.querySelector('.toggle-search'); },
+            get searchOverlay() { return document.querySelector('.search-overlay'); },
+            get searchForm() { return document.querySelector('.search-form-control'); },
+            get mainContainer() { return document.querySelector('.main-container'); },
+            get mainHeader() { return document.querySelector('.header.navbar'); }
         }
     }
 
@@ -44,7 +44,7 @@ var App = function() {
             sidebarCollapseEle.forEach(el => {
                 el.addEventListener('click', function (sidebar) {
                     sidebar.preventDefault();
-                    getSidebar = document.querySelector('.sidebar-wrapper');
+                    const getSidebar = document.querySelector('.sidebar-wrapper');
 
                     if ($recentSubmenu === true) {
                         if (document.querySelector('.collapse.submenu').classList.contains('show')) {
