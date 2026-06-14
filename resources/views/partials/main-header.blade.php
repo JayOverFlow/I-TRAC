@@ -162,7 +162,7 @@
                         @forelse ($recentMessages as $msg)
                             <div class="dropdown-item"
                                 onclick="window.location.href='{{ route('account.settings') }}#animated-underline-inbox';"
-                                style="cursor: pointer;">
+                                style="cursor: pointer; {{ is_null($msg->read_at) ? 'background-color: rgba(67, 97, 238, 0.05);' : '' }}">
                                 <div class="media">
                                     <img src="{{ $msg->sender->user_profile_photo ? asset($msg->sender->user_profile_photo) : asset('img/profiles/blank.avif') }}"
                                         class="img-fluid me-2 rounded-circle" alt="avatar"
@@ -193,12 +193,36 @@
 
                     <div id="header-notifications-list">
                         @forelse ($recentNotifications as $task)
-                            <div class="dropdown-item" onclick="window.location.href='{{ route('show.tasks') }}';"
-                                style="cursor: pointer;">
+                            @php
+                                $type = $task->task_type;
+                                $typeColors = [
+                                    'Purchase Request' => ['bg' => '#eceffe', 'stroke' => '#4361ee'],
+                                    'PR Assignment'    => ['bg' => '#eceffe', 'stroke' => '#4361ee'],
+                                    'PR Submitted'     => ['bg' => '#e8f8f0', 'stroke' => '#00ab55'],
+                                    'PO Submitted'     => ['bg' => '#fff4e6', 'stroke' => '#e6830a'],
+                                ];
+                                $color = $typeColors[$type] ?? ['bg' => '#f0f0f0', 'stroke' => '#888'];
+                                $badgeColors = [
+                                    'Purchase Request' => 'background:#4361ee;',
+                                    'PR Assignment'    => 'background:#4361ee;',
+                                    'PR Submitted'     => 'background:#00ab55;',
+                                    'PO Submitted'     => 'background:#e6830a;',
+                                ];
+                                $badgeStyle = $badgeColors[$type] ?? 'background:#888;';
+                                $typeLabel = match($type) {
+                                    'PR Submitted'  => 'PR Submitted',
+                                    'PO Submitted'  => 'PO Submitted',
+                                    'PR Assignment' => 'PR Assigned',
+                                    'Purchase Request' => 'PR Assigned',
+                                    default         => 'Notification',
+                                };
+                            @endphp
+                            <div class="dropdown-item" onclick="markNotifRead({{ $task->task_id }}, '{{ route('show.tasks') }}')"
+                                style="cursor: pointer; {{ is_null($task->read_at) ? 'background-color: rgba(67, 97, 238, 0.05);' : '' }}">
                                 <div class="media" style="align-items: flex-start;">
-                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #eceffe; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: {{ $color['bg'] }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                            fill="none" stroke="#4361ee" stroke-width="2" stroke-linecap="round"
+                                            fill="none" stroke="{{ $color['stroke'] }}" stroke-width="2" stroke-linecap="round"
                                             stroke-linejoin="round" class="feather feather-file-text">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                             <polyline points="14 2 14 8 20 8"></polyline>
@@ -206,13 +230,16 @@
                                             <line x1="16" y1="17" x2="8" y2="17"></line>
                                         </svg>
                                     </div>
-                                    <div class="media-body" style="overflow: hidden;">
+                                    <div class="media-body" style="overflow: hidden; display: flex; flex-direction: column; gap: 4px;">
                                         <h6 style="white-space: normal; font-weight: 700; line-height: 1.3; margin-bottom: 2px; font-size: 0.82rem;">
-                                            {{ $task->task_description }}
+                                            {{ $task->task_description ?? 'New Task Assigned' }}
                                         </h6>
-                                        <p style="font-size: 0.72rem; color: #888; margin-bottom: 0;">
-                                            {{ \Carbon\Carbon::parse($task->created_at)->diffForHumans() }}
-                                        </p>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 0.65rem; padding: 1px 6px; border-radius: 20px; color: #fff; {{ $badgeStyle }}">{{ $typeLabel }}</span>
+                                            <p style="font-size: 0.72rem; color: #888; margin-bottom: 0;">
+                                                {{ \Carbon\Carbon::parse($task->created_at)->diffForHumans() }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -421,8 +448,10 @@
                     msgList.innerHTML = '<div class="dropdown-item text-center py-3"><p class="text-muted mb-0" style="font-size:0.8rem;">No unread messages</p></div>';
                     return;
                 }
-                msgList.innerHTML = list.map(m => `
-                    <div class="dropdown-item" onclick="window.location.href='{{ route('account.settings') }}#animated-underline-inbox';" style="cursor:pointer;">
+                msgList.innerHTML = list.map(m => {
+                    const unreadStyle = !m.is_read ? 'background-color: rgba(67, 97, 238, 0.05);' : '';
+                    return `
+                    <div class="dropdown-item" onclick="window.location.href='{{ route('account.settings') }}#animated-underline-inbox';" style="cursor:pointer; ${unreadStyle}">
                         <div class="media">
                             <img src="${m.sender_avatar}" class="img-fluid me-2 rounded-circle" style="width:38px;height:38px;object-fit:cover;flex-shrink:0;" alt="avatar">
                             <div class="media-body" style="overflow:hidden;">
@@ -433,7 +462,8 @@
                                 <p class="text-muted text-truncate mb-0" style="font-size:0.78rem;">${m.message}</p>
                             </div>
                         </div>
-                    </div>`).join('');
+                    </div>`;
+                }).join('');
             }
 
             function renderNotifications(list) {
@@ -459,9 +489,11 @@
                     };
                     const badgeStyle = badgeColors[n.task_type] || 'background:#888;';
                     const label = n.type_label || 'Notification';
+                    const unreadStyle = !n.is_read ? 'background-color: rgba(67, 97, 238, 0.05);' : '';
+                    const description = n.task_description || 'New Task Assigned';
 
                     return `
-                    <div class="dropdown-item" onclick="markNotifRead(${n.task_id}, '${n.url}')" style="cursor:pointer;">
+                    <div class="dropdown-item" onclick="markNotifRead(${n.task_id}, '${n.url}')" style="cursor:pointer; ${unreadStyle}">
                         <div class="media" style="align-items:flex-start;">
                             <div style="width:36px;height:36px;border-radius:50%;background:${color.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color.stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -471,10 +503,8 @@
                                     <line x1="16" y1="17" x2="8" y2="17"></line>
                                 </svg>
                             </div>
-                            <div class="media-body" style="overflow:hidden;">
-                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                                    <h6 style="font-weight:700;line-height:1.2;margin-bottom:0;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${n.task_description}</h6>
-                                </div>
+                            <div class="media-body" style="overflow:hidden; display:flex; flex-direction:column; gap:4px;">
+                                <h6 style="white-space: normal; font-weight: 700; line-height: 1.3; margin-bottom: 2px; font-size: 0.82rem;">${description}</h6>
                                 <div style="display:flex;align-items:center;gap:6px;">
                                     <span style="font-size:0.65rem;padding:1px 6px;border-radius:20px;color:#fff;${badgeStyle}">${label}</span>
                                     <p style="font-size:0.7rem;color:#888;margin-bottom:0;">${n.time}</p>

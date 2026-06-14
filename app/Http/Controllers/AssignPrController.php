@@ -74,13 +74,20 @@ class AssignPrController extends Controller
         $assignedTo  = $request->assigned_to;
         $itemIds     = $request->item_ids;
 
+        // Fetch selected items to build a human-readable description
+        $items = AppItem::whereIn('app_item_id', $itemIds)->get();
+        $projectTitles = $items->pluck('app_item_proj_title')->filter()->unique()->implode(', ');
+        $headName = $user->user_fullname_no_middle ?? 'Department Head';
+        $description = "{$headName} has assigned you to create a Purchase Request for: " . ($projectTitles ?: 'Selected APP Projects');
+
         // Create ONE task for all selected items
         $task = Task::create([
-            'assigned_by'    => $headUserId,
-            'assigned_to'    => $assignedTo,
-            'task_type'      => 'Purchase Request',
-            'task_status'    => 'Pending',
-            'task_dep_id_fk' => $dep_id,
+            'assigned_by'      => $headUserId,
+            'assigned_to'      => $assignedTo,
+            'task_description' => substr($description, 0, 255),
+            'task_type'        => 'Purchase Request',
+            'task_status'      => 'Pending',
+            'task_dep_id_fk'   => $dep_id,
         ]);
 
         // Link the items to the task via pivot
