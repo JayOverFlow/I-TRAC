@@ -28,4 +28,163 @@
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
 }
 
+/* =============================================
+   DARK MODE OVERRIDES — Registration Page
+   ============================================= */
 
+/* Body and main layout */
+html.dark body {
+    background-color: #0E0F11 !important;
+}
+
+/* Right column (form area) */
+html.dark .col-6.px-4 {
+    background-color: #15181D !important;
+}
+
+/* Headings and text */
+html.dark h2.black-text,
+html.dark h5.black-text,
+html.dark .black-text {
+    color: #F3F4F6 !important;
+}
+
+html.dark p.black-text,
+html.dark p {
+    color: #A1A1AA !important;
+}
+
+/* Labels */
+html.dark .form-label {
+    color: #F3F4F6 !important;
+}
+
+/* Form controls */
+html.dark .form-control {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+    border-color: #2a2f38 !important;
+}
+
+html.dark .form-control:focus {
+    border-color: #B91C1C !important;
+    box-shadow: 0 0 0 0.25rem rgba(185, 28, 28, 0.25) !important;
+}
+
+html.dark .form-control::placeholder {
+    color: #6B7280 !important;
+}
+
+/* Select dropdown */
+html.dark .form-select {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+    border-color: #2a2f38 !important;
+}
+
+/* BS Stepper */
+html.dark .bs-stepper-circle {
+    background-color: #2a2f38 !important;
+    color: #F3F4F6 !important;
+}
+
+html.dark .active .bs-stepper-circle {
+    background-color: var(--red-2) !important;
+}
+
+html.dark .bs-stepper .step.crossed + .line {
+    background-color: var(--red-2) !important;
+}
+
+html.dark .bs-stepper .line,
+html.dark .bs-stepper-line {
+    background-color: #2a2f38 !important;
+}
+
+html.dark .bs-stepper .step-trigger {
+    color: #A1A1AA !important;
+}
+
+html.dark .bs-stepper-label.black-text,
+html.dark .bs-stepper-label {
+    color: #A1A1AA !important;
+}
+
+html.dark .step.crossed .step-trigger.disabled .bs-stepper-circle,
+html.dark .step.crossed .step-trigger:disabled .bs-stepper-circle {
+    background-color: var(--red-2) !important;
+    color: #fff !important;
+}
+
+/* OTP Inputs (Step 4 - Email Verification) */
+html.dark .opt-input {
+    background-color: #1D2127 !important;
+    color: #F3F4F6 !important;
+    border-color: #2a2f38 !important;
+}
+
+html.dark .opt-input:focus {
+    border-color: #B91C1C !important;
+    box-shadow: 0 0 0 0.25rem rgba(185, 28, 28, 0.25) !important;
+}
+
+/* Review step text */
+html.dark h6 {
+    color: #A1A1AA !important;
+}
+
+html.dark h5.black-text,
+html.dark #review-first-name,
+html.dark #review-last-name,
+html.dark #review-email,
+html.dark #review-password,
+html.dark #review-middle-name,
+html.dark #review-suffix,
+html.dark #review-tup-id,
+html.dark #review-user-type,
+html.dark #review-department {
+    color: #F3F4F6 !important;
+}
+
+/* Radio buttons in dark mode */
+html.dark .form-check-label {
+    color: #F3F4F6 !important;
+}
+
+html.dark .form-check-input:not(:checked) {
+    background-color: #1D2127 !important;
+    border-color: #2a2f38 !important;
+}
+
+/* Buttons */
+html.dark .btn-red {
+    background-color: var(--red-btn) !important;
+    color: #fff !important;
+}
+
+/* Red text links */
+html.dark .red-text {
+    color: #EF4444 !important;
+}
+
+/* Text muted / resend timer */
+html.dark .text-muted {
+    color: #6B7280 !important;
+}
+
+/* Password toggle icon */
+html.dark #toggle-password-review {
+    color: #A1A1AA !important;
+}
+
+/* Alert info box (step 4 modal) */
+html.dark .alert-info {
+    background-color: rgba(67, 97, 238, 0.1) !important;
+    border-color: rgba(67, 97, 238, 0.2) !important;
+    color: #A1A1AA !important;
+}
+
+/* Invalid feedback */
+html.dark .invalid-feedback {
+    color: #EF4444 !important;
+}

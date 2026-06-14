@@ -186,7 +186,7 @@ body.dark .gray-text {
 }
 
 body.dark .red-text-2 {
-    color: #B91C1C !important;
+    color: #EF4444 !important;
 }
 
 /* Table Striped Fix for Dark Mode */
@@ -314,7 +314,7 @@ body.dark .user-profile-dropdown .media-body small {
 }
 
 body.dark .user-profile-dropdown .media-body .red-text-2 {
-    color: #B91C1C !important;
+    color: #EF4444 !important;
 }
 
 /* Account Settings Tabs */
@@ -442,7 +442,7 @@ body.dark .fw-bold.text-black {
 }
 
 body.dark .red-text-2 {
-    color: #B91C1C !important;
+    color: #EF4444 !important;
 }
 
 /* ==========================================
@@ -497,7 +497,7 @@ body.dark .switch-account-item:hover {
     color: var(--red-text-2);
 }
 body.dark .account-role {
-    color: #B91C1C;
+    color: #EF4444;
 }
 
 /* Customized HTML Radio Selector for Premium visual appearance */
