@@ -1,0 +1,659 @@
+{
+  "$description": "Explicit field/data mapping context for the PAR (Property Acknowledgement Receipt) Excel template. Generated for use as AI agent context when injecting data into the 'PAR' sheet, using 'PAR with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "PAR_Template.xlsx",
+    "form_title": "PROPERTY ACKNOWLEDGEMENT RECEIPT",
+    "form_code": "FM-SUP-005",
+    "form_revision": "REV 0",
+    "form_revision_date": "2016-11-09",
+    "issuing_organization": "Technological University of the Philippines, Taguig City",
+    "sheets": {
+      "PAR": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it).",
+        "used_range": "A1:F52",
+        "form_visual_area": "A1:F52"
+      },
+      "PAR with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'PAR', but single-value (header/footer) cells and the first item-table data row (row 10) contain text placeholders (e.g. 'par_fund_cluster') instead of blank cells. Rows 11-43 of the item table carry only number formats, no placeholders. The signatory footer (rows 44-52) contains a known mapping anomaly - see issues.",
+        "used_range": "A1:F52",
+        "form_visual_area": "A1:F52"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across columns A-F.",
+      "The item table header occupies a single row (row 9), similar to RSPI's single-row header.",
+      "User-specified item table range 'A10:F43' (34 rows) matches the actual placeholder location (row 10) and the formatted data range (through row 43, immediately above the signatory footer at row 44).",
+      "No merges exist within the item table rows - every column is a standalone cell per row, like RSPI.",
+      "Unlike RSMI/RSPI, the PAR item table has NO grand-total row, NO 'TOTAL' label, and NO SUM formula for the Amount column (see issues).",
+      "A single logo image (image1.jpeg) is embedded once, anchored at ~A1 as part of the letterhead - no stray duplicates were found (unlike RSMI/RSPI)."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "A1:C1",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row above the letterhead"
+    },
+    {
+      "range": "D1:F1",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row above the form title"
+    },
+    {
+      "range": "A2:C2",
+      "merged": true,
+      "value": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES",
+      "purpose": "Letterhead - institution name"
+    },
+    {
+      "range": "D2:F2",
+      "merged": true,
+      "value": "PROPERTY",
+      "purpose": "Form title, line 1 of 3"
+    },
+    {
+      "range": "A3:C3",
+      "merged": true,
+      "value": "TAGUIG CITY",
+      "purpose": "Letterhead - campus/branch"
+    },
+    {
+      "range": "D3:F3",
+      "merged": true,
+      "value": "ACKNOWLEDGEMENT",
+      "purpose": "Form title, line 2 of 3"
+    },
+    {
+      "range": "D4:F4",
+      "merged": true,
+      "value": "RECEIPT",
+      "purpose": "Form title, line 3 of 3"
+    },
+    {
+      "range": "A4:C4 / A5:C5 / A6:C6",
+      "merged": true,
+      "value": "The Technological University of the Philippines shall be a premiere state university with recognized excellence in engineering and technology education at par with the leading universities in the ASEAN region.",
+      "purpose": "University vision statement, wrapped across 3 merged rows (A4:C4, A5:C5, A6:C6)"
+    },
+    {
+      "range": "D5:F5",
+      "merged": true,
+      "value": "FM-SUP-005       REV 0       09NOV2016",
+      "purpose": "Form control footer - form code, revision number, revision date (static document metadata, not user data). Fully populated, unlike the equivalent RSPI cell."
+    },
+    {
+      "range": "D6:F6",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row below the form control footer"
+    },
+    {
+      "range": "A7:B7",
+      "merged": true,
+      "value": "Fund Cluster :",
+      "purpose": "Label for header field 'fund_cluster'"
+    },
+    {
+      "range": "E7",
+      "merged": false,
+      "value": "PAR No:",
+      "purpose": "Label for header field 'par_no'"
+    },
+    {
+      "range": "A8:B8",
+      "merged": true,
+      "value": "P.O. No :",
+      "purpose": "Label for header field 'po_no'"
+    },
+    {
+      "range": "D8",
+      "merged": false,
+      "value": "Code : ",
+      "purpose": "Label for header field 'code'"
+    },
+    {
+      "range": "A9:F9",
+      "merged": false,
+      "value": {
+        "A9": "Qty.",
+        "B9": "Unit",
+        "C9": "Description",
+        "D9": "Property Number",
+        "E9": "Date Acquired",
+        "F9": "Amount"
+      },
+      "purpose": "Column headers for the Item Table (single row, row 9)"
+    },
+    {
+      "range": "A44:B44",
+      "merged": true,
+      "value": "Received by:",
+      "purpose": "Section title for the left signatory block"
+    },
+    {
+      "range": "D44",
+      "merged": false,
+      "value": "Issued by:",
+      "purpose": "Section title for the right signatory block. Not merged (unlike A44:B44) - the text visually overflows into E44:F44 (see issues)."
+    },
+    {
+      "range": "A48:C48",
+      "merged": true,
+      "value": "Signature Over Printed Name",
+      "purpose": "Static label under the 'Received by' name field (A47:C47)"
+    },
+    {
+      "range": "A50:C50",
+      "merged": true,
+      "value": "Position/Office",
+      "purpose": "Static label under the 'Received by' position field (A49:C49)"
+    },
+    {
+      "range": "A52:C52",
+      "merged": true,
+      "value": "Date",
+      "purpose": "Static label for the left block's date line (has a thin bottom border closing the form)"
+    },
+    {
+      "range": "D51:F51",
+      "merged": true,
+      "value": "Date",
+      "purpose": "Static label for the right block's date line - positioned one row earlier than its left-block counterpart (A52:C52). See issues."
+    }
+  ],
+  "field_mapping": {
+    "header_info": {
+      "description": "Single-occurrence key/value fields at the top of the form. Each field has exactly one placeholder, found in the 'PAR with Mapping' sheet.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "fund_cluster",
+          "placeholder": "par_fund_cluster",
+          "cell": "C7",
+          "merged_range": null,
+          "label_cell": "A7",
+          "label_merged_range": "A7:B7",
+          "label_text": "Fund Cluster :",
+          "data_type": "string",
+          "cell_number_format": "@ (text)"
+        },
+        {
+          "field": "po_no",
+          "placeholder": "par_po_no",
+          "cell": "C8",
+          "merged_range": null,
+          "label_cell": "A8",
+          "label_merged_range": "A8:B8",
+          "label_text": "P.O. No :",
+          "data_type": "string",
+          "cell_number_format": "mm-dd-yy (see issues - date format on an alphanumeric P.O. number field)"
+        },
+        {
+          "field": "par_no",
+          "placeholder": "par_no",
+          "cell": "F7",
+          "merged_range": null,
+          "label_cell": "E7",
+          "label_text": "PAR No:",
+          "data_type": "string",
+          "cell_number_format": "@ (text)"
+        },
+        {
+          "field": "code",
+          "placeholder": "par_code",
+          "cell": "E8",
+          "merged_range": "E8:F8",
+          "label_cell": "D8",
+          "label_text": "Code : ",
+          "data_type": "string",
+          "cell_number_format": "General"
+        }
+      ]
+    },
+    "item_table": {
+      "description": "Repeating line-item table. The header occupies a single static row (row 9). Each data row (10-43) represents one acquired property item. Placeholders are present only in the first data row (10) of 'PAR with Mapping'; mapping for rows 11-43 is by the same column letters. No columns in this table are merged per row.",
+      "section_type": "table",
+      "repeatable": true,
+      "header_row": 9,
+      "data_range": "A10:F43",
+      "max_data_rows": 34,
+      "row_pattern": "Each data row N (10 <= N <= 43) is one item record. No cells are merged within data rows.",
+      "columns": [
+        {
+          "column": "A",
+          "field": "quantity",
+          "placeholder": "par_quantity",
+          "header_label": "Qty.",
+          "data_type": "number",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "B",
+          "field": "unit",
+          "placeholder": "par_unit",
+          "header_label": "Unit",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Unit of measure, e.g. 'pc', 'unit', 'set'."
+        },
+        {
+          "column": "C",
+          "field": "description",
+          "placeholder": "par_items_descrip, + par_spec_description",
+          "header_label": "Description",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "This is a COMPOSITE field mapped to TWO source placeholders: 'par_items_descrip' (item/general description) and 'par_spec_description' (specification/technical detail). The literal placeholder text uses the separator ', + ' between them, but the exact intended join format is not explicitly defined - see issues. Column C is also unusually wide (~53 characters), consistent with holding a longer combined description."
+        },
+        {
+          "column": "D",
+          "field": "property_no",
+          "placeholder": "par_property_no",
+          "header_label": "Property Number",
+          "data_type": "string",
+          "cell_number_format": "@ (text) on rows 10-33 and 35-43; 'General' on row 34 only (minor inconsistency - see issues)"
+        },
+        {
+          "column": "E",
+          "field": "date_acquired",
+          "placeholder": "par_date_acquired",
+          "header_label": "Date Acquired",
+          "data_type": "date",
+          "cell_number_format": "mm-dd-yy on rows 10-39 and 41-43; 'General' on row 40 only (minor inconsistency - see issues)"
+        },
+        {
+          "column": "F",
+          "field": "amount",
+          "placeholder": "par_amount",
+          "header_label": "Amount",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 34 data rows)"
+        }
+      ]
+    },
+    "totals": {
+      "description": "PAR has no grand-total field. The item table (A10:F43) ends directly above the signatory footer (row 44), with no 'TOTAL' label, no total cell, and no SUM formula anywhere in the sheet - in contrast to RSMI (rsmi_total) and RSPI (live SUM formula at H39).",
+      "section_type": "none",
+      "fields": []
+    },
+    "signatory_footer": {
+      "description": "Bottom block of the form (rows 44-52), split into a left block (columns A-C, 'Received by:') and a right block (columns D-F, 'Issued by:'). The two blocks are intended to mirror each other (name -> 'Signature Over Printed Name' label -> position -> 'Position/Office' label -> date -> 'Date' label), but the right block in 'PAR with Mapping' has a mapping anomaly - see issues.",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "left_block": {
+        "title_cell": "A44:B44",
+        "title_text": "Received by:",
+        "range": "A45:C52",
+        "rows": {
+          "A45:C45": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "A46:C46": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "A47:C47": {
+            "value": "par_received_by",
+            "role": "data_field",
+            "field": "received_by",
+            "placeholder": "par_received_by",
+            "label": "Signature Over Printed Name (label is in A48:C48, below this cell)",
+            "data_type": "string"
+          },
+          "A48:C48": {
+            "value": "Signature Over Printed Name",
+            "role": "static_label",
+            "purpose": "Labels A47:C47 above it"
+          },
+          "A49:C49": {
+            "value": "par_received_by_pos",
+            "role": "data_field",
+            "field": "received_by_position",
+            "placeholder": "par_received_by_pos",
+            "label": "Position/Office (label is in A50:C50, below this cell)",
+            "data_type": "string"
+          },
+          "A50:C50": {
+            "value": "Position/Office",
+            "role": "static_label",
+            "purpose": "Labels A49:C49 above it"
+          },
+          "A51:C51": {
+            "value": null,
+            "role": "blank_value_cell",
+            "purpose": "Date value cell - no placeholder present (see issues)"
+          },
+          "A52:C52": {
+            "value": "Date",
+            "role": "static_label",
+            "purpose": "Labels A51:C51 above it; cell has a thin bottom border closing the form"
+          }
+        }
+      },
+      "right_block": {
+        "title_cell": "D44",
+        "title_text": "Issued by:",
+        "range": "D45:F52",
+        "rows": {
+          "D45:F45": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "D46:F46": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "D47:F47": {
+            "value": "par_issued_by_pos",
+            "role": "data_field (anomalous)",
+            "field": "issued_by (inferred)",
+            "placeholder": "par_issued_by_pos (literal text - likely should be 'par_issued_by'; see issues)",
+            "label": "Expected: 'Signature Over Printed Name', mirroring A48:C48 (label is in D48:F48, below this cell)",
+            "data_type": "string"
+          },
+          "D48:F48": {
+            "value": "par_issued_by_pos",
+            "role": "data_field (anomalous)",
+            "field": "issued_by_position (uncertain)",
+            "placeholder": "par_issued_by_pos",
+            "label": "Expected: static label 'Signature Over Printed Name', mirroring A48:C48 - but this cell instead repeats the same placeholder text as D47:F47; see issues",
+            "data_type": "string"
+          },
+          "D49:F49": {
+            "value": null,
+            "role": "blank",
+            "purpose": "By analogy with A49:C49 (par_received_by_pos), this cell might be intended to hold an 'issued by' position placeholder, but it is empty - see issues"
+          },
+          "D50:F50": {
+            "value": null,
+            "role": "blank",
+            "purpose": "By analogy with A50:C50 ('Position/Office'), this cell might be intended to hold that static label, but it is empty - see issues"
+          },
+          "D51:F51": {
+            "value": "Date",
+            "role": "static_label",
+            "purpose": "Date label - positioned one row earlier than its left-block counterpart (A52:C52); no corresponding blank date-value cell appears directly above it (D50:F50 is empty/unlabeled rather than a date-value cell) - see issues"
+          },
+          "D52:F52": {
+            "value": null,
+            "role": "blank",
+            "purpose": "Empty; the left block's equivalent cell (A52:C52) holds the 'Date' label and a closing bottom border"
+          }
+        }
+      },
+      "notes": "The left ('Received by') block is internally consistent and fully mapped: par_received_by (name) and par_received_by_pos (position), each followed by its static label, plus an unmapped Date line. The right ('Issued by') block does NOT mirror this cleanly - see ISS-06 through ISS-09 for a detailed breakdown of the anomaly. Neither block has a placeholder for an actual date VALUE (only 'Date' labels exist)."
+    }
+  },
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'PAR' and 'PAR with Mapping' (identical in both sheets).",
+    "ranges": [
+      {
+        "range": "A1:C1",
+        "section": "letterhead (spacer)"
+      },
+      {
+        "range": "D1:F1",
+        "section": "title_block (spacer)"
+      },
+      {
+        "range": "A2:C2",
+        "section": "letterhead"
+      },
+      {
+        "range": "D2:F2",
+        "section": "form_title"
+      },
+      {
+        "range": "A3:C3",
+        "section": "letterhead"
+      },
+      {
+        "range": "D3:F3",
+        "section": "form_title"
+      },
+      {
+        "range": "A4:C4",
+        "section": "vision_statement"
+      },
+      {
+        "range": "D4:F4",
+        "section": "form_title"
+      },
+      {
+        "range": "A5:C5",
+        "section": "vision_statement"
+      },
+      {
+        "range": "D5:F5",
+        "section": "form_control_footer"
+      },
+      {
+        "range": "A6:C6",
+        "section": "vision_statement"
+      },
+      {
+        "range": "D6:F6",
+        "section": "spacer"
+      },
+      {
+        "range": "A7:B7",
+        "section": "header_info.fund_cluster (label)"
+      },
+      {
+        "range": "A8:B8",
+        "section": "header_info.po_no (label)"
+      },
+      {
+        "range": "E8:F8",
+        "section": "header_info.code (value)"
+      },
+      {
+        "range": "A44:B44",
+        "section": "signatory_footer.left_block.title"
+      },
+      {
+        "range": "A45:C45",
+        "section": "signatory_footer.left_block (blank)"
+      },
+      {
+        "range": "D45:F45",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A46:C46",
+        "section": "signatory_footer.left_block (blank)"
+      },
+      {
+        "range": "D46:F46",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A47:C47",
+        "section": "signatory_footer.left_block (received_by)"
+      },
+      {
+        "range": "D47:F47",
+        "section": "signatory_footer.right_block (anomalous, see issues)"
+      },
+      {
+        "range": "A48:C48",
+        "section": "signatory_footer.left_block (label)"
+      },
+      {
+        "range": "D48:F48",
+        "section": "signatory_footer.right_block (anomalous, see issues)"
+      },
+      {
+        "range": "A49:C49",
+        "section": "signatory_footer.left_block (received_by_position)"
+      },
+      {
+        "range": "D49:F49",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A50:C50",
+        "section": "signatory_footer.left_block (label)"
+      },
+      {
+        "range": "D50:F50",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A51:C51",
+        "section": "signatory_footer.left_block (blank date-value cell)"
+      },
+      {
+        "range": "D51:F51",
+        "section": "signatory_footer.right_block (label, Date)"
+      },
+      {
+        "range": "A52:C52",
+        "section": "signatory_footer.left_block (label, Date)"
+      },
+      {
+        "range": "D52:F52",
+        "section": "signatory_footer.right_block (blank)"
+      }
+    ],
+    "note": "E7, F7, C7, C8, D7, D8, E8 (header value/label cells) and all item-table cells (A10:F43) are standalone, unmerged cells. D44 ('Issued by:') is also a standalone, unmerged cell, contrasting with the merged A44:B44 ('Received by:')."
+  },
+  "data_types": {
+    "string": [
+      "par_fund_cluster",
+      "par_po_no",
+      "par_no",
+      "par_code",
+      "item_table.unit",
+      "item_table.description (composite: par_items_descrip + par_spec_description)",
+      "item_table.property_no",
+      "par_received_by",
+      "par_received_by_pos"
+    ],
+    "date": [
+      "item_table.date_acquired"
+    ],
+    "number": [
+      "item_table.quantity",
+      "item_table.amount"
+    ],
+    "currency_formatted_number (#,##0.00)": [
+      "item_table.amount"
+    ]
+  },
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "header_info.po_no (C8)",
+      "description": "C8 (par_po_no) carries a 'mm-dd-yy' number format even though P.O. No. is normally alphanumeric/text - the same pattern seen in the RSMI, ICS, and RSPI templates. By contrast, par_fund_cluster (C7) and par_no (F7) correctly use a '@' (text) format."
+    },
+    {
+      "id": "ISS-02",
+      "area": "item_table.property_no (column D)",
+      "description": "The '@' (text) format is applied to column D on rows 10-33 and 35-43, but row 34 defaults to 'General'. Minor formatting inconsistency; the field is still expected to hold text (e.g. an inventory tag number)."
+    },
+    {
+      "id": "ISS-03",
+      "area": "item_table.date_acquired (column E)",
+      "description": "The 'mm-dd-yy' date format is applied to column E on rows 10-39 and 41-43, but row 40 defaults to 'General'. Minor formatting inconsistency."
+    },
+    {
+      "id": "ISS-04",
+      "area": "item_table.description (column C)",
+      "description": "The Description cell maps to a composite/concatenated value: 'par_items_descrip, + par_spec_description'. The exact separator and combination logic (e.g. comma-separated on one line vs. two lines, or whether '+' is literal text) is not explicitly defined by the placeholder string alone - the same pattern seen in the ICS and RSPI templates' Description columns."
+    },
+    {
+      "id": "ISS-05",
+      "area": "totals / item table",
+      "description": "PAR has no grand-total row, label, or formula for the Amount column (column F), unlike RSMI (text placeholder 'rsmi_total') and RSPI (live '=SUM(...)' formula). If a running total is needed for downstream use, it must be computed externally - this document does not define how."
+    },
+    {
+      "id": "ISS-06",
+      "area": "signatory_footer.right_block title (D44)",
+      "description": "The right block's title cell D44 ('Issued by:') is a single, unmerged cell, while the left block's equivalent title (A44:B44, 'Received by:') is merged across two columns. D44's text likely overflows visually into the empty E44:F44 cells."
+    },
+    {
+      "id": "ISS-07",
+      "area": "signatory_footer.right_block - duplicated placeholder (D47, D48)",
+      "description": "Cells D47:F47 and D48:F48 BOTH literally contain the placeholder text 'par_issued_by_pos'. By analogy with the left ('Received by') block - where A47:C47 holds the name placeholder 'par_received_by' and A48:C48 holds the static label 'Signature Over Printed Name' - it appears D47:F47 was likely intended to hold a name placeholder (e.g. 'par_issued_by') and D48:F48 was likely intended to hold the static label 'Signature Over Printed Name'. As written, both cells contain the same 'par_issued_by_pos' text, and no placeholder exists for the issuer's printed name or for that label."
+    },
+    {
+      "id": "ISS-08",
+      "area": "signatory_footer.right_block - missing position fields (D49, D50)",
+      "description": "D49:F49 and D50:F50 are both empty. By analogy with the left block (A49:C49 = 'par_received_by_pos', A50:C50 = static label 'Position/Office'), these cells might be expected to hold an 'issued by' position placeholder and its 'Position/Office' label respectively, but neither is present."
+    },
+    {
+      "id": "ISS-09",
+      "area": "signatory_footer.right_block - shifted/incomplete 'Date' (D51, D52)",
+      "description": "The right block's 'Date' label sits at D51:F51, one row earlier than the left block's 'Date' label (A52:C52). D52:F52 is empty, whereas the left block's corresponding row (A52:C52) carries the 'Date' label and a closing thin bottom border for the whole form. Additionally, neither block contains a placeholder for an actual date VALUE - only the word 'Date' appears as a static label in each block (A52, D51); there is no 'par_received_by_date' / 'par_issued_by_date' equivalent field."
+    }
+  ],
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive, and how it maps onto the sheet. Field names follow the placeholder values above (with the composite description field split into its two source parts, and the right signatory block mapped per the as-written placeholders noted in the issues). This is illustrative only - no validation rules are implied.",
+    "example_payload": {
+      "par_fund_cluster": "01",
+      "par_po_no": "PO-2026-00187",
+      "par_no": "PAR-2026-0021",
+      "par_code": "PPE-01",
+      "item_table": [
+        {
+          "par_quantity": 1,
+          "par_unit": "unit",
+          "par_items_descrip": "Laptop computer",
+          "par_spec_description": "Core i7, 16GB RAM, 512GB SSD, 14-inch display",
+          "par_property_no": "TUP-ICT-2026-0451",
+          "par_date_acquired": "2026-05-15",
+          "par_amount": 45000.0
+        },
+        {
+          "par_quantity": 1,
+          "par_unit": "unit",
+          "par_items_descrip": "Multifunction printer",
+          "par_spec_description": "Inkjet, A4, print/scan/copy",
+          "par_property_no": "TUP-ICT-2026-0452",
+          "par_date_acquired": "2026-05-15",
+          "par_amount": 12000.0
+        }
+      ],
+      "par_received_by": "Maria Santos",
+      "par_received_by_pos": "Faculty, College of Engineering",
+      "par_issued_by_pos": "Property Custodian, Supply Office"
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'PAR' sheet, assuming item_table rows are written starting at row 10. 'par_issued_by_pos' is shown written to D47 as it literally appears in the source mapping sheet (see ISS-07 for the ambiguity around D47/D48).",
+      "header_info": {
+        "C7": "01",
+        "C8": "PO-2026-00187",
+        "F7": "PAR-2026-0021",
+        "E8": "PPE-01"
+      },
+      "item_table_row_1 (sheet row 10)": {
+        "A10": 1,
+        "B10": "unit",
+        "C10": "Laptop computer, Core i7, 16GB RAM, 512GB SSD, 14-inch display",
+        "D10": "TUP-ICT-2026-0451",
+        "E10": "2026-05-15",
+        "F10": 45000.0
+      },
+      "item_table_row_2 (sheet row 11)": {
+        "A11": 1,
+        "B11": "unit",
+        "C11": "Multifunction printer, Inkjet, A4, print/scan/copy",
+        "D11": "TUP-ICT-2026-0452",
+        "E11": "2026-05-15",
+        "F11": 12000.0
+      },
+      "signatory_footer": {
+        "A47": "Maria Santos",
+        "A49": "Faculty, College of Engineering",
+        "D47": "Property Custodian, Supply Office (as 'par_issued_by_pos' - see ISS-07)"
+      }
+    }
+  }
+}
