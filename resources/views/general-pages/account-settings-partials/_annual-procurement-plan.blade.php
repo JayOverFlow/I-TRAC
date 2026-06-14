@@ -55,7 +55,9 @@
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
     <style>
-        /* Placeholder for any future specific APP tab styles */
+        #pane-animated-underline-annual-procurement-plan {
+            min-height: 85vh;
+        }
     </style>
 @endpush
 

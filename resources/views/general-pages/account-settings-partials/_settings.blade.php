@@ -18,6 +18,9 @@
             .archive-project-dynamic-row {
                 cursor: pointer !important;
             }
+            div[id^="settings-view-archive-"] {
+                min-height: 85vh;
+            }
         </style>
         <div class="settings-view-container">
             <!-- LEVEL 0: Main Settings View -->
