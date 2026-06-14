@@ -103,7 +103,7 @@
                             $displayStatus = in_array($status, ['complete', 'completed', 'exported', 'approved']) ? 'Complete' : 'Pending';
                             $badgeClass = ($displayStatus === 'Complete') ? 'badge-status-completed' : 'badge-status-pending';
                             $prIdCode = $task->purchaseRequest->pr_unique_code ?? ('PR-' . date('Y') . '-01-' . str_pad($task->task_id, 3, '0', STR_PAD_LEFT));
-                            $purposeText = $task->purchaseRequest->pr_purpose ?? $task->task_description ?? 'N/A';
+                            $purposeText = $task->purchaseRequest?->pr_purpose ?: 'N/A';
                             $assigneeName = $task->assignedTo->user_fullname ?? '--';
                             $prLink = $task->pr_id_fk ? route('show.create.pr', ['task_id' => $task->task_id]) : null;
                         @endphp
