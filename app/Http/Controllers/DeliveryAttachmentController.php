@@ -18,6 +18,7 @@ use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
 use App\Services\IcsPdfExportService;
+use App\Services\RspiPdfExportService;
 use Illuminate\Support\Facades\DB;
 
 class DeliveryAttachmentController extends Controller
@@ -115,6 +116,18 @@ class DeliveryAttachmentController extends Controller
 
         $pdfService = app(IcsPdfExportService::class);
         return $pdfService->export($ics);
+    }
+
+    public function exportRspi($rspi_id)
+    {
+        $rspi = Rspi::with([
+            'rspiItems.rspiSpecs',
+            'purchaseOrder',
+            'user.roles'
+        ])->findOrFail($rspi_id);
+
+        $pdfService = app(RspiPdfExportService::class);
+        return $pdfService->export($rspi);
     }
 
     public function saveIar($iar_id, Request $request)
