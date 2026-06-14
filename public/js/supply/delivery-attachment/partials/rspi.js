@@ -102,4 +102,13 @@ $(document).ready(function() {
 
         row.find('.total-cost-display').text('₱ ' + formattedTotal).attr('data-amount', total.toFixed(2));
     });
+
+    // ─── 5. Input Sanitization (No Inline Scripts) ─────────────────────────────
+    $(document).on('input', '.rspi-container .qty-input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    $(document).on('input', '.rspi-container .unit-cost-input', function() {
+        this.value = this.value.replace(/[^0-9.]/g, '');
+    });
 });
