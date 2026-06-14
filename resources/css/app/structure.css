@@ -1711,10 +1711,16 @@ body.alt-menu #content {
     padding: 14px 17px 14px 17px;
     border-right: 0;
     margin-right: 0;
+    justify-content: flex-start;
+  }
+
+  .sidebar-wrapper #sidebar .menu-categories li.menu .dropdown-toggle svg:not(.badge-icon) {
+    margin-right: 15px;
   }
 
   .sidebar-wrapper #sidebar .menu-categories li.menu .dropdown-toggle svg.feather-chevron-right {
     display: block;
+    margin-left: auto;
   }
 
   .sidebar-wrapper #sidebar .menu-categories li.menu .submenu {
