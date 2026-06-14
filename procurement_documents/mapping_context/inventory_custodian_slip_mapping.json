@@ -1,0 +1,748 @@
+{
+  "$description": "Explicit field/data mapping context for the ICS (Inventory Custodian Slip) Excel template. Generated for use as AI agent context when injecting data into the 'ICS' sheet, using 'ICS with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "ICS_Template.xlsx",
+    "form_title": "INVENTORY CUSTODIAN SLIP",
+    "form_code": "FM-SUP-001",
+    "form_revision": "REV 0",
+    "form_revision_date": "2016-11-09",
+    "issuing_organization": "Technological University of the Philippines, Taguig City",
+    "sheets": {
+      "ICS": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it).",
+        "used_range": "A1:N100",
+        "form_visual_area": "A1:H55"
+      },
+      "ICS with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'ICS', but single-value (header/footer) cells contain text placeholders (e.g. 'ics_fund_cluster') instead of blank cells. The first data row of the item table (row 11) also contains placeholders, used here to define the per-column field mapping for the whole repeating table. The remaining data rows (12-47) carry only number formats, no placeholders.",
+        "used_range": "A1:N100",
+        "form_visual_area": "A1:H55"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across columns A-H; columns I-N fall inside the sheet's used range but contain no content in either sheet.",
+      "No embedded logo image was found in this workbook (unlike the RSMI template).",
+      "Unlike the RSMI template, the ICS item table has no grand-total row/cell and no SUM formula."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "A1:E1",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row above the letterhead"
+    },
+    {
+      "range": "F1:H1",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row above the title block"
+    },
+    {
+      "range": "A2:E2",
+      "merged": true,
+      "value": "       TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES",
+      "purpose": "Letterhead - institution name (note: value has 7 leading spaces, see issues)"
+    },
+    {
+      "range": "F2:H2",
+      "merged": true,
+      "value": "INVENTORY",
+      "purpose": "Form title, line 1"
+    },
+    {
+      "range": "A3:E3",
+      "merged": true,
+      "value": "TAGUIG CITY",
+      "purpose": "Letterhead - campus/branch"
+    },
+    {
+      "range": "F3:H3",
+      "merged": true,
+      "value": "CUSTODIAN SLIP",
+      "purpose": "Form title, line 2"
+    },
+    {
+      "range": "A4:E4 / A5:E5 / A6:E6",
+      "merged": true,
+      "value": "The Technological University of the Philippines shall be a premiere state university with recognized excellence in engineering and technology education at par with the leading universities in the ASEAN region.",
+      "purpose": "University vision statement, wrapped across 3 merged rows (A4:E4, A5:E5, A6:E6)"
+    },
+    {
+      "range": "F4:H4",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer beside the vision statement"
+    },
+    {
+      "range": "F5:H5",
+      "merged": true,
+      "value": "FM-SUP-001     REV 0     09NOV2016",
+      "purpose": "Form control footer - form code, revision number, revision date (static document metadata, not user data)"
+    },
+    {
+      "range": "F6:H6",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer beside the vision statement"
+    },
+    {
+      "range": "A7",
+      "merged": "A7:B7",
+      "value": "Fund Cluster :",
+      "purpose": "Label for header field 'fund_cluster'"
+    },
+    {
+      "range": "G7",
+      "merged": false,
+      "value": "ICS No : ",
+      "purpose": "Label for header field 'ics_no'"
+    },
+    {
+      "range": "A8",
+      "merged": "A8:B8",
+      "value": "P.O. No :",
+      "purpose": "Label for header field 'po_no'"
+    },
+    {
+      "range": "F8",
+      "merged": false,
+      "value": "Code No.: ",
+      "purpose": "Label for header field 'code_no'"
+    },
+    {
+      "range": "A9:A10 / B9:B10 / C9:D9 / E9:F10 / G9:G10 / H9:H10 / C10 / D10",
+      "merged": "see merged_cells",
+      "value": {
+        "A9": "Qty.",
+        "B9": "Unit",
+        "C9": "Amount",
+        "C10": "Unit Cost",
+        "D10": "Total Cost",
+        "E9": "Description",
+        "G9": "Inventory Item No.",
+        "H9": "Estimated Useful Life"
+      },
+      "purpose": "Two-row column header for the item table. 'Amount' (C9:D9) is a group header over the 'Unit Cost' (C10) and 'Total Cost' (D10) sub-columns. All other headers (Qty., Unit, Description, Inventory Item No., Estimated Useful Life) span both header rows (9-10) via vertical merges."
+    },
+    {
+      "range": "A48:D48",
+      "merged": true,
+      "value": "Received from:",
+      "purpose": "Section title for the left signatory block. Note: merged A:D, unlike the A:E pattern used by rows 49-55 in the same block (see issues)."
+    },
+    {
+      "range": "F48:H48",
+      "merged": true,
+      "value": "Received by:",
+      "purpose": "Section title for the right signatory block"
+    },
+    {
+      "range": "F51:H51",
+      "merged": true,
+      "value": "Signature Over Printed Name",
+      "purpose": "Label under the signature line in the right ('Received by') block, describing the cell above it (F50:H50)"
+    },
+    {
+      "range": "A52:E52",
+      "merged": true,
+      "value": "Position/Office",
+      "purpose": "Label under the position/office value in the left ('Received from') block (A51:E51)"
+    },
+    {
+      "range": "F53:H53",
+      "merged": true,
+      "value": "Position/Office",
+      "purpose": "Label under the position/office value in the right ('Received by') block (F52:H52)"
+    },
+    {
+      "range": "A54:E54",
+      "merged": true,
+      "value": "Date",
+      "purpose": "Label under the date value in the left ('Received from') block (A53:E53)"
+    },
+    {
+      "range": "F55:H55",
+      "merged": true,
+      "value": "Date",
+      "purpose": "Label under the date value in the right ('Received by') block (F54:H54)"
+    }
+  ],
+  "field_mapping": {
+    "header_info": {
+      "description": "Single-occurrence key/value fields at the top of the form. Each field has exactly one placeholder, found in the 'ICS with Mapping' sheet.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "fund_cluster",
+          "placeholder": "ics_fund_cluster",
+          "cell": "C7",
+          "merged_range": null,
+          "label_cell": "A7",
+          "label_merged_range": "A7:B7",
+          "label_text": "Fund Cluster :",
+          "data_type": "string",
+          "cell_number_format": "@ (text)",
+          "notes": "Adjacent cell D7 (not part of any merge) also carries '@' format with no content - see issues."
+        },
+        {
+          "field": "po_no",
+          "placeholder": "ics_po_no",
+          "cell": "C8",
+          "merged_range": null,
+          "label_cell": "A8",
+          "label_merged_range": "A8:B8",
+          "label_text": "P.O. No :",
+          "data_type": "string",
+          "cell_number_format": "mm-dd-yy (see issues - date format on an alphanumeric P.O. number field)",
+          "notes": "Adjacent cell D8 (not part of any merge) carries 'yyyy-mm-dd;@' format with no content - see issues."
+        },
+        {
+          "field": "ics_no",
+          "placeholder": "ics_no",
+          "cell": "H7",
+          "merged_range": null,
+          "label_cell": "G7",
+          "label_text": "ICS No : ",
+          "data_type": "string",
+          "cell_number_format": "yyyy-mm-dd;@ (custom format: date pattern for numbers, plain text for strings - see issues)"
+        },
+        {
+          "field": "code_no",
+          "placeholder": "ics_code_no",
+          "cell": "G8",
+          "merged_range": null,
+          "label_cell": "F8",
+          "label_text": "Code No.: ",
+          "data_type": "string",
+          "cell_number_format": "General"
+        }
+      ]
+    },
+    "item_table": {
+      "description": "Repeating line-item table. The header occupies two rows (9-10) and is static. Each data row (11-47) represents one inventory item. Placeholders are present only in the first data row (11) of 'ICS with Mapping'; mapping for rows 12-47 is by the same column letters.",
+      "section_type": "table",
+      "repeatable": true,
+      "header_rows": "9-10",
+      "data_range": "A11:H47",
+      "max_data_rows": 37,
+      "row_pattern": "Each data row N (11 <= N <= 47) is one inventory item record. Columns E and F are merged per row (EN:FN) into a single 'Description' cell.",
+      "columns": [
+        {
+          "column": "A",
+          "field": "quantity",
+          "placeholder": "ics_quantity",
+          "header_label": "Qty.",
+          "header_cell_merge": "A9:A10",
+          "data_type": "number",
+          "notes": "Number format is inconsistent across the 37 data rows: rows 18, 19, 21, 27-32, 45-47 use '#,##0' (integer with thousands separator); all other rows (11-17, 20, 22-26, 33-44) use 'General'. See issues."
+        },
+        {
+          "column": "B",
+          "field": "unit",
+          "placeholder": "ics_unit",
+          "header_label": "Unit",
+          "header_cell_merge": "B9:B10",
+          "data_type": "string",
+          "notes": "Rows 18, 19, 21, 27, 28 carry the numeric format '#,##0' even though 'Unit' is a text field (e.g. 'pc', 'set', 'box'). Likely an accidental format bleed from column A. See issues."
+        },
+        {
+          "column": "C",
+          "field": "unit_cost",
+          "placeholder": "ics_unit_cost",
+          "header_label": "Unit Cost",
+          "header_cell": "C10 (sub-header under 'Amount', C9:D9)",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 37 data rows)"
+        },
+        {
+          "column": "D",
+          "field": "total_cost",
+          "placeholder": "ics_total_cost",
+          "header_label": "Total Cost",
+          "header_cell": "D10 (sub-header under 'Amount', C9:D9)",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 37 data rows)",
+          "notes": "Typically quantity * unit_cost, but this document does not define how it is computed (no validation rules per scope). No grand-total cell exists for this column (unlike the RSMI template's TOTAL row)."
+        },
+        {
+          "column": "E:F (merged per row)",
+          "field": "description",
+          "placeholder": "ics_items_descrip, + ics_spec_description",
+          "header_label": "Description",
+          "header_cell_merge": "E9:F10",
+          "data_type": "string",
+          "notes": "This is a COMPOSITE field mapped to TWO source placeholders: 'ics_items_descrip' (item/general description) and 'ics_spec_description' (specification/technical detail). The literal placeholder text uses the separator ', + ' between them, but the exact intended join format (e.g. 'Laptop, Core i7 / 16GB RAM / 512GB SSD' vs separate lines) is not explicitly defined - see issues."
+        },
+        {
+          "column": "G",
+          "field": "inventory_item_no",
+          "placeholder": "ics_inventory_item_no",
+          "header_label": "Inventory Item No.",
+          "header_cell_merge": "G9:G10",
+          "data_type": "string",
+          "cell_number_format": "yyyy-mm-dd;@ (consistent across all 37 data rows - custom date format with text fallback, applied to what is normally an alphanumeric property/inventory tag number; see issues)"
+        },
+        {
+          "column": "H",
+          "field": "estimated_useful_life",
+          "placeholder": "ics_estimated_useful_life",
+          "header_label": "Estimated Useful Life",
+          "header_cell_merge": "H9:H10",
+          "data_type": "string or number",
+          "cell_number_format": "General",
+          "notes": "No unit (years/months) is specified in the header label or cell format, so it is unclear whether the expected value is a plain number, or text such as '5 years'."
+        }
+      ]
+    },
+    "signatory_footer": {
+      "description": "Bottom block of the form (rows 48-55), split into a left 'Received from' block (columns A-E) and a right 'Received by' block (columns F-H). Each block holds a signature line, a printed-name/signature field, a position/office field, and a date field, each followed by its own label row - except the left block, which is missing the 'Signature Over Printed Name' label that the right block has (see issues).",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "left_block": {
+        "title_cell": "A48:D48",
+        "title_text": "Received from:",
+        "range": "A49:E55",
+        "rows": {
+          "A49:E49": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "A50:E50": {
+            "value": "ics_received_from",
+            "role": "data_field",
+            "field": "received_from",
+            "placeholder": "ics_received_from",
+            "label": "Signature Over Printed Name (implied; see issues - no explicit label cell in this block)",
+            "data_type": "string"
+          },
+          "A51:E51": {
+            "value": "ics_received_from_pos",
+            "role": "data_field",
+            "field": "received_from_position",
+            "placeholder": "ics_received_from_pos",
+            "label": "Position/Office (label is in A52:E52, below this cell)",
+            "data_type": "string"
+          },
+          "A52:E52": {
+            "value": "Position/Office",
+            "role": "static_label",
+            "purpose": "Labels A51:E51 above it"
+          },
+          "A53:E53": {
+            "value": "ics_received_from_date",
+            "role": "data_field",
+            "field": "received_from_date",
+            "placeholder": "ics_received_from_date",
+            "label": "Date (label is in A54:E54, below this cell)",
+            "data_type": "date",
+            "cell_number_format": "mm-dd-yy"
+          },
+          "A54:E54": {
+            "value": "Date",
+            "role": "static_label",
+            "purpose": "Labels A53:E53 above it"
+          },
+          "A55:E55": {
+            "value": null,
+            "role": "blank_line"
+          }
+        }
+      },
+      "right_block": {
+        "title_cell": "F48:H48",
+        "title_text": "Received by:",
+        "range": "F49:H55",
+        "rows": {
+          "F49:H49": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "F50:H50": {
+            "value": "ics_received_by",
+            "role": "data_field",
+            "field": "received_by",
+            "placeholder": "ics_received_by",
+            "label": "Signature Over Printed Name (label is in F51:H51, below this cell)",
+            "data_type": "string"
+          },
+          "F51:H51": {
+            "value": "Signature Over Printed Name",
+            "role": "static_label",
+            "purpose": "Labels F50:H50 above it"
+          },
+          "F52:H52": {
+            "value": "ics_received_by_pos",
+            "role": "data_field",
+            "field": "received_by_position",
+            "placeholder": "ics_received_by_pos",
+            "label": "Position/Office (label is in F53:H53, below this cell)",
+            "data_type": "string"
+          },
+          "F53:H53": {
+            "value": "Position/Office",
+            "role": "static_label",
+            "purpose": "Labels F52:H52 above it"
+          },
+          "F54:H54": {
+            "value": "ics_received_by_date",
+            "role": "data_field",
+            "field": "received_by_date",
+            "placeholder": "ics_received_by_date",
+            "label": "Date (label is in F55:H55, below this cell)",
+            "data_type": "date",
+            "cell_number_format": "mm/dd/yyyy;@"
+          },
+          "F55:H55": {
+            "value": "Date",
+            "role": "static_label",
+            "purpose": "Labels F54:H54 above it"
+          }
+        }
+      },
+      "notes": "Both blocks follow a 'data row, then label row below it' pattern for the position and date fields. The 'name/signature' field is the exception: the right block labels it ('Signature Over Printed Name' at F51:H51), but the left block has no equivalent label for A50:E50 - that row in the left block is immediately followed by the position field (A51:E51) instead of a label. See issues."
+    }
+  },
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'ICS' and 'ICS with Mapping' (identical in both sheets).",
+    "ranges": [
+      {
+        "range": "A1:E1",
+        "section": "letterhead (spacer)"
+      },
+      {
+        "range": "F1:H1",
+        "section": "title_block (spacer)"
+      },
+      {
+        "range": "A2:E2",
+        "section": "letterhead"
+      },
+      {
+        "range": "F2:H2",
+        "section": "form_title"
+      },
+      {
+        "range": "A3:E3",
+        "section": "letterhead"
+      },
+      {
+        "range": "F3:H3",
+        "section": "form_title"
+      },
+      {
+        "range": "A4:E4",
+        "section": "vision_statement"
+      },
+      {
+        "range": "F4:H4",
+        "section": "vision_statement (spacer)"
+      },
+      {
+        "range": "A5:E5",
+        "section": "vision_statement"
+      },
+      {
+        "range": "F5:H5",
+        "section": "form_control_footer"
+      },
+      {
+        "range": "A6:E6",
+        "section": "vision_statement"
+      },
+      {
+        "range": "F6:H6",
+        "section": "vision_statement (spacer)"
+      },
+      {
+        "range": "A7:B7",
+        "section": "header_info.fund_cluster (label)"
+      },
+      {
+        "range": "A8:B8",
+        "section": "header_info.po_no (label)"
+      },
+      {
+        "range": "G8:H8",
+        "section": "header_info (unused merge - see notes below)"
+      },
+      {
+        "range": "A9:A10",
+        "section": "item_table.header (Qty.)"
+      },
+      {
+        "range": "B9:B10",
+        "section": "item_table.header (Unit)"
+      },
+      {
+        "range": "C9:D9",
+        "section": "item_table.header (Amount - group header)"
+      },
+      {
+        "range": "E9:F10",
+        "section": "item_table.header (Description)"
+      },
+      {
+        "range": "G9:G10",
+        "section": "item_table.header (Inventory Item No.)"
+      },
+      {
+        "range": "H9:H10",
+        "section": "item_table.header (Estimated Useful Life)"
+      },
+      {
+        "range": "E11:F11 .. E47:F47",
+        "section": "item_table.data (Description, one per data row, 37 ranges)"
+      },
+      {
+        "range": "A48:D48",
+        "section": "signatory_footer.left_block.title"
+      },
+      {
+        "range": "F48:H48",
+        "section": "signatory_footer.right_block.title"
+      },
+      {
+        "range": "A49:E49",
+        "section": "signatory_footer.left_block (blank)"
+      },
+      {
+        "range": "F49:H49",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A50:E50",
+        "section": "signatory_footer.left_block (received_from)"
+      },
+      {
+        "range": "F50:H50",
+        "section": "signatory_footer.right_block (received_by)"
+      },
+      {
+        "range": "A51:E51",
+        "section": "signatory_footer.left_block (received_from_position)"
+      },
+      {
+        "range": "F51:H51",
+        "section": "signatory_footer.right_block (label)"
+      },
+      {
+        "range": "A52:E52",
+        "section": "signatory_footer.left_block (label)"
+      },
+      {
+        "range": "F52:H52",
+        "section": "signatory_footer.right_block (received_by_position)"
+      },
+      {
+        "range": "A53:E53",
+        "section": "signatory_footer.left_block (received_from_date)"
+      },
+      {
+        "range": "F53:H53",
+        "section": "signatory_footer.right_block (label)"
+      },
+      {
+        "range": "A54:E54",
+        "section": "signatory_footer.left_block (label)"
+      },
+      {
+        "range": "F54:H54",
+        "section": "signatory_footer.right_block (received_by_date)"
+      },
+      {
+        "range": "A55:E55",
+        "section": "signatory_footer.left_block (blank)"
+      },
+      {
+        "range": "F55:H55",
+        "section": "signatory_footer.right_block (label)"
+      }
+    ],
+    "note": "E11:F11 through E47:F47 (37 ranges) follow the same one-per-row pattern and are summarized as one entry above to keep this document concise. G8:H8 is merged but holds no value in either sheet (the 'Code No.:' field's value is at G8 as a single cell, not in this merge - see issues)."
+  },
+  "data_types": {
+    "string": [
+      "ics_fund_cluster",
+      "ics_po_no",
+      "ics_no",
+      "ics_code_no",
+      "item_table.unit",
+      "item_table.description (composite: ics_items_descrip + ics_spec_description)",
+      "item_table.inventory_item_no",
+      "item_table.estimated_useful_life",
+      "received_from",
+      "received_from_position",
+      "received_by",
+      "received_by_position"
+    ],
+    "date": [
+      "received_from_date",
+      "received_by_date"
+    ],
+    "number": [
+      "item_table.quantity",
+      "item_table.unit_cost",
+      "item_table.total_cost"
+    ],
+    "currency_formatted_number (#,##0.00)": [
+      "item_table.unit_cost",
+      "item_table.total_cost"
+    ],
+    "integer_formatted_number (#,##0, inconsistent)": [
+      "item_table.quantity (rows 18,19,21,27-32,45-47 only)"
+    ]
+  },
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "header_info.fund_cluster (C7/D7)",
+      "description": "C7 holds the placeholder 'ics_fund_cluster' with a '@' (text) number format. The adjacent, unmerged cell D7 also carries a '@' format with no content - likely a remnant of a previously wider value cell (C7:D7) that was later un-merged, leaving stray formatting on D7."
+    },
+    {
+      "id": "ISS-02",
+      "area": "header_info.po_no (C8/D8)",
+      "description": "C8 holds the placeholder 'ics_po_no' with a 'mm-dd-yy' number format (a pure date format, no text fallback) even though P.O. No. is normally alphanumeric. The adjacent, unmerged cell D8 carries a different format ('yyyy-mm-dd;@') with no content - both the mismatched date format on C8 and the stray formatting on D8 should be noted."
+    },
+    {
+      "id": "ISS-03",
+      "area": "header_info.ics_no (H7)",
+      "description": "H7 holds the placeholder 'ics_no' with a custom format 'yyyy-mm-dd;@' (date pattern for numeric values, plain text for string values). 'ICS No.' is normally an alphanumeric identifier, so a date-oriented format is semantically mismatched, though the '@' text section means typed text will not be corrupted."
+    },
+    {
+      "id": "ISS-04",
+      "area": "item_table.quantity (column A)",
+      "description": "The number format for the Qty. column is inconsistent across the 37 data rows: rows 18, 19, 21, 27, 28, 29, 30, 31, 32, 45, 46, 47 use '#,##0'; all remaining rows (11-17, 20, 22-26, 33-44) use 'General'. Both will display whole numbers, but formatting is not uniform."
+    },
+    {
+      "id": "ISS-05",
+      "area": "item_table.unit (column B)",
+      "description": "Rows 18, 19, 21, 27, 28 of the Unit column carry the numeric format '#,##0', even though 'Unit' is expected to hold text values (e.g. 'pc', 'box', 'set'). This appears to be an accidental format bleed from the adjacent Qty. column on those specific rows."
+    },
+    {
+      "id": "ISS-06",
+      "area": "item_table.inventory_item_no (column G)",
+      "description": "All 37 data rows in the Inventory Item No. column use the custom format 'yyyy-mm-dd;@', a date-oriented format applied to what is typically an alphanumeric property/inventory tag number. The '@' section provides a text fallback, but the format choice is semantically mismatched with the field's purpose."
+    },
+    {
+      "id": "ISS-07",
+      "area": "item_table.description (column E:F)",
+      "description": "The Description cell maps to a composite/concatenated value: 'ics_items_descrip, + ics_spec_description'. The exact separator and combination logic (e.g. comma-separated on one line vs. two lines, or whether '+' is literal text) is not explicitly defined by the placeholder string alone."
+    },
+    {
+      "id": "ISS-08",
+      "area": "item_table.estimated_useful_life (column H)",
+      "description": "The 'Estimated Useful Life' column has 'General' number format and no unit indicator in its header. It is unclear whether the expected value is a bare number (implying years) or a text string such as '5 years'."
+    },
+    {
+      "id": "ISS-09",
+      "area": "signatory_footer - left vs right block asymmetry",
+      "description": "The right ('Received by') block has an explicit 'Signature Over Printed Name' label (F51:H51) directly below the name/signature value cell (F50:H50). The left ('Received from') block has no equivalent label below its name/signature value cell (A50:E50) - that row is immediately followed by the position field (A51:E51). As a result, the left block's Position/Office and Date rows sit one row earlier (A51-A54) than their right-block counterparts (F52-F55)."
+    },
+    {
+      "id": "ISS-10",
+      "area": "signatory_footer date format inconsistency",
+      "description": "'ics_received_from_date' (A53:E53) uses the format 'mm-dd-yy' (2-digit year, no text fallback), while 'ics_received_by_date' (F54:H54) uses 'mm/dd/yyyy;@' (4-digit year, with text fallback). The two date fields in the same footer section use different and inconsistent date formats."
+    },
+    {
+      "id": "ISS-11",
+      "area": "merged cell G8:H8",
+      "description": "G8:H8 is a merged range, but the placeholder for the 'Code No.' field ('ics_code_no') is located at G8 as part of this merge, while the label 'Code No.: ' sits in the unmerged cell F8. This is structurally fine, but worth noting since other header fields (fund_cluster, po_no, ics_no) use single, unmerged value cells."
+    },
+    {
+      "id": "ISS-12",
+      "area": "letterhead text (A2)",
+      "description": "The institution name in A2 ('       TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES') has 7 leading space characters, likely used for manual visual centering. If this text is ever used as a lookup key or comparison value, it should be trimmed."
+    },
+    {
+      "id": "ISS-13",
+      "area": "merge pattern of A48:D48",
+      "description": "The 'Received from:' title cell is merged A48:D48, while every other row in that block (A49:E49 through A55:E55) is merged A:E. This is a minor inconsistency in the merge pattern but does not affect the static label's content."
+    },
+    {
+      "id": "ISS-14",
+      "area": "no grand total in item table",
+      "description": "Unlike the RSMI template, the ICS item table (A11:H47) has no grand-total row, no 'TOTAL' label, and no SUM formula for the Total Cost column."
+    },
+    {
+      "id": "ISS-15",
+      "area": "user-specified item table range vs. observed structure",
+      "description": "The brief describes the item list table as 'A12:H47, repeatable'. The actual workbook structure shows the header occupies rows 9-10 and the first data row with placeholders is row 11, giving a data range of A11:H47 (37 rows), not starting at row 12. This document maps based on the actual placeholder location (row 11 onward); confirm whether row 11 or row 12 should be treated as the first repeatable data row."
+    }
+  ],
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive, and how it maps onto the sheet. Field names follow the placeholder values above (with the composite description field split into its two source parts). This is illustrative only - no validation rules are implied.",
+    "example_payload": {
+      "ics_fund_cluster": "01",
+      "ics_po_no": "PO-2026-00187",
+      "ics_no": "ICS-2026-0034",
+      "ics_code_no": "PPE-2026-001",
+      "item_table": [
+        {
+          "ics_quantity": 1,
+          "ics_unit": "unit",
+          "ics_unit_cost": 45000.0,
+          "ics_total_cost": 45000.0,
+          "ics_items_descrip": "Laptop computer",
+          "ics_spec_description": "Core i7, 16GB RAM, 512GB SSD, 14-inch display",
+          "ics_inventory_item_no": "TUP-ICT-2026-0451",
+          "ics_estimated_useful_life": "5 years"
+        },
+        {
+          "ics_quantity": 2,
+          "ics_unit": "unit",
+          "ics_unit_cost": 8500.0,
+          "ics_total_cost": 17000.0,
+          "ics_items_descrip": "Office chair",
+          "ics_spec_description": "Mid-back, mesh fabric, adjustable height",
+          "ics_inventory_item_no": "TUP-FUR-2026-0112",
+          "ics_estimated_useful_life": "10 years"
+        }
+      ],
+      "ics_received_from": "Juan Dela Cruz",
+      "ics_received_from_pos": "Property Custodian, Supply Office",
+      "ics_received_from_date": "2026-06-12",
+      "ics_received_by": "Maria Santos",
+      "ics_received_by_pos": "Faculty, College of Engineering",
+      "ics_received_by_date": "2026-06-12"
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'ICS' sheet, assuming item_table rows are written starting at row 11.",
+      "header_info": {
+        "C7": "01",
+        "C8": "PO-2026-00187",
+        "H7": "ICS-2026-0034",
+        "G8": "PPE-2026-001"
+      },
+      "item_table_row_1 (sheet row 11)": {
+        "A11": 1,
+        "B11": "unit",
+        "C11": 45000.0,
+        "D11": 45000.0,
+        "E11:F11": "Laptop computer, Core i7, 16GB RAM, 512GB SSD, 14-inch display",
+        "G11": "TUP-ICT-2026-0451",
+        "H11": "5 years"
+      },
+      "item_table_row_2 (sheet row 12)": {
+        "A12": 2,
+        "B12": "unit",
+        "C12": 8500.0,
+        "D12": 17000.0,
+        "E12:F12": "Office chair, Mid-back, mesh fabric, adjustable height",
+        "G12": "TUP-FUR-2026-0112",
+        "H12": "10 years"
+      },
+      "signatory_footer": {
+        "A50": "Juan Dela Cruz",
+        "A51": "Property Custodian, Supply Office",
+        "A53": "2026-06-12",
+        "F50": "Maria Santos",
+        "F52": "Faculty, College of Engineering",
+        "F54": "2026-06-12"
+      }
+    }
+  }
+}

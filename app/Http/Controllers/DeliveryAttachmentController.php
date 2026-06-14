@@ -15,6 +15,7 @@ use App\Models\IcsItem;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
+use App\Services\IcsPdfExportService;
 use Illuminate\Support\Facades\DB;
 
 class DeliveryAttachmentController extends Controller
@@ -99,6 +100,19 @@ class DeliveryAttachmentController extends Controller
 
         $pdfService = app(RsmiPdfExportService::class);
         return $pdfService->export($rsmi);
+    }
+
+    public function exportIcs($ics_id)
+    {
+        $ics = Ics::with([
+            'icsItems.icsSpecs',
+            'purchaseOrder',
+            'receiver.departments',
+            'giver'
+        ])->findOrFail($ics_id);
+
+        $pdfService = app(IcsPdfExportService::class);
+        return $pdfService->export($ics);
     }
 
     public function saveIar($iar_id, Request $request)
