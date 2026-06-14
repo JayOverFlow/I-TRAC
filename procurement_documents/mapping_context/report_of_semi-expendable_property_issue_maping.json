@@ -1,0 +1,656 @@
+{
+  "$description": "Explicit field/data mapping context for the RSPI (Report of Semi-Expendable Property Issued) Excel template. Generated for use as AI agent context when injecting data into the 'RSPI' sheet, using 'RSPI with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "RSPI_Template.xlsx",
+    "form_title": "REPORT OF SEMI-EXPENDABLE PROPERTY ISSUED",
+    "form_code": "FM-SUP- (incomplete - see issues)",
+    "form_revision": "REV 0",
+    "form_revision_date": "ddmmyyyy (literal placeholder text, not an actual date - see issues)",
+    "issuing_organization": "Technological University of the Philippines, Taguig City",
+    "sheets": {
+      "RSPI": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it).",
+        "used_range": "A1:H52",
+        "form_visual_area": "A1:H44"
+      },
+      "RSPI with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'RSPI', but single-value (header/footer) cells and the first item-table data row (row 12) contain text placeholders (e.g. 'rspi_fund_cluster') instead of blank cells. Rows 13-38 of the item table carry only number formats, no placeholders. The grand-total cell (H39) retains its live SUM formula in BOTH sheets and is NOT replaced by a placeholder.",
+        "used_range": "A1:H52",
+        "form_visual_area": "A1:H44"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across columns A-H.",
+      "The item table header occupies a single row (row 11), unlike ICS's two-row header.",
+      "User-specified item table range 'A12:H38' (27 rows) matches the actual placeholder location (row 12) and the formatted data range (through row 38, immediately above the SUM total at row 39).",
+      "The same logo image (image1.png) is embedded 3 times: one anchored at ~A1 as part of the letterhead, and two stray duplicates anchored far below the visible form (~row 104 and ~row 155)."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "A1:D1",
+      "merged": true,
+      "value": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES",
+      "purpose": "Letterhead - institution name"
+    },
+    {
+      "range": "A2:D2",
+      "merged": true,
+      "value": "TAGUIG CITY",
+      "purpose": "Letterhead - campus/branch"
+    },
+    {
+      "range": "E1:H1",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row above the form title"
+    },
+    {
+      "range": "E2:H2",
+      "merged": true,
+      "value": "REPORT OF",
+      "purpose": "Form title, line 1 of 3"
+    },
+    {
+      "range": "E3:H3",
+      "merged": true,
+      "value": "SEMI-EXPENDABLE",
+      "purpose": "Form title, line 2 of 3"
+    },
+    {
+      "range": "E4:H4",
+      "merged": true,
+      "value": "PROPERTY ISSUED",
+      "purpose": "Form title, line 3 of 3"
+    },
+    {
+      "range": "A3:D3 / A4:D4 / A5:D5",
+      "merged": true,
+      "value": "The Technological University of the Philippines shall be a premiere state university with recognized excellence in engineering and technology education at par with the leading universities in the ASEAN region",
+      "purpose": "University vision statement, wrapped across 3 merged rows (A3:D3, A4:D4, A5:D5)"
+    },
+    {
+      "range": "A6:D6",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row below the vision statement (the vision statement itself occupies only rows 3-5 here, unlike RSMI/ICS where it spans 3 different rows with a trailing spacer in a different position)"
+    },
+    {
+      "range": "E5:H5",
+      "merged": true,
+      "value": "FM-SUP-          REV 0          ddmmyyyy",
+      "purpose": "Form control footer - form code, revision number, revision date (static document metadata, not user data). See issues - this text appears incomplete/unfinished."
+    },
+    {
+      "range": "E6:H6",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row below the form control footer"
+    },
+    {
+      "range": "A8",
+      "merged": false,
+      "value": "Fund Cluster:",
+      "purpose": "Label for header field 'fund_cluster'"
+    },
+    {
+      "range": "G8",
+      "merged": false,
+      "value": "Serial No.: ",
+      "purpose": "Label for header field 'serial_no'"
+    },
+    {
+      "range": "A9",
+      "merged": false,
+      "value": "P.O. No.:",
+      "purpose": "Label for header field 'po_no'"
+    },
+    {
+      "range": "G9",
+      "merged": false,
+      "value": "Date: ",
+      "purpose": "Label for header field 'date'"
+    },
+    {
+      "range": "A10:F10",
+      "merged": true,
+      "value": "To be filled out by the Property and/or Supply Division/Unit",
+      "purpose": "Static instructional note above the left side of the item table"
+    },
+    {
+      "range": "G10:H10",
+      "merged": true,
+      "value": "To be filled out by the Accounting Division/Unit",
+      "purpose": "Static instructional note above the right side of the item table (Unit Cost / Amount columns)"
+    },
+    {
+      "range": "A11:H11",
+      "merged": false,
+      "value": {
+        "A11": "ICS No.",
+        "B11": "Respon-sibility Center Code",
+        "C11": "Semi-expendable Property No.",
+        "D11": "Item Description",
+        "E11": "Unit",
+        "F11": "Qty. Issued",
+        "G11": "Unit Cost",
+        "H11": "Amount"
+      },
+      "purpose": "Column headers for the Item Table (single row, row 11). Note the hyphenation artifact in B11 ('Respon-sibility')."
+    },
+    {
+      "range": "A40",
+      "merged": false,
+      "value": "I hereby certify to the correctness of the above information.",
+      "purpose": "Certification statement above the left signatory block. Not merged - the text visually overflows into B40:D40 (see issues)."
+    },
+    {
+      "range": "E40:H40",
+      "merged": true,
+      "value": "Posted by:",
+      "purpose": "Section title for the right ('Posted by') signatory block"
+    },
+    {
+      "range": "A42:D42",
+      "merged": true,
+      "value": "________________________________________",
+      "purpose": "Static signature line for the left ('certifying officer') signatory block"
+    },
+    {
+      "range": "E43",
+      "merged": false,
+      "value": "_________________________",
+      "purpose": "Static signature line for the right ('Posted by') signatory block"
+    },
+    {
+      "range": "H43",
+      "merged": false,
+      "value": "______________",
+      "purpose": "Static signature/date line for the date field in the right signatory block"
+    },
+    {
+      "range": "E44:G44",
+      "merged": true,
+      "value": "Accounting Staff",
+      "purpose": "Static label under the 'Posted by' signature line - identifies the role of the signatory"
+    },
+    {
+      "range": "H44",
+      "merged": false,
+      "value": "Date",
+      "purpose": "Static label under the date line in the right signatory block"
+    }
+  ],
+  "field_mapping": {
+    "header_info": {
+      "description": "Single-occurrence key/value fields at the top of the form. Each field has exactly one placeholder, found in the 'RSPI with Mapping' sheet.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "fund_cluster",
+          "placeholder": "rspi_fund_cluster",
+          "cell": "B8",
+          "merged_range": null,
+          "label_cell": "A8",
+          "label_text": "Fund Cluster:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "po_no",
+          "placeholder": "rspi_po_no",
+          "cell": "B9",
+          "merged_range": null,
+          "label_cell": "A9",
+          "label_text": "P.O. No.:",
+          "data_type": "string",
+          "cell_number_format": "mm-dd-yy (see issues - date format on an alphanumeric P.O. number field)",
+          "notes": "Adjacent cell C9 (not part of any merge) also carries 'mm-dd-yy' format with no content - see issues."
+        },
+        {
+          "field": "serial_no",
+          "placeholder": "rspi_serial_no",
+          "cell": "H8",
+          "merged_range": null,
+          "label_cell": "G8",
+          "label_text": "Serial No.: ",
+          "data_type": "string",
+          "cell_number_format": "mm-dd-yy (see issues - date format on an alphanumeric serial number field)"
+        },
+        {
+          "field": "date",
+          "placeholder": "rspi_date",
+          "cell": "H9",
+          "merged_range": null,
+          "label_cell": "G9",
+          "label_text": "Date: ",
+          "data_type": "date",
+          "cell_number_format": "mm-dd-yy"
+        }
+      ]
+    },
+    "item_table": {
+      "description": "Repeating line-item table. The header occupies a single static row (row 11). Each data row (12-38) represents one issued semi-expendable property item. Placeholders are present only in the first data row (12) of 'RSPI with Mapping'; mapping for rows 13-38 is by the same column letters. Unlike RSMI/ICS, no columns in this table are merged per row.",
+      "section_type": "table",
+      "repeatable": true,
+      "header_row": 11,
+      "data_range": "A12:H38",
+      "max_data_rows": 27,
+      "row_pattern": "Each data row N (12 <= N <= 38) is one item record. No cells are merged within data rows.",
+      "columns": [
+        {
+          "column": "A",
+          "field": "ics_no",
+          "placeholder": "rspi_ics_no",
+          "header_label": "ICS No.",
+          "data_type": "string",
+          "cell_number_format": "yyyy-mm-dd;@ on rows 12-23 and 25 only; 'General' on row 24 and rows 26-38 (inconsistent - see issues). The format itself is also semantically mismatched, since 'ICS No.' is normally an alphanumeric reference."
+        },
+        {
+          "column": "B",
+          "field": "center_code",
+          "placeholder": "rspi_center_code",
+          "header_label": "Respon-sibility Center Code",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "C",
+          "field": "property_no",
+          "placeholder": "rspi_property_no",
+          "header_label": "Semi-expendable Property No.",
+          "data_type": "string",
+          "cell_number_format": "yyyy-mm-dd;@ on rows 12-32 only; 'General' on rows 33-38 (inconsistent - see issues). The format itself is also semantically mismatched, since this is normally an alphanumeric property tag number."
+        },
+        {
+          "column": "D",
+          "field": "description",
+          "placeholder": "rspi_items_descrip, + rspi_spec_description",
+          "header_label": "Item Description",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "This is a COMPOSITE field mapped to TWO source placeholders: 'rspi_items_descrip' (item/general description) and 'rspi_spec_description' (specification/technical detail). The literal placeholder text uses the separator ', + ' between them, but the exact intended join format is not explicitly defined - see issues."
+        },
+        {
+          "column": "E",
+          "field": "unit",
+          "placeholder": "rspi_unit",
+          "header_label": "Unit",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Unit of measure, e.g. 'pc', 'box', 'set'."
+        },
+        {
+          "column": "F",
+          "field": "quantity",
+          "placeholder": "rspi_quantity",
+          "header_label": "Qty. Issued",
+          "data_type": "number",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "G",
+          "field": "unit_cost",
+          "placeholder": "rspi_unit_cost",
+          "header_label": "Unit Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 27 data rows, and also row 39 / the total row)"
+        },
+        {
+          "column": "H",
+          "field": "amount",
+          "placeholder": "rspi_amount",
+          "header_label": "Amount",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 27 data rows, and also row 39 / the total row)",
+          "notes": "Typically quantity * unit_cost, but this document does not define how it is computed (no validation rules per scope)."
+        }
+      ]
+    },
+    "totals": {
+      "description": "Grand total of the item table's Amount column.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "total_amount",
+          "cell": "H39",
+          "placeholder": null,
+          "value_in_both_sheets": "=SUM(H12:H38)",
+          "label_cell": null,
+          "label_text": null,
+          "data_type": "number",
+          "cell_number_format": "#,##0.00",
+          "notes": "Unlike RSMI's total cell (which was overwritten with a text placeholder 'rsmi_total' in the mapping sheet), H39 retains its live SUM formula in BOTH 'RSPI' and 'RSPI with Mapping'. No text placeholder exists for this cell, and there is no adjacent 'TOTAL' label (see issues). Two handling approaches are possible: (a) leave the formula intact and let Excel recalculate it after the item rows are populated, or (b) overwrite it with a computed value if the consuming process does not evaluate formulas. This document does not decide between the two."
+        }
+      ]
+    },
+    "signatory_footer": {
+      "description": "Bottom block of the form (rows 40-44), split into a left block (columns A-D, under the certification statement in A40) and a right block (columns E-H, under the 'Posted by:' title in E40:H40).",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "left_block": {
+        "context_cell": "A40",
+        "context_text": "I hereby certify to the correctness of the above information.",
+        "range": "A41:D44",
+        "rows": {
+          "A41:D41": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "A42:D42": {
+            "value": "________________________________________",
+            "role": "static_label",
+            "purpose": "Signature line"
+          },
+          "A43:D43": {
+            "value": "rspi_user_id_fk",
+            "role": "data_field",
+            "field": "user_id_fk",
+            "placeholder": "rspi_user_id_fk",
+            "label": "Printed name, placed directly under the signature line (A42:D42)",
+            "data_type": "string",
+            "notes": "Name suggests this is a foreign-key reference to a user/employee record (e.g. the person who issued the items and is certifying the information). Whether the printed cell should show the raw FK or a resolved display name is not specified."
+          },
+          "A44:D44": {
+            "value": "rspi_designation",
+            "role": "data_field",
+            "field": "designation",
+            "placeholder": "rspi_designation",
+            "label": "Position/designation of the person in A43:D43, placed directly under it. This cell has a thin bottom border (cosmetic).",
+            "data_type": "string"
+          }
+        }
+      },
+      "right_block": {
+        "context_cell": "E40:H40",
+        "context_text": "Posted by:",
+        "range": "E41:H44",
+        "rows": {
+          "E41:H41": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "E42:H42": {
+            "value": null,
+            "role": "blank_line_above_signature"
+          },
+          "E43": {
+            "value": "_________________________",
+            "role": "static_label",
+            "purpose": "Signature line for the 'Posted by' signatory"
+          },
+          "H43": {
+            "value": "______________",
+            "role": "static_label",
+            "purpose": "Signature/date line for the date field"
+          },
+          "E44:G44": {
+            "value": "Accounting Staff",
+            "role": "static_label",
+            "purpose": "Position label under the 'Posted by' signature line"
+          },
+          "H44": {
+            "value": "Date",
+            "role": "static_label",
+            "purpose": "Label under the date line"
+          }
+        }
+      },
+      "notes": "Only the left block contains data-field placeholders (rspi_user_id_fk for the printed name, rspi_designation for the position). The right ('Posted by') block is entirely static - no placeholder exists for the Accounting Staff signatory's name or the date, even though visual lines for both are present."
+    }
+  },
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'RSPI' and 'RSPI with Mapping' (identical in both sheets).",
+    "ranges": [
+      {
+        "range": "A1:D1",
+        "section": "letterhead"
+      },
+      {
+        "range": "E1:H1",
+        "section": "letterhead (spacer)"
+      },
+      {
+        "range": "A2:D2",
+        "section": "letterhead"
+      },
+      {
+        "range": "E2:H2",
+        "section": "form_title"
+      },
+      {
+        "range": "A3:D3",
+        "section": "vision_statement"
+      },
+      {
+        "range": "E3:H3",
+        "section": "form_title"
+      },
+      {
+        "range": "A4:D4",
+        "section": "vision_statement"
+      },
+      {
+        "range": "E4:H4",
+        "section": "form_title"
+      },
+      {
+        "range": "A5:D5",
+        "section": "vision_statement"
+      },
+      {
+        "range": "E5:H5",
+        "section": "form_control_footer"
+      },
+      {
+        "range": "A6:D6",
+        "section": "spacer"
+      },
+      {
+        "range": "E6:H6",
+        "section": "spacer"
+      },
+      {
+        "range": "A10:F10",
+        "section": "instructional_note (left)"
+      },
+      {
+        "range": "G10:H10",
+        "section": "instructional_note (right)"
+      },
+      {
+        "range": "E40:H40",
+        "section": "signatory_footer.right_block.title (Posted by:)"
+      },
+      {
+        "range": "A41:D41",
+        "section": "signatory_footer.left_block (blank)"
+      },
+      {
+        "range": "E41:H41",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A42:D42",
+        "section": "signatory_footer.left_block (signature line)"
+      },
+      {
+        "range": "E42:H42",
+        "section": "signatory_footer.right_block (blank)"
+      },
+      {
+        "range": "A43:D43",
+        "section": "signatory_footer.left_block (user_id_fk)"
+      },
+      {
+        "range": "A44:D44",
+        "section": "signatory_footer.left_block (designation)"
+      },
+      {
+        "range": "E44:G44",
+        "section": "signatory_footer.right_block (label)"
+      }
+    ],
+    "note": "No merges exist within the item table data rows (A12:H38) - every column in this table is a single, unmerged cell per row, unlike RSMI (description column merged D:E per row) and ICS (description column merged E:F per row)."
+  },
+  "data_types": {
+    "string": [
+      "rspi_fund_cluster",
+      "rspi_po_no",
+      "rspi_serial_no",
+      "item_table.ics_no",
+      "item_table.center_code",
+      "item_table.property_no",
+      "item_table.description (composite: rspi_items_descrip + rspi_spec_description)",
+      "item_table.unit",
+      "rspi_user_id_fk",
+      "rspi_designation"
+    ],
+    "date": [
+      "rspi_date"
+    ],
+    "number": [
+      "item_table.quantity",
+      "item_table.unit_cost",
+      "item_table.amount",
+      "total_amount (H39)"
+    ],
+    "currency_formatted_number (#,##0.00)": [
+      "item_table.unit_cost",
+      "item_table.amount",
+      "total_amount (H39)"
+    ]
+  },
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "header_info.serial_no / header_info.po_no",
+      "description": "Cells H8 (rspi_serial_no) and B9 (rspi_po_no) carry a 'mm-dd-yy' number format, even though Serial No. and P.O. No. are normally alphanumeric/text values. This formatting appears inherited/leftover and does not match the field's expected content (the same pattern seen in the RSMI and ICS templates)."
+    },
+    {
+      "id": "ISS-02",
+      "area": "header_info.po_no - stray cell C9",
+      "description": "C9 (not part of any merge, adjacent to B9/rspi_po_no) carries a 'mm-dd-yy' number format with no content and no placeholder - likely a leftover from prior formatting, similar to the stray D7/D8 cells in the ICS template."
+    },
+    {
+      "id": "ISS-03",
+      "area": "item_table.ics_no (column A)",
+      "description": "The 'yyyy-mm-dd;@' format is applied to column A only on rows 12-23 and row 25 - it is missing on row 24 and rows 26-38 (which default to 'General'). The format itself is also semantically mismatched, since 'ICS No.' is typically an alphanumeric reference, not a date."
+    },
+    {
+      "id": "ISS-04",
+      "area": "item_table.property_no (column C)",
+      "description": "The 'yyyy-mm-dd;@' format is applied to column C only on rows 12-32 - it is missing on rows 33-38 (which default to 'General'). The format itself is also semantically mismatched, since 'Semi-expendable Property No.' is typically an alphanumeric tag/reference, not a date."
+    },
+    {
+      "id": "ISS-05",
+      "area": "item_table.description (column D)",
+      "description": "The Item Description cell maps to a composite/concatenated value: 'rspi_items_descrip, + rspi_spec_description'. The exact separator and combination logic (e.g. comma-separated on one line vs. two lines, or whether '+' is literal text) is not explicitly defined by the placeholder string alone - the same pattern seen in the ICS template's Description column."
+    },
+    {
+      "id": "ISS-06",
+      "area": "totals (H39)",
+      "description": "H39 retains a live '=SUM(H12:H38)' formula in BOTH 'RSPI' and 'RSPI with Mapping' - it was not replaced by a text placeholder (contrast with RSMI, where the equivalent total cell was overwritten with 'rsmi_total'). There is also no adjacent 'TOTAL' label cell, so the grand total is visually unlabeled. An AI agent must decide whether to leave the formula in place (Excel recalculates after data injection) or replace it with a computed static value."
+    },
+    {
+      "id": "ISS-07",
+      "area": "form control footer (E5)",
+      "description": "E5 reads 'FM-SUP-          REV 0          ddmmyyyy'. This appears to be an unfinished template stub: the form code is missing its numeric suffix (e.g. 'FM-SUP-007' as seen in other forms), and 'ddmmyyyy' is literal placeholder text rather than an actual revision date (contrast with RSMI's fully populated 'FM-SUP-006          REV 0          09NOV2016')."
+    },
+    {
+      "id": "ISS-08",
+      "area": "signatory_footer.right_block ('Posted by')",
+      "description": "The right footer block has visual signature and date lines (E43, H43) and static role/date labels (E44:G44 'Accounting Staff', H44 'Date'), but NO placeholders exist for the 'Posted by' signatory's name or the date. Only the left block (rspi_user_id_fk, rspi_designation) is mapped, leaving this entire block as static, non-injectable content."
+    },
+    {
+      "id": "ISS-09",
+      "area": "certification statement (A40)",
+      "description": "A40 contains a long sentence ('I hereby certify to the correctness of the above information.') in a single, unmerged cell. The text visually overflows into the empty B40:D40 cells to its right. If those cells ever receive content (e.g. accidental data injection), the certification text would be visually truncated."
+    },
+    {
+      "id": "ISS-10",
+      "area": "duplicate logo images",
+      "description": "The workbook embeds the same image (image1.png, the university logo) three times: once anchored near A1 (part of the static letterhead) and twice more anchored far below the visible form (~row 104 and ~row 155). The two extra instances appear to be stray duplicates left over from editing, similar to ISS-09 in the RSMI mapping document."
+    },
+    {
+      "id": "ISS-11",
+      "area": "item_table header label (B11)",
+      "description": "The header label 'Respon-sibility Center Code' contains a hyphenation artifact ('Respon-sibility' instead of 'Responsibility'). Cosmetic, but relevant if header text is ever used as a lookup key. The same artifact (with a different split point) appears in the RSMI template's equivalent column."
+    }
+  ],
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive, and how it maps onto the sheet. Field names follow the placeholder values above (with the composite description field split into its two source parts). This is illustrative only - no validation rules are implied.",
+    "example_payload": {
+      "rspi_fund_cluster": "01",
+      "rspi_po_no": "PO-2026-00187",
+      "rspi_serial_no": "2026-06-0042",
+      "rspi_date": "2026-06-12",
+      "item_table": [
+        {
+          "rspi_ics_no": "ICS-2026-0034",
+          "rspi_center_code": "RC-001",
+          "rspi_property_no": "TUP-SEP-2026-0011",
+          "rspi_items_descrip": "Office chair",
+          "rspi_spec_description": "Mid-back, mesh fabric, adjustable height",
+          "rspi_unit": "unit",
+          "rspi_quantity": 2,
+          "rspi_unit_cost": 8500.0,
+          "rspi_amount": 17000.0
+        },
+        {
+          "rspi_ics_no": "ICS-2026-0035",
+          "rspi_center_code": "RC-001",
+          "rspi_property_no": "TUP-SEP-2026-0012",
+          "rspi_items_descrip": "Electric fan",
+          "rspi_spec_description": "16-inch, 3-speed, stand type",
+          "rspi_unit": "unit",
+          "rspi_quantity": 3,
+          "rspi_unit_cost": 1500.0,
+          "rspi_amount": 4500.0
+        }
+      ],
+      "rspi_user_id_fk": "EMP-00231",
+      "rspi_designation": "Property Custodian, Supply Office"
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'RSPI' sheet, assuming item_table rows are written starting at row 12.",
+      "header_info": {
+        "B8": "01",
+        "B9": "PO-2026-00187",
+        "H8": "2026-06-0042",
+        "H9": "2026-06-12"
+      },
+      "item_table_row_1 (sheet row 12)": {
+        "A12": "ICS-2026-0034",
+        "B12": "RC-001",
+        "C12": "TUP-SEP-2026-0011",
+        "D12": "Office chair, Mid-back, mesh fabric, adjustable height",
+        "E12": "unit",
+        "F12": 2,
+        "G12": 8500.0,
+        "H12": 17000.0
+      },
+      "item_table_row_2 (sheet row 13)": {
+        "A13": "ICS-2026-0035",
+        "B13": "RC-001",
+        "C13": "TUP-SEP-2026-0012",
+        "D13": "Electric fan, 16-inch, 3-speed, stand type",
+        "E13": "unit",
+        "F13": 3,
+        "G13": 1500.0,
+        "H13": 4500.0
+      },
+      "totals": {
+        "H39": "21500.00 (or left as '=SUM(H12:H38)' for Excel to recalculate - see ISS-06)"
+      },
+      "signatory_footer": {
+        "A43": "EMP-00231",
+        "A44": "Property Custodian, Supply Office"
+      }
+    }
+  }
+}
