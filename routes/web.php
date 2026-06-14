@@ -83,6 +83,7 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::post('/delivery-attachment/rsmi/{rsmi_id}/save', 'saveRsmi')->name('save.rsmi');
         Route::get('/delivery-attachment/rsmi/{rsmi_id}/export', 'exportRsmi')->name('export.rsmi.pdf');
         Route::post('/delivery-attachment/ics/{ics_id}/save', 'saveIcs')->name('save.ics');
+        Route::get('/delivery-attachment/ics/{ics_id}/export', 'exportIcs')->name('export.ics.pdf');
     });
 });
 
