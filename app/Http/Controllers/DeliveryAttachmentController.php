@@ -14,6 +14,8 @@ use App\Models\Ics;
 use App\Models\IcsItem;
 use App\Models\Rspi;
 use App\Models\RspiItem;
+use App\Models\Par;
+use App\Models\ParItem;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
@@ -589,6 +591,94 @@ class DeliveryAttachmentController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to save Report of Semi-Expendable Property Issued: ' . $e->getMessage())
                 ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
+        }
+    }
+
+    public function savePar($par_id, Request $request)
+    {
+        $par = Par::findOrFail($par_id);
+
+        $validated = $request->validate([
+            'par_fund_cluster' => 'nullable|string|max:100',
+            'par_no' => 'nullable|string|max:50',
+            'par_code' => 'nullable|string|max:50',
+            'par_received_by_date' => 'nullable|date',
+            'par_issued_by_date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.par_items_id' => 'nullable|integer',
+            'items.*.par_quantity' => 'nullable|integer',
+            'items.*.par_unit' => 'nullable|string|max:20',
+            'items.*.par_items_descrip' => 'nullable|string|max:255',
+            'items.*.par_property_no' => 'nullable|string|max:50',
+            'items.*.par_date_acquired' => 'nullable|date',
+            'items.*.par_amount' => 'nullable|numeric',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $par->update([
+                'par_fund_cluster' => $validated['par_fund_cluster'] ?? null,
+                'par_no' => $validated['par_no'] ?? null,
+                'par_code' => $validated['par_code'] ?? null,
+                'par_received_by_date' => $validated['par_received_by_date'] ?? null,
+                'par_issued_by_date' => $validated['par_issued_by_date'] ?? null,
+            ]);
+
+            $incomingItemIds = [];
+
+            foreach ($validated['items'] as $itemData) {
+                $qty = isset($itemData['par_quantity']) ? intval($itemData['par_quantity']) : null;
+                $amount = isset($itemData['par_amount']) ? floatval($itemData['par_amount']) : null;
+
+                if (!empty($itemData['par_items_id'])) {
+                    // Update existing item
+                    $parItem = ParItem::where('par_id_fk', $par->par_id)
+                        ->findOrFail($itemData['par_items_id']);
+
+                    $parItem->update([
+                        'par_quantity' => $qty,
+                        'par_unit' => $itemData['par_unit'] ?? null,
+                        'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
+                        'par_property_no' => $itemData['par_property_no'] ?? null,
+                        'par_date_acquired' => $itemData['par_date_acquired'] ?? null,
+                        'par_amount' => $amount,
+                    ]);
+
+                    $incomingItemIds[] = $parItem->par_items_id;
+                } else {
+                    // Create new item
+                    $parItem = ParItem::create([
+                        'par_id_fk' => $par->par_id,
+                        'par_quantity' => $qty,
+                        'par_unit' => $itemData['par_unit'] ?? null,
+                        'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
+                        'par_property_no' => $itemData['par_property_no'] ?? null,
+                        'par_date_acquired' => $itemData['par_date_acquired'] ?? null,
+                        'par_amount' => $amount,
+                    ]);
+
+                    $incomingItemIds[] = $parItem->par_items_id;
+                }
+
+                // Consolidate specifications, clear existing specs
+                $parItem->parSpecs()->delete();
+            }
+
+            // Remove deleted items
+            ParItem::where('par_id_fk', $par->par_id)
+                ->whereNotIn('par_items_id', $incomingItemIds)
+                ->delete();
+
+            DB::commit();
+
+            return redirect()->back()
+                ->with('success', 'Property Acknowledgement Receipt saved successfully.')
+                ->with('active_document', 'doc-par-' . $par->par_id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Failed to save Property Acknowledgement Receipt: ' . $e->getMessage())
+                ->with('active_document', 'doc-par-' . $par->par_id);
         }
     }
 }

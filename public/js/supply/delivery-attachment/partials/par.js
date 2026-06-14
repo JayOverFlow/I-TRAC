@@ -49,9 +49,6 @@ $(document).ready(function() {
             }
         });
 
-        // Reset the static amount display
-        newRow.find('.amount-display').text('₱ 0.00').attr('data-amount', '0');
-
         // Append the new row to the table body
         tbody.append(newRow);
     });
@@ -77,5 +74,14 @@ $(document).ready(function() {
         }
 
         $(this).closest('tr').remove();
+    });
+
+    // ─── 4. Input Sanitization (Quantity & Amount) ────────────────────────────
+    $(document).on('input', '.par-container .qty-input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    $(document).on('input', '.par-container .amount-input', function() {
+        this.value = this.value.replace(/[^0-9.]/g, '');
     });
 });
