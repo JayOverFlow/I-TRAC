@@ -12,6 +12,8 @@ use App\Models\Rsmi;
 use App\Models\RsmiItem;
 use App\Models\Ics;
 use App\Models\IcsItem;
+use App\Models\Rspi;
+use App\Models\RspiItem;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
@@ -480,6 +482,100 @@ class DeliveryAttachmentController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to save Inventory Custodian Slip: ' . $e->getMessage())
                 ->with('active_document', 'doc-ics-' . $ics->ics_id);
+        }
+    }
+
+    public function saveRspi($rspi_id, Request $request)
+    {
+        $rspi = Rspi::findOrFail($rspi_id);
+
+        $validated = $request->validate([
+            'rspi_fund_cluster' => 'nullable|string|max:100',
+            'rspi_serial_no' => 'nullable|string|max:50',
+            'rspi_date' => 'nullable|date',
+            'items' => 'required|array|min:1',
+            'items.*.rspi_items_id' => 'nullable|integer',
+            'items.*.rspi_ics_no' => 'nullable|string|max:50',
+            'items.*.rspi_center_code' => 'nullable|string|max:50',
+            'items.*.rspi_property_no' => 'nullable|string|max:50',
+            'items.*.rspi_items_descrip' => 'nullable|string|max:255',
+            'items.*.rspi_unit' => 'nullable|string|max:20',
+            'items.*.rspi_quantity' => 'nullable|integer',
+            'items.*.rspi_unit_cost' => 'nullable|numeric',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $rspiTotal = 0;
+            $incomingItemIds = [];
+
+            foreach ($validated['items'] as $itemData) {
+                $qty = isset($itemData['rspi_quantity']) ? intval($itemData['rspi_quantity']) : 0;
+                $unitCost = isset($itemData['rspi_unit_cost']) ? floatval($itemData['rspi_unit_cost']) : 0;
+                $amount = $qty * $unitCost;
+                $rspiTotal += $amount;
+
+                if (!empty($itemData['rspi_items_id'])) {
+                    // Update existing item
+                    $rspiItem = RspiItem::where('rspi_id_fk', $rspi->rspi_id)
+                        ->findOrFail($itemData['rspi_items_id']);
+
+                    $rspiItem->update([
+                        'rspi_ics_no' => $itemData['rspi_ics_no'] ?? null,
+                        'rspi_center_code' => $itemData['rspi_center_code'] ?? null,
+                        'rspi_property_no' => $itemData['rspi_property_no'] ?? null,
+                        'rspi_items_descrip' => $itemData['rspi_items_descrip'] ?? null,
+                        'rspi_unit' => $itemData['rspi_unit'] ?? null,
+                        'rspi_quantity' => $qty,
+                        'rspi_unit_cost' => $unitCost,
+                        'rspi_amount' => $amount,
+                    ]);
+
+                    $incomingItemIds[] = $rspiItem->rspi_items_id;
+                } else {
+                    // Create new item
+                    $rspiItem = RspiItem::create([
+                        'rspi_id_fk' => $rspi->rspi_id,
+                        'rspi_ics_no' => $itemData['rspi_ics_no'] ?? null,
+                        'rspi_center_code' => $itemData['rspi_center_code'] ?? null,
+                        'rspi_property_no' => $itemData['rspi_property_no'] ?? null,
+                        'rspi_items_descrip' => $itemData['rspi_items_descrip'] ?? null,
+                        'rspi_unit' => $itemData['rspi_unit'] ?? null,
+                        'rspi_quantity' => $qty,
+                        'rspi_unit_cost' => $unitCost,
+                        'rspi_amount' => $amount,
+                    ]);
+
+                    $incomingItemIds[] = $rspiItem->rspi_items_id;
+                }
+
+                // Since description and specifications are consolidated, clear/delete specs to prevent duplication
+                $rspiItem->rspiSpecs()->delete();
+            }
+
+            // Update RSPI Header
+            $rspi->update([
+                'rspi_fund_cluster' => $validated['rspi_fund_cluster'] ?? null,
+                'rspi_serial_no' => $validated['rspi_serial_no'] ?? null,
+                'rspi_date' => $validated['rspi_date'] ?? null,
+                'rspi_total' => $rspiTotal,
+            ]);
+
+            // Delete items that were removed in the UI (not present in incoming request)
+            RspiItem::where('rspi_id_fk', $rspi->rspi_id)
+                ->whereNotIn('rspi_items_id', $incomingItemIds)
+                ->delete();
+
+            DB::commit();
+
+            return redirect()->back()
+                ->with('success', 'Report of Semi-Expendable Property Issued saved successfully.')
+                ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Failed to save Report of Semi-Expendable Property Issued: ' . $e->getMessage())
+                ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
         }
     }
 }

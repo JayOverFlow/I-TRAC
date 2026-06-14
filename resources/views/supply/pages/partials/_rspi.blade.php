@@ -1,6 +1,8 @@
 <div class="col-md-9 rspi-container document-view-container" id="doc-rspi-{{ $rspi->rspi_id }}" style="display: none;">
-    <div class="card shadow-sm border-0 mb-3">
-        <div class="card-body px-0 pb-0">
+    <form action="{{ route('save.rspi', $rspi->rspi_id) }}" method="POST">
+        @csrf
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body px-0 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3 px-3">
                 <h5 class="fw-bold red-text-2 ms-1 mb-0">Report of Semi-Expendable Property Issued</h5>
                 <div class="">
@@ -19,7 +21,7 @@
                 <div class="col-md-6">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
-                        <input type="text" name="fund_cluster" value="{{ $rspi->rspi_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="rspi_fund_cluster" value="{{ $rspi->rspi_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
 
                     <div class="row align-items-center mb-5">
@@ -35,11 +37,11 @@
                 <div class="col-md-6 border-start-md">
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Serial No.:</h6>
-                        <input type="text" name="serial_no" value="" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="rspi_serial_no" value="{{ $rspi->rspi_serial_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="date" value="{{ $rspi->rspi_date }}"
+                        <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="rspi_date" value="{{ $rspi->rspi_date }}"
                             placeholder="Select Date..">
                     </div>
                 </div>
@@ -64,33 +66,33 @@
                         @foreach($rspi->rspiItems as $index => $item)
                         <tr>
                             <td class="px-1">
+                                <input type="hidden" name="items[{{ $index }}][rspi_items_id]" value="{{ $item->rspi_items_id }}">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][ics_no]" value="">
+                                    name="items[{{ $index }}][rspi_ics_no]" value="{{ $item->rspi_ics_no }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][responsibility_center_code]" value="{{ $item->rspi_center_code }}">
+                                    name="items[{{ $index }}][rspi_center_code]" value="{{ $item->rspi_center_code }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][semi-expandable_property_no]" value="{{ $item->rspi_property_no }}">
+                                    name="items[{{ $index }}][rspi_property_no]" value="{{ $item->rspi_property_no }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm"
-                                    name="items[{{ $index }}][item_description]" value="{{ implode(', ', array_filter(array_merge([$item->rspi_items_descrip], $item->rspiSpecs->pluck('rspi_spec_description')->toArray()))) }}">
+                                    name="items[{{ $index }}][rspi_items_descrip]" value="{{ implode(', ', array_filter(array_merge([$item->rspi_items_descrip], $item->rspiSpecs->pluck('rspi_spec_description')->toArray()))) }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][unit]" value="{{ $item->rspi_unit }}">
+                                    name="items[{{ $index }}][rspi_unit]" value="{{ $item->rspi_unit }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center qty-input"
-                                    name="items[{{ $index }}][qty_issued]" value="{{ $item->rspi_quantity }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    name="items[{{ $index }}][rspi_quantity]" value="{{ $item->rspi_quantity }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center unit-cost-input"
-                                    name="items[{{ $index }}][unit_cost]" value="{{ $item->rspi_unit_cost }}" data-field="unit_cost"
-                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                    name="items[{{ $index }}][rspi_unit_cost]" value="{{ $item->rspi_unit_cost }}" data-field="unit_cost">
                             </td>
                             <td class="px-1 text-center">
                                 <span class="total-cost-display fw-bold" data-amount="{{ $item->rspi_amount }}">₱{{ number_format($item->rspi_amount, 2) }}</span>
@@ -112,4 +114,5 @@
             </div>
         </div>
     </div>
+    </form>
 </div>
