@@ -94,8 +94,25 @@ $(document).ready(function() {
     $(document).on('click', '.remove-row-btn', function() {
         var row = $(this).closest('tr.pr-item-row');
         var specificationRow = row.next('.pr-specification-row');
-        row.remove();
-        specificationRow.remove();
+        var tbody = row.closest('tbody');
+        var remainingRows = tbody.find('tr.pr-item-row');
+
+        if (remainingRows.length <= 1) {
+            // Clear fields of the remaining one row
+            row.find('input').not('[name*="app_item_id"]').val('');
+            row.find('.amount-display').text('₱ 0.00').attr('data-amount', 0);
+            row.find('.is-invalid').removeClass('is-invalid');
+            row.find('.field-error').text('').addClass('d-none');
+            
+            specificationRow.find('textarea').val('');
+            specificationRow.addClass('d-none');
+            specificationRow.find('.is-invalid').removeClass('is-invalid');
+            specificationRow.find('.field-error').text('').addClass('d-none');
+        } else {
+            // Remove the row
+            row.remove();
+            specificationRow.remove();
+        }
         updateTotals();
     });
 

@@ -497,8 +497,7 @@
                                             <td class="text-start px-0">
                                                 @if (!$isReadOnly)
                                                     <button type="button"
-                                                        class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2"
-                                                        style="{{ $loop->first && $loop->parent->first && !$saved ? 'visibility: hidden;' : 'visibility: visible;' }}">
+                                                        class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2">
                                                         <img src="{{ asset('img/remove.svg') }}" alt="Remove">
                                                     </button>
                                                 @endif
