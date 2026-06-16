@@ -24,7 +24,7 @@ body.dark #zero-config th {
 }
 
 body.dark .modal-content {
-    background-color: #0e1726 !important;
+    background-color: #1D2127 !important;
 }
 
 body.dark .modal-title {
@@ -36,10 +36,31 @@ body.dark .user-list-table td {
     color: #bfc9d4 !important;
 }
 
+body.dark #user-search-input {
+    background-color: #15181D !important;
+    border-color: #2A2F38 !important;
+    color: #F3F4F6 !important;
+}
+
 body.dark #user-search-input::placeholder {
     color: #888ea8 !important;
 }
 
 body.dark .user-list-item.active {
     background-color: #1D2127 !important;
+}
+
+/* Force checked and disabled checkboxes to be clearly visible and checked */
+.form-check-input:disabled:checked {
+    opacity: 0.85 !important;
+    background-color: #B91C1C !important;
+    border-color: #B91C1C !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
+}
+
+body.dark .form-check-input:disabled:checked {
+    opacity: 0.85 !important;
+    background-color: #B91C1C !important;
+    border-color: #B91C1C !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
 }

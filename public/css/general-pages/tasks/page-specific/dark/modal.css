@@ -15,7 +15,7 @@ body.dark .modal-backdrop.show {
   opacity: 0.8;
 }
 body.dark .modal-content {
-  background: #0E0F11;
+  background: #15181D !important;
 }
 body.dark .modal-content hr {
 }

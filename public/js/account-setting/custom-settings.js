@@ -66,65 +66,74 @@
                 var appId = btn.getAttribute('data-app-id');
                 var appTitle = btn.getAttribute('data-app-title');
                 
-                // Add elegant micro-animation state
-                btn.disabled = true;
-                var originalWidth = btn.offsetWidth;
-                btn.style.width = originalWidth + 'px'; // Lock width to prevent text wrap
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 12px; height: 12px; border-width: 2px;"></span>';
-                
-                fetch('/account-settings/set-active-app', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ app_id: appId })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        setTimeout(function() {
-                            // Reset all set buttons inside modal first
-                            setAppBtns.forEach(function(b) {
-                                b.classList.remove('active-set');
-                                b.textContent = 'Set APP';
-                            });
+                window.confirmAction({
+                    title: 'Set Active APP?',
+                    text: 'Are you sure you want to set "' + appTitle + '" as the active APP?',
+                    icon: 'question',
+                    confirmButtonText: 'Yes, Set Active',
+                    cancelButtonText: 'Cancel',
+                    onConfirm: function() {
+                        // Add elegant micro-animation state
+                        btn.disabled = true;
+                        var originalWidth = btn.offsetWidth;
+                        btn.style.width = originalWidth + 'px'; // Lock width to prevent text wrap
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 12px; height: 12px; border-width: 2px;"></span>';
+                        
+                        fetch('/account-settings/set-active-app', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ app_id: appId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                setTimeout(function() {
+                                    // Reset all set buttons inside modal first
+                                    setAppBtns.forEach(function(b) {
+                                        b.classList.remove('active-set');
+                                        b.textContent = 'Set APP';
+                                    });
 
-                            // Mark this one as active-set
-                            btn.classList.add('active-set');
-                            btn.textContent = 'Active';
+                                    // Mark this one as active-set
+                                    btn.classList.add('active-set');
+                                    btn.textContent = 'Active';
 
-                            // Apply visual state transition on the main card alert box
-                            applyActiveAPPState(appTitle, true);
-                            
-                            // Save state persistently
-                            localStorage.setItem('itrac_active_app_id', appId);
-                            localStorage.setItem('itrac_active_app_title', appTitle);
+                                    // Apply visual state transition on the main card alert box
+                                    applyActiveAPPState(appTitle, true);
+                                    
+                                    // Save state persistently
+                                    localStorage.setItem('itrac_active_app_id', appId);
+                                    localStorage.setItem('itrac_active_app_title', appTitle);
 
-                            // Close modal smoothly
-                            var modalEl = document.getElementById('setAppModal');
-                            if (modalEl) {
-                                var modalInstance = bootstrap.Modal.getInstance(modalEl);
-                                if (modalInstance) {
-                                    modalInstance.hide();
-                                }
+                                    // Close modal smoothly
+                                    var modalEl = document.getElementById('setAppModal');
+                                    if (modalEl) {
+                                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                                        if (modalInstance) {
+                                            modalInstance.hide();
+                                        }
+                                    }
+
+                                    // Reload page to reflect changes
+                                    window.location.reload();
+
+                                }, 600); // Elegant simulated latency delay
+                            } else {
+                                alert(data.message || 'Failed to set active APP.');
+                                btn.disabled = false;
+                                btn.textContent = 'Set APP';
                             }
-
-                            // Reload page to reflect changes
-                            window.location.reload();
-
-                        }, 600); // Elegant simulated latency delay
-                    } else {
-                        alert(data.message || 'Failed to set active APP.');
-                        btn.disabled = false;
-                        btn.textContent = 'Set APP';
+                        })
+                        .catch(error => {
+                            console.error('Error setting active APP:', error);
+                            alert('An error occurred. Please try again.');
+                            btn.disabled = false;
+                            btn.textContent = 'Set APP';
+                        });
                     }
-                })
-                .catch(error => {
-                    console.error('Error setting active APP:', error);
-                    alert('An error occurred. Please try again.');
-                    btn.disabled = false;
-                    btn.textContent = 'Set APP';
                 });
             });
         });

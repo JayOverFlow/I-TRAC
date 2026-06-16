@@ -30,26 +30,30 @@
                 <div>
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP {{ number_format($app_data?->app_total ?? 0, 2) }}</h5>
 
-                    <div class="text-end">
+                    <div class="text-end d-flex align-items-center gap-2 justify-content-end">
                         @if($isReadOnly)
-                            <div class="badge bg-success p-2 px-3">
+                            <div class="badge bg-success p-2 px-3" id="completed-badge">
                                 <h6 class="mb-0 text-white">
                                     <i class="fas fa-check-circle me-1"></i> Completed
                                 </h6>
                             </div>
-                        @else
-                            <button type="button" id="btn-done"
-                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                                <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
-                                <span>Done</span>
-                            </button>
-
-                            <button type="button" id="btn-draft"
-                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
-                                <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
-                                <span class="fw-bold">Save as Draft</span>
+                            <button type="button" id="btn-edit-app"
+                                class="btn border border-light-subtle btn-white d-inline-flex align-items-center justify-content-center px-3" style="min-height: 38px;">
+                                <span>Edit</span>
                             </button>
                         @endif
+
+                        <button type="button" id="btn-done"
+                            class="btn border border-light-subtle btn-dark-red align-items-center justify-content-center gap-1 px-3 {{ $isReadOnly ? 'd-none' : 'd-inline-flex' }}" style="min-height: 38px;">
+                            <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
+                            <span>Done</span>
+                        </button>
+
+                        <button type="button" id="btn-draft"
+                            class="btn border border-light-subtle btn-white align-items-center justify-content-center gap-1 px-2 {{ $isReadOnly ? 'd-none' : 'd-inline-flex' }}" style="min-height: 38px;">
+                            <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
+                            <span class="fw-bold">Save as Draft</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -58,37 +62,60 @@
         <div id="project-items-container">
             @if(isset($app_data) && $app_data->appItems->count() > 0)
                 @foreach($app_data->appItems as $index => $item)
-                    <div class="card project-item-card mb-3">
+                    @php
+                        $isItemAssigned = $item->app_items_assigned_to !== null;
+                        $isItemLocked = $isReadOnly || $isItemAssigned;
+                    @endphp
+                    <div class="card project-item-card mb-3 {{ $isItemAssigned ? 'is-assigned' : '' }}">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title fw-bold"><span class="red-text-2 item-number-span">Item {{ $index + 1 }}</span> | Procurement Project Details</h5>
+                            <input type="hidden" name="items[{{ $index }}][app_item_id]" value="{{ $item->app_item_id }}">
+                            @if($isItemAssigned)
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][proj_title]" value="{{ $item->app_item_proj_title }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][end_user]" value="{{ $item->app_items_end_user }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][gen_desc]" value="{{ $item->app_items_gen_desc }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][mode]" value="{{ $item->app_items_mode }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][criteria]" value="{{ $item->app_items_criteria }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][covered]" value="{{ $item->app_items_covered }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][start]" value="{{ $item->app_items_start }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][end]" value="{{ $item->app_items_end }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][source]" value="{{ $item->app_items_source }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][esti_budget]" value="{{ $item->app_items_esti_budget }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][tools]" value="{{ $item->app_items_tools }}">
+                                <input type="hidden" class="assigned-hidden-input" name="items[{{ $index }}][remarks]" value="{{ $item->app_items_remarks }}">
+                            @endif
 
-                                @if(!$isReadOnly)
-                                    <button type="button" class="btn btn-dark-red remove-project-btn {{ $app_data->appItems->count() === 1 ? 'd-none' : '' }}" title="Remove project/item">
-                                        <img src="{{ asset('img/Trash.svg') }}" width="20" height="20">
-                                    </button>
-                                @endif
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold">
+                                    <span class="red-text-2 item-number-span">Item {{ $index + 1 }}</span> | Procurement Project Details
+                                    @if($isItemAssigned)
+                                        <span class="badge bg-secondary ms-2 text-white" style="font-size: 0.75rem;">Assigned</span>
+                                    @endif
+                                </h5>
+
+                                <button type="button" class="btn btn-dark-red remove-project-btn {{ ($isItemLocked || $app_data->appItems->count() === 1) ? 'd-none' : '' }}" title="Remove project/item">
+                                    <img src="{{ asset('img/Trash.svg') }}" width="20" height="20">
+                                </button>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="form-group col-4">
                                     <label>Project Title</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][proj_title]"
-                                        data-field="proj_title" value="{{ $item->app_item_proj_title }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="proj_title" value="{{ $item->app_item_proj_title }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
                                 <div class="form-group col-4">
                                     <label>End-User or Implementing Unit</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][end_user]"
-                                        data-field="end_user" value="{{ $item->app_items_end_user }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="end_user" value="{{ $item->app_items_end_user }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
                                 <div class="form-group col-4">
                                     <label>General Description</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][gen_desc]"
-                                        data-field="gen_desc" value="{{ $item->app_items_gen_desc }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="gen_desc" value="{{ $item->app_items_gen_desc }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
                             </div>
@@ -97,7 +124,7 @@
                                 <div class="form-group col-4">
                                     <label>Mode of Procurement</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][mode]"
-                                        data-field="mode" value="{{ $item->app_items_mode }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="mode" value="{{ $item->app_items_mode }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
@@ -105,7 +132,7 @@
                                     <label>Criteria for Bid Evaluation</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][criteria]"
                                         data-field="criteria"
-                                        placeholder="Including Sustainability and Domestic Preference" value="{{ $item->app_items_criteria }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        placeholder="Including Sustainability and Domestic Preference" value="{{ $item->app_items_criteria }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
@@ -114,11 +141,11 @@
                                     <span class="field-error d-none"></span>
                                     <div class="mt-4 d-flex justify-content-center" data-field="covered">
                                         <input class="form-check-input" type="radio" name="items[{{ $index }}][covered]"
-                                            id="covered-yes-{{ $index }}" value="Yes" {{ $item->app_items_covered === 'Yes' ? 'checked' : '' }} {{ $isReadOnly ? 'disabled' : '' }}>
+                                            id="covered-yes-{{ $index }}" value="Yes" {{ $item->app_items_covered === 'Yes' ? 'checked' : '' }} {{ $isItemLocked ? 'disabled' : '' }}>
                                         <label class="form-check-label ms-2 me-4" for="covered-yes-{{ $index }}">Yes</label>
 
                                         <input class="form-check-input" type="radio" name="items[{{ $index }}][covered]"
-                                            id="covered-no-{{ $index }}" value="No" {{ $item->app_items_covered === 'No' ? 'checked' : '' }} {{ $isReadOnly ? 'disabled' : '' }}>
+                                            id="covered-no-{{ $index }}" value="No" {{ $item->app_items_covered === 'No' ? 'checked' : '' }} {{ $isItemLocked ? 'disabled' : '' }}>
                                         <label class="form-check-label ms-2" for="covered-no-{{ $index }}">No</label>
                                     </div>
                                 </div>
@@ -133,21 +160,21 @@
                                 <div class="form-group col-3">
                                     <label>Start of Procurement Activity</label>
                                     <input type="text" class="form-control flatpickr-date" name="items[{{ $index }}][start]"
-                                        data-field="start" placeholder="Select Date" value="{{ $item->app_items_start ? \Carbon\Carbon::parse($item->app_items_start)->format('Y-m-d') : '' }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="start" placeholder="Select Date" value="{{ $item->app_items_start ? \Carbon\Carbon::parse($item->app_items_start)->format('Y-m-d') : '' }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
                                 <div class="form-group col-3">
                                     <label>End of Procurement Activity</label>
                                     <input type="text" class="form-control flatpickr-date" name="items[{{ $index }}][end]"
-                                        data-field="end" placeholder="Select Date" value="{{ $item->app_items_end }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="end" placeholder="Select Date" value="{{ $item->app_items_end }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
                                 <div class="form-group col-3">
                                     <label>Source of Fund</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][source]"
-                                        data-field="source" value="{{ $item->app_items_source }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="source" value="{{ $item->app_items_source }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
@@ -155,7 +182,7 @@
                                     <label>Estimated Budget/Approved Budget</label>
                                     <input type="number" class="form-control estimated-budget-input"
                                         name="items[{{ $index }}][esti_budget]" data-field="esti_budget"
-                                        placeholder="In Peso" step="any" min="0" value="{{ $item->app_items_esti_budget }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        placeholder="In Peso" step="0.01" min="0" value="{{ $item->app_items_esti_budget }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
                             </div>
@@ -164,7 +191,7 @@
                                 <div class="form-group col-6">
                                     <label>Procurement Strategy or Tools</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][tools]"
-                                        data-field="tools" value="{{ $item->app_items_tools }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        data-field="tools" value="{{ $item->app_items_tools }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
@@ -172,7 +199,7 @@
                                     <label>REMARKS</label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][remarks]"
                                         data-field="remarks"
-                                        placeholder="Other relevant descriptions of the procurement project, if applicable" value="{{ $item->app_items_remarks }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                        placeholder="Other relevant descriptions of the procurement project, if applicable" value="{{ $item->app_items_remarks }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
                             </div>
@@ -275,7 +302,7 @@
                                 <label>Estimated Budget/Approved Budget</label>
                                 <input type="number" class="form-control estimated-budget-input"
                                     name="items[0][esti_budget]" data-field="esti_budget"
-                                    placeholder="In Peso" step="any" min="0">
+                                    placeholder="In Peso" step="0.01" min="0">
                                 <span class="field-error d-none"></span>
                             </div>
                         </div>
@@ -301,8 +328,7 @@
             @endif
         </div>
 
-        @if(!$isReadOnly)
-        <div class="d-flex justify-content-center mb-3">
+        <div class="d-flex justify-content-center mb-3 {{ $isReadOnly ? 'd-none' : '' }}" id="add-project-btn-container">
             <button type="button"
                 class="btn border border-light-subtle btn-white d-inline-flex align-items-center justify-content-center w-50 gap-1 py-2"
                 id="add-project-btn">
@@ -310,7 +336,6 @@
                 <span class="fw-bold">Add Project</span>
             </button>
         </div>
-        @endif
 
         <div class="d-flex justify-content-end">
             <h4><span class="fw-bold">Total Amount: </span><span id="total-amount-display">0.00</span></h4>

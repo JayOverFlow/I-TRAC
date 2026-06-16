@@ -96,6 +96,7 @@
                     </div>
                 `);
             },
+            "order": [],
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
             "pageLength": 5
