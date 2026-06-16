@@ -297,7 +297,7 @@
                                     <i class="fas fa-file-export me-1"></i> Exported
                                 </h6>
                             </div>
-                            <a href="{{ route('export.pr.download', $task->task_id) }}"
+                            <a href="{{ route('export.pr.download', $task->task_id) }}" id="export-again-btn"
                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                                 <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                                 <span>Export as PDF Again</span>

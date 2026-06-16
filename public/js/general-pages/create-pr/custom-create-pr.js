@@ -376,7 +376,16 @@ $(document).ready(function() {
         e.preventDefault();
         var url = $(this).data('url');
         if (url) {
-            submitPrForm('submit', url);
+            window.confirmAction({
+                title: 'Complete Purchase Request?',
+                text: 'Are you sure you want to mark this purchase request as complete?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Complete',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    submitPrForm('submit', url);
+                }
+            });
         }
     });
 
@@ -385,14 +394,33 @@ $(document).ready(function() {
         e.preventDefault();
         var url = $(this).data('url');
         if (url) {
-            submitPrForm('submit', url);
+            window.confirmAction({
+                title: 'Export Purchase Request?',
+                text: 'Are you sure you want to export this purchase request as a PDF?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    submitPrForm('submit', url);
+                }
+            });
         }
     });
 
     // ─── Save as Draft — prevent default, use AJAX ────────────────────────
     $('#pr-form').on('submit', function(e) {
         e.preventDefault();
-        submitPrForm('draft', this.action);
+        var form = this;
+        window.confirmAction({
+            title: 'Save as Draft?',
+            text: 'Are you sure you want to save this purchase request as a draft?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Save',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                submitPrForm('draft', form.action);
+            }
+        });
     });
 
     // ─── Cancel button logic ──────────────────────────────────────────────
@@ -400,8 +428,35 @@ $(document).ready(function() {
         const url = $(this).data('url');
         const form = $('#cancel-pr-form');
         if (url) {
-            form.attr('action', url);
-            form.submit();
+            window.confirmAction({
+                title: 'Cancel Purchase Request?',
+                text: 'Are you sure you want to cancel this purchase request?',
+                icon: 'warning',
+                confirmButtonText: 'Yes, Cancel',
+                cancelButtonText: 'No, Keep It',
+                onConfirm: function() {
+                    form.attr('action', url);
+                    form.submit();
+                }
+            });
+        }
+    });
+
+    // ─── Export PDF Again logic ───────────────────────────────────────────
+    $(document).on('click', '#export-again-btn', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (url) {
+            window.confirmAction({
+                title: 'Export PDF Again?',
+                text: 'Are you sure you want to export this purchase request as a PDF again?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    window.location.href = url;
+                }
+            });
         }
     });
 });
