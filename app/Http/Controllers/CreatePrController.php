@@ -115,7 +115,7 @@ class CreatePrController extends Controller
                 'items.*.description'     => 'required|string|min:5|max:50',
                 'items.*.quantity'        => 'required|integer|min:1|max:9999999',
                 'items.*.cost'            => 'required|numeric|min:1|max:9999999',
-                'items.*.specification'   => 'nullable|string|min:5|max:1000',
+                'items.*.specification'   => 'nullable|string|min:5|max:500',
             ];
         } else {
             $rules = [
@@ -127,7 +127,7 @@ class CreatePrController extends Controller
                 'items.*.description'     => 'nullable|string|min:5|max:50',
                 'items.*.quantity'        => 'nullable|integer|min:1|max:9999999',
                 'items.*.cost'            => 'nullable|numeric|min:1|max:9999999',
-                'items.*.specification'   => 'nullable|string|min:5|max:1000',
+                'items.*.specification'   => 'nullable|string|min:5|max:500',
             ];
         }
 
@@ -156,7 +156,7 @@ class CreatePrController extends Controller
             'items.*.cost.min'             => 'Unit cost must be at least 1.',
             'items.*.cost.max'             => 'Unit cost is too large.',
             'items.*.specification.min'    => 'Specification must be at least 5 characters.',
-            'items.*.specification.max'    => 'Specification must not exceed 1000 characters.',
+            'items.*.specification.max'    => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -199,7 +199,8 @@ class CreatePrController extends Controller
 
         $this->authorizeTask($task);
 
-        if ($task->task_status !== 'Pending') {
+        $pr = $task->pr_id_fk ? PrParent::find($task->pr_id_fk) : null;
+        if ($task->task_status !== 'Pending' && (!$pr || $pr->pr_status !== 'Draft')) {
             return response()->json([
                 'success' => false,
                 'message' => 'This PR has already been submitted and can no longer be edited.',
@@ -224,7 +225,10 @@ class CreatePrController extends Controller
                 if (!$task->pr_id_fk) {
                     $task->update(['pr_id_fk' => $pr->pr_id]);
                 }
-                // Task status stays "Pending" for drafts
+                // Ensure task status is 'Pending' for drafts
+                if ($task->task_status !== 'Pending') {
+                    $task->update(['task_status' => 'Pending']);
+                }
             });
 
             session()->flash('success', 'Purchase Request saved as draft.');
@@ -255,7 +259,8 @@ class CreatePrController extends Controller
 
         $this->authorizeTask($task);
 
-        if ($task->task_status !== 'Pending') {
+        $pr = $task->pr_id_fk ? PrParent::find($task->pr_id_fk) : null;
+        if ($task->task_status !== 'Pending' && (!$pr || $pr->pr_status !== 'Draft')) {
             return response()->json([
                 'success' => false,
                 'message' => 'This PR has already been completed.',
@@ -619,10 +624,10 @@ class CreatePrController extends Controller
             }
 
             // 3. Header Data Mapping (Form Info)
-            $sheet->setCellValue('B8', $pr->department->dep_name ?? 'N/A');
-            $sheet->setCellValue('F8', $pr->pr_no ?? 'N/A');
-            $sheet->setCellValue('B9', $pr->pr_section ?? 'N/A');
-            $sheet->setCellValue('F9', $pr->pr_date ? \Carbon\Carbon::parse($pr->pr_date)->format('M d, Y') : 'N/A');
+            $sheet->setCellValue('B8', $pr->department->dep_name);
+            $sheet->setCellValue('F8', $pr->pr_no);
+            $sheet->setCellValue('B9', $pr->pr_section);
+            $sheet->setCellValue('F9', \Carbon\Carbon::parse($pr->pr_date)->format('M d, Y'));
 
             // Set Form Info (A8:G9) styles
             $sheet->getStyle('A8:G9')->getFont()->setSize(11);

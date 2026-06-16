@@ -34,13 +34,18 @@
         $isViewer_Assigner = ($task->assigned_by === $user->user_id);
 
         // Head can edit if: viewer is the assigner, task is assigned (not self-created), and status is Complete
-        $canHeadEdit = $isViewer_Assigner && $isAssigned && ($taskStatus === 'Complete');
+        $canHeadEdit = $isViewer_Assigner && $isAssigned && ($taskStatus === 'Complete') && (!$pr || $pr->pr_status === 'Complete');
 
         // Self-created: the Head assigned the task to themselves
         $isSelfCreatedHead = $isViewer_Assigner && !$isAssigned;
 
         // For self-created tasks, the Head can export directly from Pending
         $isReadOnly = ($taskStatus !== 'Pending') && !$canHeadEdit && !($isSelfCreatedHead && $taskStatus === 'Pending');
+
+        // If the PR status is Draft, it is not read-only
+        if ($pr && $pr->pr_status === 'Draft') {
+            $isReadOnly = false;
+        }
 
         // Only Head, Program Chair, Dean, Supply, and Procurement see the stepper
         $isAuthorized = in_array($userRole, ['Head', 'Supply', 'Procurement']);
@@ -97,8 +102,8 @@
             [
                 'prefix' => 'Purchase Request:',
                 'label' => 'SUBMITTED',
-                'active' => ($pr && $pr->submitted_at) ? true : false,
-                'date' => ($pr && $pr->submitted_at) ? \Carbon\Carbon::parse($pr->submitted_at)->format('d M, Y') : null,
+                'active' => ($pr && $pr->submitted_at && $pr->pr_status !== 'Draft') ? true : false,
+                'date' => ($pr && $pr->submitted_at && $pr->pr_status !== 'Draft') ? \Carbon\Carbon::parse($pr->submitted_at)->format('d M, Y') : null,
             ],
             [
                 'prefix' => 'Purchase Request:',
@@ -190,7 +195,7 @@
             <div class="col-xl-9 col-lg-8 col-md-7 col-12 px-1">
     @endif
 
-    @if ($taskStatus === 'Complete' && $pr && $pr->submitted_at && !$isViewer_Assigner)
+    @if ($taskStatus === 'Complete' && $pr && $pr->pr_status === 'Complete' && $pr->submitted_at && !$isViewer_Assigner)
         @php
             $deadline = \Carbon\Carbon::parse($pr->submitted_at)->addDays(3);
             $now = now();
@@ -231,16 +236,16 @@
                             </div>
                             <button type="button" id="export-pr-btn" data-url="{{ route('export.pr.from_form', $task->task_id) }}"
                                 class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                                <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
-                                <span>Export</span>
+                                <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                                <span>Export as PDF</span>
                             </button>
                         </div>
-                    @elseif ($isSelfCreatedHead && $taskStatus === 'Pending')
+                    @elseif ($isSelfCreatedHead && ($taskStatus === 'Pending' || ($pr && $pr->pr_status === 'Draft')))
                         {{-- Head self-created: skip Complete, export directly --}}
                         <button type="button" id="export-pr-btn" data-url="{{ route('export.pr.from_form', $task->task_id) }}"
                             class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                            <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
-                            <span>Export</span>
+                            <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                            <span>Export as PDF</span>
                         </button>
 
                         <button type="submit"
@@ -252,7 +257,7 @@
                         {{-- Subordinate or non-self-created: show Complete + Save as Draft --}}
                         <button type="button" id="submit-pr-btn" data-url="{{ route('submit.pr', $task->task_id) }}"
                             class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                            <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
+                            <img src="{{ asset('img/Check.svg') }}" width="18" height="18">
                             <span>Complete</span>
                         </button>
 
@@ -261,7 +266,7 @@
                             <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
                             <span class="fw-bold">Save as Draft</span>
                         </button>
-                    @elseif ($taskStatus === 'Complete' && !$isSelfCreatedHead)
+                    @elseif ($taskStatus === 'Complete' && !$isSelfCreatedHead && ($pr && $pr->pr_status === 'Complete'))
                         {{-- Subordinate completed; Head has not yet exported --}}
                         @php
                             $deadline =
@@ -284,7 +289,7 @@
                                 <span class="fw-bold black-text"> Cancel</span>
                             </button>
                         </div>
-                    @elseif ($taskStatus === 'Exported' || ($isSelfCreatedHead && $taskStatus === 'Complete'))
+                    @elseif (($taskStatus === 'Exported' && $pr && $pr->pr_status === 'Exported') || ($isSelfCreatedHead && $taskStatus === 'Complete' && $pr && $pr->pr_status === 'Complete'))
                         {{-- PR has been exported — fully locked for everyone, with re-download option --}}
                         <div class="d-flex align-items-center gap-2 justify-content-end">
                             <div class="badge bg-dark p-2 px-3">
@@ -294,8 +299,8 @@
                             </div>
                             <a href="{{ route('export.pr.download', $task->task_id) }}"
                                class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                                <img src="{{ asset('img/Submit.svg') }}" width="18" height="18">
-                                <span>Export Again</span>
+                                <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                                <span>Export as PDF Again</span>
                             </a>
                         </div>
                     @else
@@ -373,7 +378,7 @@
                         <div class="col-8">
                             <input type="text" name="pr_no" data-field="pr_no"
                                 class="form-control form-control-sm w-100"
-                                value="{{ $pr?->pr_no ?? old('pr_no') }}" {{ $isReadOnly ? 'disabled' : '' }}>
+                                value="{{ $pr?->pr_no ?? old('pr_no') }}" {{ $isReadOnly ? 'disabled' : '' }} placeholder="Optional">
                             <span class="field-error d-none"></span>
                         </div>
                     </div>
@@ -531,7 +536,7 @@
                                                     <div class="specification-body rounded-bottom"
                                                         style="{{ !$specText ? 'display: none;' : '' }}">
                                                         <textarea class="form-control form-control-sm border-0 shadow-none px-2"
-                                                            name="items[{{ $rowIndex }}][specification]" data-field="specification" rows="2" placeholder="Enter specification details."
+                                                            name="items[{{ $rowIndex }}][specification]" data-field="specification" rows="2" placeholder="e.g., 16 GB RAM, AMD Ryzen 5, NVIDEA RTX 2050"
                                                             {{ $isReadOnly ? 'disabled' : '' }}>{{ $specText }}</textarea>
                                                         <span class="field-error d-none"></span>
                                                     </div>
