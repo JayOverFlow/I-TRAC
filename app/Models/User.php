@@ -148,4 +148,9 @@ class User extends Authenticatable
             $this->user_suffix,
         ])));
     }
+
+    public function mrs()
+    {
+        return $this->hasMany(Mr::class, 'assigned_to', 'user_id');
+    }
 }
