@@ -37,4 +37,9 @@ class PoItem extends Model
     {
         return $this->hasMany(PoSpec::class, 'po_items_id_fk', 'po_items_id');
     }
+
+    public function mrs()
+    {
+        return $this->hasMany(Mr::class, 'po_item_id_fk', 'po_items_id');
+    }
 }
