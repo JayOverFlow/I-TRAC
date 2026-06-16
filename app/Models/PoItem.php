@@ -42,4 +42,9 @@ class PoItem extends Model
     {
         return $this->hasMany(Mr::class, 'po_item_id_fk', 'po_items_id');
     }
+
+    public function parItems()
+    {
+        return $this->hasMany(ParItem::class, 'par_po_items_id_fk', 'po_items_id');
+    }
 }

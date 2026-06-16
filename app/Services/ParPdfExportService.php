@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Par;
+use App\Models\Mr;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
@@ -32,7 +33,15 @@ class ParPdfExportService
         $sheet->getPageSetup()->setFitToPage(true);
         $sheet->getPageSetup()->setFitToWidth(1);
         $sheet->getPageSetup()->setFitToHeight(1);
-        $sheet->getPageSetup()->setPrintArea('A1:F52');
+
+        $poItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
+        $hasQrCode = false;
+        if ($poItemIds->isNotEmpty()) {
+            $hasQrCode = Mr::whereIn('po_item_id_fk', $poItemIds)->whereNotNull('mr_qr_code')->exists();
+        }
+        $printArea = $hasQrCode ? 'A1:F53' : 'A1:F52';
+        $sheet->getPageSetup()->setPrintArea($printArea);
+
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
@@ -131,6 +140,33 @@ class ParPdfExportService
         // D52: write issue date to align/close the sheet correctly
         $sheet->setCellValue('D50', $formatDate($par->par_issued_by_date));
 
+        // 5. Generate and Embed QR Code
+        $tempImage = null;
+        if ($poItemIds->isNotEmpty()) {
+            $mrEntry = Mr::whereIn('po_item_id_fk', $poItemIds)->first();
+            if ($mrEntry && $mrEntry->mr_qr_code) {
+                $options = new \chillerlan\QRCode\QROptions([
+                    'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+                    'scale'           => 10,
+                    'imageTransparent' => false,
+                ]);
+                $qrcode = new \chillerlan\QRCode\QRCode($options);
+                $tempImage = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
+                $qrcode->render($mrEntry->mr_qr_code, $tempImage);
+
+                // Add Drawing to Sheet
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('MR QR Code');
+                $drawing->setDescription('QR Code for MR Assignment');
+                $drawing->setPath($tempImage);
+                $drawing->setCoordinates('A53');
+                $drawing->setHeight(110);
+                $drawing->setOffsetX(15);
+                $drawing->setOffsetY(10);
+                $drawing->setWorksheet($sheet);
+            }
+        }
+
         // Clear calculations and save to PDF using native mPDF writer
         Calculation::getInstance($spreadsheet)->clearCalculationCache();
 
@@ -139,8 +175,11 @@ class ParPdfExportService
 
         $filename = 'PAR_' . str_replace('-', '_', $par->par_no ?: $par->par_id) . '.pdf';
 
-        return response()->streamDownload(function () use ($pdfWriter) {
+        return response()->streamDownload(function () use ($pdfWriter, $tempImage) {
             $pdfWriter->save('php://output');
+            if ($tempImage && file_exists($tempImage)) {
+                @unlink($tempImage);
+            }
         }, $filename, [
             'Content-Type' => 'application/pdf',
         ]);

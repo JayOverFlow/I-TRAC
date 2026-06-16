@@ -16,6 +16,7 @@ use App\Models\Rspi;
 use App\Models\RspiItem;
 use App\Models\Par;
 use App\Models\ParItem;
+use App\Models\Mr;
 use App\Services\IarPdfExportService;
 use App\Services\RisPdfExportService;
 use App\Services\RsmiPdfExportService;
@@ -189,6 +190,48 @@ class DeliveryAttachmentController extends Controller
             'receiver.departments',
             'issuer.roles'
         ])->findOrFail($par_id);
+
+        DB::transaction(function () use ($par) {
+            // Find if we already have entries in mr_tbl for these items to reuse the QR code
+            $existingMr = null;
+            $poItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
+
+            if ($poItemIds->isNotEmpty()) {
+                $existingMr = Mr::whereIn('po_item_id_fk', $poItemIds)->first();
+            }
+
+            if ($existingMr) {
+                $qrCode = $existingMr->mr_qr_code;
+            } else {
+                // Generate unique numeric code in the format MR-XXXX-XXXX
+                do {
+                    $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+                } while (Mr::where('mr_qr_code', $qrCode)->exists());
+            }
+
+            foreach ($par->parItems as $item) {
+                if ($item->par_po_items_id_fk) {
+                    // Avoid duplicates
+                    $exists = Mr::where('po_item_id_fk', $item->par_po_items_id_fk)->exists();
+                    if (!$exists) {
+                        Mr::create([
+                            'po_item_id_fk' => $item->par_po_items_id_fk,
+                            'mr_qr_code'    => $qrCode,
+                            'item_name'     => $item->par_items_descrip,
+                            'specification' => $item->parSpecs->pluck('par_spec_description')->filter()->implode("\n"),
+                            'quantity'      => $item->par_quantity,
+                            'unit'          => $item->par_unit,
+                            'stock'         => $item->par_property_no,
+                            'is_assigned'   => 0,
+                            'assigned_to'   => null,
+                        ]);
+                    }
+                }
+            }
+        });
+
+        // Reload par details to ensure latest values
+        $par->load('parItems.parSpecs');
 
         $pdfService = app(ParPdfExportService::class);
         return $pdfService->export($par);
@@ -668,6 +711,7 @@ class DeliveryAttachmentController extends Controller
             'par_issued_by_date' => 'nullable|date',
             'items' => 'required|array|min:1',
             'items.*.par_items_id' => 'nullable|integer',
+            'items.*.par_po_items_id_fk' => 'nullable|integer|exists:po_items_tbl,po_items_id',
             'items.*.par_quantity' => 'nullable|integer',
             'items.*.par_unit' => 'nullable|string|max:20',
             'items.*.par_items_descrip' => 'nullable|string|max:255',
@@ -698,6 +742,7 @@ class DeliveryAttachmentController extends Controller
                         ->findOrFail($itemData['par_items_id']);
 
                     $parItem->update([
+                        'par_po_items_id_fk' => $itemData['par_po_items_id_fk'] ?? null,
                         'par_quantity' => $qty,
                         'par_unit' => $itemData['par_unit'] ?? null,
                         'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
@@ -711,6 +756,7 @@ class DeliveryAttachmentController extends Controller
                     // Create new item
                     $parItem = ParItem::create([
                         'par_id_fk' => $par->par_id,
+                        'par_po_items_id_fk' => $itemData['par_po_items_id_fk'] ?? null,
                         'par_quantity' => $qty,
                         'par_unit' => $itemData['par_unit'] ?? null,
                         'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
