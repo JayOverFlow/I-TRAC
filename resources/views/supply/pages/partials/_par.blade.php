@@ -112,6 +112,7 @@
                             <tr>
                                 <td class="px-1">
                                     <input type="hidden" name="items[{{ $index }}][par_items_id]" value="{{ $item->par_items_id }}">
+                                    <input type="hidden" name="items[{{ $index }}][par_po_items_id_fk]" value="{{ $item->par_po_items_id_fk }}">
                                     <input type="text" class="form-control form-control-sm text-center qty-input"
                                         name="items[{{ $index }}][par_quantity]" value="{{ $item->par_quantity }}">
                                 </td>

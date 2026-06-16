@@ -484,6 +484,7 @@ class PoReviewController extends Controller
 
                         $parItem = ParItem::create([
                             'par_id_fk' => $par->par_id,
+                            'par_po_items_id_fk' => $item->po_items_id,
                             'par_quantity' => $qty,
                             'par_unit' => $item->po_items_unit,
                             'par_items_descrip' => $item->po_items_descrip,

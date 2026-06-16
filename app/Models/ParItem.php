@@ -12,6 +12,7 @@ class ParItem extends Model
 
     protected $fillable = [
         'par_id_fk',
+        'par_po_items_id_fk',
         'par_quantity',
         'par_unit',
         'par_items_descrip',
@@ -23,6 +24,11 @@ class ParItem extends Model
     public function par()
     {
         return $this->belongsTo(Par::class, 'par_id_fk', 'par_id');
+    }
+
+    public function poItem()
+    {
+        return $this->belongsTo(PoItem::class, 'par_po_items_id_fk', 'po_items_id');
     }
 
     public function parSpecs()
