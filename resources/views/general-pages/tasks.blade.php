@@ -193,14 +193,11 @@
                                             id="app-item-{{ $appItem->app_item_id }}"
                                             data-item-id="{{ $appItem->app_item_id }}"
                                             value="{{ $appItem->app_item_id }}"
-                                            {{ $isUsed ? 'disabled' : '' }}>
+                                            {{ $isUsed ? 'checked disabled' : '' }}>
                                     </div>
                                 </td>
                                 <td>
                                     {{ $appItem->app_item_proj_title ?: '---' }}
-                                    @if($isUsed)
-                                        <span class="badge ms-1" style="background-color: #6c757d; font-size: 10px;">Item Assigned</span>
-                                    @endif
                                 </td>
                                 <td>{{ $appItem->app_items_gen_desc ?: '---' }}</td>
                                 <td>{{ $appItem->app_items_mode ?: '---' }}</td>
@@ -318,6 +315,7 @@
                     "sLengthMenu": "Results :  _MENU_",
                 },
                 "columnDefs": columnDefsConfig,
+                "order": [],
                 "stripeClasses": [],
                 "lengthMenu": [5, 10, 20, 50],
                 "pageLength": 10,
@@ -406,7 +404,7 @@
 
         // APP item checkbox → enable Create button
         $(document).on('change', '.app-item-checkbox', function() {
-            var anyChecked = $('.app-item-checkbox:checked').length > 0;
+            var anyChecked = $('.app-item-checkbox:checked:not(:disabled)').length > 0;
             $('#btn-create-from-checklist').prop('disabled', !anyChecked);
         });
     </script>

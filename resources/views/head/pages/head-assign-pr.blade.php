@@ -13,6 +13,10 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/head/assign-pr/head-assign-pr.css') }}">
+
+    <!-- DARK MODE SPECIFIC css -->
+    <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/dark/modal.css') }}">
 @endpush
 
 {{-- Hidden meta tags for JS to consume the route URL and CSRF token --}}
@@ -104,11 +108,16 @@
                 <tbody>
                     @forelse($app_data->appItems as $appItem)
                         @if ($appItem->app_items_assigned_to)
-                            {{-- Already assigned: show icon, no checkbox --}}
-                            <tr>
-                                <td class="text-center align-middle">
-                                    <img src="{{ asset('img/Assigned.svg') }}" width="24" height="24"
-                                        title="Item is already assigned">
+                            {{-- Already assigned: show checked and disabled checkbox --}}
+                            <tr class="opacity-50">
+                                <td>
+                                    <div class="form-check form-check-danger form-check-inline">
+                                        <input class="form-check-input item-checkbox" type="checkbox"
+                                            id="item-{{ $appItem->app_item_id }}"
+                                            data-item-id="{{ $appItem->app_item_id }}"
+                                            value="{{ $appItem->app_item_id }}"
+                                            checked disabled>
+                                    </div>
                                 </td>
                                 <td>{{ $appItem->app_item_proj_title ?: '---' }}</td>
                                 <td>{{ $appItem->app_items_gen_desc ?: '---' }}</td>

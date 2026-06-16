@@ -18,7 +18,7 @@
 .modal-content {
   border: none;
   border-radius: 6px;
-  background: var(--white-2) !important;
+  background: var(--white-2);
   border-bottom: 1px solid #e0e6ed;
 }
 .modal-content hr {

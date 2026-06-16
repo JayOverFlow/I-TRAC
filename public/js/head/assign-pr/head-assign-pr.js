@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateButtonStates() {
         // Use DataTables API to query elements across all pages (even those not currently in the DOM)
         const table = $("#zero-config").DataTable();
-        const checkedCount = table.$(".item-checkbox:checked").length;
+        const checkedCount = table.$(".item-checkbox:checked:not(:disabled)").length;
         const isDisabled = checkedCount === 0;
 
         if (assignBtn) assignBtn.disabled = isDisabled;
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // 1. Collect item IDs from all checked checkboxes (across all DataTable pages)
             const table = $("#zero-config").DataTable();
             const itemIds = [];
-            table.$(".item-checkbox:checked").each(function () {
+            table.$(".item-checkbox:checked:not(:disabled)").each(function () {
                 itemIds.push(this.dataset.itemId);
             });
 
@@ -101,6 +101,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const assignedTo = selectedUser
                 ? selectedUser.dataset.userId
                 : null;
+            const assignedName = selectedUser
+                ? selectedUser.querySelector(".user-name").textContent.trim()
+                : "the selected user";
 
             if (itemIds.length === 0 || !assignedTo) return;
 
@@ -112,36 +115,45 @@ document.addEventListener("DOMContentLoaded", function () {
                 'meta[name="csrf-token"]',
             ).content;
 
-            const formData = new FormData();
-            formData.append("assigned_to", assignedTo);
-            itemIds.forEach((id) => formData.append("item_ids[]", id));
+            window.confirmAction({
+                title: 'Confirm Assignment?',
+                text: 'Are you sure you want to assign the selected procurement item(s) to ' + assignedName + '?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Assign',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    const formData = new FormData();
+                    formData.append("assigned_to", assignedTo);
+                    itemIds.forEach((id) => formData.append("item_ids[]", id));
 
-            fetch(url, {
-                method: "POST",
-                headers: { "X-CSRF-TOKEN": csrf },
-                body: formData,
-            })
-                .then(async (response) => {
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.message || "Failed to assign Purchase Request. Please check your inputs.");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.success) {
-                        // Close the modal and reload the page to reflect changes
-                        $("#exampleModalCenter").modal("hide");
-                        location.reload();
-                    } else {
-                        throw new Error(data.message || "An error occurred during assignment.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Assignment error:", error);
-                    $("#exampleModalCenter").modal("hide");
-                    showToast('error', error.message || 'An error occurred while assigning the PR.');
-                });
+                    fetch(url, {
+                        method: "POST",
+                        headers: { "X-CSRF-TOKEN": csrf },
+                        body: formData,
+                    })
+                        .then(async (response) => {
+                            if (!response.ok) {
+                                const errorData = await response.json().catch(() => ({}));
+                                throw new Error(errorData.message || "Failed to assign Purchase Request. Please check your inputs.");
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            if (data.success) {
+                                // Close the modal and reload the page to reflect changes
+                                $("#exampleModalCenter").modal("hide");
+                                location.reload();
+                            } else {
+                                throw new Error(data.message || "An error occurred during assignment.");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Assignment error:", error);
+                            $("#exampleModalCenter").modal("hide");
+                            showToast('error', error.message || 'An error occurred while assigning the PR.');
+                        });
+                }
+            });
         });
     }
 

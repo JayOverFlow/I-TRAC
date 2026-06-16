@@ -49,7 +49,7 @@ class AccountSettingsController extends Controller
             } else {
                 $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
             }
-            $apps = $appsQuery->get();
+            $apps = $appsQuery->orderBy('created_at', 'desc')->get();
 
             return view('head.pages.head-account-settings', compact('user', 'apps', 'activeAppId', 'activeApp'));
         } elseif ($genRole === 'Procurement') {
@@ -60,7 +60,7 @@ class AccountSettingsController extends Controller
             } else {
                 $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
             }
-            $apps = $appsQuery->get();
+            $apps = $appsQuery->orderBy('created_at', 'desc')->get();
 
             // Fetch PRs retrieved by this user
             $loadedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
@@ -73,7 +73,7 @@ class AccountSettingsController extends Controller
             } else {
                 $appsQuery->whereIn('app_dep_id_fk', $user->departments()->pluck('dep_id'));
             }
-            $apps = $appsQuery->get();
+            $apps = $appsQuery->orderBy('created_at', 'desc')->get();
             return view('supply.pages.supply-account-settings', compact('user', 'apps', 'activeAppId', 'activeApp'));
         } elseif ($genRole === 'Unassigned') {
             return view('unassigned.pages.unassigned-account-settings', compact('user'));

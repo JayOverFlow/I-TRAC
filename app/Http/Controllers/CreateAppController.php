@@ -130,6 +130,7 @@ class CreateAppController extends Controller
 
         $appId = $request->input('app_id');
 
+        $existingItemIds = [];
         if ($appId) {
             $app = AppParent::findOrFail($appId);
 
@@ -138,13 +139,8 @@ class CreateAppController extends Controller
                 abort(403, 'Unauthorized access.');
             }
 
-            // Prevent editing if already marked as Done
-            if ($app->app_status === 'Done') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Completed Annual Procurement Plans cannot be modified.',
-                ], 400);
-            }
+            // Allow modifying completed APPs to make form editing more flexible.
+
 
             // Update status and ensure unique code exists
             $appData = [
@@ -170,8 +166,7 @@ class CreateAppController extends Controller
             }
             $app->update($appData);
 
-            // Clear old items to overwrite
-            $app->appItems()->delete();
+            $existingItemIds = AppItem::where('app_id_fk', $app->app_id)->pluck('app_item_id')->toArray();
         } else {
             $year = date('Y');
             $appCount = AppParent::where('app_dep_id_fk', $depId)
@@ -193,26 +188,72 @@ class CreateAppController extends Controller
         }
 
 
+        $submittedItemIds = [];
         $totalEstiBudget = 0;
         foreach ($request->input('items', []) as $item) {
             $estiBudget = isset($item['esti_budget']) ? (float)$item['esti_budget'] : 0;
             $totalEstiBudget += $estiBudget;
 
-            AppItem::create([
-                'app_id_fk'              => $app->app_id,
-                'app_item_proj_title'    => $item['proj_title']   ?? null,
-                'app_items_end_user'     => $item['end_user']     ?? null,
-                'app_items_gen_desc'     => $item['gen_desc']     ?? null,
-                'app_items_mode'         => $item['mode']         ?? null,
-                'app_items_criteria'     => $item['criteria']     ?? null,
-                'app_items_covered'      => $item['covered']      ?? null,
-                'app_items_start'        => $item['start']        ?? null,
-                'app_items_end'          => $item['end']          ?? null,
-                'app_items_source'       => $item['source']       ?? null,
-                'app_items_esti_budget'  => $item['esti_budget']  ?? null,
-                'app_items_tools'        => $item['tools']        ?? null,
-                'app_items_remarks'      => $item['remarks']      ?? null,
-            ]);
+            $itemId = $item['app_item_id'] ?? null;
+
+            if ($itemId && in_array($itemId, $existingItemIds)) {
+                $submittedItemIds[] = $itemId;
+                $existingItem = AppItem::find($itemId);
+
+                // If the item is already assigned, preserve its values to prevent tampering
+                if ($existingItem->app_items_assigned_to !== null) {
+                    continue;
+                }
+
+                $existingItem->update([
+                    'app_item_proj_title'    => $item['proj_title']   ?? $existingItem->app_item_proj_title,
+                    'app_items_end_user'     => $item['end_user']     ?? $existingItem->app_items_end_user,
+                    'app_items_gen_desc'     => $item['gen_desc']     ?? $existingItem->app_items_gen_desc,
+                    'app_items_mode'         => $item['mode']         ?? $existingItem->app_items_mode,
+                    'app_items_criteria'     => $item['criteria']     ?? $existingItem->app_items_criteria,
+                    'app_items_covered'      => $item['covered']      ?? $existingItem->app_items_covered,
+                    'app_items_start'        => $item['start']        ?? $existingItem->app_items_start,
+                    'app_items_end'          => $item['end']          ?? $existingItem->app_items_end,
+                    'app_items_source'       => $item['source']       ?? $existingItem->app_items_source,
+                    'app_items_esti_budget'  => $item['esti_budget']  ?? $existingItem->app_items_esti_budget,
+                    'app_items_tools'        => $item['tools']        ?? $existingItem->app_items_tools,
+                    'app_items_remarks'      => $item['remarks']      ?? $existingItem->app_items_remarks,
+                ]);
+            } else {
+                AppItem::create([
+                    'app_id_fk'              => $app->app_id,
+                    'app_item_proj_title'    => $item['proj_title']   ?? null,
+                    'app_items_end_user'     => $item['end_user']     ?? null,
+                    'app_items_gen_desc'     => $item['gen_desc']     ?? null,
+                    'app_items_mode'         => $item['mode']         ?? null,
+                    'app_items_criteria'     => $item['criteria']     ?? null,
+                    'app_items_covered'      => $item['covered']      ?? null,
+                    'app_items_start'        => $item['start']        ?? null,
+                    'app_items_end'          => $item['end']          ?? null,
+                    'app_items_source'       => $item['source']       ?? null,
+                    'app_items_esti_budget'  => $item['esti_budget']  ?? null,
+                    'app_items_tools'        => $item['tools']        ?? null,
+                    'app_items_remarks'      => $item['remarks']      ?? null,
+                ]);
+            }
+        }
+
+        // Delete any existing items that were not submitted (removed on frontend)
+        if ($appId) {
+            $toDeleteIds = array_diff($existingItemIds, $submittedItemIds);
+            if (!empty($toDeleteIds)) {
+                // Security check: Make sure none of the items being deleted are assigned!
+                $assignedToDelete = AppItem::whereIn('app_item_id', $toDeleteIds)
+                    ->whereNotNull('app_items_assigned_to')
+                    ->count();
+                if ($assignedToDelete > 0) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cannot delete items that are already assigned to a Purchase Request task.',
+                    ], 422);
+                }
+                AppItem::whereIn('app_item_id', $toDeleteIds)->delete();
+            }
         }
 
         // Set allocated budget (app_total) dynamically: set to Estimated Budget sum if Done, 0 if Draft

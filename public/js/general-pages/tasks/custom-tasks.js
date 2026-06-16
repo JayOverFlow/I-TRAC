@@ -49,7 +49,7 @@ $(document).on("click", "#btn-create-from-checklist", function () {
         return;
     }
     var selectedItemIds = [];
-    $(".app-item-checkbox:checked").each(function () {
+    $(".app-item-checkbox:checked:not(:disabled)").each(function () {
         selectedItemIds.push($(this).data("item-id"));
     });
 
@@ -128,42 +128,51 @@ $(document).on("click", "#confirm-assign-btn", function () {
     // Collect item IDs from the checked checkboxes in the DataTable
     const itemIds = [];
     const table = $("#app-items-config").DataTable();
-    table.$(".app-item-checkbox:checked").each(function () {
+    table.$(".app-item-checkbox:checked:not(:disabled)").each(function () {
         itemIds.push($(this).data("item-id") || $(this).val());
     });
 
     const selectedUser = $(".user-list-item.active");
     const assignedTo = selectedUser.length ? selectedUser.data("user-id") : null;
+    const assignedName = selectedUser.length ? selectedUser.find(".user-name").text().trim() : "the selected user";
 
     if (itemIds.length === 0 || !assignedTo) return;
 
     const btn = $(this);
-    btn.prop("disabled", true).text("Assigning...");
-
     const url = $('meta[name="assign-pr-url"]').attr("content");
     const csrf = $('meta[name="csrf-token"]').attr("content");
 
-    $.ajax({
-        url: url,
-        type: "POST",
-        headers: { "X-CSRF-TOKEN": csrf },
-        data: {
-            assigned_to: assignedTo,
-            item_ids: itemIds
-        },
-        success: function (response) {
-            if (response.success) {
-                $("#exampleModalCenter").modal("hide");
-                location.reload();
-            } else {
-                alert(response.message || "Failed to assign Purchase Request. Please check your inputs.");
-                btn.prop("disabled", false).text("Assign");
-            }
-        },
-        error: function (xhr) {
-            console.error(xhr);
-            alert("An error occurred while assigning. Please try again.");
-            btn.prop("disabled", false).text("Assign");
+    window.confirmAction({
+        title: 'Confirm Assignment?',
+        text: 'Are you sure you want to assign the selected procurement item(s) to ' + assignedName + '?',
+        icon: 'question',
+        confirmButtonText: 'Yes, Assign',
+        cancelButtonText: 'Cancel',
+        onConfirm: function() {
+            btn.prop("disabled", true).text("Assigning...");
+            $.ajax({
+                url: url,
+                type: "POST",
+                headers: { "X-CSRF-TOKEN": csrf },
+                data: {
+                    assigned_to: assignedTo,
+                    item_ids: itemIds
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#exampleModalCenter").modal("hide");
+                        location.reload();
+                    } else {
+                        alert(response.message || "Failed to assign Purchase Request. Please check your inputs.");
+                        btn.prop("disabled", false).text("Assign");
+                    }
+                },
+                error: function (xhr) {
+                    console.error(xhr);
+                    alert("An error occurred while assigning. Please try again.");
+                    btn.prop("disabled", false).text("Assign");
+                }
+            });
         }
     });
 });

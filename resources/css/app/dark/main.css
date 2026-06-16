@@ -394,7 +394,7 @@ body.dark .custom-control-input:disabled ~ .form-check-input, body.dark .custom-
   background-color: #2A2F38;
 }
 body.dark .form-control {
-  color: #B91C1C;
+  color: #bfc9d4;
   background: #2A2F38;
 }
 body.dark .form-text {
@@ -458,7 +458,7 @@ body.dark .form-check-input:checked[type=checkbox]:not([role=switch]) {
 
 /*      Custom Select       */
 body.dark .form-select {
-  color: #B91C1C;
+  color: #bfc9d4;
   background-color: #2A2F38;
 }
 body.dark .form-select.form-select-lg {
@@ -2631,4 +2631,9 @@ body.dark .was-validated .form-control:invalid {
 body.dark .form-select.is-invalid,
 body.dark .was-validated .form-select:invalid {
     border-color: #e7515a !important;
+}
+
+/* Edit button border contrast in dark mode */
+body.dark #btn-edit-app {
+    border-color: #4b5563 !important;
 }

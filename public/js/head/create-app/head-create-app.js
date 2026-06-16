@@ -5,12 +5,46 @@ document.addEventListener("DOMContentLoaded", function () {
     const addProjectBtn         = document.getElementById("add-project-btn");
     const btnDone               = document.getElementById("btn-done");
     const btnDraft              = document.getElementById("btn-draft");
+    const btnEdit               = document.getElementById("btn-edit-app");
     const projectItemsContainer = document.getElementById("project-items-container");
     const totalAmountDisplay    = document.getElementById("total-amount-display");
 
     // ─── Flatpickr init ──────────────────────────────────────────────────────
-    if (typeof flatpickr !== "undefined") {
-        flatpickr(".flatpickr-date:not([disabled])");
+    function initFlatpickrForCard(card) {
+        if (typeof flatpickr === "undefined") return;
+
+        const startInput = card.querySelector('[data-field="start"]');
+        const endInput = card.querySelector('[data-field="end"]');
+
+        let startPicker = null;
+        let endPicker = null;
+
+        if (endInput && !endInput.disabled) {
+            if (endInput._flatpickr) endInput._flatpickr.destroy();
+            endPicker = flatpickr(endInput, {
+                minDate: (startInput && startInput.value) ? startInput.value : "today",
+                dateFormat: "Y-m-d"
+            });
+        }
+
+        if (startInput && !startInput.disabled) {
+            if (startInput._flatpickr) startInput._flatpickr.destroy();
+            startPicker = flatpickr(startInput, {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                onChange: function (selectedDates, dateStr) {
+                    if (endPicker) {
+                        endPicker.set("minDate", dateStr || "today");
+                    }
+                }
+            });
+        }
+    }
+
+    if (projectItemsContainer) {
+        projectItemsContainer.querySelectorAll(".project-item-card").forEach((card) => {
+            initFlatpickrForCard(card);
+        });
     }
 
     // ─── Utility: total amount ────────────────────────────────────────────────
@@ -209,14 +243,65 @@ document.addEventListener("DOMContentLoaded", function () {
     if (btnDone) {
         btnDone.addEventListener("click", function () {
             window.confirmAction({
-                title: 'Submit Annual Procurement Plan?',
-                text: 'Are you sure you want to complete this Annual Procurement Plan? This will submit it for final review and cannot be modified once approved.',
+                title: 'Set as Completed?',
+                text: 'Are you sure you want to set this APP as completed? You can edit it later if needed.',
                 icon: 'question',
-                confirmButtonText: 'Yes, Submit It',
+                confirmButtonText: 'Yes, Complete',
                 cancelButtonText: 'Cancel',
                 onConfirm: function() {
                     submitForm("done");
                 }
+            });
+        });
+    }
+
+    if (btnEdit) {
+        btnEdit.addEventListener("click", function () {
+            // Hide Completed badge and Edit button
+            const completedBadge = document.getElementById("completed-badge");
+            if (completedBadge) completedBadge.classList.add("d-none");
+            btnEdit.classList.add("d-none");
+
+            // Show Done and Save as Draft buttons
+            if (btnDone) {
+                btnDone.classList.remove("d-none");
+                btnDone.classList.add("d-inline-flex");
+            }
+            if (btnDraft) {
+                btnDraft.classList.remove("d-none");
+                btnDraft.classList.add("d-inline-flex");
+            }
+
+            // Enable form fields (skipping already assigned items)
+            form.querySelectorAll("input, select, textarea").forEach((el) => {
+                if (el.closest(".project-item-card.is-assigned")) {
+                    return;
+                }
+                el.removeAttribute("disabled");
+                el.removeAttribute("readonly");
+            });
+
+            // Show Add Project container
+            const addProjectContainer = document.getElementById("add-project-btn-container");
+            if (addProjectContainer) {
+                addProjectContainer.classList.remove("d-none");
+            }
+
+            // Show Trash buttons if count > 1
+            const projectCards = projectItemsContainer.querySelectorAll(".project-item-card");
+            if (projectCards.length > 1) {
+                projectCards.forEach((card) => {
+                    if (card.classList.contains("is-assigned")) {
+                        return;
+                    }
+                    const trashBtn = card.querySelector(".remove-project-btn");
+                    if (trashBtn) trashBtn.classList.remove("d-none");
+                });
+            }
+
+            // Re-initialize flatpickr on the now enabled inputs
+            projectCards.forEach((card) => {
+                initFlatpickrForCard(card);
             });
         });
     }
@@ -246,9 +331,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const newIndex      = projectCards.length; // 0-based
             const newItemNumber = newIndex + 1;
 
-            // Deep-clone the first card as a clean template
-            const firstCard = projectCards[0];
-            const newCard   = firstCard.cloneNode(true);
+            // Find a card that is not assigned to clone as a template, or clean it up
+            const templateCard = projectItemsContainer.querySelector(".project-item-card:not(.is-assigned)") || projectCards[0];
+            const newCard   = templateCard.cloneNode(true);
+
+            // Clean template-specific assigned states
+            newCard.classList.remove("is-assigned");
+            newCard.querySelectorAll('input[type="hidden"]').forEach(el => el.remove());
+            newCard.querySelectorAll('.badge').forEach(el => {
+                if (el.textContent.trim() === 'Assigned') el.remove();
+            });
+            newCard.querySelectorAll('input, select, textarea').forEach(el => {
+                el.removeAttribute("disabled");
+                el.removeAttribute("readonly");
+            });
 
             // Show the Trash button on cloned cards
             const trashBtn = newCard.querySelector(".remove-project-btn");
@@ -298,12 +394,7 @@ document.addEventListener("DOMContentLoaded", function () {
             projectItemsContainer.appendChild(newCard);
 
             // Initialize flatpickr on the new date inputs
-            if (typeof flatpickr !== "undefined") {
-                newCard.querySelectorAll(".flatpickr-date").forEach((input) => {
-                    if (input._flatpickr) input._flatpickr.destroy();
-                    flatpickr(input);
-                });
-            }
+            initFlatpickrForCard(newCard);
         });
     }
 
@@ -312,8 +403,53 @@ document.addEventListener("DOMContentLoaded", function () {
     if (projectItemsContainer) {
         updateTotalAmount();
 
+        projectItemsContainer.addEventListener("keydown", function (e) {
+            if (e.target.classList.contains("estimated-budget-input")) {
+                // Allow control keys
+                if ([
+                    'Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'NumLock',
+                    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'
+                ].includes(e.key)) {
+                    return;
+                }
+                
+                // Allow command/control shortcut combinations
+                if (e.ctrlKey || e.metaKey) {
+                    return;
+                }
+
+                // Allow period/decimal point, but only if it's the first one
+                if (e.key === '.') {
+                    if (e.target.value.includes('.')) {
+                        e.preventDefault();
+                    }
+                    return;
+                }
+
+                // Allow numbers only
+                if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        projectItemsContainer.addEventListener("paste", function (e) {
+            if (e.target.classList.contains("estimated-budget-input")) {
+                const clipboardData = e.clipboardData || window.clipboardData;
+                const pastedData = clipboardData.getData('text');
+                
+                // Allow only positive float or integer formats (e.g. 100, 100.5)
+                if (!/^\d+(\.\d+)?$/.test(pastedData)) {
+                    e.preventDefault();
+                }
+            }
+        });
+
         projectItemsContainer.addEventListener("input", function (e) {
             if (e.target.classList.contains("estimated-budget-input")) {
+                if (e.target.value !== "" && parseFloat(e.target.value) < 0) {
+                    e.target.value = 0;
+                }
                 updateTotalAmount();
             }
         });
