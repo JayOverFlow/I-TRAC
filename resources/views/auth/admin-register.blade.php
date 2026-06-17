@@ -26,11 +26,8 @@
 <body class="layout-boxed">
     <div class="main-container vh-100" id="container">
         <div class="row vh-100 g-0">
-            <div id="cover" class="col-6 p-4 d-flex justify-content-center align-items-center">
-                <div class="text-center">
-                    <img src="{{ asset('img/itrac-cover-logo.png') }}" alt="I-TRAC logo" class="my-5" width="500" height="100">
-                    <h4 class="white-text">A Digital System for Item Status Tracking and <br> QR-Code Enabled Material Requisition Control</h4>
-                </div>
+            <div id="cover" class="col-6 p-0">
+                <img src="{{ asset('img/Background.svg') }}" alt="Background" class="w-100 h-100" style="object-fit: cover;">
             </div>
             <div class="col-5 px-2 py-5">
                 

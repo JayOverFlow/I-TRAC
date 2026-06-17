@@ -1,5 +1,5 @@
 #cover {
-    background-color: var(--red-2);
+    overflow: hidden;
 }
 
 .bs-stepper-circle {

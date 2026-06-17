@@ -2,6 +2,6 @@
 @extends('layouts.head-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'MR | I-TRAC')
+@section('title', 'Property Assignment | I-TRAC')
 
 @include('general-pages.mr')
