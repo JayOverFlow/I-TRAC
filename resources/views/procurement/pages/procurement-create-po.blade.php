@@ -31,12 +31,6 @@
                     @endif
                 </div>
                 <div>
-                    @php
-                        $pr = $po->purchaseRequest;
-                        $allocated_budget = ($pr && $pr->app) ? $pr->app->app_total : 0;
-                    @endphp
-                    <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP {{ number_format($allocated_budget, 2) }}</h5>
-
                     <div class="text-end">
                         @if ($isDone)
                             <a href="{{ route('export.po.pdf', ['po_id' => $po->po_id]) }}"
@@ -278,8 +272,8 @@
         </div>
 
         <div class="d-flex justify-content-end align-items-center mb-3 mt-3">
-            <h5 class="fw-bold ps-2 pe-5">Total Amount</h5>
-            <h5 class="ps-2 pe-2" id="grand-total-amount">₱ {{ number_format($po->po_total_amount, 2) }}</h5>
+            <h5 class="fw-bold black-text ps-2 pe-5">Total Amount</h5>
+            <h5 class="ps-2 black-text pe-2" id="grand-total-amount">₱ {{ number_format($po->po_total_amount, 2) }}</h5>
         </div>
 
     </form>

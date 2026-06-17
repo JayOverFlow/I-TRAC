@@ -75,7 +75,6 @@ class CreatePoController extends Controller
             'po_title' => $request->po_title,
             'po_unique_code' => $uniqueCode,
             'saved_by_user_id_fk' => $user->user_id,
-            'po_date' => now()->toDateString(),
             'po_status' => 'Draft',
         ]);
 
