@@ -149,8 +149,8 @@ $(document).ready(function() {
 
             $hiddenInput.val(formatted);
 
-            // Filter DataTable with the active code/partial code
-            table.search(formatted).draw();
+            // Filter DataTable with the active code/partial code in the first column
+            table.column(0).search(formatted).draw();
 
             // Validate full format: PR-{3-digit-officeId}-{6-digits}-{3-digits}
             const prRegex = /^PR-\d{3}-\d{6}-\d{3}$/;
