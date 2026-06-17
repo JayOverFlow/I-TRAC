@@ -15,7 +15,7 @@
                 @foreach ($retrievedPrs as $retrievedPr)
                     <tr class="clickable-row" data-id="{{ $retrievedPr->pr_id }}">
                         <td class="text-center">
-                            {{ $retrievedPr->pr_id }}</td>
+                            {{ $retrievedPr->pr_unique_code ?? $retrievedPr->pr_id }}</td>
                         <td>
                             {{ $retrievedPr->pr_purpose ?? 'Untitled PR' }}</td>
                         <td class="text-center">

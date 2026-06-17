@@ -15,7 +15,7 @@ $(document).ready(function() {
                     <div class="code-mask-input-group">
                         <span class="code-static-prefix">PR</span>
                         <span class="code-dash">-</span>
-                        <input type="text" class="code-digit-input code-office-id" placeholder="00" maxlength="4">
+                        <input type="text" class="code-digit-input code-office-id" placeholder="000" maxlength="3">
                         <span class="code-dash">-</span>
                         <input type="text" class="code-digit-input code-app-code" placeholder="000000" maxlength="6">
                         <span class="code-dash">-</span>
@@ -97,7 +97,7 @@ $(document).ready(function() {
                 const appCode = digits.substring(digits.length - 9, digits.length - 3);
                 const officeId = digits.substring(0, digits.length - 9);
 
-                $officeInput.val(officeId);
+                $officeInput.val(officeId.padStart(3, '0'));
                 $appInput.val(appCode);
                 $countInput.val(prCount);
 
@@ -106,6 +106,24 @@ $(document).ready(function() {
             } else {
                 // If pasted text is just a number, populate current field
                 $(this).val(digits.substring(0, $(this).attr('maxlength')));
+                updatePrCode();
+            }
+        });
+
+        // Auto-pad office input on blur
+        $officeInput.on('blur', function() {
+            const val = $(this).val();
+            if (val && val.length < 3) {
+                $(this).val(val.padStart(3, '0'));
+                updatePrCode();
+            }
+        });
+
+        // Auto-pad count input on blur
+        $countInput.on('blur', function() {
+            const val = $(this).val();
+            if (val && val.length < 3) {
+                $(this).val(val.padStart(3, '0'));
                 updatePrCode();
             }
         });
@@ -134,8 +152,8 @@ $(document).ready(function() {
             // Filter DataTable with the active code/partial code
             table.search(formatted).draw();
 
-            // Validate full format: PR-{officeId}-{6-digits}-{3-digits}
-            const prRegex = /^PR-\d+-\d{6}-\d{3}$/;
+            // Validate full format: PR-{3-digit-officeId}-{6-digits}-{3-digits}
+            const prRegex = /^PR-\d{3}-\d{6}-\d{3}$/;
             if (prRegex.test(formatted)) {
                 $retrieveBtn.prop('disabled', false);
             } else {
