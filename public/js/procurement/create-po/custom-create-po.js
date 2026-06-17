@@ -130,6 +130,30 @@ $(document).ready(function() {
         }
     }
 
+    // ─── Format TIN inputs (XXX-XXX-XXX-XXX) ──────────────────────────────
+    $(document).on('input', 'input[name="po_tin"], input[name="po_tuptin"]', function() {
+        let value = $(this).val().replace(/\D/g, ''); // Remove all non-digits
+        if (value.length > 12) {
+            value = value.substring(0, 12);
+        }
+        
+        let formatted = '';
+        if (value.length > 0) {
+            formatted += value.substring(0, 3);
+        }
+        if (value.length > 3) {
+            formatted += '-' + value.substring(3, 6);
+        }
+        if (value.length > 6) {
+            formatted += '-' + value.substring(6, 9);
+        }
+        if (value.length > 9) {
+            formatted += '-' + value.substring(9, 12);
+        }
+        
+        $(this).val(formatted);
+    });
+
     // ─── Calculate Amount ─────────────────────────────────────────────────
     $(document).on('input', '.qty-input, .cost-input', function() {
         var row = $(this).closest('tr.po-item-row');
