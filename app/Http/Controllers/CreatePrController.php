@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
+use App\Services\PrPdfExportService;
 
 class CreatePrController extends Controller
 {
@@ -580,150 +581,12 @@ class CreatePrController extends Controller
             abort(403, 'Purchase Request must be exported before download.');
         }
 
-        $pr = PrParent::with(['prItems.prSpecs', 'department', 'requestor', 'approver'])
+        $pr = PrParent::with(['prItems.prSpecs', 'department', 'requestor.roles', 'requestor.departments', 'savedBy.roles', 'approver'])
             ->findOrFail($task->pr_id_fk);
 
-        $templatePath = base_path('procurement_documents/Purchase Request Excel Template (2).xlsx');
-
-        if (!file_exists($templatePath)) {
-            return redirect()->back()->with('error', 'Excel template not found.');
-        }
-
         try {
-            $spreadsheet = IOFactory::load($templatePath);
-            $sheet = $spreadsheet->getActiveSheet();
-
-            // 1. General Styling & Page Setup
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial Narrow');
-            $sheet->getPageSetup()->setFitToPage(true);
-            $sheet->getPageSetup()->setFitToWidth(1);
-            $sheet->getPageSetup()->setFitToHeight(1);
-            $sheet->getPageSetup()->setPrintArea('A1:G54');
-            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
-            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-            $sheet->getPageSetup()->setHorizontalCentered(true);
-
-            // Equal Margins (0.5 inches on all sides)
-            $sheet->getPageMargins()->setTop(0.5);
-            $sheet->getPageMargins()->setBottom(0.5);
-            $sheet->getPageMargins()->setLeft(0.5);
-            $sheet->getPageMargins()->setRight(0.5);
-
-            // 2. Institutional Header Row Height Adjustment (Rows 1-5)
-            $headerRowHeights = [
-                1 => 10,
-                2 => 14,
-                3 => 14,
-                4 => 14,
-                5 => 14,
-                6 => 0,   // Remove unnecessary row/border
-                7 => 12,  // Blank Gap row
-            ];
-            foreach ($headerRowHeights as $row => $height) {
-                $sheet->getRowDimension($row)->setRowHeight($height);
-            }
-
-            // 3. Header Data Mapping (Form Info)
-            $sheet->setCellValue('B8', $pr->department->dep_name);
-            $sheet->setCellValue('F8', $pr->pr_no);
-            $sheet->setCellValue('B9', $pr->pr_section);
-            $sheet->setCellValue('F9', \Carbon\Carbon::parse($pr->pr_date)->format('M d, Y'));
-
-            // Set Form Info (A8:G9) styles
-            $sheet->getStyle('A8:G9')->getFont()->setSize(11);
-
-            // 4. Items mapping (Row 12-47) - Expanded to match new template
-            $currRow = 12;
-            $items = $pr->prItems;
-
-            $sheet->getStyle('A12:G47')->getFont()->setSize(10);
-
-            foreach ($items as $item) {
-                if ($currRow > 47) break;
-
-                $sheet->setCellValue('A' . $currRow, $item->pr_items_quantity);
-                $sheet->setCellValue('B' . $currRow, $item->pr_items_unit);
-
-                // Description + Specs (joined with commas, no wrapping)
-                $description = $item->pr_items_descrip;
-                if ($item->prSpecs->isNotEmpty()) {
-                    $specs = $item->prSpecs->pluck('pr_spec_spec')->join(', ');
-                    $description .= ", " . $specs;
-                }
-                $sheet->setCellValue('C' . $currRow, $description);
-                $sheet->getStyle('C' . $currRow)->getAlignment()->setWrapText(false);
-
-                $sheet->setCellValue('E' . $currRow, $item->pr_items_cost);
-                $sheet->getStyle('E' . $currRow)->getNumberFormat()->setFormatCode('#,##0.00');
-
-                $sheet->setCellValue('G' . $currRow, "=A{$currRow}*E{$currRow}");
-                $sheet->getStyle('G' . $currRow)->getNumberFormat()->setFormatCode('#,##0.00');
-
-                $currRow++;
-            }
-
-            // 5. Grand Total Row (Row 48)
-            $sheet->setCellValue('F48', '=SUM(G12:G47)');
-            $sheet->getStyle('F48')->getNumberFormat()->setFormatCode('#,##0.00');
-            $sheet->getStyle('F48')->getFont()->setBold(true);
-
-            // 6. Footer (Rows 50-53)
-            $sheet->setCellValue('C50', $pr->pr_purpose ?? 'N/A');
-
-            // Name Formatter Helper
-            $formatName = function ($user) {
-                if (!$user) return 'N/A';
-                $mi = $user->user_middlename ? substr($user->user_middlename, 0, 1) . '.' : '';
-                return trim($user->user_firstname . ' ' . $mi . ' ' . $user->user_lastname . ' ' . ($user->user_suffix ?? ''));
-            };
-
-            $requestorName = strtoupper($formatName($pr->requestor));
-            $departmentHeadName = strtoupper($formatName($pr->approver));
-
-            // Footer names and designations
-            $sheet->setCellValue('C52', $requestorName);
-            $sheet->setCellValue('D52', $departmentHeadName);
-            $sheet->getStyle('C52:D52')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('C52:D52')->getFont()->setSize(10)->setBold(false);
-
-            $sheet->setCellValue('C53', $pr->pr_designation ?? 'Section Head');
-            $sheet->setCellValue('D53', $pr->pr_approved_by_designation ?? 'Department Head');
-            $sheet->getStyle('C53:D53')->getAlignment()->setWrapText(false)->setShrinkToFit(true);
-            $sheet->getStyle('C53:D53')->getFont()->setSize(9);
-
-            // 6.1 Unique Code (Row 54)
-            $sheet->setCellValue('G54', $pr->pr_unique_code ?? 'N/A');
-            $sheet->getStyle('G54')->getFont()->setSize(8);
-            $sheet->getStyle('G54')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-
-            // 7. Apply Thick Borders
-            $thickStyle = [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                    ],
-                ],
-            ];
-            $sheet->getStyle('A1:G5')->applyFromArray($thickStyle);   // Header Box (1-5)
-            $sheet->getStyle('A8:G9')->applyFromArray($thickStyle);   // Form Info Box (8-9)
-            $sheet->getStyle('A11:G47')->applyFromArray($thickStyle); // Items Table (11-47)
-            $sheet->getStyle('A48:G48')->applyFromArray($thickStyle); // Total Row (48)
-            $sheet->getStyle('A50:G53')->applyFromArray($thickStyle); // Footer (50-53)
-
-            // 8. Final Calculation
-            Calculation::getInstance($spreadsheet)->clearCalculationCache();
-            $sheet->getCell('F48')->getCalculatedValue();
-
-            // Export to PDF using mPDF
-            $pdfWriter = new Mpdf($spreadsheet);
-            $pdfWriter->setPreCalculateFormulas(true);
-            $filename = ($pr->pr_unique_code ?: 'PR_EXPORT') . ".pdf";
-
-            return response()->streamDownload(function () use ($pdfWriter) {
-                $pdfWriter->save('php://output');
-            }, $filename, [
-                'Content-Type' => 'application/pdf',
-            ]);
+            $pdfService = app(PrPdfExportService::class);
+            return $pdfService->export($pr);
         } catch (\Exception $e) {
             Log::error('PR PDF Export Error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to generate PDF. Details: ' . $e->getMessage());

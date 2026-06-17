@@ -103,7 +103,7 @@ class AssignPrController extends Controller
 
             // Create initial row in pr_tbl - saved_by_user_id_fk and pr_name_of_requestor populated
             $pr = PrParent::create([
-                'saved_by_user_id_fk'  => $assignedTo,
+                'saved_by_user_id_fk'  => $headUserId,
                 'pr_name_of_requestor' => $assignedTo,
             ]);
 
