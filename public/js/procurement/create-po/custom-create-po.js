@@ -320,13 +320,31 @@ $(document).ready(function() {
     // ─── Done button — strict validation ──────────────────────────────────
     $(document).on('click', '#submit-po-btn', function(e) {
         e.preventDefault();
-        submitPoForm('Done');
+        window.confirmAction({
+            title: 'Complete Purchase Order?',
+            text: 'Are you sure you want to mark this purchase order as complete?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Complete',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                submitPoForm('Done');
+            }
+        });
     });
 
     // ─── Save as Draft — lenient validation ───────────────────────────────
     $(document).on('click', '#draft-po-btn', function(e) {
         e.preventDefault();
-        submitPoForm('Draft');
+        window.confirmAction({
+            title: 'Save as Draft?',
+            text: 'Are you sure you want to save this purchase order as a draft?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Save',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                submitPoForm('Draft');
+            }
+        });
     });
 });
 
