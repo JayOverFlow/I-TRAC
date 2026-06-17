@@ -7,6 +7,10 @@ use App\Models\AppParent;
 use App\Models\AppItem;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\PrParent;
+use App\Models\PrItem;
+use App\Models\PrSpec;
+use Illuminate\Support\Facades\DB;
 
 class AssignPrController extends Controller
 {
@@ -80,21 +84,45 @@ class AssignPrController extends Controller
         $headName = $user->user_fullname_no_middle ?? 'Department Head';
         $description = "{$headName} has assigned you to create a Purchase Request for: " . ($projectTitles ?: 'Selected APP Projects');
 
-        // Create ONE task for all selected items
-        $task = Task::create([
-            'assigned_by'      => $headUserId,
-            'assigned_to'      => $assignedTo,
-            'task_description' => substr($description, 0, 255),
-            'task_type'        => 'Purchase Request',
-            'task_status'      => 'Pending',
-            'task_dep_id_fk'   => $dep_id,
-        ]);
+        DB::transaction(function () use ($headUserId, $assignedTo, $itemIds, $dep_id, $description) {
+            // Create ONE task for all selected items
+            $task = Task::create([
+                'assigned_by'      => $headUserId,
+                'assigned_to'      => $assignedTo,
+                'task_description' => substr($description, 0, 255),
+                'task_type'        => 'Purchase Request',
+                'task_status'      => 'Pending',
+                'task_dep_id_fk'   => $dep_id,
+            ]);
 
-        // Link the items to the task via pivot
-        $task->appItems()->attach($itemIds);
+            // Link the items to the task via pivot
+            $task->appItems()->attach($itemIds);
 
-        // Mark each selected item as assigned to this user
-        AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_assigned_to' => $assignedTo]);
+            // Mark each selected item as assigned to this user
+            AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_assigned_to' => $assignedTo]);
+
+            // Create initial row in pr_tbl - saved_by_user_id_fk and pr_name_of_requestor populated
+            $pr = PrParent::create([
+                'saved_by_user_id_fk'  => $assignedTo,
+                'pr_name_of_requestor' => $assignedTo,
+            ]);
+
+            // Link the PR to the Task!
+            $task->update(['pr_id_fk' => $pr->pr_id]);
+
+            // Insert initial row/s into pr_items_tbl and pr_items_specs_tbl.
+            foreach ($itemIds as $itemId) {
+                $prItem = PrItem::create([
+                    'pr_id_fk'          => $pr->pr_id,
+                    'pr_app_item_id_fk' => $itemId,
+                ]);
+
+                PrSpec::create([
+                    'pr_items_id_fk' => $prItem->pr_items_id,
+                    'pr_spec_spec'   => null,
+                ]);
+            }
+        });
 
         session()->flash('success', 'Purchase Request successfully assigned to the selected user.');
         

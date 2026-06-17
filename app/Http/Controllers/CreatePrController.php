@@ -23,7 +23,7 @@ class CreatePrController extends Controller
     private function authorizeTask(Task $task)
     {
         $user = Auth::user();
-        
+
         // Resolve active role dynamically based on active session context
         $activeRoleId = session('active_role_id');
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
@@ -49,7 +49,7 @@ class CreatePrController extends Controller
     public function showCreatePr($task_id)
     {
         $user = Auth::user();
-        
+
         // Resolve active role dynamically based on active session context
         $activeRoleId = session('active_role_id');
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
@@ -360,14 +360,15 @@ class CreatePrController extends Controller
 
             // Update existing PR header
             $pr->update([
-                'pr_section'     => $request->input('pr_section'),
-                'pr_no'          => $request->input('pr_no'),
-                'pr_department'  => $departmentId,
-                'app_id_fk'      => $appId,
-                'pr_unique_code' => $uniqueCode,
-                'pr_purpose'     => $request->input('pr_purpose'),
-                'pr_status'      => $status,
-                'submitted_at'   => $pr->submitted_at ?: (in_array($status, ['Complete', 'Exported']) ? now() : null),
+                'pr_section'           => $request->input('pr_section'),
+                'pr_no'                => $request->input('pr_no'),
+                'pr_department'        => $departmentId,
+                'app_id_fk'            => $appId,
+                'pr_unique_code'       => $uniqueCode,
+                'pr_purpose'           => $request->input('pr_purpose'),
+                'pr_status'            => $status,
+                'submitted_at'         => $pr->submitted_at ?: (in_array($status, ['Complete', 'Exported']) ? now() : null),
+                'pr_name_of_requestor' => $pr->pr_name_of_requestor ?: $user->user_id,
             ]);
 
             // Delete old items (cascades to specs via FK)
@@ -390,7 +391,6 @@ class CreatePrController extends Controller
                 'pr_department'        => $departmentId,
                 'app_id_fk'            => $appId,
                 'pr_no'                => $request->input('pr_no'),
-                'pr_date'              => now()->toDateString(),
                 'pr_purpose'           => $request->input('pr_purpose'),
                 'pr_name_of_requestor' => $user->user_id,
                 'saved_by_user_id_fk'  => $user->user_id,
@@ -527,8 +527,8 @@ class CreatePrController extends Controller
                 // Get Head's designation for the approval field
                 $activeRoleId = session('active_role_id');
                 $headRole = $user->roles->where('gen_role', 'Head')->first()
-                          ?? $user->roles->where('role_id', $activeRoleId)->first()
-                          ?? $user->roles->first();
+                    ?? $user->roles->where('role_id', $activeRoleId)->first()
+                    ?? $user->roles->first();
                 $designation = $headRole?->role_name ?? 'Department Head';
 
                 // Stamp the approval
@@ -636,10 +636,10 @@ class CreatePrController extends Controller
             $currRow = 12;
             $items = $pr->prItems;
 
-            $sheet->getStyle('A12:G47')->getFont()->setSize(10); 
+            $sheet->getStyle('A12:G47')->getFont()->setSize(10);
 
             foreach ($items as $item) {
-                if ($currRow > 47) break; 
+                if ($currRow > 47) break;
 
                 $sheet->setCellValue('A' . $currRow, $item->pr_items_quantity);
                 $sheet->setCellValue('B' . $currRow, $item->pr_items_unit);
