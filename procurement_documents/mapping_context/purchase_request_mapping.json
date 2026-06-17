@@ -1,0 +1,648 @@
+{
+  "$description": "Explicit field/data mapping context for the PR (Purchase Request) Excel template. Generated for use as AI agent context when injecting data into the 'PR' sheet, using 'PR with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "PR_Template.xlsx",
+    "form_title": "PURCHASE REQUEST",
+    "form_code": "FM-PR-007",
+    "form_revision": "REV01",
+    "form_revision_date": "2025-03-11",
+    "issuing_organization": "Technological University of the Philippines, Procurement Office (Km.14 East Service Road, Western Bicutan, Taguig City 1630)",
+    "sheets": {
+      "PR": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it). NOTE: this sheet is not fully blank - two footer cells (E52, E53) carry hardcoded default text rather than being empty (see issues).",
+        "used_range": "A1:N53",
+        "form_visual_area": "A1:G53"
+      },
+      "PR with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'PR', but single-value (header/footer) cells contain text placeholders (e.g. 'pr_department') instead of blank or default cells. IMPORTANT ANOMALY: unlike every other form mapped so far (RSMI, ICS, RSPI, PAR), the repeating item table (rows 12-47) contains NO placeholders anywhere - only the header row (11) and number formats on columns E and G are present. Column mapping for the item table must therefore be inferred from the header labels and formats alone.",
+        "used_range": "A1:N53",
+        "form_visual_area": "A1:G53"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across columns A-G; columns H-N fall inside the sheet's used range but contain no content in either sheet.",
+      "Unlike RSMI/ICS/RSPI/PAR, this form has no 'university vision statement' paragraph - rows 4, 6, and 7 are empty spacers instead.",
+      "User-specified item table range 'A12:G47' (36 rows) matches the formatted data range exactly (header is row 11, data starts row 12, ends row 47 immediately above the TOTAL row at 48).",
+      "Two instances of the same logo image (image1.png) are embedded: one anchored at ~A1:A3 (the letterhead logo) and one small image anchored at ~E12:E13 - i.e. directly inside the first data row of the repeatable item table, in the merged 'Unit Cost' column. 'PR with Mapping' additionally has a third, duplicate instance of the letterhead logo at the same A1 position (see issues)."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "A1",
+      "merged": false,
+      "value": "\\n\\n",
+      "purpose": "Tiny spacer cell (row height 6.0) holding two literal newline characters - likely reserved space for the overlapping letterhead logo image rather than meaningful text content."
+    },
+    {
+      "range": "B2:D2",
+      "merged": true,
+      "value": "Republic of the Philippines",
+      "purpose": "Letterhead - country line"
+    },
+    {
+      "range": "E2:G2",
+      "merged": true,
+      "value": "PROCUREMENT OFFICE",
+      "purpose": "Letterhead - issuing office"
+    },
+    {
+      "range": "B3:D3",
+      "merged": true,
+      "value": "TECHNOLOGICAL UNIVERSITY OF THE PHLIPPINES\\nKm.14 East Service Road, Western Bicutan, Taguig City 1630",
+      "purpose": "Letterhead - institution name and address, two lines within one merged cell (note: 'PHLIPPINES' is a misspelling of 'PHILIPPINES' - see issues)"
+    },
+    {
+      "range": "E3:G3",
+      "merged": true,
+      "value": "PURCHASE REQUEST",
+      "purpose": "Form title (bold, 20pt) - the only title line; unlike RSMI/ICS/RSPI/PAR this title is not split across multiple rows"
+    },
+    {
+      "range": "B4:D4",
+      "merged": true,
+      "value": null,
+      "purpose": "Empty spacer row beneath the institution name/address"
+    },
+    {
+      "range": "B5:D5",
+      "merged": true,
+      "value": "http:www.tup.edu.ph  |  Telephone Nos.: (632) 8824-7250 to 54 local 113",
+      "purpose": "Letterhead - website and phone contact line"
+    },
+    {
+      "range": "E5:G5",
+      "merged": true,
+      "value": "FM-PR-007        REV01      11MARCH2025",
+      "purpose": "Form control footer - form code, revision number, revision date (static document metadata, not user data)"
+    },
+    {
+      "range": "A8",
+      "merged": false,
+      "value": "Department:",
+      "purpose": "Label for header field 'department'"
+    },
+    {
+      "range": "E8",
+      "merged": false,
+      "value": "PR NO. :",
+      "purpose": "Label for header field 'pr_no'"
+    },
+    {
+      "range": "A9",
+      "merged": false,
+      "value": "Section:",
+      "purpose": "Label for header field 'section'"
+    },
+    {
+      "range": "E9",
+      "merged": false,
+      "value": "Date:",
+      "purpose": "Label for header field 'date'"
+    },
+    {
+      "range": "A10",
+      "merged": "A10:G10",
+      "value": null,
+      "purpose": "Empty, merged spacer row directly above the item table header"
+    },
+    {
+      "range": "A11:G11",
+      "merged": "C11:D11 and E11:F11 only",
+      "value": {
+        "A11": "Quantity",
+        "B11": "Unit",
+        "C11:D11": "Item Description",
+        "E11:F11": "  Unit Cost",
+        "G11": "Total Cost"
+      },
+      "purpose": "Column headers for the Item Table (single row, row 11). 'Item Description' and 'Unit Cost' headers each span two underlying columns via merges; 'Quantity', 'Unit', and 'Total Cost' are single columns. Note the leading whitespace in the 'Unit Cost' label text."
+    },
+    {
+      "range": "A48",
+      "merged": "A48:E48",
+      "value": "TOTAL",
+      "purpose": "Label for the item table grand total row, merged across columns A-E"
+    },
+    {
+      "range": "A50",
+      "merged": "A50:B50",
+      "value": "PURPOSE:",
+      "purpose": "Label for the purpose/justification field"
+    },
+    {
+      "range": "A51",
+      "merged": "A51:B51",
+      "value": "SIGNATURE:",
+      "purpose": "Label for the requestor's signature line"
+    },
+    {
+      "range": "E51",
+      "merged": "E51:G51",
+      "value": "Approved by:",
+      "purpose": "Section title for the approver block"
+    },
+    {
+      "range": "A52",
+      "merged": "A52:B52",
+      "value": "NAME OF REQUESTOR:",
+      "purpose": "Label for the requestor name field(s)"
+    },
+    {
+      "range": "A53",
+      "merged": "A53:B53",
+      "value": "DESIGNATION:",
+      "purpose": "Label for the requestor designation/role field(s)"
+    }
+  ],
+  "field_mapping": {
+    "header_info": {
+      "description": "Single-occurrence key/value fields at the top of the form. Each field has exactly one placeholder, found in the 'PR with Mapping' sheet.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "department",
+          "placeholder": "pr_department",
+          "cell": "B8",
+          "merged_range": "B8:D8",
+          "label_cell": "A8",
+          "label_text": "Department:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "section",
+          "placeholder": "pr_section",
+          "cell": "B9",
+          "merged_range": "B9:D9",
+          "label_cell": "A9",
+          "label_text": "Section:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "pr_no",
+          "placeholder": "pr_no",
+          "cell": "F8",
+          "merged_range": "F8:G8",
+          "label_cell": "E8",
+          "label_text": "PR NO. :",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "date",
+          "placeholder": "pr_date",
+          "cell": "F9",
+          "merged_range": "F9:G9",
+          "label_cell": "E9",
+          "label_text": "Date:",
+          "data_type": "datetime",
+          "cell_number_format": "m/d/yy h:mm",
+          "notes": "Unlike the date fields in RSMI/ICS/RSPI/PAR (which use date-only formats like 'mm-dd-yy'), this field's format includes a time component ('h:mm'). Whether a time value is actually expected, or whether this is leftover formatting, is not defined here."
+        }
+      ]
+    },
+    "item_table": {
+      "description": "Repeating line-item table. The header occupies a single static row (row 11). Each data row (12-47) represents one requested item. UNLIKE every other form mapped so far, 'PR with Mapping' contains NO placeholders in any item-table data row - the table is entirely unmapped at the field-name level. The column-to-field assignments below are INFERRED from the row-11 header labels and the column number formats; no placeholder strings exist to confirm exact field names, so the 'placeholder' values shown are suggestions, not confirmed mappings (see issues).",
+      "section_type": "table",
+      "repeatable": true,
+      "header_row": 11,
+      "data_range": "A12:G47",
+      "max_data_rows": 36,
+      "row_pattern": "Each data row N (12 <= N <= 47) is one item record. Columns C:D are merged per row (CN:DN) into a single 'Item Description' cell, and columns E:F are merged per row (EN:FN) into a single 'Unit Cost' cell. Column G ('Total Cost') is a standalone cell.",
+      "mapping_status": "unmapped_in_source_workbook - column assignments below are inferred, not confirmed by placeholder text",
+      "columns": [
+        {
+          "column": "A",
+          "field": "quantity",
+          "suggested_placeholder": "pr_quantity",
+          "header_label": "Quantity",
+          "data_type": "number",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "B",
+          "field": "unit",
+          "suggested_placeholder": "pr_unit",
+          "header_label": "Unit",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Unit of measure, e.g. 'pc', 'box', 'ream'."
+        },
+        {
+          "column": "C:D (merged per row)",
+          "field": "item_description",
+          "suggested_placeholder": "pr_item_description",
+          "header_label": "Item Description",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Unlike the equivalent description columns in ICS/RSPI/PAR (which map to two composite placeholders, e.g. 'xxx_items_descrip, + xxx_spec_description'), no such composite pattern is confirmed here since no placeholders exist at all in this table. A single combined description field is assumed, but this is an inference."
+        },
+        {
+          "column": "E:F (merged per row)",
+          "field": "unit_cost",
+          "suggested_placeholder": "pr_unit_cost",
+          "header_label": "  Unit Cost",
+          "data_type": "number",
+          "cell_number_format": "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)  (Excel 'Accounting' style, parentheses for negatives)",
+          "notes": "Column F has a width of only ~1.7 characters - visually, F is almost invisible and the merge with E functions mainly to slightly widen the Unit Cost display column."
+        },
+        {
+          "column": "G",
+          "field": "total_cost",
+          "suggested_placeholder": "pr_total_cost",
+          "header_label": "Total Cost",
+          "data_type": "number",
+          "cell_number_format": "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-  (Excel 'Accounting' style, minus sign for negatives - a DIFFERENT accounting sub-style than column E/F; see issues)",
+          "notes": "Typically quantity * unit_cost, but this document does not define how it is computed (no validation rules per scope)."
+        }
+      ]
+    },
+    "totals": {
+      "description": "Grand total of the item table's Total Cost column.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "total_amount",
+          "cell": "F48",
+          "merged_range": "F48:G48",
+          "placeholder": null,
+          "value_in_both_sheets": null,
+          "label_cell": "A48",
+          "label_merged_range": "A48:E48",
+          "label_text": "TOTAL",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00_);(#,##0.00)",
+          "notes": "No placeholder and no SUM formula exists for this cell in either sheet - it is currently blank in both 'PR' and 'PR with Mapping'. Contrast with RSMI (placeholder 'rsmi_total') and RSPI (live '=SUM(...)' formula). An AI agent must compute and write this value itself, or leave it blank, depending on downstream needs - this document does not decide which."
+        }
+      ]
+    },
+    "footer_block": {
+      "description": "Bottom block of the form (rows 50-53): a single-row PURPOSE field, then a SIGNATURE/requestor/designation block on the left (columns A-D) and an Approved-by block on the right (columns E-G).",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "fields": {
+        "A50:C50_purpose": {
+          "label_cell": "A50",
+          "label_merged_range": "A50:B50",
+          "label_text": "PURPOSE:",
+          "value_cell": "C50",
+          "value_merged_range": "C50:G50",
+          "field": "purpose",
+          "placeholder": "pr_purpose",
+          "data_type": "string"
+        },
+        "signature_line": {
+          "label_cell": "A51",
+          "label_merged_range": "A51:B51",
+          "label_text": "SIGNATURE:",
+          "value_cell": "C51",
+          "value_merged_range": "C51:D51",
+          "field": null,
+          "placeholder": null,
+          "data_type": null,
+          "notes": "C51:D51 is a blank merged cell with no placeholder - intended as empty visual space for a physical/drawn signature, not a data field."
+        },
+        "approved_by_title": {
+          "cell": "E51",
+          "merged_range": "E51:G51",
+          "value": "Approved by:",
+          "role": "static_label"
+        },
+        "requestor_id_fk": {
+          "label_cell": "A52",
+          "label_merged_range": "A52:B52",
+          "label_text": "NAME OF REQUESTOR:",
+          "value_cell": "C52",
+          "merged_range": null,
+          "field": "saved_by_user_id_fk",
+          "placeholder": "saved_by_user_id_fk",
+          "data_type": "string",
+          "notes": "Foreign-key reference to the user/employee record of the requestor. C52 and D52 are two separate, unmerged cells sitting side by side under the same 'NAME OF REQUESTOR:' label - see requestor_name_display below and ISS for the relationship between them."
+        },
+        "requestor_name_display": {
+          "label_cell": "A52",
+          "label_merged_range": "A52:B52",
+          "label_text": "NAME OF REQUESTOR:",
+          "value_cell": "D52",
+          "merged_range": null,
+          "field": "name_of_requestor",
+          "placeholder": "pr_name_of_requestor",
+          "data_type": "string",
+          "notes": "Sits immediately to the right of saved_by_user_id_fk (C52). Likely a human-readable display name resolved from, or provided alongside, the FK in C52 - the document does not define which one takes precedence if both are supplied."
+        },
+        "approved_by": {
+          "label_cell": "E51",
+          "label_text": "Approved by:",
+          "value_cell": "E52",
+          "merged_range": "E52:G52",
+          "field": "approved_by",
+          "placeholder": "pr_approved_by",
+          "data_type": "string",
+          "default_value_in_blank_PR_sheet": "Engr. REXMELLE F. DECAPIA, JR. Ph.D.",
+          "notes": "In the unmapped 'PR' sheet (which is meant to be the blank template), this cell is NOT empty - it carries a hardcoded default approver name. 'PR with Mapping' replaces it with the placeholder 'pr_approved_by'. See issues."
+        },
+        "requestor_role_or_dept": {
+          "label_cell": "A53",
+          "label_merged_range": "A53:B53",
+          "label_text": "DESIGNATION:",
+          "value_cell": "C53",
+          "merged_range": null,
+          "field": "unclear (see issues)",
+          "placeholder": "?? role : department",
+          "data_type": "string",
+          "notes": "The literal placeholder text is '?? role : department', which reads as an unresolved note/TODO rather than a clean field name. It is positioned under the same 'DESIGNATION:' label as D53. Treated here as a still-open field pending clarification - see issues."
+        },
+        "requestor_role": {
+          "label_cell": "A53",
+          "label_merged_range": "A53:B53",
+          "label_text": "DESIGNATION:",
+          "value_cell": "D53",
+          "merged_range": null,
+          "field": "role",
+          "placeholder": "role",
+          "data_type": "string",
+          "notes": "Bare placeholder text 'role' with no form-specific prefix (every other placeholder in this workbook is prefixed with 'pr_', 'saved_by_', etc.). Likely the requestor's job role/title, paired with C53 - see issues."
+        },
+        "approved_by_designation": {
+          "label_cell": "E51",
+          "value_cell": "E53",
+          "merged_range": "E53:G53",
+          "field": "approved_by_designation",
+          "placeholder": "pr_approved_by_designation",
+          "data_type": "string",
+          "default_value_in_blank_PR_sheet": "Campus Director",
+          "notes": "Like approved_by (E52), this cell is NOT empty in the unmapped 'PR' sheet - it carries a hardcoded default designation. 'PR with Mapping' replaces it with the placeholder 'pr_approved_by_designation'. See issues."
+        }
+      }
+    }
+  },
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'PR' and 'PR with Mapping' (identical in both sheets).",
+    "ranges": [
+      {
+        "range": "B2:D2",
+        "section": "letterhead"
+      },
+      {
+        "range": "E2:G2",
+        "section": "letterhead"
+      },
+      {
+        "range": "B3:D3",
+        "section": "letterhead"
+      },
+      {
+        "range": "E3:G3",
+        "section": "form_title"
+      },
+      {
+        "range": "B4:D4",
+        "section": "spacer"
+      },
+      {
+        "range": "B5:D5",
+        "section": "letterhead"
+      },
+      {
+        "range": "E5:G5",
+        "section": "form_control_footer"
+      },
+      {
+        "range": "B8:D8",
+        "section": "header_info.department"
+      },
+      {
+        "range": "F8:G8",
+        "section": "header_info.pr_no"
+      },
+      {
+        "range": "B9:D9",
+        "section": "header_info.section"
+      },
+      {
+        "range": "F9:G9",
+        "section": "header_info.date"
+      },
+      {
+        "range": "A10:G10",
+        "section": "spacer (above item table header)"
+      },
+      {
+        "range": "C11:D11",
+        "section": "item_table.header (Item Description)"
+      },
+      {
+        "range": "E11:F11",
+        "section": "item_table.header (Unit Cost)"
+      },
+      {
+        "range": "C12:D12 .. C47:D47",
+        "section": "item_table.data (Item Description, one per data row, 36 ranges)"
+      },
+      {
+        "range": "E12:F12 .. E47:F47",
+        "section": "item_table.data (Unit Cost, one per data row, 36 ranges)"
+      },
+      {
+        "range": "A48:E48",
+        "section": "totals.label (TOTAL)"
+      },
+      {
+        "range": "F48:G48",
+        "section": "totals.value"
+      },
+      {
+        "range": "A50:B50",
+        "section": "footer_block.purpose (label)"
+      },
+      {
+        "range": "C50:G50",
+        "section": "footer_block.purpose (value)"
+      },
+      {
+        "range": "A51:B51",
+        "section": "footer_block.signature (label)"
+      },
+      {
+        "range": "C51:D51",
+        "section": "footer_block.signature (blank signature space)"
+      },
+      {
+        "range": "E51:G51",
+        "section": "footer_block.approved_by_title"
+      },
+      {
+        "range": "A52:B52",
+        "section": "footer_block.requestor_label"
+      },
+      {
+        "range": "E52:G52",
+        "section": "footer_block.approved_by"
+      },
+      {
+        "range": "A53:B53",
+        "section": "footer_block.designation_label"
+      },
+      {
+        "range": "E53:G53",
+        "section": "footer_block.approved_by_designation"
+      }
+    ],
+    "note": "C12:D12 through C47:D47, and E12:F12 through E47:F47 (36 ranges each) follow the same one-per-row pattern and are summarized as one entry above to keep this document concise. Notably, C52/D52 and C53/D53 are NOT merged (each is a standalone cell), unlike most other side-by-side field pairs in this workbook's footer."
+  },
+  "data_types": {
+    "string": [
+      "pr_department",
+      "pr_section",
+      "pr_no",
+      "item_table.unit",
+      "item_table.item_description",
+      "pr_purpose",
+      "saved_by_user_id_fk",
+      "pr_name_of_requestor",
+      "pr_approved_by",
+      "'?? role : department' (C53, unresolved)",
+      "role",
+      "pr_approved_by_designation"
+    ],
+    "datetime": [
+      "pr_date"
+    ],
+    "number": [
+      "item_table.quantity",
+      "item_table.unit_cost",
+      "item_table.total_cost",
+      "total_amount (F48)"
+    ],
+    "accounting_formatted_number": [
+      "item_table.unit_cost (parentheses-style negatives)",
+      "item_table.total_cost (minus-sign-style negatives)",
+      "total_amount (F48, parentheses-style negatives)"
+    ]
+  },
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "item_table - fully unmapped",
+      "description": "Unlike RSMI, ICS, RSPI, and PAR (each of which has at least the first item-table data row populated with text placeholders in their 'with Mapping' sheet), the PR item table (rows 12-47) contains NO placeholders anywhere. The column-to-field mapping in this document (pr_quantity, pr_unit, pr_item_description, pr_unit_cost, pr_total_cost) is INFERRED from the row-11 header labels and column number formats, not confirmed by the source workbook. Confirm intended field names before relying on them."
+    },
+    {
+      "id": "ISS-02",
+      "area": "item_table accounting format mismatch (E vs G)",
+      "description": "Column E (Unit Cost) uses an Excel accounting format that displays negative numbers in parentheses ('_(* #,##0.00_);_(* (#,##0.00);...'), while column G (Total Cost) uses a different accounting sub-style that displays negatives with a leading minus sign ('_-* #,##0.00_-;-* #,##0.00_-;...'). Both render positive numbers identically, but the two columns are not using the exact same number-format string."
+    },
+    {
+      "id": "ISS-03",
+      "area": "header_info.date (F9) - datetime format",
+      "description": "F9 (pr_date) uses the format 'm/d/yy h:mm', which includes a time component, unlike the pure date formats ('mm-dd-yy') used for equivalent date fields in RSMI, ICS, RSPI, and PAR. It is unclear whether a time value is actually expected for this field or whether this format was inherited unintentionally."
+    },
+    {
+      "id": "ISS-04",
+      "area": "footer_block.requestor (C52 / D52)",
+      "description": "Two separate, unmerged placeholder cells sit side by side under the single 'NAME OF REQUESTOR:' label: C52 holds 'saved_by_user_id_fk' (a foreign-key reference) and D52 holds 'pr_name_of_requestor' (a display name). The relationship between the two - e.g. whether the name should be looked up from the FK, or supplied independently, and which one takes precedence if both are given - is not defined in the workbook."
+    },
+    {
+      "id": "ISS-05",
+      "area": "footer_block.designation (C53 / D53)",
+      "description": "C53 contains the literal text '?? role : department', which reads as an unresolved note or TODO left by whoever built the mapping sheet, rather than a clean field name. D53 contains the bare word 'role' with no form-specific prefix (every other placeholder in this workbook uses a prefix like 'pr_' or 'saved_by_'). Both sit under the single 'DESIGNATION:' label, mirroring the two-cells-one-label pattern of C52/D52, but with much less clarity about what each is meant to hold."
+    },
+    {
+      "id": "ISS-06",
+      "area": "footer_block.approved_by / approved_by_designation - hardcoded defaults",
+      "description": "In the supposedly blank 'PR' sheet, E52 already contains the static text 'Engr. REXMELLE F. DECAPIA, JR. Ph.D.' and E53 already contains 'Campus Director', rather than being empty. 'PR with Mapping' overwrites both with placeholders ('pr_approved_by', 'pr_approved_by_designation'). This means the 'empty' template is not actually empty for these two fields - an AI agent populating a fresh copy of 'PR' needs to know whether to keep these defaults (e.g. because the Campus Director is always the approver) or always overwrite them with injected data."
+    },
+    {
+      "id": "ISS-07",
+      "area": "embedded image inside the item table (E12:E13)",
+      "description": "A small instance of the embedded logo image (image1.png) is anchored at approximately E12:E13 - directly inside the first data row of the repeatable item table, within the merged 'Unit Cost' column. If the item table is expanded/repeated by inserting or shifting rows, this image may not move with the data, may visually overlap injected values, or may be unintentionally duplicated. This differs from the harmless, far-below stray image duplicates seen in the RSMI and RSPI templates."
+    },
+    {
+      "id": "ISS-08",
+      "area": "duplicate letterhead logo in 'PR with Mapping'",
+      "description": "'PR with Mapping' embeds the letterhead logo image (image1.png, anchored at ~A1) twice, while 'PR' embeds it only once at the same position. The second instance in the mapping sheet appears to be a stray duplicate left over from editing."
+    },
+    {
+      "id": "ISS-09",
+      "area": "letterhead text - misspelling and stray newline",
+      "description": "B3 spells the institution name as 'TECHNOLOGICAL UNIVERSITY OF THE PHLIPPINES' (missing the 'I' in 'PHILIPPINES'). Separately, A1 contains only two literal newline characters ('\\n\\n') with a row height of 6 - likely an artifact of logo placement rather than meaningful text, but technically a non-empty 'static' cell."
+    },
+    {
+      "id": "ISS-10",
+      "area": "totals (F48)",
+      "description": "F48:G48 (the TOTAL value cell) has no placeholder and no SUM formula in either sheet - it is blank in both. Contrast with RSMI (placeholder text) and RSPI (live SUM formula). An AI agent must decide whether to compute and write this value itself or leave it blank; this document does not decide that."
+    },
+    {
+      "id": "ISS-11",
+      "area": "user-specified item table range vs. observed structure",
+      "description": "The brief's stated range 'A12:G47' matches the observed data range exactly (header at row 11, 36 data rows from 12-47, TOTAL row at 48). No discrepancy here, unlike some of the earlier forms in this series."
+    }
+  ],
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive, and how it maps onto the sheet. Item-table field names are the INFERRED suggestions noted above (see ISS-01), since no placeholders exist in the source workbook for that section. This is illustrative only - no validation rules are implied.",
+    "example_payload": {
+      "pr_department": "College of Engineering",
+      "pr_section": "Electronics Engineering",
+      "pr_no": "PR-2026-00098",
+      "pr_date": "2026-06-12",
+      "item_table": [
+        {
+          "pr_quantity": 5,
+          "pr_unit": "pc",
+          "pr_item_description": "Digital multimeter, autoranging",
+          "pr_unit_cost": 1800.0,
+          "pr_total_cost": 9000.0
+        },
+        {
+          "pr_quantity": 10,
+          "pr_unit": "box",
+          "pr_item_description": "Resistor assortment kit, 1/4W",
+          "pr_unit_cost": 350.0,
+          "pr_total_cost": 3500.0
+        }
+      ],
+      "pr_purpose": "For use in the Electronics Laboratory's circuit analysis exercises, AY 2026-2027.",
+      "saved_by_user_id_fk": "EMP-00231",
+      "pr_name_of_requestor": "Juan Dela Cruz",
+      "pr_approved_by": "Engr. Rexmelle F. Decapia, Jr. Ph.D.",
+      "pr_approved_by_designation": "Campus Director"
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'PR' sheet, assuming item_table rows are written starting at row 12. C53/D53 are omitted here since their intended content is unresolved (see ISS-05).",
+      "header_info": {
+        "B8": "College of Engineering",
+        "B9": "Electronics Engineering",
+        "F8": "PR-2026-00098",
+        "F9": "2026-06-12"
+      },
+      "item_table_row_1 (sheet row 12)": {
+        "A12": 5,
+        "B12": "pc",
+        "C12:D12": "Digital multimeter, autoranging",
+        "E12:F12": 1800.0,
+        "G12": 9000.0
+      },
+      "item_table_row_2 (sheet row 13)": {
+        "A13": 10,
+        "B13": "box",
+        "C13:D13": "Resistor assortment kit, 1/4W",
+        "E13:F13": 350.0,
+        "G13": 3500.0
+      },
+      "totals": {
+        "F48:G48": 12500.0
+      },
+      "footer_block": {
+        "C50:G50": "For use in the Electronics Laboratory's circuit analysis exercises, AY 2026-2027.",
+        "C52": "EMP-00231",
+        "D52": "Juan Dela Cruz",
+        "E52:G52": "Engr. Rexmelle F. Decapia, Jr. Ph.D.",
+        "E53:G53": "Campus Director"
+      }
+    }
+  }
+}
