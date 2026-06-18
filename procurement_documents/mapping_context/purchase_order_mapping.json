@@ -1,0 +1,749 @@
+{
+  "$description": "Explicit field/data mapping context for the PO (Purchase Order) Excel template. Generated for use as AI agent context when injecting data into the 'PO' sheet, using 'PO with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "PO_Template.xlsx",
+    "form_title": "PURCHASE ORDER",
+    "form_code": "FM-PR-006",
+    "form_revision": "REV 1",
+    "form_revision_date": "2017-03-03",
+    "issuing_organization": "Technological University of the Philippines (Km. 14 East Service Road, Western Bicutan, Taguig City)",
+    "sheets": {
+      "PO": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it). NOTE: this sheet is not fully blank - several cells already carry hardcoded static text (a named Accountant, boilerplate clauses) rather than being empty (see issues).",
+        "used_range": "A1:H55",
+        "form_visual_area": "A1:F55"
+      },
+      "PO with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'PO', but single-value (header/footer) cells and the first item-table data row (row 13) contain placeholders instead of blank cells. This mapping sheet uses THREE different placeholder notations side by side: plain snake_case tokens (e.g. 'po_supplier'), bracket-style composite tokens (e.g. '[total amount in words]'), and descriptive lookup expressions written as prose (e.g. 'user->user_fullname where role_id = 68'). It also contains one extra row (56) that does not exist at all in the 'PO' sheet - see issues.",
+        "used_range": "A1:H56",
+        "form_visual_area": "A1:F56"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across columns A-F; columns G-H fall inside the sheet's used range but contain no content in either sheet.",
+      "User-specified item table range 'A13:F37' (25 rows) matches the formatted data range exactly (header is row 12, data starts row 13, ends row 37 immediately above the title/recap rows starting at 38).",
+      "A1 (merged A1:A2) is NOT a normal text or floating-drawing image cell. It uses Excel's modern 'Picture in Cell' / rich-value feature to embed the university logo (xl/media/image1.png) directly inside the cell. Tools that don't support this newer rich-value type (including openpyxl, used to generate this document) read it back as a literal error string '#VALUE!' rather than the image - see issues. There are no ordinary floating/anchored drawing-object images anywhere in this workbook."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "A1:A2",
+      "merged": true,
+      "value": "#VALUE! (rich-value image placeholder, NOT real text - see meta.layout_notes and issues)",
+      "purpose": "Letterhead logo, embedded via Excel's 'Picture in Cell' rich-value feature rather than a floating image or text."
+    },
+    {
+      "range": "B1:D1",
+      "merged": true,
+      "value": "TEHCNOLOGICAL UNIVERSITY OF THE PHILIPPINES\\nKm. 14 East Service Road, Western Bicutan, Taguig City\\nTel. 8247-5250 to 54",
+      "purpose": "Letterhead - institution name, address, and phone, three lines within one merged cell (note: 'TEHCNOLOGICAL' is a misspelling of 'TECHNOLOGICAL' - see issues)"
+    },
+    {
+      "range": "E1:F1",
+      "merged": true,
+      "value": "PURCHASE ORDER",
+      "purpose": "Form title (bold, 12pt)"
+    },
+    {
+      "range": "B2:D2",
+      "merged": true,
+      "value": " The Technological University of the Philippines shall be a premiere state university with recognized excellence in engineering and technology education at par with the leading universities in the ASEAN region.",
+      "purpose": "University vision statement (single merged cell, unlike the multi-row wrapping seen in RSMI/ICS/RSPI/PAR)"
+    },
+    {
+      "range": "E2:F2",
+      "merged": true,
+      "value": "FM-PR-006 REV 1 03MARCH2017",
+      "purpose": "Form control footer - form code, revision number, revision date (static document metadata, not user data)"
+    },
+    {
+      "range": "A8",
+      "merged": false,
+      "value": "Gentlemen:",
+      "purpose": "Static salutation line opening the body of the letter-style PO; no associated data field"
+    },
+    {
+      "range": "B9:E9",
+      "merged": true,
+      "value": " Please furnish this Office the following articles subject to the term and conditions contained herein.",
+      "purpose": "Static introductory sentence directly above the item table; no associated data field"
+    },
+    {
+      "range": "A12:F12",
+      "merged": false,
+      "value": {
+        "A12": "Stock/Property No.",
+        "B12": "Unit",
+        "C12": "Description",
+        "D12": "Quantity",
+        "E12": "Unit Cost",
+        "F12": "Amount"
+      },
+      "purpose": "Column headers for the Item Table (single row, row 12). No header cell is merged, unlike RSMI's/ICS's/PR's split-column headers."
+    },
+    {
+      "range": "A41:F41",
+      "merged": true,
+      "value": "In case of failure to make the full delivery within the time specified above, a penalty of one tenth (1/10) of one percent for everyday of delay shall be imposed on the undelivered item/s.",
+      "purpose": "Static penalty/boilerplate clause; identical in both sheets, no associated data field"
+    },
+    {
+      "range": "B43",
+      "merged": false,
+      "value": "Conforme:",
+      "purpose": "Section title for the left ('Supplier acknowledgement') signatory block"
+    },
+    {
+      "range": "E43",
+      "merged": false,
+      "value": "Very Truly yours,",
+      "purpose": "Section title / letter-closing for the right ('TUP signatory') block"
+    },
+    {
+      "range": "C46",
+      "merged": false,
+      "value": "Signature over Printed Name of Supplier",
+      "purpose": "Static label beneath the (unmapped, blank) supplier name/signature space in the left block"
+    },
+    {
+      "range": "C48",
+      "merged": false,
+      "value": "__________",
+      "purpose": "Static underscore line, left block - a blank line for a handwritten date beneath the supplier's signature block"
+    },
+    {
+      "range": "C49",
+      "merged": false,
+      "value": " Date",
+      "purpose": "Static label under the C48 underscore line"
+    },
+    {
+      "range": "A51",
+      "merged": false,
+      "value": "Funds Cluster:",
+      "purpose": "Static label for a budget/accounting field; paired with a static underscore fill-in line (B51), not a placeholder"
+    },
+    {
+      "range": "B51",
+      "merged": false,
+      "value": "_______________",
+      "purpose": "Static underscore fill-in line for 'Funds Cluster' - present identically in both sheets, no placeholder"
+    },
+    {
+      "range": "A52",
+      "merged": false,
+      "value": "Funds Available:",
+      "purpose": "Static label for a budget/accounting field; paired with a static underscore fill-in line (B52), not a placeholder"
+    },
+    {
+      "range": "B52",
+      "merged": false,
+      "value": "_______________",
+      "purpose": "Static underscore fill-in line for 'Funds Available' - present identically in both sheets, no placeholder"
+    },
+    {
+      "range": "E51",
+      "merged": false,
+      "value": "ORS/BURS No:",
+      "purpose": "Static label paired with a static underscore fill-in line (F51), not a placeholder"
+    },
+    {
+      "range": "F51",
+      "merged": false,
+      "value": "____________",
+      "purpose": "Static underscore fill-in line - present identically in both sheets, no placeholder"
+    },
+    {
+      "range": "E52",
+      "merged": false,
+      "value": "ORS/BURS:",
+      "purpose": "Static label paired with a static underscore fill-in line (F52), not a placeholder"
+    },
+    {
+      "range": "F52",
+      "merged": false,
+      "value": "____________",
+      "purpose": "Static underscore fill-in line - present identically in both sheets, no placeholder"
+    },
+    {
+      "range": "E53",
+      "merged": false,
+      "value": "Amount:",
+      "purpose": "Static label paired with a static underscore fill-in line (F53), not a placeholder"
+    },
+    {
+      "range": "F53",
+      "merged": false,
+      "value": "____________",
+      "purpose": "Static underscore fill-in line - present identically in both sheets, no placeholder"
+    },
+    {
+      "range": "C54",
+      "merged": false,
+      "value": "JULIET T. NAREZ",
+      "purpose": "Hardcoded printed name of the Accountant who countersigns the budget/funds section. Present identically in BOTH 'PO' and 'PO with Mapping' - this is a fixed default, not an injectable field (see issues)."
+    },
+    {
+      "range": "C55",
+      "merged": false,
+      "value": "Accountant III",
+      "purpose": "Hardcoded job title accompanying C54. Also identical in both sheets, also not an injectable field."
+    }
+  ],
+  "field_mapping": {
+    "header_info": {
+      "description": "Single-occurrence key/value fields at the top of the form. Each field has exactly one placeholder, found in the 'PO with Mapping' sheet.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "supplier",
+          "placeholder": "po_supplier",
+          "cell": "C4",
+          "merged_range": "C4:D4",
+          "label_cell": "A4",
+          "label_merged_range": "A4:B4",
+          "label_text": "Supplier:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "address",
+          "placeholder": "po_address",
+          "cell": "C5",
+          "merged_range": "C5:D5",
+          "label_cell": "A5",
+          "label_merged_range": "A5:B5",
+          "label_text": "Address:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "tele",
+          "placeholder": "po_tele",
+          "cell": "C6",
+          "merged_range": "C6:D6",
+          "label_cell": "A6",
+          "label_merged_range": "A6:B6",
+          "label_text": "Tel. No.:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "tin",
+          "placeholder": "po_tin",
+          "cell": "C7",
+          "merged_range": "C7:D7",
+          "label_cell": "A7",
+          "label_merged_range": "A7:B7",
+          "label_text": "TIN:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "po_no",
+          "placeholder": "po_no",
+          "cell": "F4",
+          "merged_range": null,
+          "label_cell": "E4",
+          "label_text": "P.O. No.:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "date",
+          "placeholder": "po_date",
+          "cell": "F5",
+          "merged_range": null,
+          "label_cell": "E5",
+          "label_text": "Date:",
+          "data_type": "date",
+          "cell_number_format": "General (see issues - no date-specific format applied, unlike equivalent fields in RSMI/ICS/RSPI/PAR)"
+        },
+        {
+          "field": "mode",
+          "placeholder": "po_mode",
+          "cell": "F6",
+          "merged_range": null,
+          "label_cell": "E6",
+          "label_text": "Mode of Procurement:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "tuptin",
+          "placeholder": "po_tuptin",
+          "cell": "F7",
+          "merged_range": null,
+          "label_cell": "E7",
+          "label_text": "TUP-Taguig TIN:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "place_delivery",
+          "placeholder": "po_place_delivery",
+          "cell": "C10",
+          "merged_range": "C10:D10",
+          "label_cell": "A10",
+          "label_merged_range": "A10:B10",
+          "label_text": "Place of Delivery:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "date_of_delivery",
+          "placeholder": "po_delivery_term (literal text in source - see issues; likely intended to be a distinct field such as 'po_date_delivery')",
+          "cell": "C11",
+          "merged_range": "C11:D11",
+          "label_cell": "A11",
+          "label_merged_range": "A11:B11",
+          "label_text": "Date of Delivery:",
+          "data_type": "date",
+          "cell_number_format": "General",
+          "notes": "The placeholder text in this cell is identical to the one in F10 (which sits under the unrelated 'Delivery Term:' label). This duplication is almost certainly a copy-paste mapping error - see issues."
+        },
+        {
+          "field": "delivery_term",
+          "placeholder": "po_delivery_term",
+          "cell": "F10",
+          "merged_range": null,
+          "label_cell": "E10",
+          "label_text": "Delivery Term:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "field": "payment_term",
+          "placeholder": "po_payment_term",
+          "cell": "F11",
+          "merged_range": null,
+          "label_cell": "E11",
+          "label_text": "Payment Term:",
+          "data_type": "string",
+          "cell_number_format": "General"
+        }
+      ]
+    },
+    "item_table": {
+      "description": "Repeating line-item table. The header occupies a single static row (row 12). Each data row (13-37) represents one ordered item. Placeholders are present only in the first data row (13) of 'PO with Mapping'; mapping for rows 14-37 is by the same column letters. No columns in this table are merged per row.",
+      "section_type": "table",
+      "repeatable": true,
+      "header_row": 12,
+      "data_range": "A13:F37",
+      "max_data_rows": 25,
+      "row_pattern": "Each data row N (13 <= N <= 37) is one item record. No cells are merged within data rows.",
+      "columns": [
+        {
+          "column": "A",
+          "field": "stockno",
+          "placeholder": "po_items_stockno",
+          "header_label": "Stock/Property No.",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "B",
+          "field": "unit",
+          "placeholder": "po_items_unit",
+          "header_label": "Unit",
+          "data_type": "string",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "C",
+          "field": "description",
+          "placeholder": "po_items_descrip, + po_spec_description",
+          "header_label": "Description",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Composite field mapped to TWO source placeholders: 'po_items_descrip' and 'po_spec_description', joined with ', + ' - the same pattern seen in the ICS, RSPI, and PAR templates' Description columns."
+        },
+        {
+          "column": "D",
+          "field": "quantity",
+          "placeholder": "po_items_quantity",
+          "header_label": "Quantity",
+          "data_type": "number",
+          "cell_number_format": "General"
+        },
+        {
+          "column": "E",
+          "field": "unit_cost",
+          "placeholder": "po_items_cost",
+          "header_label": "Unit Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 25 data rows)"
+        },
+        {
+          "column": "F",
+          "field": "amount",
+          "placeholder": "po_items_amount || po_items_quantity * po_items_cost",
+          "header_label": "Amount",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00 (consistent across all 25 data rows)",
+          "notes": "This is the only column across all forms mapped so far where the source mapping sheet EXPLICITLY documents the computation, using a '||' separator between the field name ('po_items_amount') and a description of how it's derived ('po_items_quantity * po_items_cost'). This is informational text from the source, not a validation rule authored by this document."
+        }
+      ]
+    },
+    "totals_and_summary": {
+      "description": "Rows 38-39, directly beneath the item table, hold a composite title line, a total-in-words line, and the grand total value. Notation here switches to bracket-style tokens ('[field]'), distinct from the plain snake_case placeholders used elsewhere in the same sheet.",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "composite_title_line",
+          "cell": "A38",
+          "merged_range": "A38:E38",
+          "placeholder": "[po_title] - + [pr_department] - + [po_fund_cluster]",
+          "data_type": "string",
+          "notes": "A composite text line combining three bracket-style tokens joined by ' - + ': '[po_title]', '[pr_department]' (note the 'pr_' prefix, not 'po_' - possibly carried over from the related Purchase Request form), and '[po_fund_cluster]'. None of these three tokens are defined as standalone placeholders elsewhere in this sheet - see issues."
+        },
+        {
+          "field": "total_amount_in_words",
+          "cell": "A39",
+          "merged_range": "A39:E39",
+          "placeholder": "[total amount in words]",
+          "data_type": "string",
+          "notes": "Bracket-style placeholder indicating the grand total should be spelled out in words (e.g. 'Twelve Thousand Five Hundred Pesos Only')."
+        },
+        {
+          "field": "total_amount",
+          "cell": "F39",
+          "merged_range": null,
+          "placeholder": "[total amount] || sum of all amount",
+          "data_type": "number",
+          "cell_number_format": "General (see issues - no currency format applied despite holding a monetary total)",
+          "notes": "Bracket-style placeholder with an explicit computation hint after '||': 'sum of all amount' - i.e. the sum of the item table's Amount column (F13:F37). No SUM formula is actually present in either sheet; this is informational text only."
+        }
+      ]
+    },
+    "signatory_footer": {
+      "description": "Bottom block of the form, split into a left ('Conforme:' / supplier acknowledgement, rows 43-49) and right ('Very Truly yours,' / TUP signatory, rows 43-45) section, followed by a separate budget/accounting section (rows 51-55).",
+      "section_type": "mixed",
+      "occurs": "once_per_document",
+      "left_block_supplier": {
+        "title_cell": "B43",
+        "title_text": "Conforme:",
+        "fields": [],
+        "notes": "This entire block (rows 44-49, columns A-C) is static and unmapped: it contains a blank space for a physical/drawn signature, the static label 'Signature over Printed Name of Supplier' (C46), a static underscore line (C48), and the static label ' Date' (C49). No placeholders exist anywhere in this block - the supplier signs and dates by hand, with no corresponding injectable field."
+      },
+      "right_block_tup_signatory": {
+        "title_cell": "E43",
+        "title_text": "Very Truly yours,",
+        "fields": [
+          {
+            "field": "approver_name",
+            "cell": "D44",
+            "merged_range": "D44:F44",
+            "placeholder": "user->user_fullname where role_id = 68 (Campus Director)",
+            "data_type": "string",
+            "notes": "Written as a descriptive lookup expression (prose, not snake_case): the full name of the user whose role_id equals 68, parenthetically identified as 'Campus Director'. This implies the value should be resolved from a 'user'/'role' data source rather than supplied as a flat literal."
+          },
+          {
+            "field": "approver_role",
+            "cell": "D45",
+            "merged_range": "D45:F45",
+            "placeholder": "user->role_name where user->role_id = 68",
+            "data_type": "string",
+            "notes": "Same lookup-expression style as D44, resolving the role/designation name for role_id 68."
+          }
+        ],
+        "notes": "Unlike the supplier block, this block has no visual signature line, no underscore, and no 'Date' caption - it reads as an auto-populated letter closing (name + title) rather than a space for a physical signature."
+      },
+      "budget_accounting_section": {
+        "fields": [],
+        "notes": "Rows 51-53 (Funds Cluster, Funds Available, ORS/BURS No, ORS/BURS, Amount) are entirely static underscore fill-in lines in BOTH sheets - no placeholders exist for any of these budget/accounting values. Rows 54-55 hardcode a specific Accountant's name and title (JULIET T. NAREZ / Accountant III) in both sheets as well - see issues."
+      }
+    },
+    "uncategorized_extra_field": {
+      "description": "A single placeholder that exists ONLY in 'PO with Mapping', at a row that does not exist at all in the 'PO' sheet.",
+      "field": "unique_code",
+      "placeholder": "po_unique_code",
+      "cell": "F56",
+      "merged_range": null,
+      "data_type": "string",
+      "notes": "'PO with Mapping' has 56 rows; 'PO' has only 55. F56 sits in this extra row, unmerged, with no static label anywhere nearby and no equivalent location in the blank template's visual layout. See issues."
+    }
+  },
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'PO' and 'PO with Mapping' (identical in both sheets, since the extra row 56 in the mapping sheet is not part of any merge).",
+    "ranges": [
+      {
+        "range": "A1:A2",
+        "section": "letterhead (logo, rich-value image)"
+      },
+      {
+        "range": "B1:D1",
+        "section": "letterhead"
+      },
+      {
+        "range": "E1:F1",
+        "section": "form_title"
+      },
+      {
+        "range": "B2:D2",
+        "section": "vision_statement"
+      },
+      {
+        "range": "E2:F2",
+        "section": "form_control_footer"
+      },
+      {
+        "range": "A4:B4",
+        "section": "header_info.supplier (label)"
+      },
+      {
+        "range": "C4:D4",
+        "section": "header_info.supplier (value)"
+      },
+      {
+        "range": "A5:B5",
+        "section": "header_info.address (label)"
+      },
+      {
+        "range": "C5:D5",
+        "section": "header_info.address (value)"
+      },
+      {
+        "range": "A6:B6",
+        "section": "header_info.tele (label)"
+      },
+      {
+        "range": "C6:D6",
+        "section": "header_info.tele (value)"
+      },
+      {
+        "range": "A7:B7",
+        "section": "header_info.tin (label)"
+      },
+      {
+        "range": "C7:D7",
+        "section": "header_info.tin (value)"
+      },
+      {
+        "range": "B9:E9",
+        "section": "instructional_note"
+      },
+      {
+        "range": "A10:B10",
+        "section": "header_info.place_delivery (label)"
+      },
+      {
+        "range": "C10:D10",
+        "section": "header_info.place_delivery (value)"
+      },
+      {
+        "range": "A11:B11",
+        "section": "header_info.date_of_delivery (label)"
+      },
+      {
+        "range": "C11:D11",
+        "section": "header_info.date_of_delivery (value, anomalous placeholder - see issues)"
+      },
+      {
+        "range": "A38:E38",
+        "section": "totals_and_summary.composite_title_line"
+      },
+      {
+        "range": "A39:E39",
+        "section": "totals_and_summary.total_amount_in_words"
+      },
+      {
+        "range": "A41:F41",
+        "section": "static_penalty_clause"
+      },
+      {
+        "range": "D44:F44",
+        "section": "signatory_footer.right_block_tup_signatory.approver_name"
+      },
+      {
+        "range": "D45:F45",
+        "section": "signatory_footer.right_block_tup_signatory.approver_role"
+      }
+    ],
+    "note": "No merges exist within the item table data rows (A13:F37) - every column in this table is a single, unmerged cell per row, the same pattern seen in RSPI and PAR. F39 (the grand total cell) is also unmerged."
+  },
+  "data_types": {
+    "string": [
+      "po_supplier",
+      "po_address",
+      "po_tele",
+      "po_tin",
+      "po_no",
+      "po_mode",
+      "po_tuptin",
+      "po_place_delivery",
+      "po_delivery_term",
+      "item_table.stockno",
+      "item_table.unit",
+      "item_table.description (composite: po_items_descrip + po_spec_description)",
+      "[po_title]",
+      "[pr_department]",
+      "[po_fund_cluster]",
+      "[total amount in words]",
+      "approver_name (lookup expression)",
+      "approver_role (lookup expression)",
+      "po_unique_code"
+    ],
+    "date": [
+      "po_date",
+      "date_of_delivery (C11, see issues)"
+    ],
+    "number": [
+      "item_table.quantity",
+      "item_table.unit_cost",
+      "item_table.amount",
+      "[total amount] (F39)"
+    ],
+    "currency_formatted_number (#,##0.00)": [
+      "item_table.unit_cost",
+      "item_table.amount"
+    ]
+  },
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "letterhead logo (A1:A2)",
+      "description": "A1 uses Excel's newer 'Picture in Cell' rich-value feature to embed the logo image directly in the cell, instead of a normal floating drawing object or plain text. Tools without rich-value support (such as openpyxl) read this cell back as the literal string '#VALUE!' rather than the image. An AI agent or downstream process inspecting cell values must NOT treat '#VALUE!' in A1 as real text or as an error to fix - it is an artifact of how the embedded logo is stored."
+    },
+    {
+      "id": "ISS-02",
+      "area": "header_info.date_of_delivery (C11) - duplicated placeholder",
+      "description": "C11 (under the 'Date of Delivery:' label) contains the placeholder text 'po_delivery_term', which is identical to the placeholder at F10 (under the unrelated 'Delivery Term:' label). This is almost certainly a copy-paste error in the source mapping sheet; the date-of-delivery field very likely needs its own distinct placeholder (e.g. 'po_date_delivery') rather than reusing 'po_delivery_term'."
+    },
+    {
+      "id": "ISS-03",
+      "area": "header_info.date (F5) - missing date format",
+      "description": "F5 (po_date) uses 'General' number format, with no date-specific formatting applied at all. This contrasts with the equivalent date fields in RSMI, ICS, RSPI, and PAR, which at least carry a (sometimes mismatched) date format such as 'mm-dd-yy'."
+    },
+    {
+      "id": "ISS-04",
+      "area": "mixed placeholder notations",
+      "description": "This workbook's mapping sheet uses three distinct, incompatible placeholder styles in different places: (a) plain snake_case tokens (e.g. 'po_supplier', 'po_items_cost'), (b) bracket-wrapped tokens (e.g. '[total amount in words]', '[po_title]'), and (c) descriptive database-lookup prose (e.g. 'user->user_fullname where role_id = 68'). An AI agent parsing this sheet programmatically needs to handle all three notations, since a single regex or naming convention will not catch every field."
+    },
+    {
+      "id": "ISS-05",
+      "area": "totals_and_summary.composite_title_line (A38)",
+      "description": "A38 combines three bracket-style tokens - '[po_title]', '[pr_department]', and '[po_fund_cluster]' - joined by the literal text ' - + '. None of these three tokens corresponds to a standalone placeholder defined anywhere else in the sheet (there is no separate 'po_title' or 'po_fund_cluster' field elsewhere, and '[pr_department]' uses a 'pr_' prefix matching the separate Purchase Request form rather than this PO form, suggesting the value may need to be sourced from a related PR record). The exact intended final rendering (e.g. how literal vs. interpolated the ' - + ' separator is) is not defined."
+    },
+    {
+      "id": "ISS-06",
+      "area": "totals_and_summary.total_amount (F39) - no currency format",
+      "description": "F39 (the grand total amount) uses 'General' number format, unlike the item table's Unit Cost and Amount columns (E, F), which both use '#,##0.00'. The total cell is also not a SUM formula in either sheet - it is blank, with only the bracket-style placeholder describing the expected computation."
+    },
+    {
+      "id": "ISS-07",
+      "area": "extra row 56 / po_unique_code",
+      "description": "'PO with Mapping' contains 56 rows; 'PO' (the actual blank template) contains only 55. The placeholder 'po_unique_code' sits alone at F56, in a row that has no corresponding location, label, or merge in the blank form's visual layout. It is unclear where (or whether) this value should actually be written into the final 'PO' sheet."
+    },
+    {
+      "id": "ISS-08",
+      "area": "hardcoded Accountant signatory (C54, C55)",
+      "description": "Both 'PO' and 'PO with Mapping' hardcode the name 'JULIET T. NAREZ' and title 'Accountant III' at C54/C55, in both the blank template and the mapping sheet, with no placeholder replacing them. As with the hardcoded approver defaults seen in the PR template, an AI agent needs to know whether this specific Accountant is always correct, or whether these cells should sometimes be overwritten."
+    },
+    {
+      "id": "ISS-09",
+      "area": "letterhead text - misspelling",
+      "description": "B1 spells the institution name as 'TEHCNOLOGICAL UNIVERSITY OF THE PHILIPPINES' (transposed letters in 'TECHNOLOGICAL'). Cosmetic, but relevant if this text is ever used as a lookup key."
+    },
+    {
+      "id": "ISS-10",
+      "area": "supplier signatory block - no name/signature placeholder",
+      "description": "The entire 'Conforme:' (supplier acknowledgement) block has no placeholder for the supplier's printed name, even though a static caption 'Signature over Printed Name of Supplier' (C46) exists. The supplier's name must apparently be filled in by hand on the printed form, separate from the 'po_supplier' field used earlier in the header (which identifies the supplier company, not necessarily the signing individual)."
+    },
+    {
+      "id": "ISS-11",
+      "area": "budget/accounting section - entirely unmapped",
+      "description": "Funds Cluster, Funds Available, ORS/BURS No., ORS/BURS, and Amount (rows 51-53) are all static underscore fill-in lines in both sheets, with no placeholders. This section appears intended for manual completion by the Accounting office after the PO is printed, rather than for AI-driven data injection."
+    }
+  ],
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive, and how it maps onto the sheet. Field names follow the placeholder values above where unambiguous; for the anomalous/lookup-style fields (date_of_delivery, approver_name, approver_role, the composite title line), illustrative resolved values are shown instead of the raw placeholder syntax. This is illustrative only - no validation rules are implied.",
+    "example_payload": {
+      "po_supplier": "ABC Office Supplies Trading",
+      "po_address": "123 Commerce St., Taguig City",
+      "po_tele": "(02) 8123-4567",
+      "po_tin": "123-456-789-000",
+      "po_no": "PO-2026-00056",
+      "po_date": "2026-06-12",
+      "po_mode": "Public Bidding",
+      "po_tuptin": "000-123-456-000",
+      "po_place_delivery": "TUP Taguig Supply Office",
+      "date_of_delivery": "2026-06-30",
+      "po_delivery_term": "Within 15 calendar days from receipt of PO",
+      "po_payment_term": "Within 30 days upon delivery and inspection",
+      "item_table": [
+        {
+          "po_items_stockno": "ST-2026-0091",
+          "po_items_unit": "ream",
+          "po_items_descrip": "Bond paper, A4, 80gsm",
+          "po_spec_description": "500 sheets per ream",
+          "po_items_quantity": 50,
+          "po_items_cost": 250.0,
+          "po_items_amount": 12500.0
+        },
+        {
+          "po_items_stockno": "ST-2026-0092",
+          "po_items_unit": "box",
+          "po_items_descrip": "Ballpoint pen, black",
+          "po_spec_description": "0.5mm, 12 pcs per box",
+          "po_items_quantity": 20,
+          "po_items_cost": 120.0,
+          "po_items_amount": 2400.0
+        }
+      ],
+      "po_title": "Purchase Order",
+      "pr_department": "Supply Office",
+      "po_fund_cluster": "01",
+      "total_amount_in_words": "Fourteen Thousand Nine Hundred Pesos Only",
+      "total_amount": 14900.0,
+      "approver_name": "Engr. Rexmelle F. Decapia, Jr. Ph.D.",
+      "approver_role": "Campus Director"
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'PO' sheet, assuming item_table rows are written starting at row 13. C54/C55 (hardcoded Accountant) and the budget section (rows 51-53) are left untouched, per ISS-08 and ISS-11.",
+      "header_info": {
+        "C4": "ABC Office Supplies Trading",
+        "C5": "123 Commerce St., Taguig City",
+        "C6": "(02) 8123-4567",
+        "C7": "123-456-789-000",
+        "F4": "PO-2026-00056",
+        "F5": "2026-06-12",
+        "F6": "Public Bidding",
+        "F7": "000-123-456-000",
+        "C10": "TUP Taguig Supply Office",
+        "C11": "2026-06-30",
+        "F10": "Within 15 calendar days from receipt of PO",
+        "F11": "Within 30 days upon delivery and inspection"
+      },
+      "item_table_row_1 (sheet row 13)": {
+        "A13": "ST-2026-0091",
+        "B13": "ream",
+        "C13": "Bond paper, A4, 80gsm, 500 sheets per ream",
+        "D13": 50,
+        "E13": 250.0,
+        "F13": 12500.0
+      },
+      "item_table_row_2 (sheet row 14)": {
+        "A14": "ST-2026-0092",
+        "B14": "box",
+        "C14": "Ballpoint pen, black, 0.5mm, 12 pcs per box",
+        "D14": 20,
+        "E14": 120.0,
+        "F14": 2400.0
+      },
+      "totals_and_summary": {
+        "A38": "Purchase Order - Supply Office - 01",
+        "A39": "Fourteen Thousand Nine Hundred Pesos Only",
+        "F39": 14900.0
+      },
+      "signatory_footer": {
+        "D44": "Engr. Rexmelle F. Decapia, Jr. Ph.D.",
+        "D45": "Campus Director"
+      }
+    }
+  }
+}

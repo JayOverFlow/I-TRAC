@@ -8,13 +8,11 @@ use App\Models\PoParent;
 use App\Models\PoItem;
 use App\Models\PoSpec;
 use App\Models\PrParent;
+use App\Services\PoPdfExportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CreatePoController extends Controller
@@ -299,130 +297,13 @@ class CreatePoController extends Controller
         }
     }
 
-    private function convertNumberToWords($number) {
-        if (!extension_loaded('intl')) {
-            return strtoupper((string) $number);
-        }
-        $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
-        
-        $wholeNumber = floor($number);
-        $decimal = round($number - $wholeNumber, 2) * 100;
-        
-        $words = strtoupper($formatter->format($wholeNumber));
-        
-        if ($decimal > 0) {
-            $words .= " AND " . $decimal . "/100";
-        }
-        
-        return $words;
-    }
+    public function exportPdf(PoPdfExportService $pdfService, $po_id) {
+        $po = PoParent::with(['poItems.poSpecs', 'purchaseRequest.department'])->findOrFail($po_id);
 
-    public function exportPdf($po_id) {
-        $po = PoParent::with(['poItems.poSpecs'])->findOrFail($po_id);
-
-        if ($po->poItems->count() > 23) {
-            return back()->with('error', 'Purchase Order exceeds maximum limit of 23 items for PDF export.');
+        if ($po->poItems->count() > 25) {
+            return back()->with('error', 'Purchase Order exceeds maximum limit of 25 items for PDF export.');
         }
 
-        $templatePath = base_path('procurement_documents/Purchase Order Template.xlsx');
-        if (!file_exists($templatePath)) {
-            return back()->with('error', 'Template file not found.');
-        }
-
-        $spreadsheet = IOFactory::load($templatePath);
-        $sheet = $spreadsheet->getSheet(0);
-
-        // Map header fields
-        $sheet->setCellValue('C4', $po->po_supplier ?? '');
-        $sheet->setCellValue('F4', $po->po_no ?? '');
-        $sheet->setCellValue('C5', $po->po_address ?? '');
-        
-        if ($po->po_date) {
-            $sheet->setCellValue('F5', date('F j, Y', strtotime($po->po_date)));
-        }
-        
-        $sheet->setCellValue('C6', $po->po_tele ?? '');
-        $sheet->setCellValue('F6', $po->po_mode ?? '');
-        $sheet->setCellValue('C7', $po->po_tin ?? '');
-        $sheet->setCellValue('F7', $po->po_tuptin ?? '');
-        $sheet->setCellValue('C10', $po->po_place_delivery ?? '');
-        $sheet->setCellValue('F10', $po->po_delivery_term ?? '');
-        
-        if ($po->po_date_delivery) {
-            $sheet->setCellValue('C11', date('F j, Y', strtotime($po->po_date_delivery)));
-        }
-        $sheet->setCellValue('F11', $po->po_payment_term ?? '');
-
-        // Map item fields
-        $currentRow = 13;
-        foreach ($po->poItems as $item) {
-            $sheet->setCellValue('A' . $currentRow, $item->po_items_stockno ?? '');
-            $sheet->setCellValue('B' . $currentRow, $item->po_items_unit ?? '');
-            
-            $description = $item->po_items_descrip;
-            $specs = $item->poSpecs->pluck('po_spec_description')->filter()->implode("\n");
-            if ($specs) {
-                $description .= "\n" . $specs;
-            }
-            $sheet->setCellValue('C' . $currentRow, $description ?? '');
-            $sheet->setCellValue('D' . $currentRow, $item->po_items_quantity ?? 0);
-            $sheet->setCellValue('E' . $currentRow, $item->po_items_cost ?? 0);
-            $sheet->setCellValue('F' . $currentRow, $item->po_items_total ?? 0);
-            
-            $currentRow++;
-        }
-
-        // End of items marker
-        $sheet->setCellValue('C' . $currentRow, '*** Nothing follows ***');
-        $sheet->getStyle('C' . $currentRow)->getFont()->setBold(true);
-        $sheet->getStyle('C' . $currentRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $currentRow++;
-
-        // Summary fields (fixed rows as requested)
-        $sheet->setCellValue('C38', $po->po_title ?? '');
-        
-        $amountInWords = $this->convertNumberToWords($po->po_total_amount) . ' PESOS ONLY';
-        $sheet->setCellValue('C39', $amountInWords);
-        $sheet->setCellValue('F39', $po->po_total_amount ?? 0);
-
-        // Page setup for PDF (center horizontally and scale to fit width)
-        $sheet->getPageSetup()->setHorizontalCentered(true);
-        $sheet->getPageSetup()->setFitToPage(true);
-        $sheet->getPageSetup()->setFitToWidth(1);
-        $sheet->getPageSetup()->setFitToHeight(1);
-        $sheet->getPageMargins()->setLeft(0.8);
-        $sheet->getPageMargins()->setRight(0.8);
-        $sheet->getPageMargins()->setTop(0.2);
-        $sheet->getPageMargins()->setBottom(0.2);
-
-        // Manually inject logo
-        $logoPath = public_path('img/tup-logo.png');
-        if (file_exists($logoPath)) {
-            $drawing = new Drawing();
-            $drawing->setName('TUP Logo');
-            $drawing->setDescription('TUP Logo');
-            $drawing->setPath($logoPath);
-            $drawing->setCoordinates('A1');
-            $drawing->setHeight(70);
-            $drawing->setOffsetX(15);
-            $drawing->setOffsetY(5);
-            $drawing->setWorksheet($sheet);
-        }
-
-        // Export to PDF
-        $writer = new Mpdf($spreadsheet);
-        $writer->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
-        $writer->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
-
-        $response = new StreamedResponse(function () use ($writer) {
-            $writer->save('php://output');
-        });
-
-        $filename = 'Purchase_Order_' . ($po->po_no ?? $po->po_unique_code) . '.pdf';
-        $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename . '"');
-        $response->headers->set('Cache-Control', 'max-age=0');
-
-        return $response;
+        return $pdfService->export($po);
     }
 }
