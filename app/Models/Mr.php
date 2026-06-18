@@ -19,10 +19,12 @@ class Mr extends Model
         'quantity',
         'unit',
         'stock',
-        'location',
+        'building',
+        'room_no',
         'item_image',
         'is_assigned',
         'date_scanned',
+        'category',
     ];
 
     public function poItem()
