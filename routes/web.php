@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MrController;
 use App\Http\Controllers\CreatePrController;
 use App\Http\Controllers\CreatePoController;
+use App\Http\Controllers\InventoryController;
 
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\PoReviewController;
@@ -88,6 +89,11 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::get('/delivery-attachment/rspi/{rspi_id}/export', 'exportRspi')->name('export.rspi.pdf');
         Route::post('/delivery-attachment/par/{par_id}/save', 'savePar')->name('save.par');
         Route::get('/delivery-attachment/par/{par_id}/export', 'exportPar')->name('export.par.pdf');
+    });
+
+    Route::controller(InventoryController::class)->group(function () {
+        Route::get('/inventory', 'showInventory')->name('show.inventory');
+        // Route::post('/po-review/{po_id}/generate-attachments', 'generateAttachments')->name('generate.attachments');
     });
 });
 

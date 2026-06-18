@@ -1,0 +1,35 @@
+.card {
+    border-color: var(--red-1) !important;
+}
+
+.card-title {
+    color: var(--red-1) !important;
+}
+
+.head-avatar{
+    padding: 2px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(#FFD700, #F4ED8A, #FFD700);
+}
+
+.supply-avatar{
+    padding: 2px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(#537f00, #85CD00, #537f00);
+}
+
+.procurement-avatar{
+    padding: 2px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(#31449f, #4D69EE, #31449f);
+}
+
+.faculty-avatar{
+    padding: 2px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(#454343, #ABA5A5, #454343);
+}
