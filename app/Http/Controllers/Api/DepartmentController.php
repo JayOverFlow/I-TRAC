@@ -10,7 +10,7 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = Department::orderBy('dep_name', 'asc')
-            ->get(['dep_id', 'dep_name']);
+            ->get(['dep_id', 'dep_name', 'parent_dep_id']);
 
         return response()->json($departments);
     }
