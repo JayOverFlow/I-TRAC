@@ -346,16 +346,17 @@ class CreatePrController extends Controller
         if ($pr) {
             // Self-heal/ensure sequential unique code exists
             $uniqueCode = $pr->pr_unique_code;
-            // Self-heal: format older codes that do not have the department ID (which would have less than 3 dashes)
-            if (!$uniqueCode || substr_count($uniqueCode, '-') < 3) {
+            // Self-heal: format older codes that do not have the 3-digit department ID
+            $parts = explode('-', (string)$uniqueCode);
+            if (!$uniqueCode || count($parts) < 4 || strlen($parts[1]) !== 3) {
                 if ($app && $app->app_unique_code) {
                     $cleanAppCode = str_replace(['APP', '-'], '', $app->app_unique_code);
                     $prCount = PrParent::where('app_id_fk', $appId)->count() + 1;
-                    $uniqueCode = 'PR-' . $departmentId . '-' . $cleanAppCode . '-' . str_pad($prCount, 3, '0', STR_PAD_LEFT);
+                    $uniqueCode = 'PR-' . str_pad($departmentId, 3, '0', STR_PAD_LEFT) . '-' . $cleanAppCode . '-' . str_pad($prCount, 3, '0', STR_PAD_LEFT);
                 } else {
                     $lastPr = PrParent::orderBy('pr_id', 'desc')->first();
                     $nextNum = $lastPr ? ($lastPr->pr_id + 1) : 1;
-                    $uniqueCode = 'PR-' . $departmentId . '-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+                    $uniqueCode = 'PR-' . str_pad($departmentId, 3, '0', STR_PAD_LEFT) . '-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
                 }
             }
 
@@ -375,15 +376,15 @@ class CreatePrController extends Controller
             // Delete old items (cascades to specs via FK)
             $pr->prItems()->delete();
         } else {
-            // Generate sequential unique code with department ID prefix (PR-DEPID-YYYYVV-XXX format)
+            // Generate sequential unique code with department ID prefix (PR-000-000000-000 format)
             if ($app && $app->app_unique_code) {
                 $cleanAppCode = str_replace(['APP', '-'], '', $app->app_unique_code);
                 $prCount = PrParent::where('app_id_fk', $appId)->count() + 1;
-                $uniqueCode = 'PR-' . $departmentId . '-' . $cleanAppCode . '-' . str_pad($prCount, 3, '0', STR_PAD_LEFT);
+                $uniqueCode = 'PR-' . str_pad($departmentId, 3, '0', STR_PAD_LEFT) . '-' . $cleanAppCode . '-' . str_pad($prCount, 3, '0', STR_PAD_LEFT);
             } else {
                 $lastPr = PrParent::orderBy('pr_id', 'desc')->first();
                 $nextNum = $lastPr ? ($lastPr->pr_id + 1) : 1;
-                $uniqueCode = 'PR-' . $departmentId . '-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
+                $uniqueCode = 'PR-' . str_pad($departmentId, 3, '0', STR_PAD_LEFT) . '-UNKNOWN-' . str_pad($nextNum, 3, '0', STR_PAD_LEFT);
             }
 
             // Create new PR header

@@ -9,29 +9,17 @@
                     <th class="fw-bold black-text text-nowrap text-center" style="width: 15%">PR-ID</th>
                     <th class="fw-bold black-text" style="width: 50%">Title</th>
                     <th class="fw-bold black-text text-center" style="width: 25%">Date Created</th>
-                    <th class="fw-bold black-text text-nowrap text-center" style="width: 10%">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($retrievedPrs as $retrievedPr)
                     <tr class="clickable-row" data-id="{{ $retrievedPr->pr_id }}">
                         <td class="text-center">
-                            {{ $retrievedPr->pr_id }}</td>
+                            {{ $retrievedPr->pr_unique_code ?? $retrievedPr->pr_id }}</td>
                         <td>
                             {{ $retrievedPr->pr_purpose ?? 'Untitled PR' }}</td>
                         <td class="text-center">
                             {{ $retrievedPr->created_at ? $retrievedPr->created_at->format('Y-m-d') : 'N/A' }}</td>
-                        <td class="text-center">
-                            <button class="btn bg-transparent p-0 border-0 shadow-none" title="View Purchase Request">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="20"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"
-                                    style="color: #4361ee;">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                            </button>
-                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -84,7 +72,7 @@
     <script>
         $(document).ready(function() {
             var table = $('#pr-table').DataTable({
-                "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'<'#custom-search-box'>><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'>>>" +
+                "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'<'#custom-search-box'>><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
                     "<'table-responsive'tr>" +
                     "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
                 "oLanguage": {
@@ -93,6 +81,8 @@
                         "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
                     },
                     "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                    "sSearchPlaceholder": "Search...",
                     "sLengthMenu": "Results :  _MENU_",
                 },
                 "stripeClasses": [],
