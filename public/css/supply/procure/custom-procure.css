@@ -3,9 +3,11 @@
     align-items: center;
     gap: 10px;
 }
+
 .search-input-container {
     position: relative;
 }
+
 .search-input-container svg {
     position: absolute;
     left: 12px;
@@ -13,27 +15,42 @@
     transform: translateY(-50%);
     color: #888ea8;
 }
+
 .search-input-container input {
     padding-left: 40px !important;
     width: 300px !important;
 }
+
 .clickable-row {
     cursor: pointer;
 }
+
 .clickable-row:hover {
     background-color: rgba(0, 0, 0, 0.05) !important;
 }
+
 body.dark .clickable-row:hover {
     background-color: rgba(255, 255, 255, 0.05) !important;
 }
+
 .btn-red {
     background-color: #e7515a !important;
     border-color: #e7515a !important;
     color: #fff !important;
+    transition: transform 0.18s ease !important;
 }
+
 .btn-red:disabled {
     background-color: #efb5bd !important;
     border-color: #efb5bd !important;
+}
+
+.btn-red:not(:disabled):hover {
+    transform: translateY(-2px) !important;
+}
+
+.btn-red:not(:disabled):active {
+    transform: translateY(0) !important;
 }
 
 body.dark #input-retrieve-po-btn {

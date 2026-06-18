@@ -33,3 +33,35 @@
     border: 2px solid transparent;
     background: linear-gradient(#454343, #ABA5A5, #454343);
 }
+
+/* ── Subordinate Status Badges (matches PR status badge style) ── */
+.badge-assigned {
+    background-color: #EAF9EA;
+    color: #4CAF50;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+.badge-not-assigned {
+    background-color: #FFF0F0;
+    color: #FF5A5A;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+/* Dark mode overrides */
+body.dark .badge-assigned {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+}
+
+body.dark .badge-not-assigned {
+    background-color: rgba(255, 90, 90, 0.15);
+    color: #FF5A5A;
+}
