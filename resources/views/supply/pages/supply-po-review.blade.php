@@ -643,7 +643,7 @@
                                 <td class="px-2">
                                     <select class="form-select form-select-sm user-select">
                                         <option value="" selected disabled>Select User</option>
-                                        @foreach($users as $user)
+                                        @foreach($users->sortBy('user_fullname') as $user)
                                             <option value="{{ $user->user_id }}">{{ $user->user_fullname }}</option>
                                         @endforeach
                                     </select>

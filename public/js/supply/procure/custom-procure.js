@@ -162,9 +162,6 @@ $(document).ready(function() {
 
                 $hiddenInput.val(formatted);
 
-                // Filter DataTable with the active code/partial code
-                table.search(formatted).draw();
-
                 // Validate full format: PO-{officeId}-{9-digits}-{3-digits}
                 const poRegex = /^PO-\d{3}-\d{9}-\d{3}$/;
                 if (poRegex.test(formatted)) {
