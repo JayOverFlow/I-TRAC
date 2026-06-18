@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/dark/modal.css') }}">
+
+
 @endpush
 
 @section('content')
@@ -162,16 +164,16 @@
         <div class="card px-0">
             <div class="card-body px-0">
                 <h5 class="card-title red-text-2 fw-bold px-2 ms-4">ANNUAL PROCUREMENT PLAN</h5>
-                <table id="app-items-config" class="table dt-table-hover border-top-0" style="width:100%; border-top: none !important;">
+                <table id="app-items-config" class="table dt-table-hover border-top-0" style="width:100%; border-top: none !important; table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th class="fw-bold">Project Title</th>
-                            <th class="fw-bold">General Description</th>
-                            <th class="fw-bold">Mode of Procurement</th>
-                            <th class="fw-bold">Start of Procurement</th>
-                            <th class="fw-bold">End of Procurement</th>
-                            <th class="fw-bold">Estimated Budget</th>
+                            <th style="width: 4%;"></th>
+                            <th class="fw-bold" style="width: 22%;">Project Title</th>
+                            <th class="fw-bold" style="width: 26%;">General Description</th>
+                            <th class="fw-bold" style="width: 12%;">Mode of Procurement</th>
+                            <th class="fw-bold" style="width: 10%;">Start of Procurement</th>
+                            <th class="fw-bold" style="width: 10%;">End of Procurement</th>
+                            <th class="fw-bold" style="width: 11%;">Estimated Budget</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -179,15 +181,18 @@
                             @php
                                 $isUsed = in_array($appItem->app_item_id, $usedAppItemIds->toArray() ?? []);
                             @endphp
-                            <tr class="{{ $isUsed ? 'opacity-50' : '' }}">
+                            <tr>
                                 <td>
-                                    <div class="form-check form-check-danger form-check-inline">
-                                        <input class="form-check-input app-item-checkbox" type="checkbox"
-                                            id="app-item-{{ $appItem->app_item_id }}"
-                                            data-item-id="{{ $appItem->app_item_id }}"
-                                            value="{{ $appItem->app_item_id }}"
-                                            {{ $isUsed ? 'checked disabled' : '' }}>
-                                    </div>
+                                    @if($isUsed)
+                                        <img src="{{ asset('img/Assigned.svg') }}" alt="Assigned" width="24" height="18" title="Item Assigned">
+                                    @else
+                                        <div class="form-check form-check-danger form-check-inline">
+                                            <input class="form-check-input app-item-checkbox" type="checkbox"
+                                                id="app-item-{{ $appItem->app_item_id }}"
+                                                data-item-id="{{ $appItem->app_item_id }}"
+                                                value="{{ $appItem->app_item_id }}">
+                                        </div>
+                                    @endif
                                 </td>
                                 <td>
                                     {{ $appItem->app_item_proj_title ?: '---' }}
@@ -368,11 +373,10 @@
 
         // ── APP Items DataTable (checklist panel) ─────────────────────────
         $('#app-items-config').DataTable({
+            "autoWidth": false,
             "columnDefs": [
                 { "targets": [0, 3, 4, 5, 6], "className": "text-center align-middle" },
                 { "targets": [1, 2],          "className": "text-start align-middle text-wrap" },
-                { "targets": 1, "width": "35%" },
-                { "targets": 2, "width": "15%" },
                 { "orderable": false, "targets": [0] }
             ],
             "searching":    false,

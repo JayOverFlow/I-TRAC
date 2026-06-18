@@ -9,6 +9,10 @@ $(document).on("click", "#btn-show-app-checklist", function () {
     $("#pr-list-panel").hide();
     $("#app-checklist-panel").show();
 
+    if ($.fn.DataTable.isDataTable('#app-items-config')) {
+        $('#app-items-config').DataTable().columns.adjust();
+    }
+
     // Set action to create and change button label
     $("#btn-create-from-checklist").attr("data-action", "create").text("Create");
 
@@ -21,6 +25,10 @@ $(document).on("click", "#btn-show-app-checklist", function () {
 $(document).on("click", "#btn-assign-pr", function () {
     $("#pr-list-panel").hide();
     $("#app-checklist-panel").show();
+
+    if ($.fn.DataTable.isDataTable('#app-items-config')) {
+        $('#app-items-config').DataTable().columns.adjust();
+    }
 
     // Set action to assign and change button label
     $("#btn-create-from-checklist").attr("data-action", "assign").text("Assign");
