@@ -370,6 +370,24 @@ $(document).ready(function() {
             }
         });
     });
+
+    // ─── Export PDF ───────────────────────────────────────────────────────
+    $(document).on('click', '#export-po-btn', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (url) {
+            window.confirmAction({
+                title: 'Export Purchase Order?',
+                text: 'Are you sure you want to export this purchase order as a PDF?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    window.location.href = url;
+                }
+            });
+        }
+    });
 });
 
 $(document).on('click', '.btn-group .dropdown-item', function(e) {

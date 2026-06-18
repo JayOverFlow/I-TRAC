@@ -33,7 +33,7 @@
                 <div>
                     <div class="text-end">
                         @if ($isDone)
-                            <a href="{{ route('export.po.pdf', ['po_id' => $po->po_id]) }}"
+                            <a href="{{ route('export.po.pdf', ['po_id' => $po->po_id]) }}" id="export-po-btn"
                                 class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
                                 <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                                 <span>Export as PDF</span>
