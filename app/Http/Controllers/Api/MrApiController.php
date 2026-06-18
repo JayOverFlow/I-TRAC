@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class MrApiController extends Controller
 {
@@ -129,43 +130,118 @@ class MrApiController extends Controller
     }
 
     public function updateItemImage(Request $request)
-{
-    try {
-        $request->validate([
-            'item_id' => 'required|integer',
-            'item_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        // Find using mr_id since that is your primary key
-        $item = \App\Models\Mr::where('mr_id', $request->item_id)->first();
-
-        if (!$item) {
-            return response()->json(['status' => 'error', 'message' => 'Item not found in database.'], 404);
-        }
-
-        if ($request->hasFile('item_image')) {
-            $file = $request->file('item_image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            
-            // Save to public/img/items/
-            $file->move(public_path('img/items'), $filename);
-            
-            // Update column
-            $item->item_image = 'img/items/' . $filename;
-            $item->save();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Item image updated successfully!',
-                'image_url' => asset($item->item_image)
+    {
+        try {
+            $request->validate([
+                'item_id' => 'required|integer',
+                'item_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             ]);
+
+            $item = Mr::where('mr_id', $request->item_id)->first();
+
+            if (!$item) {
+                return response()->json(['status' => 'error', 'message' => 'Item not found in database.'], 404);
+            }
+
+            if ($request->hasFile('item_image')) {
+                $file = $request->file('item_image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+
+                // Save to public/img/items/
+                $file->move(public_path('img/items'), $filename);
+                $newPath = 'img/items/' . $filename;
+
+                // Handle existing images (JSON or single string)
+                $existingImages = [];
+                if ($item->item_image) {
+                    $decoded = json_decode($item->item_image, true);
+                    if (is_array($decoded)) {
+                        $existingImages = $decoded;
+                    } else {
+                        // Handle legacy single string format
+                        $existingImages = [$item->item_image];
+                    }
+                }
+
+                // Append new image
+                $existingImages[] = $newPath;
+
+                // Save back as JSON
+                $item->item_image = json_encode(array_values($existingImages));
+                $item->save();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Item image added successfully!',
+                    'image_url' => asset($newPath),
+                    'all_images' => $item->item_image
+                ]);
+            }
+
+            return response()->json(['status' => 'error', 'message' => 'No image file detected.'], 400);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
-
-        return response()->json(['status' => 'error', 'message' => 'No image file detected.'], 400);
-
-    } catch (\Exception $e) {
-        // This will prevent the "infinite loading" by returning the error message
-        return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
     }
-}
+
+    public function deleteItemImage(Request $request)
+    {
+        try {
+            $request->validate([
+                'item_id' => 'required|integer',
+                'image_path' => 'required|string',
+            ]);
+
+            $item = Mr::where('mr_id', $request->item_id)->first();
+
+            if (!$item) {
+                return response()->json(['status' => 'error', 'message' => 'Item not found.'], 404);
+            }
+
+            if (!$item->item_image) {
+                return response()->json(['status' => 'error', 'message' => 'No images found for this item.'], 400);
+            }
+
+            $existingImages = [];
+            $decoded = json_decode($item->item_image, true);
+            if (is_array($decoded)) {
+                $existingImages = $decoded;
+            } else {
+                $existingImages = [$item->item_image];
+            }
+
+            $targetPath = $request->image_path;
+
+            // 1. Remove from array
+            if (($key = array_search($targetPath, $existingImages)) !== false) {
+                unset($existingImages[$key]);
+
+                // 2. Delete physical file
+                $fullPath = public_path($targetPath);
+                if (File::exists($fullPath)) {
+                    File::delete($fullPath);
+                }
+
+                // 3. Update database
+                if (empty($existingImages)) {
+                    $item->item_image = null;
+                } else {
+                    $item->item_image = json_encode(array_values($existingImages));
+                }
+                $item->save();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Image deleted successfully.',
+                    'all_images' => $item->item_image
+                ]);
+            }
+
+            return response()->json(['status' => 'error', 'message' => 'Image path not found in item record.'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
 }
