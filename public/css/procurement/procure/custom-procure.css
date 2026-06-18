@@ -16,3 +16,15 @@ body.dark .search-input-container svg {
     color: #A1A1AA !important;
     stroke: #A1A1AA !important;
 }
+
+.btn-red {
+    transition: transform 0.18s ease !important;
+}
+
+.btn-red:not(:disabled):hover {
+    transform: translateY(-2px) !important;
+}
+
+.btn-red:not(:disabled):active {
+    transform: translateY(0) !important;
+}

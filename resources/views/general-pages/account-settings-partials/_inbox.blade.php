@@ -59,13 +59,7 @@
                                     <form class="chat-form d-flex align-items-center gap-3" action="javascript:void(0);" id="chat-form" style="display: none;">
                                         <input type="text" class="mail-write-box form-control flex-grow-1" id="chat-input-message" placeholder="Type or add your message..."/>
                                         
-                                        <button type="button" class="btn p-0 shadow-none bg-transparent border-0 d-flex align-items-center justify-content-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#bfc9d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                                        </button>
-                                        
-                                        <button type="button" class="btn p-0 shadow-none bg-transparent border-0 d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#bfc9d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                                        </button>
+
                                         
                                         <button type="submit" class="btn p-0 shadow-none bg-transparent border-0 d-flex align-items-center justify-content-center" id="chat-send-btn">
                                             <img src="{{ asset('img/chat-send-button.svg') }}" alt="Send" width="40" height="40">

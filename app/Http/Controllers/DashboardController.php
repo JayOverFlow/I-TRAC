@@ -60,7 +60,11 @@ class DashboardController extends Controller
                             $query->where('r.gen_role', 'Unassigned')
                                   ->orWhereNull('ud.role_id_fk');
                         })
-                        ->select('u.user_id', 'u.user_tupid', 'u.user_firstname', 'u.user_lastname', 'u.user_email', 'u.user_type', 'r.role_name')
+                        ->select(
+                            'u.user_id', 'u.user_tupid', 'u.user_firstname',
+                            'u.user_lastname', 'u.user_email', 'u.user_type', 'r.role_name',
+                            \DB::raw('EXISTS(SELECT 1 FROM tasks_tbl t WHERE t.assigned_to = u.user_id AND (t.is_deleted = 0 OR t.is_deleted IS NULL)) as has_task')
+                        )
                         ->get();
                 }
             }

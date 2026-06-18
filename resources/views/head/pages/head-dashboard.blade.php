@@ -27,7 +27,7 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/SchoolYear.svg') }}" alt="School Year">
+                            <img src="{{ asset('img/Fiscal Year.svg') }}" alt="Fiscal Year">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Fiscal Year</h5>
@@ -41,7 +41,7 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/DepBudget.svg') }}" alt="Department">
+                            <img src="{{ asset('img/DepartmentBudget.svg') }}" alt="Department">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold mb-0">Office Budget</h5>
@@ -55,7 +55,7 @@
                 <div class="card h-100">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/Utilized.svg') }}" alt="Utilized Budget">
+                            <img src="{{ asset('img/UtilBud.svg') }}" alt="Utilized Budget">
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Utilized Budget</h5>
@@ -78,7 +78,7 @@
                     <th class="fw-bold">Last Name</th>
                     <th class="fw-bold">Role</th>
                     <th class="fw-bold">TUP Email</th>
-                    <th class="fw-bold text-center" style="width: 80px;">Action</th>
+                    <th class="fw-bold text-center">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -96,14 +96,11 @@
                         </td>
                         <td class="align-middle">{{ $sub->user_email }}</td>
                         <td class="text-center align-middle">
-                            <div class="dropdown d-inline-block">
-                                <button class="btn btn-link text-decoration-none p-0" type="button" id="actionMenu-{{ $sub->user_id }}" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false" style="color: var(--black-color, #3b3f5c); border: none;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionMenu-{{ $sub->user_id }}">
-                                    <li><span class="dropdown-item-text text-muted">No Actions Programmed</span></li>
-                                </ul>
-                            </div>
+                            @if($sub->has_task)
+                                <span class="badge-assigned">Assigned</span>
+                            @else
+                                <span class="badge-not-assigned">Not Assigned</span>
+                            @endif
                         </td>
                     </tr>
                 @empty
@@ -138,9 +135,7 @@
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
             "pageLength": 5,
-            "columnDefs": [
-                { "orderable": false, "targets": 5 }
-            ],
+            "columnDefs": [],
             "initComplete": function () {
                 $('.assigned-title').html('<h5 class="fw-bold mb-0 red-text-2">Subordinates</h5>');
             }
