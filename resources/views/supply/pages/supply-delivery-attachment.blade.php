@@ -508,11 +508,11 @@
     <script src="{{ asset('plugins/src/flatpickr/flatpickr.js') }}"></script>
 
     <!-- CUSTOM js -->
-                                    <script src="{{ asset('js/supply/delivery-attachment/custom-delivery-attachment.js') }}"></script>
-                                    <script src="{{ asset('js/supply/delivery-attachment/partials/iar.js') }}"></script>
-                                    <script src="{{ asset('js/supply/delivery-attachment/partials/ris.js') }}"></script>
-                                    <script src="{{ asset('js/supply/delivery-attachment/partials/rsmi.js') }}"></script>
-                                    <script src="{{ asset('js/supply/delivery-attachment/partials/ics.js') }}"></script>
-                                    <script src="{{ asset('js/supply/delivery-attachment/partials/rspi.js') }}"></script>
-                                    <script src="{{ asset('js/supply/delivery-attachment/partials/par.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/custom-delivery-attachment.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/partials/iar.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/partials/ris.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/partials/rsmi.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/partials/ics.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/partials/rspi.js') }}"></script>
+    <script src="{{ asset('js/supply/delivery-attachment/partials/par.js') }}"></script>
 @endpush

@@ -39,4 +39,55 @@ $(document).ready(function() {
             }
         }
     }
+
+    // Helper to get document type name
+    function getDocumentTypeName(container) {
+        if (container.hasClass('iar-container')) return 'Inspection and Acceptance Report';
+        if (container.hasClass('ics-container')) return 'Inventory Custodian Slip';
+        if (container.hasClass('par-container')) return 'Property Acknowledgement Receipt';
+        if (container.hasClass('ris-container')) return 'Requisition and Issue Slip';
+        if (container.hasClass('rsmi-container')) return 'Report of Supplies and Materials Issued';
+        if (container.hasClass('rspi-container')) return 'Report of Semi-Expendable Property Issued';
+        return 'document';
+    }
+
+    // Confirmation Alert for Save as Draft
+    $(document).on('click', '.iar-container button[type="submit"], .ics-container button[type="submit"], .par-container button[type="submit"], .ris-container button[type="submit"], .rsmi-container button[type="submit"], .rspi-container button[type="submit"]', function(e) {
+        e.preventDefault();
+        var form = $(this).closest('form');
+        var container = $(this).closest('.document-view-container');
+        var docName = getDocumentTypeName(container);
+
+        window.confirmAction({
+            title: 'Save as Draft?',
+            text: 'Are you sure you want to save this ' + docName + ' as draft?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Save',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                form.submit();
+            }
+        });
+    });
+
+    // Confirmation Alert for Export as PDF
+    $(document).on('click', '.iar-container a.btn-dark-red, .ics-container a.btn-dark-red, .par-container a.btn-dark-red, .ris-container a.btn-dark-red, .rsmi-container a.btn-dark-red, .rspi-container a.btn-dark-red', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        var container = $(this).closest('.document-view-container');
+        var docName = getDocumentTypeName(container);
+
+        if (url) {
+            window.confirmAction({
+                title: 'Export as PDF?',
+                text: 'Are you sure you want to export this ' + docName + ' as a PDF?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    window.location.href = url;
+                }
+            });
+        }
+    });
 });
