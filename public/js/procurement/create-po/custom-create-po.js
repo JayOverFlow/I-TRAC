@@ -130,6 +130,30 @@ $(document).ready(function() {
         }
     }
 
+    // ─── Format TIN inputs (XXX-XXX-XXX-XXX) ──────────────────────────────
+    $(document).on('input', 'input[name="po_tin"], input[name="po_tuptin"]', function() {
+        let value = $(this).val().replace(/\D/g, ''); // Remove all non-digits
+        if (value.length > 12) {
+            value = value.substring(0, 12);
+        }
+        
+        let formatted = '';
+        if (value.length > 0) {
+            formatted += value.substring(0, 3);
+        }
+        if (value.length > 3) {
+            formatted += '-' + value.substring(3, 6);
+        }
+        if (value.length > 6) {
+            formatted += '-' + value.substring(6, 9);
+        }
+        if (value.length > 9) {
+            formatted += '-' + value.substring(9, 12);
+        }
+        
+        $(this).val(formatted);
+    });
+
     // ─── Calculate Amount ─────────────────────────────────────────────────
     $(document).on('input', '.qty-input, .cost-input', function() {
         var row = $(this).closest('tr.po-item-row');
@@ -320,13 +344,49 @@ $(document).ready(function() {
     // ─── Done button — strict validation ──────────────────────────────────
     $(document).on('click', '#submit-po-btn', function(e) {
         e.preventDefault();
-        submitPoForm('Done');
+        window.confirmAction({
+            title: 'Complete Purchase Order?',
+            text: 'Are you sure you want to mark this purchase order as complete?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Complete',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                submitPoForm('Done');
+            }
+        });
     });
 
     // ─── Save as Draft — lenient validation ───────────────────────────────
     $(document).on('click', '#draft-po-btn', function(e) {
         e.preventDefault();
-        submitPoForm('Draft');
+        window.confirmAction({
+            title: 'Save as Draft?',
+            text: 'Are you sure you want to save this purchase order as a draft?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Save',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                submitPoForm('Draft');
+            }
+        });
+    });
+
+    // ─── Export PDF ───────────────────────────────────────────────────────
+    $(document).on('click', '#export-po-btn', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (url) {
+            window.confirmAction({
+                title: 'Export Purchase Order?',
+                text: 'Are you sure you want to export this purchase order as a PDF?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    window.location.href = url;
+                }
+            });
+        }
     });
 });
 
