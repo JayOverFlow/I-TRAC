@@ -27,7 +27,6 @@
                             <th class="fw-bold black-text text-nowrap text-center" style="width: 15%">PO-ID</th>
                             <th class="fw-bold black-text" style="width: 50%">Title</th>
                             <th class="fw-bold black-text text-center" style="width: 25%">Date Created</th>
-                            <th class="fw-bold black-text text-nowrap text-center" style="width: 10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,17 +35,6 @@
                                 <td class="text-center">{{ $po->po_id }}</td>
                                 <td>{{ $po->po_title }}</td>
                                 <td class="text-center">{{ $po->created_at ? $po->created_at->format('Y-m-d') : 'N/A' }}
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn bg-transparent p-0 border-0 shadow-none" title="View Purchase Order">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="20"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"
-                                            style="color: #4361ee;">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                    </button>
                                 </td>
                             </tr>
                         @endforeach

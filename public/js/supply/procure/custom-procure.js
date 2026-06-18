@@ -17,7 +17,7 @@ $(document).ready(function() {
         const route = tableEl.data('route');
         
         const table = tableEl.DataTable({
-            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'<'#" + searchBoxId + "'>>>>" +
+            "dom": "<'dt--top-section'<'row'<'col-12'l>><'row mt-3'<'col-12 col-sm-6'<'#" + searchBoxId + "'>> <'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center align-items-center'f>>>" +
                 "<'table-responsive'tr>" +
                 "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
             "oLanguage": {
@@ -26,7 +26,9 @@ $(document).ready(function() {
                     "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
                 },
                 "sInfo": "Showing page _PAGE_ of _PAGES_",
-                "sLengthMenu": "<h4 class='fw-bold mb-3 red-text-2'>Purchase Orders</h4>",
+                "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                "sSearchPlaceholder": "Search...",
+                "sLengthMenu": "<h4 class='fw-bold mb-0 red-text-2'>Purchase Orders</h4>",
             },
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
@@ -43,9 +45,9 @@ $(document).ready(function() {
                         <div class="code-mask-input-group">
                             <span class="code-static-prefix">PO</span>
                             <span class="code-dash">-</span>
-                            <input type="text" class="code-digit-input code-office-id" placeholder="00" maxlength="4">
+                            <input type="text" class="code-digit-input code-office-id" placeholder="000" maxlength="3">
                             <span class="code-dash">-</span>
-                            <input type="text" class="code-digit-input code-po-pr" placeholder="000000000" maxlength="9">
+                            <input type="text" class="code-digit-input code-po-pr" placeholder="00000000" maxlength="9">
                             <span class="code-dash">-</span>
                             <input type="text" class="code-digit-input code-po-count" placeholder="000" maxlength="3">
                         </div>
@@ -164,7 +166,7 @@ $(document).ready(function() {
                 table.search(formatted).draw();
 
                 // Validate full format: PO-{officeId}-{9-digits}-{3-digits}
-                const poRegex = /^PO-\d+-\d{9}-\d{3}$/;
+                const poRegex = /^PO-\d{3}-\d{9}-\d{3}$/;
                 if (poRegex.test(formatted)) {
                     $retrieveBtn.prop('disabled', false);
                 } else {
@@ -198,7 +200,7 @@ $(document).ready(function() {
     }
 
     // Initialize table for PO (Updated regex pattern for backfill compatibility)
-    initTable('#po-table', 'po-search-box', 'po_unique_code', 'retrieve-po-btn', /^PO-\d{9}-\d{3}$/);
+    initTable('#po-table', 'po-search-box', 'po_unique_code', 'retrieve-po-btn', /^PO-\d{3}-\d{9}-\d{3}$/);
 
     // Handle PO review redirection
     $(document).on('click', '.clickable-row', function() {
