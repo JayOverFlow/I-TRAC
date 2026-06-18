@@ -36,8 +36,8 @@ class MrApiController extends Controller
 
         if ($assignedToOthers->isNotEmpty()) {
             $otherNames = $assignedToOthers->map(function ($item) {
-                return $item->assignedUser 
-                    ? trim($item->assignedUser->user_firstname . ' ' . $item->assignedUser->user_lastname) 
+                return $item->assignedUser
+                    ? trim($item->assignedUser->user_firstname . ' ' . $item->assignedUser->user_lastname)
                     : 'another user';
             })->unique()->implode(', ');
 
@@ -127,4 +127,45 @@ class MrApiController extends Controller
             'items' => $items
         ]);
     }
+
+    public function updateItemImage(Request $request)
+{
+    try {
+        $request->validate([
+            'item_id' => 'required|integer',
+            'item_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Find using mr_id since that is your primary key
+        $item = \App\Models\Mr::where('mr_id', $request->item_id)->first();
+
+        if (!$item) {
+            return response()->json(['status' => 'error', 'message' => 'Item not found in database.'], 404);
+        }
+
+        if ($request->hasFile('item_image')) {
+            $file = $request->file('item_image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            
+            // Save to public/img/items/
+            $file->move(public_path('img/items'), $filename);
+            
+            // Update column
+            $item->item_image = 'img/items/' . $filename;
+            $item->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Item image updated successfully!',
+                'image_url' => asset($item->item_image)
+            ]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'No image file detected.'], 400);
+
+    } catch (\Exception $e) {
+        // This will prevent the "infinite loading" by returning the error message
+        return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
+    }
+}
 }
