@@ -60,6 +60,45 @@ $(document).ready(function() {
         }
     }
 
+    // Update category sections visibility and their divider lines
+    function updateCategoryVisibility() {
+        const categories = [
+            { bodyId: 'tbody-supply-materials', sectionId: 'section-supply-materials' },
+            { bodyId: 'tbody-semi-expendable', sectionId: 'section-semi-expendable' },
+            { bodyId: 'tbody-equipment', sectionId: 'section-equipment' },
+            { bodyId: 'tbody-not-delivered', sectionId: 'section-not-delivered' }
+        ];
+
+        let anyVisible = false;
+        categories.forEach(cat => {
+            const count = $(`#${cat.bodyId} .po-item-row`).length;
+            const section = $(`#${cat.sectionId}`);
+            if (count > 0) {
+                section.show();
+                anyVisible = true;
+            } else {
+                section.hide();
+            }
+        });
+
+        if (anyVisible) {
+            $('#categories-card').show();
+        } else {
+            $('#categories-card').hide();
+        }
+
+        // Hide the divider (hr) for the last visible category section
+        const visibleSections = $('.category-section:visible');
+        visibleSections.each(function(index) {
+            const hr = $(this).find('.category-divider');
+            if (index === visibleSections.length - 1) {
+                hr.hide();
+            } else {
+                hr.show();
+            }
+        });
+    }
+
     // Update category totals (count and amount)
     function updateCategoryTotals() {
         const categories = [
@@ -80,6 +119,8 @@ $(document).ready(function() {
             $(`#${cat.countId}`).text(count + ' Item/s');
             $(`#${cat.totalId}`).text('₱ ' + formatMoney(total));
         });
+
+        updateCategoryVisibility();
     }
 
     // Uncategorized table Checkbox change
