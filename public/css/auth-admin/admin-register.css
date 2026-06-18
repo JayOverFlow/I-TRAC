@@ -21,7 +21,7 @@
 }
 
 #cover {
-    background-color: var(--red-2);
+    overflow: hidden;
     width: 50vw;
     height: 100vh;
 }

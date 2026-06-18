@@ -2,6 +2,6 @@
 @extends('layouts.procurement-layout')
 
 {{-- Define contents to show in the layout --}}
-@section('title', 'Tasks | I-TRAC')
+@section('title', 'Property Assignment | I-TRAC')
 
 @include('general-pages.mr')

@@ -290,18 +290,20 @@
                             </button>
                         </div>
                     @elseif (($taskStatus === 'Exported' && $pr && $pr->pr_status === 'Exported') || ($isSelfCreatedHead && $taskStatus === 'Complete' && $pr && $pr->pr_status === 'Complete'))
-                        {{-- PR has been exported — fully locked for everyone, with re-download option --}}
+                        {{-- PR has been exported — fully locked for everyone, with re-download option for Head only --}}
                         <div class="d-flex align-items-center gap-2 justify-content-end">
                             <div class="badge bg-dark p-2 px-3">
                                 <h6 class="mb-0 text-white">
                                     <i class="fas fa-file-export me-1"></i> Exported
                                 </h6>
                             </div>
-                            <a href="{{ route('export.pr.download', $task->task_id) }}" id="export-again-btn"
-                               class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                                <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
-                                <span>Export as PDF Again</span>
-                            </a>
+                            @if ($isHead)
+                                <a href="{{ route('export.pr.download', $task->task_id) }}" id="export-again-btn"
+                                   class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                    <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                                    <span>Export as PDF Again</span>
+                                </a>
+                            @endif
                         </div>
                     @else
                         {{-- Fallback for any other read-only status --}}
