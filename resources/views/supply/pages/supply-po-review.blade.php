@@ -232,287 +232,303 @@
     </div>
 
     {{-- Categories Card --}}
-    <div class="card shadow-sm border-0 mb-3 px-0 po-card">
+    <div class="card shadow-sm border-0 mb-3 px-0 po-card" id="categories-card" style="{{ $po->poItems->whereNotNull('po_items_category')->count() > 0 ? '' : 'display: none;' }}">
         <div class="card-body px-0 pb-0">
-            <div class="d-flex justify-content-between ms-4 mb-1">
-                <div class="d-flex align-items-baseline gap-2">
-                    <h5 class="red-text fw-bold">Supply and Materials</h5>
-                    <small class="black-text item-count"
-                        id="count-supply-materials">{{ $po->poItems->where('po_items_category', 'Supply and Materials')->count() }}
-                        Item/s</small>
+            {{-- Supply and Materials Section --}}
+            <div class="category-section" id="section-supply-materials" style="{{ $po->poItems->where('po_items_category', 'Supply and Materials')->count() > 0 ? '' : 'display: none;' }}">
+                <div class="d-flex justify-content-between ms-4 mb-1">
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h5 class="red-text fw-bold">Supply and Materials</h5>
+                        <small class="black-text item-count"
+                            id="count-supply-materials">{{ $po->poItems->where('po_items_category', 'Supply and Materials')->count() }}
+                            Item/s</small>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 me-4">
+                        <p class="project-total-amount mb-0 fw-bold" id="total-supply-materials">₱
+                            {{ number_format($po->poItems->where('po_items_category', 'Supply and Materials')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
+                        </p>
+                    </div>
                 </div>
-                <div class="d-flex align-items-baseline gap-2 me-4">
-                    <p class="project-total-amount mb-0 fw-bold" id="total-supply-materials">₱
-                        {{ number_format($po->poItems->where('po_items_category', 'Supply and Materials')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
-                    </p>
-                </div>
-            </div>
-            <div class="po-collapse-area" id="collapseCardSupplyMaterials">
-                <div class="table-responsive mx-3">
-                    <table class="table table-sm table-borderless align-middle po-table">
-                        <thead class="bg-transparent">
-                            <tr>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                <th class="black-text fw-bold ps-0">Item Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
-                                <th class="text-center black-text fw-bold" style="width: 4%"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-supply-materials">
-                            @foreach ($po->poItems->where('po_items_category', 'Supply and Materials') as $item)
-                                <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
-                                    <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
-                                    <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center py-0">
-                                        {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center">
-                                        <select class="form-select form-control-sm category-select"
-                                            name="items[{{ $item->po_items_id }}]">
-                                            <option value="Supply and Materials" selected>Supply and Materials</option>
-                                            <option value="Semi-Expendable">Semi-Expendable</option>
-                                            <option value="Equipment">Equipment</option>
-                                            <option value="Not Delivered">Not Delivered</option>
-                                        </select>
-                                    </td>
-                                    <td class="px-1 text-center">
-                                        <button type="button" class="btn border btn-white assign-item-btn"
-                                            title="Assign Item" data-item-id="{{ $item->po_items_id }}"
-                                            data-item-desc="{{ $item->po_items_descrip }}"
-                                            data-item-qty="{{ $item->po_items_quantity }}">
-                                            <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
-                                                alt="Assign">
-                                        </button>
-                                    </td>
+                <div class="po-collapse-area" id="collapseCardSupplyMaterials">
+                    <div class="table-responsive mx-3">
+                        <table class="table table-sm table-borderless align-middle po-table">
+                            <thead class="bg-transparent">
+                                <tr>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
+                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
+                                    <th class="black-text fw-bold ps-0">Item Description</th>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
+                                    <th class="text-center black-text fw-bold" style="width: 4%"></th>
                                 </tr>
-
-                                @foreach ($item->poSpecs as $spec)
-                                    <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
-                                        <td colspan="2"></td>
-                                        <td class="px-1 py-0" style="font-size: 0.85rem;">
-                                            > {{ $spec->po_spec_description }}
+                            </thead>
+                            <tbody id="tbody-supply-materials">
+                                @foreach ($po->poItems->where('po_items_category', 'Supply and Materials') as $item)
+                                    <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
+                                        <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
+                                        <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center py-0">
+                                            {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center">
+                                            <select class="form-select form-control-sm category-select"
+                                                name="items[{{ $item->po_items_id }}]">
+                                                <option value="Supply and Materials" selected>Supply and Materials</option>
+                                                <option value="Semi-Expendable">Semi-Expendable</option>
+                                                <option value="Equipment">Equipment</option>
+                                                <option value="Not Delivered">Not Delivered</option>
+                                            </select>
                                         </td>
-                                        <td colspan="5"></td>
+                                        <td class="px-1 text-center">
+                                            <button type="button" class="btn border btn-white assign-item-btn"
+                                                title="Assign Item" data-item-id="{{ $item->po_items_id }}"
+                                                data-item-desc="{{ $item->po_items_descrip }}"
+                                                data-item-qty="{{ $item->po_items_quantity }}">
+                                                <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
+                                                    alt="Assign">
+                                            </button>
+                                        </td>
                                     </tr>
+    
+                                    @foreach ($item->poSpecs as $spec)
+                                        <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
+                                            <td colspan="2"></td>
+                                            <td class="px-1 py-0" style="font-size: 0.85rem;">
+                                                > {{ $spec->po_spec_description }}
+                                            </td>
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <hr class="category-divider">
             </div>
-            <hr>
-            <div class="d-flex justify-content-between ms-4 mb-1">
-                <div class="d-flex align-items-baseline gap-2">
-                    <h5 class="red-text fw-bold">Semi-Expendables</h5>
-                    <small class="black-text item-count"
-                        id="count-semi-expendable">{{ $po->poItems->where('po_items_category', 'Semi-Expendable')->count() }}
-                        Item/s</small>
+
+            {{-- Semi-Expendables Section --}}
+            <div class="category-section" id="section-semi-expendable" style="{{ $po->poItems->where('po_items_category', 'Semi-Expendable')->count() > 0 ? '' : 'display: none;' }}">
+                <div class="d-flex justify-content-between ms-4 mb-1">
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h5 class="red-text fw-bold">Semi-Expendables</h5>
+                        <small class="black-text item-count"
+                            id="count-semi-expendable">{{ $po->poItems->where('po_items_category', 'Semi-Expendable')->count() }}
+                            Item/s</small>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 me-4">
+                        <p class="project-total-amount mb-0 fw-bold" id="total-semi-expendable">₱
+                            {{ number_format($po->poItems->where('po_items_category', 'Semi-Expendable')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
+                        </p>
+                    </div>
                 </div>
-                <div class="d-flex align-items-baseline gap-2 me-4">
-                    <p class="project-total-amount mb-0 fw-bold" id="total-semi-expendable">₱
-                        {{ number_format($po->poItems->where('po_items_category', 'Semi-Expendable')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
-                    </p>
-                </div>
-            </div>
-            <div class="po-collapse-area" id="collapseCardSemiExpendable">
-                <div class="table-responsive mx-3">
-                    <table class="table table-sm table-borderless align-middle po-table">
-                        <thead class="bg-transparent">
-                            <tr>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                <th class="black-text fw-bold ps-0">Item Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
-                                <th class="text-center black-text fw-bold" style="width: 4%"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-semi-expendable">
-                            @foreach ($po->poItems->where('po_items_category', 'Semi-Expendable') as $item)
-                                <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
-                                    <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
-                                    <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center py-0">
-                                        {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center">
-                                        <select class="form-select form-control-sm category-select"
-                                            name="items[{{ $item->po_items_id }}]">
-                                            <option value="Supply and Materials">Supply and Materials</option>
-                                            <option value="Semi-Expendable" selected>Semi-Expendable</option>
-                                            <option value="Equipment">Equipment</option>
-                                            <option value="Not Delivered">Not Delivered</option>
-                                        </select>
-                                    </td>
-                                    <td class="px-1 text-center">
-                                        <button type="button" class="btn border btn-white assign-item-btn"
-                                            title="Assign Item" data-item-id="{{ $item->po_items_id }}"
-                                            data-item-desc="{{ $item->po_items_descrip }}"
-                                            data-item-qty="{{ $item->po_items_quantity }}">
-                                            <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
-                                                alt="Assign">
-                                        </button>
-                                    </td>
+                <div class="po-collapse-area" id="collapseCardSemiExpendable">
+                    <div class="table-responsive mx-3">
+                        <table class="table table-sm table-borderless align-middle po-table">
+                            <thead class="bg-transparent">
+                                <tr>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
+                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
+                                    <th class="black-text fw-bold ps-0">Item Description</th>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
+                                    <th class="text-center black-text fw-bold" style="width: 4%"></th>
                                 </tr>
-
-                                @foreach ($item->poSpecs as $spec)
-                                    <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
-                                        <td colspan="2"></td>
-                                        <td class="px-1 py-0" style="font-size: 0.85rem;">
-                                            > {{ $spec->po_spec_description }}
+                            </thead>
+                            <tbody id="tbody-semi-expendable">
+                                @foreach ($po->poItems->where('po_items_category', 'Semi-Expendable') as $item)
+                                    <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
+                                        <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
+                                        <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center py-0">
+                                            {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center">
+                                            <select class="form-select form-control-sm category-select"
+                                                name="items[{{ $item->po_items_id }}]">
+                                                <option value="Supply and Materials">Supply and Materials</option>
+                                                <option value="Semi-Expendable" selected>Semi-Expendable</option>
+                                                <option value="Equipment">Equipment</option>
+                                                <option value="Not Delivered">Not Delivered</option>
+                                            </select>
                                         </td>
-                                        <td colspan="5"></td>
+                                        <td class="px-1 text-center">
+                                            <button type="button" class="btn border btn-white assign-item-btn"
+                                                title="Assign Item" data-item-id="{{ $item->po_items_id }}"
+                                                data-item-desc="{{ $item->po_items_descrip }}"
+                                                data-item-qty="{{ $item->po_items_quantity }}">
+                                                <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
+                                                    alt="Assign">
+                                            </button>
+                                        </td>
                                     </tr>
+    
+                                    @foreach ($item->poSpecs as $spec)
+                                        <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
+                                            <td colspan="2"></td>
+                                            <td class="px-1 py-0" style="font-size: 0.85rem;">
+                                                > {{ $spec->po_spec_description }}
+                                            </td>
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <hr class="category-divider">
             </div>
-            <hr>
-            <div class="d-flex justify-content-between ms-4 mb-1">
-                <div class="d-flex align-items-baseline gap-2">
-                    <h5 class="red-text fw-bold">Equipment</h5>
-                    <small class="black-text item-count"
-                        id="count-equipment">{{ $po->poItems->where('po_items_category', 'Equipment')->count() }}
-                        Item/s</small>
+
+            {{-- Equipment Section --}}
+            <div class="category-section" id="section-equipment" style="{{ $po->poItems->where('po_items_category', 'Equipment')->count() > 0 ? '' : 'display: none;' }}">
+                <div class="d-flex justify-content-between ms-4 mb-1">
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h5 class="red-text fw-bold">Equipment</h5>
+                        <small class="black-text item-count"
+                            id="count-equipment">{{ $po->poItems->where('po_items_category', 'Equipment')->count() }}
+                            Item/s</small>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 me-4">
+                        <p class="project-total-amount mb-0 fw-bold" id="total-equipment">₱
+                            {{ number_format($po->poItems->where('po_items_category', 'Equipment')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
+                        </p>
+                    </div>
                 </div>
-                <div class="d-flex align-items-baseline gap-2 me-4">
-                    <p class="project-total-amount mb-0 fw-bold" id="total-equipment">₱
-                        {{ number_format($po->poItems->where('po_items_category', 'Equipment')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
-                    </p>
-                </div>
-            </div>
-            <div class="po-collapse-area" id="collapseCardEquipment">
-                <div class="table-responsive mx-3">
-                    <table class="table table-sm table-borderless align-middle po-table">
-                        <thead class="bg-transparent">
-                            <tr>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                <th class="black-text fw-bold ps-0">Item Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
-                                <th class="text-center black-text fw-bold" style="width: 4%"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-equipment">
-                            @foreach ($po->poItems->where('po_items_category', 'Equipment') as $item)
-                                <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
-                                    <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
-                                    <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center py-0">
-                                        {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center">
-                                        <select class="form-select form-control-sm category-select"
-                                            name="items[{{ $item->po_items_id }}]">
-                                            <option value="Supply and Materials">Supply and Materials</option>
-                                            <option value="Semi-Expendable">Semi-Expendable</option>
-                                            <option value="Equipment" selected>Equipment</option>
-                                        </select>
-                                    </td>
-                                    <td class="px-1 text-center">
-                                        <button type="button" class="btn border btn-white assign-item-btn"
-                                            title="Assign Item" data-item-id="{{ $item->po_items_id }}"
-                                            data-item-desc="{{ $item->po_items_descrip }}"
-                                            data-item-qty="{{ $item->po_items_quantity }}">
-                                            <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
-                                                alt="Assign">
-                                        </button>
-                                    </td>
+                <div class="po-collapse-area" id="collapseCardEquipment">
+                    <div class="table-responsive mx-3">
+                        <table class="table table-sm table-borderless align-middle po-table">
+                            <thead class="bg-transparent">
+                                <tr>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
+                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
+                                    <th class="black-text fw-bold ps-0">Item Description</th>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Category</th>
+                                    <th class="text-center black-text fw-bold" style="width: 4%"></th>
                                 </tr>
-
-                                @foreach ($item->poSpecs as $spec)
-                                    <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
-                                        <td colspan="2"></td>
-                                        <td class="px-1 py-0" style="font-size: 0.85rem;">
-                                            > {{ $spec->po_spec_description }}
+                            </thead>
+                            <tbody id="tbody-equipment">
+                                @foreach ($po->poItems->where('po_items_category', 'Equipment') as $item)
+                                    <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
+                                        <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
+                                        <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center py-0">
+                                            {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center">
+                                            <select class="form-select form-control-sm category-select"
+                                                name="items[{{ $item->po_items_id }}]">
+                                                <option value="Supply and Materials">Supply and Materials</option>
+                                                <option value="Semi-Expendable">Semi-Expendable</option>
+                                                <option value="Equipment" selected>Equipment</option>
+                                            </select>
                                         </td>
-                                        <td colspan="5"></td>
+                                        <td class="px-1 text-center">
+                                            <button type="button" class="btn border btn-white assign-item-btn"
+                                                title="Assign Item" data-item-id="{{ $item->po_items_id }}"
+                                                data-item-desc="{{ $item->po_items_descrip }}"
+                                                data-item-qty="{{ $item->po_items_quantity }}">
+                                                <img src="{{ asset('img/Assign.svg') }}" width="16" height="16"
+                                                    alt="Assign">
+                                            </button>
+                                        </td>
                                     </tr>
+    
+                                    @foreach ($item->poSpecs as $spec)
+                                        <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
+                                            <td colspan="2"></td>
+                                            <td class="px-1 py-0" style="font-size: 0.85rem;">
+                                                > {{ $spec->po_spec_description }}
+                                            </td>
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <hr class="category-divider">
             </div>
-            <hr>
-            <div class="d-flex justify-content-between ms-4 mb-1">
-                <div class="d-flex align-items-baseline gap-2">
-                    <h5 class="red-text fw-bold">Not Delivered</h5>
-                    <small class="black-text item-count"
-                        id="count-not-delivered">{{ $po->poItems->where('po_items_category', 'Not Delivered')->count() }}
-                        Item/s</small>
+
+            {{-- Not Delivered Section --}}
+            <div class="category-section" id="section-not-delivered" style="{{ $po->poItems->where('po_items_category', 'Not Delivered')->count() > 0 ? '' : 'display: none;' }}">
+                <div class="d-flex justify-content-between ms-4 mb-1">
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h5 class="red-text fw-bold">Not Delivered</h5>
+                        <small class="black-text item-count"
+                            id="count-not-delivered">{{ $po->poItems->where('po_items_category', 'Not Delivered')->count() }}
+                            Item/s</small>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 me-4">
+                        <p class="project-total-amount mb-0 fw-bold" id="total-not-delivered">₱
+                            {{ number_format($po->poItems->where('po_items_category', 'Not Delivered')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
+                        </p>
+                    </div>
                 </div>
-                <div class="d-flex align-items-baseline gap-2 me-4">
-                    <p class="project-total-amount mb-0 fw-bold" id="total-not-delivered">₱
-                        {{ number_format($po->poItems->where('po_items_category', 'Not Delivered')->sum(function ($item) {return $item->po_items_quantity * $item->po_items_cost;}),2) }}
-                    </p>
-                </div>
-            </div>
-            <div class="po-collapse-area" id="collapseCardNotDelivered">
-                <div class="table-responsive mx-3">
-                    <table class="table table-sm table-borderless align-middle po-table">
-                        <thead class="bg-transparent">
-                            <tr>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                <th class="black-text fw-bold ps-0">Item Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
-                                <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-not-delivered">
-                            @foreach ($po->poItems->where('po_items_category', 'Not Delivered') as $item)
-                                <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
-                                    <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
-                                    <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
-                                    <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center py-0">
-                                        {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
-                                    <td class="px-1 text-center">
-                                        <select class="form-select form-control-sm category-select"
-                                            name="items[{{ $item->po_items_id }}]">
-                                            <option value="Supply and Materials">Supply and Materials</option>
-                                            <option value="Semi-Expendable">Semi-Expendable</option>
-                                            <option value="Equipment">Equipment</option>
-                                            <option value="Not Delivered" selected>Not Delivered</option>
-                                        </select>
-                                    </td>
+                <div class="po-collapse-area" id="collapseCardNotDelivered">
+                    <div class="table-responsive mx-3">
+                        <table class="table table-sm table-borderless align-middle po-table">
+                            <thead class="bg-transparent">
+                                <tr>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
+                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
+                                    <th class="black-text fw-bold ps-0">Item Description</th>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 10%">Amount</th>
+                                    <th class="text-center black-text fw-bold" style="width: 19%">Category</th>
                                 </tr>
-
-                                @foreach ($item->poSpecs as $spec)
-                                    <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
-                                        <td colspan="2"></td>
-                                        <td class="px-1 py-0" style="font-size: 0.85rem;">
-                                            > {{ $spec->po_spec_description }}
+                            </thead>
+                            <tbody id="tbody-not-delivered">
+                                @foreach ($po->poItems->where('po_items_category', 'Not Delivered') as $item)
+                                    <tr class="po-item-row" data-id="{{ $item->po_items_id }}">
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_stockno }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_unit }}</td>
+                                        <td class="px-1 py-0">{{ $item->po_items_descrip }}</td>
+                                        <td class="px-1 text-center py-0">{{ $item->po_items_quantity }}</td>
+                                        <td class="px-1 text-center py-0">{{ number_format($item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center py-0">
+                                            {{ number_format($item->po_items_quantity * $item->po_items_cost, 2) }}</td>
+                                        <td class="px-1 text-center">
+                                            <select class="form-select form-control-sm category-select"
+                                                name="items[{{ $item->po_items_id }}]">
+                                                <option value="Supply and Materials">Supply and Materials</option>
+                                                <option value="Semi-Expendable">Semi-Expendable</option>
+                                                <option value="Equipment">Equipment</option>
+                                                <option value="Not Delivered" selected>Not Delivered</option>
+                                            </select>
                                         </td>
-                                        <td colspan="4"></td>
                                     </tr>
+    
+                                    @foreach ($item->poSpecs as $spec)
+                                        <tr class="po-specification-row" data-item-id="{{ $item->po_items_id }}">
+                                            <td colspan="2"></td>
+                                            <td class="px-1 py-0" style="font-size: 0.85rem;">
+                                                > {{ $spec->po_spec_description }}
+                                            </td>
+                                            <td colspan="4"></td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <hr class="category-divider">
             </div>
         </div>
     </div>
@@ -643,7 +659,7 @@
                                 <td class="px-2">
                                     <select class="form-select form-select-sm user-select">
                                         <option value="" selected disabled>Select User</option>
-                                        @foreach($users as $user)
+                                        @foreach($users->sortBy('user_fullname') as $user)
                                             <option value="{{ $user->user_id }}">{{ $user->user_fullname }}</option>
                                         @endforeach
                                     </select>
