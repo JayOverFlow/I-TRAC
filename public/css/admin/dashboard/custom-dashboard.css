@@ -144,39 +144,116 @@ body.dark .new-dept-interface {
     border: 1px solid #2A2F38 !important;
 }
 
+/* Action Button Color/Height/Alignment Styles */
+#btn-edit-main,
+#btn-edit-users,
+#btn-add-row,
+#btn-add-row-users,
+#btn-save-all,
+#btn-save-users,
+#btn-update-role-save,
+#btn-update-dept-save,
+#btn-cancel-edit,
+#btn-cancel-users {
+    height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+}
+
+/* Set horizontal padding for text-containing buttons */
+#btn-edit-main,
+#btn-edit-users,
+#btn-add-row,
+#btn-add-row-users,
+#btn-save-all,
+#btn-save-users {
+    padding: 0 16px !important;
+}
+
+/* Make icon-only action buttons square */
+#btn-cancel-edit,
+#btn-cancel-users {
+    width: 38px !important;
+    padding: 0 !important;
+}
+
 /* Action Button Color Differentiation */
-#btn-add-row {
-    background-color: #10B981 !important;
-    border-color: #10B981 !important;
+#btn-edit-main,
+#btn-edit-users,
+#btn-add-row,
+#btn-add-row-users {
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
     color: #ffffff !important;
 }
-#btn-add-row:hover {
-    background-color: #059669 !important;
-    border-color: #059669 !important;
+#btn-edit-main:hover,
+#btn-edit-users:hover,
+#btn-add-row:hover,
+#btn-add-row-users:hover {
+    background-color: #630418 !important;
+    border-color: #630418 !important;
 }
 
 #btn-save-all, 
 #btn-save-users, 
 #btn-update-role-save, 
 #btn-update-dept-save {
-    background-color: #3B82F6 !important;
-    border-color: #3B82F6 !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    border: 1px solid #8C0404 !important;
+    color: #8C0404 !important;
+}
+#btn-save-all {
+    font-weight: bold !important;
 }
 #btn-save-all:hover, #btn-save-users:hover, #btn-update-role-save:hover, #btn-update-dept-save:hover {
-    background-color: #2563EB !important;
-    border-color: #2563EB !important;
+    background-color: rgba(140, 4, 4, 0.05) !important;
 }
 
 #btn-cancel-edit, 
 #btn-cancel-users {
-    background-color: #E11D48 !important;
-    border-color: #E11D48 !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    border: 1px solid #3e3e3e !important;
+    color: #3e3e3e !important;
 }
 #btn-cancel-edit:hover, #btn-cancel-users:hover {
-    background-color: #BE123C !important;
-    border-color: #BE123C !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+#btn-cancel-edit svg,
+#btn-cancel-users svg {
+    color: #3e3e3e !important;
+}
+
+/* Dark Mode Overrides for Action Buttons */
+body.dark #btn-save-all, 
+body.dark #btn-save-users, 
+body.dark #btn-update-role-save, 
+body.dark #btn-update-dept-save {
+    background-color: transparent !important;
+    border: 1px solid #EF4444 !important;
+    color: #EF4444 !important;
+}
+body.dark #btn-save-all:hover, 
+body.dark #btn-save-users:hover, 
+body.dark #btn-update-role-save:hover, 
+body.dark #btn-update-dept-save:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+body.dark #btn-cancel-edit, 
+body.dark #btn-cancel-users {
+    background-color: transparent !important;
+    border: 1px solid #ffffffb9 !important;
+    color: #ffffffb9 !important;
+}
+body.dark #btn-cancel-edit:hover, 
+body.dark #btn-cancel-users:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+body.dark #btn-cancel-edit svg,
+body.dark #btn-cancel-users svg {
+    color: #ffffff !important;
 }
 
 
@@ -417,4 +494,21 @@ body.dark #editUserForm button[type="submit"] {
 body.dark #editUserForm button[type="submit"]:hover {
     background-color: #991b1b !important;
     border-color: #991b1b !important;
+}
+
+/* Header Logs Icon Styling */
+.header-logs-icon {
+    transition: opacity 0.2s ease;
+    opacity: 0.8;
+    vertical-align: middle;
+}
+.header-logs-icon:hover {
+    opacity: 1;
+}
+
+body.dark .header-logs-icon {
+    filter: invert(1) brightness(100%) opacity(0.8);
+}
+body.dark .header-logs-icon:hover {
+    filter: invert(1) brightness(100%) opacity(1);
 }

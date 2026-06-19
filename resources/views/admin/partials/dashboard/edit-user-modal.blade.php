@@ -77,7 +77,7 @@
                                         
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label for="edit-firstname" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">First Name</label>
+                                                <label for="edit-firstname" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">First Name <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" id="edit-firstname" name="firstname" placeholder="Enter first name" required style="border-radius: 6px; font-size: 0.875rem;" />
                                             </div>
                                             
@@ -86,18 +86,18 @@
                                                 <input type="text" class="form-control" id="edit-middlename" name="middlename" placeholder="Enter middle name" style="border-radius: 6px; font-size: 0.875rem;" />
                                             </div>
                                             
-                                            <div class="col-md-8">
-                                                <label for="edit-lastname" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">Last Name</label>
+                                            <div class="col-md-6">
+                                                <label for="edit-lastname" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">Last Name <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" id="edit-lastname" name="lastname" placeholder="Enter last name" required style="border-radius: 6px; font-size: 0.875rem;" />
                                             </div>
                                             
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label for="edit-suffix" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">Suffix</label>
                                                 <input type="text" class="form-control" id="edit-suffix" name="suffix" placeholder="e.g. Jr., III" style="border-radius: 6px; font-size: 0.875rem;" />
                                             </div>
                                             
                                             <div class="col-md-6">
-                                                <label for="edit-tupid" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">TUPT-ID</label>
+                                                <label for="edit-tupid" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">TUP-T ID</label>
                                                 <input type="text" class="form-control" id="edit-tupid" name="tupid" placeholder="XXXXX-00-0000" required style="border-radius: 6px; font-size: 0.875rem;" />
                                             </div>
                                             

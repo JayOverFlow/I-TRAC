@@ -30,20 +30,21 @@
 <div id="btn-state-container-users" style="display:none!important;">
     {{-- Readonly mode: Edit button --}}
     <div id="edit-mode-btns-users">
-        <button id="btn-edit-users" class="btn btn-primary d-flex align-items-center">
+        <button id="btn-edit-users" class="btn d-flex align-items-center">
             <span>Edit</span>
         </button>
     </div>
     {{-- Edit mode: Save + Cancel buttons --}}
     <div id="manage-mode-btns-users" class="d-none animate__animated animate__fadeIn">
         <div class="d-flex align-items-center gap-2">
-            <button id="btn-add-row-users" class="btn btn-success p-2" title="Add New Assignment">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <button id="btn-add-row-users" class="btn d-flex align-items-center gap-2" title="Add New Assignment">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <span>Add a row</span>
             </button>
-            <button id="btn-save-users" class="btn btn-info p-2" title="Save Changes">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <button id="btn-save-users" class="btn d-flex align-items-center justify-content-center" title="Save Changes">
+                Save
             </button>
-            <button id="btn-cancel-users" class="btn btn-danger p-2" title="Cancel">
+            <button id="btn-cancel-users" class="btn d-flex align-items-center justify-content-center p-2" title="Cancel">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
