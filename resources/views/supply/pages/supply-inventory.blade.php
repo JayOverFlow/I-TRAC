@@ -204,36 +204,36 @@
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
                                                         <span class="black-text">Item Name:</span>
                                                         <span id="detailItemName"
-                                                            class="fw-bold text-end black-text"></span>
+                                                            class="fw-bold text-start black-text"></span>
                                                     </div>
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
                                                         <span class="black-text">Assignee:</span>
                                                         <span id="detailAssignee"
-                                                            class="fw-bold text-end black-text"></span>
+                                                            class="fw-bold text-start black-text"></span>
                                                     </div>
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
                                                         <span class="black-text">Date Scanned:</span>
                                                         <span id="detailDateScanned"
-                                                            class="fw-bold text-end black-text"></span>
+                                                            class="fw-bold text-start black-text"></span>
                                                     </div>
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
                                                         <span class="black-text">Stock:</span>
-                                                        <span id="detailStock" class="fw-bold text-end black-text"></span>
+                                                        <span id="detailStock" class="fw-bold text-start black-text"></span>
                                                     </div>
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
                                                         <span class="black-text">Unit:</span>
-                                                        <span id="detailUnit" class="fw-bold text-end black-text"></span>
+                                                        <span id="detailUnit" class="fw-bold text-start black-text"></span>
                                                     </div>
                                                     <div
                                                         class="d-flex justify-content-between py-2 border-bottom align-items-start">
                                                         <span class="black-text text-nowrap">Specifications:</span>
                                                         <span id="detailSpecifications"
-                                                            class="fw-bold text-end black-text text-break detail-specifications"></span>
+                                                            class="fw-bold text-start black-text text-break detail-specifications"></span>
                                                     </div>
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
                                                         <span class="black-text">Quantity:</span>
                                                         <span id="detailQuantity"
-                                                            class="fw-bold text-end black-text"></span>
+                                                            class="fw-bold text-start black-text"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -277,21 +277,21 @@
                                                             <div class="size-card p-2 text-center rounded border selected"
                                                                 data-size="Small">
                                                                 <div class="size-title small">Small</div>
-                                                                <div class="size-dim text-muted black-text">3x3 cm</div>
+                                                                <div class="size-dim text-muted black-text">2x2 cm</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Medium">
                                                                 <div class="size-title small">Medium</div>
-                                                                <div class="size-dim text-muted">5x5 cm</div>
+                                                                <div class="size-dim text-muted">3x3 cm</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Large">
                                                                 <div class="size-title small">Large</div>
-                                                                <div class="size-dim text-muted">10x10 cm</div>
+                                                                <div class="size-dim text-muted">4x4 cm</div>
                                                             </div>
                                                         </div>
                                                     </div>
