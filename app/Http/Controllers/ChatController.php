@@ -49,6 +49,7 @@ class ChatController extends Controller
             $user->latest_message_time = $latestMessage ? $latestMessage->created_at->format('g:i A') : null;
             $user->latest_message_date = $latestMessage ? $latestMessage->created_at : null;
             $user->unread_count = $unreadCount;
+            $user->is_online = \Illuminate\Support\Facades\Cache::has('last_seen_user_' . $user->user_id);
             $user->department_name = $user->departments->isNotEmpty()
                 ? $user->departments->pluck('dep_name')->implode(', ')
                 : 'User';
@@ -86,15 +87,28 @@ class ChatController extends Controller
             ->limit(20)
             ->get();
 
-        // Add basic placeholder info needed for the frontend render
-        $users->transform(function ($user) {
-            $user->latest_message = 'Click to start chatting';
-            $user->latest_message_time = '';
-            $user->latest_message_date = null;
-            $user->unread_count = 0;
+                // Add actual message info and online status for searched users
+        $users->transform(function ($user) use ($authUserId) {
+            $latestMessage = Message::where(function ($query) use ($authUserId, $user) {
+                $query->where('sender_id', $authUserId)->where('receiver_id', $user->user_id);
+            })->orWhere(function ($query) use ($authUserId, $user) {
+                $query->where('sender_id', $user->user_id)->where('receiver_id', $authUserId);
+            })->latest('created_at')->first();
+
+            $unreadCount = Message::where('sender_id', $user->user_id)
+                ->where('receiver_id', $authUserId)
+                ->whereNull('read_at')
+                ->count();
+
+            $user->latest_message = $latestMessage ? $latestMessage->message : 'Click to start chatting';
+            $user->latest_message_time = $latestMessage ? $latestMessage->created_at->format('g:i A') : '';
+            $user->latest_message_date = $latestMessage ? $latestMessage->created_at : null;
+            $user->unread_count = $unreadCount;
+            $user->is_online = \Illuminate\Support\Facades\Cache::has('last_seen_user_' . $user->user_id);
             $user->department_name = $user->departments->isNotEmpty()
                 ? $user->departments->pluck('dep_name')->implode(', ')
                 : 'User';
+
             return $user;
         });
 
@@ -127,9 +141,12 @@ class ChatController extends Controller
 
         $targetUser = User::with('departments')->find($userId);
         if ($targetUser) {
+            $targetUser->is_online = \Illuminate\Support\Facades\Cache::has('last_seen_user_' . $targetUser->user_id);
             $targetUser->department_name = $targetUser->departments->isNotEmpty()
                 ? $targetUser->departments->pluck('dep_name')->implode(', ')
                 : 'User';
+        }
+
         }
 
         return response()->json([
@@ -263,4 +280,6 @@ class ChatController extends Controller
 
         return response()->json(['success' => true]);
     }
+
 }
+
