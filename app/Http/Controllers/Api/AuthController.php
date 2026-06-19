@@ -217,6 +217,9 @@ class AuthController extends Controller
     // --------------------------------------------------
     public function logout(Request $request)
     {
+        if ($request->user()) {
+            Cache::forget('last_seen_user_' . $request->user()->user_id);
+        }
         $request->user()->currentAccessToken()->delete();
         return response()->json([
             'status' => 'success',

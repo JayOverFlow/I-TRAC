@@ -252,6 +252,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            \Illuminate\Support\Facades\Cache::forget('last_seen_user_' . Auth::id());
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();
