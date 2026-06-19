@@ -147,7 +147,7 @@ class ChatController extends Controller
                 : 'User';
         }
 
-        }
+        
 
         return response()->json([
             'messages' => $messages,
