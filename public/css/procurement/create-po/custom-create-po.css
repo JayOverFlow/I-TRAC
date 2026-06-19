@@ -227,3 +227,8 @@ body.dark .black-text {
     border-color: #dc3545;
     background-image: none;
 }
+
+.custom-specification-container.is-invalid .custom-specification-header,
+.custom-specification-container.is-invalid .specification-body {
+    border-color: #dc3545 !important;
+}

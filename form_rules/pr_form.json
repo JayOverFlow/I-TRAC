@@ -81,7 +81,7 @@
         "required": false,
         "string": true,
         "min_length": 5,
-        "max_length": 1000
+        "max_length": 250
       }
     }
   }
