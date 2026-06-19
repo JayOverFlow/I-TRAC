@@ -93,6 +93,8 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
 
     Route::controller(InventoryController::class)->group(function () {
         Route::get('/inventory', 'showInventory')->name('show.inventory');
+        // Route to generate and download the QR code item label
+        Route::get('/inventory/generate-label', 'generateLabel')->name('inventory.generate-label');
         // Route::post('/po-review/{po_id}/generate-attachments', 'generateAttachments')->name('generate.attachments');
     });
 });

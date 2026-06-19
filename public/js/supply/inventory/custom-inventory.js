@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // Initialize Datatable
     $('#zero-config').DataTable({
         "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
@@ -20,12 +20,12 @@ $(document).ready(function() {
     });
 
     // Row click handler to open Details Modal
-    $('#zero-config tbody').on('click', 'tr.inventory-row', function(e) {
+    $('#zero-config tbody').on('click', 'tr.inventory-row', function (e) {
         // Prevent click events if selecting text
         if (window.getSelection().toString()) return;
 
         var $row = $(this);
-        
+
         // Extract data attributes
         var itemName = $row.data('item-name') || '—';
         var assignee = $row.data('assignee') || '—';
@@ -37,6 +37,8 @@ $(document).ready(function() {
         var building = $row.data('building') || '—';
         var roomNo = $row.data('room-no') || '—';
         var itemImage = $row.data('item-image');
+        // Extract the unique item QR code data attribute from the clicked row
+        var mrQrCode = $row.data('mr-qr-code') || '';
 
         // Populate detail fields
         $('#detailItemName').text(itemName);
@@ -48,6 +50,8 @@ $(document).ready(function() {
         $('#detailQuantity').text(quantity);
         $('#detailBuilding').text(building);
         $('#detailRoom').text(roomNo);
+        // Set the extracted QR code string to the hidden form input
+        $('#mr_qr_code').val(mrQrCode);
 
         // Reset Tab State to first tab (Details)
         var detailsTabEl = document.querySelector('#details-tab');
@@ -66,7 +70,7 @@ $(document).ready(function() {
         $('.layout-card').removeClass('selected');
         $('.layout-card[data-layout="layout_1"]').addClass('selected');
         $('#qr_layout').val('layout_1');
-        
+
         // Hide Layout 2 since Small is selected by default
         $('#layout-2-col').hide();
 
@@ -103,16 +107,16 @@ $(document).ready(function() {
             }
 
             // Initialize Splide for thumbnails
-            setTimeout(function() {
+            setTimeout(function () {
                 window.modalSplide = new Splide('#modalThumbnailSlider', {
-                    fixedWidth  : 60,
-                    fixedHeight : 60,
-                    gap         : 10,
-                    rewind      : true,
-                    pagination  : false,
+                    fixedWidth: 60,
+                    fixedHeight: 60,
+                    gap: 10,
+                    rewind: true,
+                    pagination: false,
                     isNavigation: true,
-                    arrows      : true,
-                    focus       : 'center'
+                    arrows: true,
+                    focus: 'center'
                 });
 
                 window.modalSplide.mount();
@@ -126,7 +130,7 @@ $(document).ready(function() {
                 });
 
                 // Workaround for direct click syncing on images
-                $('#modalThumbnailList').on('click', '.splide__slide img', function() {
+                $('#modalThumbnailList').on('click', '.splide__slide img', function () {
                     primaryImg.src = this.src;
                 });
             }, 150);
@@ -144,7 +148,7 @@ $(document).ready(function() {
     });
 
     // Sizing selectors toggles
-    $(document).on('click', '.size-card', function() {
+    $(document).on('click', '.size-card', function () {
         $('.size-card').removeClass('selected');
         $('.size-card .size-dim').removeClass('black-text');
         $(this).addClass('selected');
@@ -166,20 +170,20 @@ $(document).ready(function() {
     });
 
     // Layout selectors toggles
-    $(document).on('click', '.layout-card', function() {
+    $(document).on('click', '.layout-card', function () {
         $('.layout-card').removeClass('selected');
         $(this).addClass('selected');
         $('#qr_layout').val($(this).data('layout'));
     });
 
     // Stepper Quantity buttons logic
-    $(document).on('click', '.btn-stepper-plus', function() {
+    $(document).on('click', '.btn-stepper-plus', function () {
         var $input = $(this).siblings('.stepper-quantity');
         var val = parseInt($input.val()) || 0;
         $input.val(val + 1);
     });
 
-    $(document).on('click', '.btn-stepper-minus', function() {
+    $(document).on('click', '.btn-stepper-minus', function () {
         var $input = $(this).siblings('.stepper-quantity');
         var val = parseInt($input.val()) || 1;
         if (val > 1) {
@@ -187,7 +191,7 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('change', '.stepper-quantity', function() {
+    $(document).on('change', '.stepper-quantity', function () {
         var val = parseInt($(this).val()) || 1;
         if (val < 1) {
             val = 1;
@@ -195,55 +199,28 @@ $(document).ready(function() {
         $(this).val(val);
     });
 
-    // Form Submission Alert handler
-    $(document).on('submit', '#createItemLabelForm', function(e) {
+    // -------------------------------------------------------------
+    // Form Submission Handler for Item Label Generation
+    // -------------------------------------------------------------
+    // Intercepts the submit event of the Create Item Label form.
+    // Instead of using standard AJAX or SweetAlert prompts, it serializes
+    // the form parameters and assigns them to window.location.href to trigger
+    // a direct file download stream from the backend. Finally, it hides the modal.
+    $(document).on('submit', '#createItemLabelForm', function (e) {
+        // Prevent default form page reload behavior
         e.preventDefault();
-        var size = $('#label_size').val();
-        var layout = $('#qr_layout').val();
-        var quantity = $('.stepper-quantity').val();
-        var itemName = $('#detailItemName').text();
-
-        // Confirm label generation action
-        if (window.confirmAction) {
-            window.confirmAction({
-                title: 'Generate Item Label?',
-                text: 'Create ' + quantity + ' labels (' + size + ', ' + layout + ') for ' + itemName,
-                icon: 'question',
-                confirmButtonText: 'Yes, Create',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Labels successfully generated.',
-                        icon: 'success',
-                        confirmButtonColor: '#630418'
-                    });
-                    var myModal = bootstrap.Modal.getInstance(document.getElementById('itemDetailsModal'));
-                    if (myModal) myModal.hide();
-                }
-            });
-        } else {
-            Swal.fire({
-                title: 'Generate Item Label?',
-                text: 'Create ' + quantity + ' labels (' + size + ', ' + layout + ') for ' + itemName,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Create',
-                cancelButtonText: 'Cancel',
-                confirmButtonColor: '#630418'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Labels successfully generated.',
-                        icon: 'success',
-                        confirmButtonColor: '#630418'
-                    });
-                    var myModal = bootstrap.Modal.getInstance(document.getElementById('itemDetailsModal'));
-                    if (myModal) myModal.hide();
-                }
-            });
+        
+        // Retrieve the form action route URL and current serialized form values
+        var actionUrl = $(this).attr('action');
+        var queryParams = $(this).serialize();
+        
+        // Direct the browser window to the generator endpoint to initiate force download
+        window.location.href = actionUrl + '?' + queryParams;
+        
+        // Retrieve the Bootstrap modal instance for itemDetailsModal and dismiss it
+        var myModal = bootstrap.Modal.getInstance(document.getElementById('itemDetailsModal'));
+        if (myModal) {
+            myModal.hide();
         }
     });
 });
