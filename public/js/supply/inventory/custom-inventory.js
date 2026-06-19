@@ -67,6 +67,10 @@ $(document).ready(function () {
         $('.size-card[data-size="Small"]').find('.size-dim').addClass('black-text');
         $('#label_size').val('Small');
 
+        // Re-enable the Create Item Label submit button (Small is the default)
+        var $submitBtn = $('#createItemLabelForm button[type="submit"]');
+        $submitBtn.prop('disabled', false).removeClass('opacity-50');
+
         $('.layout-card').removeClass('selected');
         $('.layout-card[data-layout="layout_1"]').addClass('selected');
         $('#qr_layout').val('layout_1');
@@ -212,28 +216,59 @@ $(document).ready(function () {
     });
 
     // -------------------------------------------------------------
-    // Form Submission Handler for Item Label Generation
+    // Form Submission Handler for Item Label Generation (Batch PDF)
     // -------------------------------------------------------------
     // Intercepts the submit event of the Create Item Label form.
-    // Instead of using standard AJAX or SweetAlert prompts, it serializes
-    // the form parameters and assigns them to window.location.href to trigger
-    // a direct file download stream from the backend. Finally, it hides the modal.
+    // Sends a fetch request to the backend which generates batch PDFs
+    // (one A6 page per 24 stickers). The backend returns a JSON array
+    // of download URLs. We iterate through them and trigger a download
+    // for each PDF file, then close the modal.
     $(document).on('submit', '#createItemLabelForm', function (e) {
         // Prevent default form page reload behavior
         e.preventDefault();
-        
+
         // Retrieve the form action route URL and current serialized form values
         var actionUrl = $(this).attr('action');
         var queryParams = $(this).serialize();
-        
-        // Direct the browser window to the generator endpoint to initiate force download
-        window.location.href = actionUrl + '?' + queryParams;
-        
-        // Retrieve the Bootstrap modal instance for itemDetailsModal and dismiss it
+
+        // Immediately hide the modal so the user isn't waiting on the UI
         var myModal = bootstrap.Modal.getInstance(document.getElementById('itemDetailsModal'));
         if (myModal) {
             myModal.hide();
         }
+
+        // Send a fetch GET request to the backend label generator endpoint.
+        // The backend returns JSON: { pdf_urls: ["/img/qr_stickers/file1.pdf", ...] }
+        fetch(actionUrl + '?' + queryParams, {
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Server returned ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function (data) {
+            // Loop through each returned PDF URL and trigger a browser download
+            // by creating a temporary hidden <a> element with the download attribute.
+            if (data.pdf_urls && data.pdf_urls.length > 0) {
+                data.pdf_urls.forEach(function (url, index) {
+                    // Stagger downloads slightly to prevent browser throttling
+                    setTimeout(function () {
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = '';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }, index * 500);
+                });
+            }
+        })
+        .catch(function (err) {
+            console.error('Label generation failed:', err);
+            alert('Failed to generate labels. Please try again.');
+        });
     });
 });
 

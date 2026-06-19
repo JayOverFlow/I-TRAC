@@ -278,21 +278,21 @@
                                                             <div class="size-card p-2 text-center rounded border selected"
                                                                 data-size="Small">
                                                                 <div class="size-title small">Small</div>
-                                                                <div class="size-dim text-muted black-text">2x2 cm</div>
+                                                                <div class="size-dim text-muted">(Sample Items)</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Medium">
                                                                 <div class="size-title small">Medium</div>
-                                                                <div class="size-dim text-muted">3x3 cm</div>
+                                                                <div class="size-dim text-muted">(Sample Items)</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Large">
                                                                 <div class="size-title small">Large</div>
-                                                                <div class="size-dim text-muted">4x4 cm</div>
+                                                                <div class="size-dim text-muted">(Sample Items)</div>
                                                             </div>
                                                         </div>
                                                     </div>
