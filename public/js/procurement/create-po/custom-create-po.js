@@ -1,6 +1,9 @@
 $(document).ready(function() {
     if (typeof flatpickr !== "undefined") {
-        flatpickr('.flatpickr-date');
+        flatpickr('.flatpickr-date', {
+            minDate: "today",
+            dateFormat: "Y-m-d"
+        });
     }
 
     // ─── Card collapse toggle ─────────────────────────────────────────────
