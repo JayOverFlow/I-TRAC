@@ -36,7 +36,7 @@
 
         <li class="nav-item dropdown notification-dropdown">
             <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                <img src="{{ asset('img/logs.svg') }}" class="header-logs-icon" alt="Activity Log" width="19" height="19" style="object-fit: contain;">
             </a>
 
             <div class="dropdown-menu position-absolute" aria-labelledby="notificationDropdown">
