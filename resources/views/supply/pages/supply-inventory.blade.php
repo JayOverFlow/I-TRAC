@@ -26,7 +26,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/mr-all.svg') }}" alt="ALL">
+                            <img src="{{ asset('img/ALL.svg') }}" alt="ALL">
                         </div>
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">ALL</h6>
@@ -40,7 +40,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/mr-equipment.svg') }}" alt="Equipment">
+                            <img src="{{ asset('img/EQUIPMENT.svg') }}" alt="Equipment">
                         </div>
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">Equipment</h6>
@@ -54,7 +54,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/mr-semi-expandable.svg') }}" alt="Semi-Expendable">
+                            <img src="{{ asset('img/SEMI-EXP.svg') }}" alt="Semi-Expendable">
                         </div>
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">Semi-Expendable</h6>

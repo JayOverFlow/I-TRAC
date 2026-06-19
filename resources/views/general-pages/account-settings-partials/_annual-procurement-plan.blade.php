@@ -29,9 +29,9 @@
                         <td class="text-center" style="cursor: pointer;"
                             onclick="window.location='{{ $targetRoute }}'">
                             @if ($app->app_status === 'Done')
-                                <span class="badge bg-success" style="font-size: 0.78rem;">Done</span>
+                                <span class="badge badge-light-success mb-2 me-4">Done</span>
                             @else
-                                <span class="badge bg-warning" style="font-size: 0.78rem;">Draft</span>
+                                <span class="badge badge-light-dark mb-2 me-4">Draft</span>
                             @endif
                         </td>
                     </tr>
@@ -51,6 +51,14 @@
     <style>
         #pane-animated-underline-annual-procurement-plan {
             min-height: 85vh;
+        }
+        .badge-light-warning {
+            background-color: #ffd59a !important;
+            color: #8c5201 !important;
+        }
+        body.dark .badge-light-warning {
+            background-color: rgba(226, 160, 63, 0.28) !important;
+            color: #e2a03f !important;
         }
     </style>
 @endpush
@@ -77,13 +85,17 @@
                 $('.custom-buttons').html(`
                     <div class="d-flex gap-2">
                         <button class="btn btn-dark-red d-flex align-items-center px-4 py-2 border-0" style="border-radius: 8px;" onclick="window.location='{{ route('show.create-app') }}'">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
-                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M14 2V8H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <rect x="7" y="13" width="10" height="6" rx="1" stroke="white" stroke-width="2"/>
-                                <line x1="10.5" y1="13" x2="10.5" y2="19" stroke="white" stroke-width="2"/>
-                                <line x1="13.5" y1="13" x2="13.5" y2="19" stroke="white" stroke-width="2"/>
-                                <line x1="7" y1="16" x2="17" y2="16" stroke="white" stroke-width="2"/>
+                            <svg width="20" height="20" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
+                                <g clip-path="url(#clip0_1527_4830)">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.25 13.125H3.75V11.8125H16.25V13.125H12.5V15.75H16.25V17.0625H12.5V19.6875H11.25V17.0625H7.5V19.6875H6.25V17.0625H3.75V15.75H6.25V13.125ZM7.5 13.125V15.75H11.25V13.125H7.5Z" fill="white"/>
+                                    <path d="M5 0H11.875V1.3125H5C4.66848 1.3125 4.35054 1.45078 4.11612 1.69692C3.8817 1.94306 3.75 2.2769 3.75 2.625V18.375C3.75 18.7231 3.8817 19.0569 4.11612 19.3031C4.35054 19.5492 4.66848 19.6875 5 19.6875H15C15.3315 19.6875 15.6495 19.5492 15.8839 19.3031C16.1183 19.0569 16.25 18.7231 16.25 18.375V5.90625H17.5V18.375C17.5 19.0712 17.2366 19.7389 16.7678 20.2312C16.2989 20.7234 15.663 21 15 21H5C4.33696 21 3.70107 20.7234 3.23223 20.2312C2.76339 19.7389 2.5 19.0712 2.5 18.375V2.625C2.5 1.92881 2.76339 1.26113 3.23223 0.768845C3.70107 0.276562 4.33696 0 5 0V0Z" fill="white"/>
+                                    <path d="M11.875 3.9375V0L17.5 5.90625H13.75C13.2527 5.90625 12.7758 5.69883 12.4242 5.32962C12.0725 4.9604 11.875 4.45964 11.875 3.9375V3.9375Z" fill="white"/>
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_1527_4830">
+                                        <rect width="20" height="21" fill="white"/>
+                                    </clipPath>
+                                </defs>
                             </svg>
                             <span class="fw-bold">Create</span>
                         </button>

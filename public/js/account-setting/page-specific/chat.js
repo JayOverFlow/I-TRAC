@@ -105,7 +105,7 @@ $(document).ready(function() {
                     
                     let unreadBadge = '';
                     if (user.unread_count > 0) {
-                        unreadBadge = `<span class="badge bg-danger rounded-circle float-end" style="width: 20px; height: 20px; line-height: 20px; text-align: center; padding: 0; font-size: 10px;">${user.unread_count}</span>`;
+                        unreadBadge = `<span class="badge bg-danger rounded-circle" style="position: absolute; right: 11px; top: 38px; width: 20px; height: 20px; line-height: 20px; text-align: center; padding: 0; font-size: 10px; pointer-events: none;">${user.unread_count}</span>`;
                     }
 
                     const isActive = activeUserId === user.user_id ? 'active' : '';
@@ -123,7 +123,8 @@ $(document).ready(function() {
                                         <span class="user-name" data-name="${name}">${name}</span>
                                         <span class="user-meta-time">${time}</span>
                                     </div>
-                                    <span class="preview" style="display: block;">${preview} ${unreadBadge}</span>
+                                    <span class="preview" style="display: block;">${preview}</span>
+                                    ${unreadBadge}
                                 </div>
                             </div>
                         </div>

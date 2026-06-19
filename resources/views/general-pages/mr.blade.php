@@ -163,7 +163,7 @@
                 "sInfo": "Showing page _PAGE_ of _PAGES_",
                 "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
                 "sSearchPlaceholder": "Search...",
-                "sLengthMenu": "<h4 class='fw-bold mb-0 red-text-2'>Materials Requisition</h4>",
+                "sLengthMenu": "<h4 class='fw-bold mb-0 red-text-2'>Property Assignment</h4>"
             },
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
