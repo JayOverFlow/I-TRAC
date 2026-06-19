@@ -95,11 +95,13 @@
                                     setAppBtns.forEach(function(b) {
                                         b.classList.remove('active-set');
                                         b.textContent = 'Set APP';
+                                        b.disabled = false;
                                     });
 
                                     // Mark this one as active-set
                                     btn.classList.add('active-set');
                                     btn.textContent = 'Active';
+                                    btn.disabled = true;
 
                                     // Apply visual state transition on the main card alert box
                                     applyActiveAPPState(appTitle, true);

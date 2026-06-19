@@ -160,13 +160,13 @@ $(document).ready(function() {
                     const name = `${user.user_firstname} ${user.user_lastname}`;
                     
                     $('#active-chat-img').attr('src', avatar);
-                    
                     const statusDot = user.is_online 
                         ? '<span class="online-pill">Online</span>' 
                         : '<span class="offline-pill">Offline</span>';
 
                     $('#active-chat-name').html(`${name} ${statusDot}`);
-                    $('#active-chat-subtitle').text(user.user_type || 'User');
+                    $('#active-chat-subtitle').text(user.department_name || 'User');
+
                     
                     $('#active-chat-header').show();
                     $('#chat-form').show();

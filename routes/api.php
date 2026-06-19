@@ -21,6 +21,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('mr/items',     [MrApiController::class, 'getUserItems'])->middleware('auth:sanctum');
     Route::post('mr/items/update-image', [MrApiController::class, 'updateItemImage'])->middleware('auth:sanctum');
     Route::post('mr/items/delete-image', [MrApiController::class, 'deleteItemImage'])->middleware('auth:sanctum');
+    Route::post('mr/items/update-location', [MrApiController::class, 'updateItemLocation'])->middleware('auth:sanctum');
 });
 
 Route::get('departments', [DepartmentController::class, 'index']);

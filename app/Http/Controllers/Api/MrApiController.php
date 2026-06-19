@@ -116,7 +116,9 @@ class MrApiController extends Controller
                     'quantity' => $item->quantity,
                     'unit' => $item->unit,
                     'stock' => $item->stock,
-                    'location' => $item->location ?? 'Unknown Location',
+                    'location' => ($item->building && $item->room_no)
+                        ? "{$item->building} - {$item->room_no}"
+                        : ($item->building ?? $item->room_no ?? 'Unknown Location'),
                     'item_image' => $item->item_image,
                     'date_scanned' => $item->date_scanned,
                     'category' => $category,
@@ -228,6 +230,39 @@ class MrApiController extends Controller
 
             return response()->json(['status' => 'error', 'message' => 'Image path not found in item record.'], 404);
 
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function updateItemLocation(Request $request)
+    {
+        try {
+            $request->validate([
+                'item_id' => 'required|integer',
+                'building' => 'nullable|string|max:255',
+                'room_no' => 'nullable|string|max:50',
+            ]);
+
+            $item = Mr::where('mr_id', $request->item_id)->first();
+
+            if (!$item) {
+                return response()->json(['status' => 'error', 'message' => 'Item not found.'], 404);
+            }
+
+            $item->building = $request->building;
+            $item->room_no = $request->room_no;
+            $item->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Location updated successfully!',
+                'item' => [
+                    'mr_id' => $item->mr_id,
+                    'building' => $item->building,
+                    'room_no' => $item->room_no,
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }

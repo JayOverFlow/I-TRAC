@@ -256,6 +256,16 @@ body.dark .btn-set-app.active-set {
     box-shadow: 0 4px 8px rgba(185, 28, 28, 0.25) !important;
 }
 
+body.dark .btn-set-app.active-set:disabled {
+    background-color: var(--brand-red) !important;
+    color: #ffffff !important;
+    border-color: var(--brand-red) !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 0.9;
+}
+
 body.dark .btn-set-app-disabled {
     background-color: #1b2e4b !important;
     border-color: #191e3a !important;
