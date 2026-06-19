@@ -138,7 +138,7 @@
                     <button type="button" class="btn-close shadow-none border-0 btn-close-custom" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-3">
+                <div class="modal-body px-3 pt-0">
                     <div class="row">
                         <!-- Left Column: Media Canvas & Splide Sync -->
                         <div class="col-md-5 mb-4 mb-md-0 d-flex flex-column align-items-center">
@@ -311,7 +311,7 @@
                                                                 <img src="{{ asset('img/qr-label-layout-1.svg') }}"
                                                                     alt="Layout 1"
                                                                     class="mx-auto my-2 img-fluid shadow-sm border rounded"
-                                                                    style="height: 120px; object-fit: contain;">
+                                                                    style="height: 80px; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                         <!-- Layout 2 Card -->
@@ -321,7 +321,7 @@
                                                                 <img src="{{ asset('img/qr-label-layout-2.svg') }}"
                                                                     alt="Layout 2"
                                                                     class="mx-auto my-2 img-fluid shadow-sm border rounded"
-                                                                    style="height: 120px; object-fit: contain;">
+                                                                    style="height: 80px; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -344,10 +344,34 @@
                                                     </div>
                                                 </div>
 
+                                                <!-- 4. Paper Size -->
+                                                <div class="mb-3">
+                                                    <h6 class="fw-bold red-text-2 d-block small mb-2">4. Paper Size</h6>
+                                                    <div class="row g-2 justify-content-center">
+                                                        <input type="hidden" name="paper_size" id="paper_size"
+                                                            value="A6">
+                                                        <div class="col-5">
+                                                            <div class="paper-size-card p-2 text-center rounded border selected"
+                                                                data-paper-size="A6">
+                                                                <div class="paper-title small">A6</div>
+                                                                <div class="paper-dim text-muted small">(105 x 148 mm)</div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-5">
+                                                            <div class="paper-size-card p-2 text-center rounded border"
+                                                                data-paper-size="A4">
+                                                                <div class="paper-title small">A4</div>
+                                                                <div class="paper-dim text-muted small">(210 x 297mm)</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <!-- Footer button inside the card -->
                                                 <div class="text-center">
                                                     <button type="submit"
-                                                        class="btn btn-red btn-sm w-100 py-2 d-flex align-items-center justify-content-center fw-bold">
+                                                        class="btn btn-red btn-md w-100 py-2 d-flex align-items-center justify-content-center fw-bold">
                                                         <img src="{{ asset('img/white-qr-code-icon.svg') }}">
                                                         <span class="ms-2">Create Item Label</span>
                                                     </button>

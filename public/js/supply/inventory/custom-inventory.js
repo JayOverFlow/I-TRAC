@@ -72,6 +72,11 @@ $(document).ready(function() {
 
         $('.stepper-quantity').val('15');
 
+        // Reset paper size selection to A4
+        $('.paper-size-card').removeClass('selected');
+        $('.paper-size-card[data-paper-size="A6"]').addClass('selected');
+        $('#paper_size').val('A6');
+
         // Handle Media/Image Gallery
         var primaryImg = document.getElementById('modalPrimaryImage');
         var noImgPlaceholder = document.getElementById('modalNoImagePlaceholder');
@@ -172,6 +177,13 @@ $(document).ready(function() {
         $('#qr_layout').val($(this).data('layout'));
     });
 
+    // Paper size selectors toggles
+    $(document).on('click', '.paper-size-card', function() {
+        $('.paper-size-card').removeClass('selected');
+        $(this).addClass('selected');
+        $('#paper_size').val($(this).data('paper-size'));
+    });
+
     // Stepper Quantity buttons logic
     $(document).on('click', '.btn-stepper-plus', function() {
         var $input = $(this).siblings('.stepper-quantity');
@@ -201,13 +213,14 @@ $(document).ready(function() {
         var size = $('#label_size').val();
         var layout = $('#qr_layout').val();
         var quantity = $('.stepper-quantity').val();
+        var paperSize = $('#paper_size').val();
         var itemName = $('#detailItemName').text();
 
         // Confirm label generation action
         if (window.confirmAction) {
             window.confirmAction({
                 title: 'Generate Item Label?',
-                text: 'Create ' + quantity + ' labels (' + size + ', ' + layout + ') for ' + itemName,
+                text: 'Create ' + quantity + ' labels (' + size + ', ' + layout + ', ' + paperSize + ') for ' + itemName,
                 icon: 'question',
                 confirmButtonText: 'Yes, Create',
                 cancelButtonText: 'Cancel'
@@ -226,7 +239,7 @@ $(document).ready(function() {
         } else {
             Swal.fire({
                 title: 'Generate Item Label?',
-                text: 'Create ' + quantity + ' labels (' + size + ', ' + layout + ') for ' + itemName,
+                text: 'Create ' + quantity + ' labels (' + size + ', ' + layout + ', ' + paperSize + ') for ' + itemName,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Create',
