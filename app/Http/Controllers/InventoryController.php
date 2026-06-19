@@ -11,6 +11,7 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Output\QRGdImagePNG;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Mpdf\Mpdf as MpdfLib;
 
 class InventoryController extends Controller
 {
@@ -37,33 +38,101 @@ class InventoryController extends Controller
     }
 
     /**
-     * Generate a QR code, overlay it onto a template image, and force download the merged PNG.
+     * Generate QR code sticker(s), place them into the A6 PDF grid,
+     * and return JSON with download URLs.
      *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * Supports multiple sizes (Small, Medium, Large) and layouts (with/without text).
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function generateLabel(Request $request)
     {
         // -------------------------------------------------------------
-        // 1. Configuration & Tweakable Settings
+        // 1. Input Retrieval & Size/Layout Configuration Mapping
         // -------------------------------------------------------------
-        $qrWidth      = 260;               // Width of the QR code in pixels after resizing
-        $qrHeight     = 245;               // Height of the QR code in pixels after resizing
-        $xOffset      = -10;               // X coordinate on the background template where QR will be pasted
-        $yOffset      = -10;               // Y coordinate on the background template where QR will be pasted
-        $templateName = 'qr_template.png'; // File name of the template in public/img/qr_templates/
-
-        // -------------------------------------------------------------
-        // 2. Input Retrieval
-        // -------------------------------------------------------------
-        // Retrieve the QR code text or URL to encode from the request query string.
-        // Falls back to a default example URL if not provided.
+        $size   = $request->query('label_size') ?: 'Small';
+        $layout = $request->query('qr_layout') ?: 'layout_1';
         $qrText = $request->query('mr_qr_code') ?: 'https://example.com';
+        $stickerQuantity = max(1, (int) ($request->query('sticker_quantity') ?: 1));
+
+        // Dictionary defining parameters for each of the 5 configurations.
+        // You can manually adjust qr_width, qr_height, x_offset, and y_offset below.
+        $configs = [
+            'Small_layout_1' => [
+                'template'  => 'small.png',
+                'sheet'     => '2X2', //QR ONLY
+                'cols'      => 4,
+                'rows'      => 6,
+                'desc'      => 'Small_NoText',
+                'qr_width'  => 298,
+                'qr_height' => 253,
+                'x_offset'  => -25,
+                'y_offset'  => -21,
+            ],
+            'Medium_layout_1' => [
+                'template'  => 'medium-qr.png',
+                'sheet'     => '3X3', //QR ONLY
+                'cols'      => 3,
+                'rows'      => 4,
+                'desc'      => 'Medium_NoText',
+                'qr_width'  => 455,
+                'qr_height' => 380,
+                'x_offset'  => -38,
+                'y_offset'  => -32,
+            ],
+            'Large_layout_1' => [
+                'template'  => 'large-qr.png',
+                'sheet'     => '4X4', //QR ONLY
+                'cols'      => 2,
+                'rows'      => 3,
+                'desc'      => 'Large_NoText',
+                'qr_width'  => 620,
+                'qr_height' => 517,
+                'x_offset'  => -50,
+                'y_offset'  => -35,
+            ],
+            'Medium_layout_2' => [
+                'template'  => 'medium-qr-text.png',
+                'sheet'     => '3X4.5', //WITH TEXT
+                'cols'      => 3,
+                'rows'      => 3,
+                'desc'      => 'Medium_WithText',
+                'qr_width'  => 470,
+                'qr_height' => 387,
+                'x_offset'  => -45,
+                'y_offset'  => -35,
+            ],
+            'Large_layout_2' => [
+                'template'  => 'large-qr-text.png',
+                'sheet'     => '4X6', //WITH TEXT
+                'cols'      => 2,
+                'rows'      => 2,
+                'desc'      => 'Large_WithText',
+                'qr_width'  => 625,
+                'qr_height' => 530,
+                'x_offset'  => -52,
+                'y_offset'  => -44,
+            ],
+        ];
+
+        // Resolve selected configuration; fallback to Small Layout 1 if mismatch
+        $configKey = $size . '_' . $layout;
+        $config    = isset($configs[$configKey]) ? $configs[$configKey] : $configs['Small_layout_1'];
+
+        $qrWidth      = $config['qr_width'];
+        $qrHeight     = $config['qr_height'];
+        $xOffset      = $config['x_offset'];
+        $yOffset      = $config['y_offset'];
+        $templateName = $config['template'];
+        $gridCols     = $config['cols'];
+        $gridRows     = $config['rows'];
+        $desc         = $config['desc'];
+        $stickersPerPage = $gridCols * $gridRows;
 
         // -------------------------------------------------------------
-        // 3. Temporary QR Code Generation via chillerlan/php-qrcode
+        // 2. Temporary QR Code Generation via chillerlan/php-qrcode
         // -------------------------------------------------------------
-        // Set options: High Error Correction (ECC_H), PNG output using GD, and transparent background disabled
         $options = new QROptions([
             'outputInterface'  => QRGdImagePNG::class,
             'scale'            => 10,
@@ -92,7 +161,7 @@ class InventoryController extends Controller
         $qrcode->render($qrText, $tempQrPath);
 
         // -------------------------------------------------------------
-        // 4. Background Template Verification & Manipulation via intervention/image
+        // 3. Background Template Verification & Manipulation via intervention/image
         // -------------------------------------------------------------
         $templatePath = public_path('img/qr_templates/' . $templateName);
         if (!file_exists($templatePath)) {
@@ -116,13 +185,13 @@ class InventoryController extends Controller
         imagealphablending($gdImage, false);
         imagesavealpha($gdImage, true);
 
-        $width = imagesx($gdImage);
+        $width  = imagesx($gdImage);
         $height = imagesy($gdImage);
 
         for ($x = 0; $x < $width; $x++) {
             for ($y = 0; $y < $height; $y++) {
                 $colorIndex = imagecolorat($gdImage, $x, $y);
-                $colorInfo = imagecolorsforindex($gdImage, $colorIndex);
+                $colorInfo  = imagecolorsforindex($gdImage, $colorIndex);
 
                 // If the pixel is pure white (used for background and light modules), set it to transparent
                 if ($colorInfo['red'] === 255 && $colorInfo['green'] === 255 && $colorInfo['blue'] === 255) {
@@ -136,27 +205,97 @@ class InventoryController extends Controller
         $qrImage->resize($qrWidth, $qrHeight);
 
         // Insert the resized QR code onto the background template at the defined X and Y offsets.
-        // The default alignment for insert() is TOP_LEFT.
         $backgroundImage->insert($qrImage, $xOffset, $yOffset);
 
-        // Save the final merged PNG image into public/img/qr_stickers/.
-        // The save() method automatically encodes based on the file extension (.png).
+        // Save the final merged PNG image (the single sticker) into public/img/qr_stickers/.
         $stickerName = 'sticker_' . uniqid() . '.png';
         $stickerPath = $qrStickersDir . '/' . $stickerName;
         $backgroundImage->save($stickerPath);
 
-        // -------------------------------------------------------------
-        // 5. Cleanup & File Download Response
-        // -------------------------------------------------------------
-        // Delete the raw QR code file from public/img/qr_codes/ since it is no longer needed
+        // Clean up the temporary raw QR code file since it's no longer needed
         if (file_exists($tempQrPath)) {
             @unlink($tempQrPath);
         }
 
-        // Return a binary download response forcing the browser to download the merged PNG file
-        return response()->download($stickerPath, $stickerName, [
-            'Content-Type' => 'image/png',
+        // -------------------------------------------------------------
+        // 4. Batch PDF Generation using mPDF directly
+        // -------------------------------------------------------------
+        // Calculate how many A6 pages (PDF files) are needed
+        $totalPages = (int) ceil($stickerQuantity / $stickersPerPage);
+
+        // Track which sticker number we're on across all pages
+        $stickerIndex = 0;
+
+        // Collect the public-accessible URLs for all generated PDFs
+        $pdfUrls = [];
+
+        // A6 dimensions: 105mm × 148mm. Each cell size is derived by dividing
+        // the page area evenly across the grid (cols × rows).
+        $cellWidth  = 105 / $gridCols;
+        $cellHeight = 148 / $gridRows;
+
+        for ($page = 0; $page < $totalPages; $page++) {
+            // Create a new mPDF instance with A6 portrait, zero margins
+            $mpdf = new MpdfLib([
+                'format'        => 'A6',
+                'orientation'   => 'P',
+                'margin_left'   => 0,
+                'margin_right'  => 0,
+                'margin_top'    => 0,
+                'margin_bottom' => 0,
+                'margin_header' => 0,
+                'margin_footer' => 0,
+                'tempDir'       => storage_path('app/mpdf_tmp'),
+            ]);
+
+            // Determine how many stickers to place on this specific page
+            $stickersOnThisPage = min($stickersPerPage, $stickerQuantity - $stickerIndex);
+
+            // Build an HTML table that fills the entire A6 page with sticker images.
+            $html  = '<table style="width:105mm; height:148mm; border-collapse:collapse; table-layout:fixed;">';
+            $placed = 0;
+
+            for ($r = 0; $r < $gridRows; $r++) {
+                $html .= '<tr>';
+                for ($c = 0; $c < $gridCols; $c++) {
+                    $html .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm; text-align:center; vertical-align:middle; padding:0; margin:0;">';
+
+                    // Only insert an image if we still have stickers to place
+                    if ($placed < $stickersOnThisPage) {
+                        $html .= '<img src="' . $stickerPath . '" style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm; display:block;" />';
+                        $placed++;
+                        $stickerIndex++;
+                    }
+
+                    $html .= '</td>';
+                }
+                $html .= '</tr>';
+            }
+
+            $html .= '</table>';
+
+            // Write the HTML table into the mPDF document and save as PDF
+            $mpdf->WriteHTML($html);
+
+            // Save using a descriptive file name containing size and layout descriptors
+            $pdfName = 'labels_' . $desc . '_page' . ($page + 1) . '_' . uniqid() . '.pdf';
+            $pdfPath = $qrStickersDir . '/' . $pdfName;
+            $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
+
+            // Build the public URL for the generated PDF
+            $pdfUrls[] = asset('img/qr_stickers/' . $pdfName);
+        }
+
+        // Clean up the single sticker PNG since it has been embedded into the PDFs
+        if (file_exists($stickerPath)) {
+            @unlink($stickerPath);
+        }
+
+        // -------------------------------------------------------------
+        // 5. JSON Response with Download URLs
+        // -------------------------------------------------------------
+        return response()->json([
+            'pdf_urls' => $pdfUrls,
         ]);
     }
 }
-
