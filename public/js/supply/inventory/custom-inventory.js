@@ -58,7 +58,9 @@ $(document).ready(function() {
 
         // Reset Item Label form selections
         $('.size-card').removeClass('selected');
+        $('.size-card .size-dim').removeClass('black-text');
         $('.size-card[data-size="Medium"]').addClass('selected');
+        $('.size-card[data-size="Medium"]').find('.size-dim').addClass('black-text');
         $('#label_size').val('Medium');
 
         $('.layout-card').removeClass('selected');
@@ -141,7 +143,9 @@ $(document).ready(function() {
     // Sizing selectors toggles
     $(document).on('click', '.size-card', function() {
         $('.size-card').removeClass('selected');
+        $('.size-card .size-dim').removeClass('black-text');
         $(this).addClass('selected');
+        $(this).find('.size-dim').addClass('black-text');
         $('#label_size').val($(this).data('size'));
     });
 
