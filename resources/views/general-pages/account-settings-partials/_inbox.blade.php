@@ -23,6 +23,10 @@
                         <div class="search">
                             <input type="text" class="form-control" placeholder="Search User" />
                         </div>
+                        <div class="inbox-filter-tabs">
+                            <button class="inbox-filter-btn active" data-filter="all">All</button>
+                            <button class="inbox-filter-btn" data-filter="unread">Unread</button>
+                        </div>
                         <div class="people" id="chat-people-list">
                             <!-- Dynamic user list will be appended here -->
                         </div>
