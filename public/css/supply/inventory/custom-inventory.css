@@ -45,3 +45,132 @@
 .table-w-100 {
     width: 100% !important;
 }
+
+/* Custom Item Details Modal Styling */
+.main-image-viewport-card {
+    transition: all 0.3s ease;
+}
+
+.size-card {
+    border: 1.5px solid #e2e8f0 !important;
+    background: #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.size-card:hover {
+    border-color: var(--red-1) !important;
+    background: #fffcfc !important;
+}
+
+.size-card.selected {
+    border-color: var(--red-1) !important;
+    border-width: 2px !important;
+    background: #fdf2f2 !important;
+    box-shadow: 0 4px 12px rgba(99, 4, 24, 0.08);
+}
+
+.size-card.selected .size-title {
+    font-weight: 800 !important;
+    color: var(--red-1) !important;
+}
+
+.layout-card {
+    border: 1.5px solid #e2e8f0 !important;
+    background: #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.layout-card:hover {
+    border-color: var(--red-1) !important;
+    background: #fffcfc !important;
+}
+
+.layout-card.selected {
+    border-color: var(--red-1) !important;
+    border-width: 2px !important;
+    background: #fdf2f2 !important;
+    box-shadow: 0 4px 12px rgba(99, 4, 24, 0.08);
+}
+
+.custom-detail-tabs .nav-link {
+    color: var(--gray-text) !important;
+    border-bottom: 3px solid transparent !important;
+    background: transparent !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-detail-tabs .nav-link:hover {
+    color: var(--red-1) !important;
+}
+
+.custom-detail-tabs .nav-link.active {
+    color: var(--red-1) !important;
+    border-bottom: 3px solid var(--red-1) !important;
+    background: transparent !important;
+}
+
+.detail-rows .border-bottom {
+    border-color: #f1f5f9 !important;
+}
+
+.btn-dark-red:hover {
+    background-color: var(--red-2) !important;
+}
+
+/* Splide Carousel Custom Overrides */
+.splide__slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.splide__slide img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.2s ease-in-out;
+}
+
+.splide__slide img:hover {
+    border-color: var(--red-1);
+}
+
+.splide__slide.is-active img {
+    border-color: var(--red-1) !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(99, 4, 24, 0.15);
+}
+
+.splide__arrow {
+    background: #ffffff !important;
+    opacity: 0.9 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+}
+
+.splide__arrow svg {
+    fill: var(--red-1) !important;
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.splide__arrow:hover {
+    opacity: 1 !important;
+}
+
+.splide__arrow--prev {
+    left: -10px !important;
+}
+
+.splide__arrow--next {
+    right: -10px !important;
+}
+
+.icon-placeholder {
+    transition: background-color 0.2s ease;
+}
