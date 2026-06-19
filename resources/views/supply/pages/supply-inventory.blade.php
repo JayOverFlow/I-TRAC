@@ -132,13 +132,13 @@
     <!-- Item Details Modal -->
     <div class="modal fade" id="itemDetailsModal" tabindex="-1" aria-labelledby="itemDetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-5">
-                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4 d-flex justify-content-between align-items-center">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0 px-3 pt-3 d-flex justify-content-between align-items-center">
                     <h4 class="modal-title fw-bold red-text-2" id="itemDetailsModalLabel">Item Details</h4>
                     <button type="button" class="btn-close shadow-none border-0 btn-close-custom" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body p-3">
                     <div class="row">
                         <!-- Left Column: Media Canvas & Splide Sync -->
                         <div class="col-md-5 mb-4 mb-md-0 d-flex flex-column align-items-center">
@@ -192,14 +192,13 @@
 
                                     <div class="tab-content" id="itemModalTabContent">
                                         <!-- Tab 1: Details (Read-Only State) -->
-                                        <div class="tab-pane fade show active" id="details-tab-pane" role="tabpanel"
+                                        <div class="tab-pane fade px-2 show active" id="details-tab-pane" role="tabpanel"
                                             aria-labelledby="details-tab" tabindex="0">
                                             <!-- Property Details Section -->
-                                            <div class="mb-4">
+                                            <div class="mb-3">
                                                 <h6 class="fw-bold d-flex align-items-center red-text-2">
-                                                    <i
-                                                        class="icon-placeholder d-inline-block me-2 icon-property-details"></i>
-                                                    Property Details
+                                                    <img src="{{ asset('img/property-details-icon.svg') }}">
+                                                    <span class="ms-2">Property Details
                                                 </h6>
                                                 <div class="detail-rows">
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
@@ -242,8 +241,8 @@
                                             <!-- Location Information Section -->
                                             <div>
                                                 <h6 class="fw-bold d-flex align-items-center red-text-2">
-                                                    <i class="icon-placeholder d-inline-block me-2 icon-location-info"></i>
-                                                    Location Information
+                                                    <img src="{{ asset('img/location-icon.svg') }}">
+                                                    <span class="ms-2">Location Information
                                                 </h6>
                                                 <div class="detail-rows">
                                                     <div class="d-flex justify-content-between py-2 border-bottom">
@@ -260,17 +259,17 @@
                                         </div>
 
                                         <!-- Tab 2: Item Label (Interactive Form State) -->
-                                        <div class="tab-pane fade" id="item-label-tab-pane" role="tabpanel"
+                                        <div class="tab-pane fade px-2" id="item-label-tab-pane" role="tabpanel"
                                             aria-labelledby="item-label-tab" tabindex="0">
                                             <form id="createItemLabelForm">
                                                 <h6 class="fw-bold d-flex align-items-center red-text-2">
-                                                    <i class="icon-placeholder d-inline-block me-2 icon-qr-label"></i>
-                                                    Create Item Label
+                                                    <img src="{{ asset('img/red-qr-code-icon.svg') }}">
+                                                    <span class="ms-2">Create Item Label
                                                 </h6>
 
                                                 <!-- 1. Size Selection -->
                                                 <div class="mb-3">
-                                                    <h6 class="fw-bold red-text-2 d-block mb-2">1. Size</h6>
+                                                    <h6 class="fw-bold red-text-2 small d-block mb-2">1. Size</h6>
                                                     <div class="row g-2">
                                                         <input type="hidden" name="label_size" id="label_size"
                                                             value="Small">
@@ -300,7 +299,8 @@
 
                                                 <!-- 2. QR Label Layout -->
                                                 <div class="mb-3">
-                                                    <h6 class="fw-bold red-text-2 d-block mb-2">2. QR Label Layout</h6>
+                                                    <h6 class="fw-bold red-text-2 d-block small mb-2">2. QR Label Layout
+                                                    </h6>
                                                     <div class="row g-3 justify-content-center">
                                                         <input type="hidden" name="qr_layout" id="qr_layout"
                                                             value="layout_1">
@@ -308,45 +308,50 @@
                                                         <div class="col-6" id="layout-1-col">
                                                             <div class="layout-card p-2 rounded border text-center selected"
                                                                 data-layout="layout_1">
-                                                                <img src="{{ asset('img/qr-label-layout-1.svg') }}" alt="Layout 1" class="mx-auto my-2 img-fluid shadow-sm border rounded" style="height: 120px; object-fit: contain;">
+                                                                <img src="{{ asset('img/qr-label-layout-1.svg') }}"
+                                                                    alt="Layout 1"
+                                                                    class="mx-auto my-2 img-fluid shadow-sm border rounded"
+                                                                    style="height: 120px; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                         <!-- Layout 2 Card -->
                                                         <div class="col-6" id="layout-2-col">
                                                             <div class="layout-card p-2 rounded border text-center"
                                                                 data-layout="layout_2">
-                                                                <img src="{{ asset('img/qr-label-layout-2.svg') }}" alt="Layout 2" class="mx-auto my-2 img-fluid shadow-sm border rounded" style="height: 120px; object-fit: contain;">
+                                                                <img src="{{ asset('img/qr-label-layout-2.svg') }}"
+                                                                    alt="Layout 2"
+                                                                    class="mx-auto my-2 img-fluid shadow-sm border rounded"
+                                                                    style="height: 120px; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <!-- 3. Quantity Stepper -->
-                                                <div class="mb-4">
+                                                <div class="mb-3">
 
-                                                    <h6 class="fw-bold red-text-2 d-block mb-2">3. Quantity <span
+                                                    <h6 class="fw-bold red-text-2 d-block small mb-2">3. Quantity <span
                                                             class="text-muted fw-normal">(Number of
                                                             Stickers)</span></h6>
-                                                    <div class="input-group input-group-sm w-75 shadow-sm">
-                                                        <button
-                                                            class="btn btn-outline-secondary btn-stepper-minus px-3 stepper-btn"
+                                                    <div class="input-group input-group-sm w-50 shadow-sm mx-auto">
+                                                        <button class="btn btn-stepper-minus px-3 stepper-btn"
                                                             type="button">&minus;</button>
                                                         <input type="text"
                                                             class="form-control text-center stepper-quantity stepper-input"
                                                             name="sticker_quantity" value="15">
-                                                        <button
-                                                            class="btn btn-outline-secondary btn-stepper-plus px-3 stepper-btn"
+                                                        <button class="btn btn-stepper-plus px-3 stepper-btn"
                                                             type="button">&plus;</button>
                                                     </div>
                                                 </div>
 
                                                 <!-- Footer button inside the card -->
-                                                <button type="submit"
-                                                    class="btn btn-red w-100 py-2.5 d-flex align-items-center justify-content-center fw-bold">
-                                                    <i
-                                                        class="icon-placeholder d-inline-block me-2 icon-btn-create-label"></i>
-                                                    Create Item Label
-                                                </button>
+                                                <div class="text-center">
+                                                    <button type="submit"
+                                                        class="btn btn-red btn-sm w-100 py-2 d-flex align-items-center justify-content-center fw-bold">
+                                                        <img src="{{ asset('img/white-qr-code-icon.svg') }}">
+                                                        <span class="ms-2">Create Item Label</span>
+                                                    </button>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
