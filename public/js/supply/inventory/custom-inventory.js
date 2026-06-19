@@ -76,6 +76,11 @@ $(document).ready(function () {
 
         $('.stepper-quantity').val('15');
 
+        // Reset paper size selection to A4
+        $('.paper-size-card').removeClass('selected');
+        $('.paper-size-card[data-paper-size="A6"]').addClass('selected');
+        $('#paper_size').val('A6');
+
         // Handle Media/Image Gallery
         var primaryImg = document.getElementById('modalPrimaryImage');
         var noImgPlaceholder = document.getElementById('modalNoImagePlaceholder');
@@ -174,6 +179,13 @@ $(document).ready(function () {
         $('.layout-card').removeClass('selected');
         $(this).addClass('selected');
         $('#qr_layout').val($(this).data('layout'));
+    });
+
+    // Paper size selectors toggles
+    $(document).on('click', '.paper-size-card', function() {
+        $('.paper-size-card').removeClass('selected');
+        $(this).addClass('selected');
+        $('#paper_size').val($(this).data('paper-size'));
     });
 
     // Stepper Quantity buttons logic

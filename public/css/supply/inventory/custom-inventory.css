@@ -354,3 +354,69 @@ body.dark .stepper-input {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+/* Paper Size Selection Styling */
+.paper-size-card {
+    border: 1.5px solid #cbd5e1 !important;
+    background: #ffffff;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.paper-size-card:hover {
+    border-color: var(--red-1) !important;
+    background: #fffcfc !important;
+}
+
+.paper-size-card.selected {
+    border-color: var(--red-2) !important;
+    border-width: 2px !important;
+    background: #fdf2f2 !important;
+    box-shadow: 0 4px 12px rgba(99, 4, 24, 0.08);
+}
+
+.paper-size-card.selected .paper-title {
+    font-weight: 800 !important;
+    color: var(--red-2) !important;
+}
+
+.paper-size-card.selected .paper-dim {
+    color: var(--black-text) !important;
+    font-weight: bold !important;
+}
+
+.paper-size-card .paper-title {
+    font-weight: bold;
+    color: #475569;
+}
+
+.paper-size-card .paper-dim {
+    font-size: 0.65rem;
+}
+
+body.dark .paper-size-card {
+    background: #1d2127;
+    border-color: #4b5563 !important;
+}
+
+body.dark .paper-size-card:hover {
+    border-color: #EF4444 !important;
+    background: #251b1d !important;
+}
+
+body.dark .paper-size-card.selected {
+    border-color: #EF4444 !important;
+    background: #2d181c !important;
+}
+
+body.dark .paper-size-card.selected .paper-title {
+    color: #EF4444 !important;
+}
+
+body.dark .paper-size-card.selected .paper-dim {
+    color: #f3f4f6 !important;
+}
+
+body.dark .paper-size-card .paper-title {
+    color: #a1a1aa !important;
+}
