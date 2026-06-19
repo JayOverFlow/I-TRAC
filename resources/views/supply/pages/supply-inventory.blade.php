@@ -273,19 +273,19 @@
                                                     <h6 class="fw-bold red-text-2 d-block mb-2">1. Size</h6>
                                                     <div class="row g-2">
                                                         <input type="hidden" name="label_size" id="label_size"
-                                                            value="Medium">
+                                                            value="Small">
                                                         <div class="col-4">
-                                                            <div class="size-card p-2 text-center rounded border"
+                                                            <div class="size-card p-2 text-center rounded border selected"
                                                                 data-size="Small">
                                                                 <div class="size-title small">Small</div>
-                                                                <div class="size-dim text-muted">3x3 cm</div>
+                                                                <div class="size-dim text-muted black-text">3x3 cm</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
-                                                            <div class="size-card p-2 text-center rounded border selected"
+                                                            <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Medium">
                                                                 <div class="size-title small">Medium</div>
-                                                                <div class="size-dim text-muted black-text">5x5 cm</div>
+                                                                <div class="size-dim text-muted">5x5 cm</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
@@ -301,26 +301,26 @@
                                                 <!-- 2. QR Label Layout -->
                                                 <div class="mb-3">
                                                     <h6 class="fw-bold red-text-2 d-block mb-2">2. QR Label Layout</h6>
-                                                    <div class="row g-3">
+                                                    <div class="row g-3 justify-content-center">
                                                         <input type="hidden" name="qr_layout" id="qr_layout"
                                                             value="layout_1">
                                                         <!-- Layout 1 Card -->
-                                                        <div class="col-6">
+                                                        <div class="col-6" id="layout-1-col">
                                                             <div class="layout-card p-2 rounded border text-center selected"
                                                                 data-layout="layout_1">
                                                                 <!-- Mock layout design -->
                                                                 <div
-                                                                    class="mx-auto my-2 p-2 bg-white rounded shadow-sm border position-relative mock-layout-container mock-layout-layout1">
-                                                                    <div class="qr-mock-code qr-mock-code-lg mx-auto">
+                                                                    class="mx-auto my-2 p-2 bg-white rounded shadow-sm border position-relative d-flex align-items-center justify-content-center mock-layout-container mock-layout-layout1">
+                                                                    <div class="qr-mock-code qr-mock-code-lg">
                                                                     </div>
                                                                     <div
-                                                                        class="position-absolute bottom-0 start-0 end-0 py-1 text-white fw-bold text-center do-not-remove-banner banner-yellow">
+                                                                        class="position-absolute bottom-0 start-0 end-0 py-1 text-white fw-bold text-center do-not-remove-banner banner-black">
                                                                         DO NOT REMOVE</div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <!-- Layout 2 Card -->
-                                                        <div class="col-6">
+                                                        <div class="col-6" id="layout-2-col">
                                                             <div class="layout-card p-2 rounded border text-center"
                                                                 data-layout="layout_2">
                                                                 <!-- Mock layout design -->
@@ -336,7 +336,7 @@
                                                                             Date: ________________</div>
                                                                     </div>
                                                                     <div
-                                                                        class="position-absolute bottom-0 start-0 end-0 py-1 text-white fw-bold text-center do-not-remove-banner banner-red">
+                                                                        class="position-absolute bottom-0 start-0 end-0 py-1 text-white fw-bold text-center do-not-remove-banner banner-black">
                                                                         DO NOT REMOVE</div>
                                                                 </div>
                                                             </div>

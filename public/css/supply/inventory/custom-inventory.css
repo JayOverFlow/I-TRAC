@@ -273,7 +273,7 @@ body.dark .main-image-viewport-card {
 }
 
 .qr-mock-code {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23630418"><path d="M3 3h8v8H3zm2 2v4h4V5zm14-2h8v8h-8zm2 2v4h4V5zM3 19h8v8H3zm2 2v4h4v-4zm11-13h2v2h-2zm4 4h2v2h-2zm-4 4h2v2h-2zm4 4h2v2h-2zm-4-4h2v2h-2zm8 4h2v2h-2zm-4-8h2v2h-2zm4 4h2v2h-2z"/></svg>') no-repeat center;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000000"><path d="M3 3h8v8H3zm2 2v4h4V5zm14-2h8v8h-8zm2 2v4h4V5zM3 19h8v8H3zm2 2v4h4v-4zm11-13h2v2h-2zm4 4h2v2h-2zm-4 4h2v2h-2zm4 4h2v2h-2zm-4-4h2v2h-2zm8 4h2v2h-2zm-4-8h2v2h-2zm4 4h2v2h-2z"/></svg>') no-repeat center;
     background-size: cover;
 }
 
@@ -300,6 +300,10 @@ body.dark .main-image-viewport-card {
 
 .banner-red {
     background-color: #EF4444;
+}
+
+.banner-black {
+    background-color: #000000;
 }
 
 .layout-details-text {

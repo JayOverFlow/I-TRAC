@@ -59,13 +59,16 @@ $(document).ready(function() {
         // Reset Item Label form selections
         $('.size-card').removeClass('selected');
         $('.size-card .size-dim').removeClass('black-text');
-        $('.size-card[data-size="Medium"]').addClass('selected');
-        $('.size-card[data-size="Medium"]').find('.size-dim').addClass('black-text');
-        $('#label_size').val('Medium');
+        $('.size-card[data-size="Small"]').addClass('selected');
+        $('.size-card[data-size="Small"]').find('.size-dim').addClass('black-text');
+        $('#label_size').val('Small');
 
         $('.layout-card').removeClass('selected');
         $('.layout-card[data-layout="layout_1"]').addClass('selected');
         $('#qr_layout').val('layout_1');
+        
+        // Hide Layout 2 since Small is selected by default
+        $('#layout-2-col').hide();
 
         $('.stepper-quantity').val('15');
 
@@ -146,7 +149,20 @@ $(document).ready(function() {
         $('.size-card .size-dim').removeClass('black-text');
         $(this).addClass('selected');
         $(this).find('.size-dim').addClass('black-text');
-        $('#label_size').val($(this).data('size'));
+        var selectedSize = $(this).data('size');
+        $('#label_size').val(selectedSize);
+
+        // Dynamic QR Label Layout selection based on selected size
+        if (selectedSize === 'Small') {
+            $('#layout-2-col').hide();
+            if ($('#qr_layout').val() === 'layout_2') {
+                $('.layout-card').removeClass('selected');
+                $('.layout-card[data-layout="layout_1"]').addClass('selected');
+                $('#qr_layout').val('layout_1');
+            }
+        } else {
+            $('#layout-2-col').show();
+        }
     });
 
     // Layout selectors toggles
