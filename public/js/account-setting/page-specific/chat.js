@@ -3,12 +3,45 @@ $(document).ready(function() {
     let messagePolling = null;
     let usersPolling = null;
     let lastMessageCount = 0;
+    let activeFilter = 'all'; // 'all' or 'unread'
+    let lastDateLabel = null;
 
-    // Helper: format time
+    // Helper: format time (e.g. 05:38 PM)
     function formatTime(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Helper: format date label (e.g. Today 05:38 PM, Monday 05:38 PM)
+    function getMessageDateLabel(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        if (date.toDateString() === today.toDateString()) {
+            return `Today ${timeString}`;
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            return `Yesterday ${timeString}`;
+        } else {
+            const options = { weekday: 'long' };
+            const dayName = date.toLocaleDateString([], options);
+            return `${dayName} ${timeString}`;
+        }
+    }
+
+    // Helper: escape HTML to prevent XSS
+    function escapeHtml(string) {
+        return String(string)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     // Helper: debounce
@@ -54,7 +87,17 @@ $(document).ready(function() {
                     return;
                 }
 
-                response.users.forEach(function(user) {
+                // Filter users when Unread tab is active
+                const usersToRender = activeFilter === 'unread'
+                    ? response.users.filter(u => u.unread_count > 0)
+                    : response.users;
+
+                if (usersToRender.length === 0 && activeFilter === 'unread') {
+                    peopleList.append('<div class="p-3 text-center text-muted"><small>No unread messages</small></div>');
+                    return;
+                }
+
+                usersToRender.forEach(function(user) {
                     const avatar = user.user_profile_photo ? `/${user.user_profile_photo}` : '/img/profiles/blank.avif';
                     const name = `${user.user_firstname} ${user.user_lastname}`;
                     const time = formatTime(user.latest_message_date);
@@ -66,12 +109,14 @@ $(document).ready(function() {
                     }
 
                     const isActive = activeUserId === user.user_id ? 'active' : '';
+                    const onlineDot = user.is_online ? '<span class="online-dot"></span>' : '';
 
                     const personHtml = `
                         <div class="person ${isActive}" data-chat="person-${user.user_id}" data-id="${user.user_id}">
                             <div class="user-info">
                                 <div class="f-head">
                                     <img src="${avatar}" alt="avatar">
+                                    ${onlineDot}
                                 </div>
                                 <div class="f-body">
                                     <div class="meta-info">
@@ -103,18 +148,24 @@ $(document).ready(function() {
             method: 'GET',
             success: function(response) {
                 const chatMessagesContainer = $('#active-chat-messages');
+                const user = response.target_user;
                 
                 // If not polling, clear and set header
                 if (!isPolling) {
                     chatMessagesContainer.empty();
                     lastMessageCount = 0;
+                    lastDateLabel = null;
                     
-                    const user = response.target_user;
                     const avatar = user.user_profile_photo ? `/${user.user_profile_photo}` : '/img/profiles/blank.avif';
                     const name = `${user.user_firstname} ${user.user_lastname}`;
                     
                     $('#active-chat-img').attr('src', avatar);
-                    $('#active-chat-name').text(name);
+                    
+                    const statusDot = user.is_online 
+                        ? '<span class="online-pill">Online</span>' 
+                        : '<span class="offline-pill">Offline</span>';
+
+                    $('#active-chat-name').html(`${name} ${statusDot}`);
                     $('#active-chat-subtitle').text(user.user_type || 'User');
                     
                     $('#active-chat-header').show();
@@ -126,28 +177,48 @@ $(document).ready(function() {
                     $('.chat-box-inner').addClass('chat-active');
                     $('.chat-meta-user').addClass('chat-active');
                     $('.chat-footer').addClass('chat-active');
+                } else if (user) {
+                    // Update online/offline status badge dynamically
+                    const name = `${user.user_firstname} ${user.user_lastname}`;
+                    const statusDot = user.is_online 
+                        ? '<span class="online-pill">Online</span>' 
+                        : '<span class="offline-pill">Offline</span>';
+                    $('#active-chat-name').html(`${name} ${statusDot}`);
                 }
 
                 const newMessages = response.messages;
                 
-                // Only append if there are new messages
-                if (newMessages.length > lastMessageCount) {
-                    const messagesToAppend = newMessages.slice(lastMessageCount);
+                // Re-render if message count has changed (messages added or deleted)
+                if (newMessages.length !== lastMessageCount) {
+                    chatMessagesContainer.empty();
+                    lastDateLabel = null;
                     let html = '';
                     
-                    messagesToAppend.forEach(function(msg) {
+                    newMessages.forEach(function(msg) {
                         const type = msg.sender_id == userId ? 'you' : 'me'; 
                         const timestamp = formatTime(msg.created_at);
+                        const dateLabel = getMessageDateLabel(msg.created_at);
                         
-                        // We put message-info AFTER the bubble in HTML
-                        // and use flex-direction: row-reverse in CSS for 'me' to flip them visually
-                        html += `
-                            <div class="bubble-wrapper ${type}">
-                                <div class="bubble ${type}">
-                                    ${msg.message}
+                        if (dateLabel !== lastDateLabel) {
+                            html += `
+                                <div class="chat-date-divider-container">
+                                    <div class="chat-date-divider">
+                                        <span>${dateLabel}</span>
+                                    </div>
                                 </div>
-                                <div class="message-info">
-                                    ${timestamp}
+                            `;
+                            lastDateLabel = dateLabel;
+                        }
+                        html += `
+                            <div class="bubble-wrapper ${type}" id="msg-wrapper-${msg.message_id}">
+                                <div class="bubble ${type}">
+                                    ${escapeHtml(msg.message)}
+                                </div>
+                                <div class="bubble-actions-container">
+                                    <button class="chat-action-btn copy-msg" data-text="${escapeHtml(msg.message)}" title="Copy Message">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    </button>
+                                    <span class="chat-time-label">${timestamp}</span>
                                 </div>
                             </div>
                         `;
@@ -181,10 +252,10 @@ $(document).ready(function() {
     // Init load
     loadUsers();
     
-    // Poll users list every 10 seconds
+    // Poll users list every 3 seconds for real-time online status and previews
     usersPolling = setInterval(function() {
         loadUsers();
-    }, 10000);
+    }, 3000);
 
     // User click
     $(document).on('click', '.user-list-box .person', function() {
@@ -222,27 +293,7 @@ $(document).ready(function() {
         
         if (!message || !activeUserId) return;
         
-        // optimistic updates
-        lastMessageCount++; 
-        
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const tempHtml = `
-            <div class="bubble-wrapper me">
-                <div class="bubble me">
-                    ${message}
-                    <div class="bubble-actions">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    </div>
-                </div>
-                <div class="message-info">
-                    ${timestamp}
-                </div>
-            </div>
-        `;
-        $('#active-chat-messages').append(tempHtml);
         input.val('');
-        scrollToBottom();
 
         // AJAX POST
         $.ajax({
@@ -254,6 +305,7 @@ $(document).ready(function() {
                 message: message
             },
             success: function(response) {
+                loadMessages(activeUserId);
                 loadUsers();
             },
             error: function(err) {
@@ -278,8 +330,29 @@ $(document).ready(function() {
 
     $('.search > input').on('keyup', handleSearch);
 
+    // All / Unread filter tabs
+    $(document).on('click', '.inbox-filter-btn', function() {
+        if ($(this).hasClass('active')) return;
+        $('.inbox-filter-btn').removeClass('active');
+        $(this).addClass('active');
+        activeFilter = $(this).data('filter');
+        loadUsers();
+    });
+
     $('.hamburger, .chat-system .chat-box .chat-not-selected p').on('click', function() {
         $(this).parents('.chat-system').find('.user-list-box').toggleClass('user-list-box-show')
+    });
+
+    // Event listener: Copy message text
+    $(document).on('click', '.copy-msg', function() {
+        const text = $(this).data('text');
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = $(this);
+            btn.css('background', '#00ab55').css('color', '#fff').css('border-color', '#00ab55');
+            setTimeout(() => {
+                btn.css('background', '').css('color', '').css('border-color', '');
+            }, 1000);
+        });
     });
 
     const ps = new PerfectScrollbar('.chat-conversation-box', { suppressScrollX : true });

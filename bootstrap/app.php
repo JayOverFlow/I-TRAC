@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'api', // <-- And add this line
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\UpdateUserLastSeen::class,
+        ]);
         $middleware->alias([
             'admin.auth' => \App\Http\Middleware\AdminAuth::class,
             'role' => CheckRole::class,
