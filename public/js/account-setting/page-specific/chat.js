@@ -115,7 +115,7 @@ $(document).ready(function() {
                     
                     $('#active-chat-img').attr('src', avatar);
                     $('#active-chat-name').text(name);
-                    $('#active-chat-subtitle').text(user.user_type || 'User');
+                    $('#active-chat-subtitle').text(user.department_name || 'User');
                     
                     $('#active-chat-header').show();
                     $('#chat-form').show();

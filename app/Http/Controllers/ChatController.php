@@ -31,7 +31,7 @@ class ChatController extends Controller
             ->toArray();
 
         // Get those specific users
-        $users = User::whereIn('user_id', $userIds)->get();
+        $users = User::whereIn('user_id', $userIds)->with('departments')->get();
 
         $usersWithData = $users->map(function ($user) use ($authUserId) {
             $latestMessage = Message::where(function ($query) use ($authUserId, $user) {
@@ -49,6 +49,9 @@ class ChatController extends Controller
             $user->latest_message_time = $latestMessage ? $latestMessage->created_at->format('g:i A') : null;
             $user->latest_message_date = $latestMessage ? $latestMessage->created_at : null;
             $user->unread_count = $unreadCount;
+            $user->department_name = $user->departments->isNotEmpty()
+                ? $user->departments->pluck('dep_name')->implode(', ')
+                : 'User';
 
             return $user;
         });
@@ -79,6 +82,7 @@ class ChatController extends Controller
                     ->orWhere('user_middlename', 'LIKE', "%{$query}%")
                     ->orWhere('user_lastname', 'LIKE', "%{$query}%");
             })
+            ->with('departments')
             ->limit(20)
             ->get();
 
@@ -88,6 +92,9 @@ class ChatController extends Controller
             $user->latest_message_time = '';
             $user->latest_message_date = null;
             $user->unread_count = 0;
+            $user->department_name = $user->departments->isNotEmpty()
+                ? $user->departments->pluck('dep_name')->implode(', ')
+                : 'User';
             return $user;
         });
 
@@ -118,9 +125,16 @@ class ChatController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
+        $targetUser = User::with('departments')->find($userId);
+        if ($targetUser) {
+            $targetUser->department_name = $targetUser->departments->isNotEmpty()
+                ? $targetUser->departments->pluck('dep_name')->implode(', ')
+                : 'User';
+        }
+
         return response()->json([
             'messages' => $messages,
-            'target_user' => User::find($userId)
+            'target_user' => $targetUser
         ]);
     }
 

@@ -733,6 +733,16 @@ body:not(.dark) .custom-modal-header .modal-title {
     box-shadow: 0 4px 8px rgba(140, 4, 4, 0.15) !important;
 }
 
+.btn-set-app.active-set:disabled {
+    background-color: var(--brand-red) !important;
+    color: #ffffff !important;
+    border-color: var(--brand-red) !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 0.9;
+}
+
 .btn-set-app-disabled {
     background-color: #f1f2f3 !important;
     border: 1px solid #e0e6ed !important;

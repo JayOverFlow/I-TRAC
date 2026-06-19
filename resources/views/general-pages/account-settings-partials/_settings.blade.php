@@ -916,7 +916,7 @@
                             </div>
                             @if($app->app_status === 'Done')
                                 @if(isset($activeAppId) && $app->app_id == $activeAppId)
-                                    <button type="button" class="btn btn-set-app active-set" data-app-id="{{ $app->app_id }}" data-app-title="{{ $app->app_title }}">Active</button>
+                                    <button type="button" class="btn btn-set-app active-set" data-app-id="{{ $app->app_id }}" data-app-title="{{ $app->app_title }}" disabled>Active</button>
                                 @else
                                     <button type="button" class="btn btn-set-app" data-app-id="{{ $app->app_id }}" data-app-title="{{ $app->app_title }}">Set APP</button>
                                 @endif
