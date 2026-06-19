@@ -164,6 +164,11 @@ thead.bg-transparent th {
     background-image: none;
 }
 
+.custom-specification-container.is-invalid .custom-specification-header,
+.custom-specification-container.is-invalid .specification-body {
+    border-color: #dc3545 !important;
+}
+
 /* DARK MODE OVERRIDES */
 body.dark .custom-specification-header {
     background-color: #2a2f38 !important;
