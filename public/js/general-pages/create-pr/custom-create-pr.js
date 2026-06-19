@@ -180,6 +180,7 @@ $(document).ready(function() {
     function clearAllErrors() {
         $('#pr-form .field-error').text('').addClass('d-none');
         $('#pr-form .is-invalid').removeClass('is-invalid');
+        $('#pr-form .custom-specification-container').removeClass('is-invalid');
     }
 
     /**
@@ -187,8 +188,6 @@ $(document).ready(function() {
      * @param {Object} errors — shape: { "pr_section": ["msg"], "items.0.unit": ["msg"], ... }
      */
     function showFieldErrors(errors) {
-        var rows = $('#pr-form .pr-item-row');
-
         $.each(errors, function(key, messages) {
             var msg = messages[0];
 
@@ -198,35 +197,36 @@ $(document).ready(function() {
                 if (input.length) {
                     input.addClass('is-invalid');
                     input.closest('.col-8').find('.field-error').text(msg).removeClass('d-none');
+                } else {
+                    showToast(msg, 'error');
                 }
                 return;
             }
 
-            // Item fields: items.0.unit → index=0, field=unit
+            // Item fields: items.item_0.unit → index=item_0, field=unit
             var parts = key.split('.');
             if (parts.length < 3) return;
-            var idx = parts[1];
+            var itemIndex = parts[1];
             var field = parts[2];
 
-            var row;
-            if (/^\d+$/.test(idx)) {
-                row = rows.eq(parseInt(idx, 10));
-            } else {
-                // Find row dynamically via the custom string key
-                var inputEl = $('#pr-form [name^="items[' + idx + ']"]').first();
-                row = inputEl.closest('tr.pr-item-row');
-            }
-            if (!row || !row.length) return;
-
-            var input = row.find('[data-field="' + field + '"]');
+            var nameAttr = 'items[' + itemIndex + '][' + field + ']';
+            var input = $('#pr-form [name="' + nameAttr + '"]');
             if (!input.length) return;
 
             input.addClass('is-invalid');
 
             // For specification, find the span inside the spec row
             if (field === 'specification') {
-                var specRow = row.next('.pr-specification-row');
+                var specRow = input.closest('.pr-specification-row');
                 specRow.find('.field-error').text(msg).removeClass('d-none');
+                
+                // Ensure the specification row is visible if there's an error
+                specRow.removeClass('d-none');
+                specRow.find('.specification-body').show();
+                specRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
+                
+                // Add invalid class to container for visual feedback
+                specRow.find('.custom-specification-container').addClass('is-invalid');
                 return;
             }
 
@@ -236,6 +236,14 @@ $(document).ready(function() {
                 errorSpan.text(msg).removeClass('d-none');
             }
         });
+
+        // Scroll to the first error field
+        var firstInvalid = $('#pr-form .is-invalid').first();
+        if (firstInvalid.length) {
+            $('html, body').animate({
+                scrollTop: firstInvalid.offset().top - 150
+            }, 500);
+        }
     }
 
     // ─── Toast helper ─────────────────────────────────────────────────────

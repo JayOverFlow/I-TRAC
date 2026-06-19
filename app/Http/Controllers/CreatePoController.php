@@ -106,7 +106,7 @@ class CreatePoController extends Controller
                 'items.*.description' => 'required|string|min:5|max:255',
                 'items.*.quantity'    => 'required|integer|min:1|max:9999999',
                 'items.*.cost'        => 'required|numeric|min:0.01|max:9999999',
-                'items.*.specification' => 'nullable|string|min:5|max:1000',
+                'items.*.specification' => 'nullable|string|min:5|max:250',
             ];
         } else {
             $rules = [
@@ -128,7 +128,7 @@ class CreatePoController extends Controller
                 'items.*.description' => 'nullable|string|min:5|max:255',
                 'items.*.quantity'    => 'nullable|integer|min:1|max:9999999',
                 'items.*.cost'        => 'nullable|numeric|min:0.01|max:9999999',
-                'items.*.specification' => 'nullable|string|min:5|max:1000',
+                'items.*.specification' => 'nullable|string|min:5|max:250',
             ];
         }
 
@@ -184,7 +184,7 @@ class CreatePoController extends Controller
             'items.*.cost.min'             => 'Unit cost must be at least 0.01.',
             'items.*.cost.max'             => 'Unit cost is too large.',
             'items.*.specification.min'    => 'Specification must be at least 5 characters.',
-            'items.*.specification.max'    => 'Specification must not exceed 1000 characters.',
+            'items.*.specification.max'    => 'Specification must not exceed 250 characters.',
         ];
 
         return Validator::make($request->all(), $rules, $messages);
