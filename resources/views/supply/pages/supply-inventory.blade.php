@@ -308,37 +308,14 @@
                                                         <div class="col-6" id="layout-1-col">
                                                             <div class="layout-card p-2 rounded border text-center selected"
                                                                 data-layout="layout_1">
-                                                                <!-- Mock layout design -->
-                                                                <div
-                                                                    class="mx-auto my-2 p-2 bg-white rounded shadow-sm border position-relative d-flex align-items-center justify-content-center mock-layout-container mock-layout-layout1">
-                                                                    <div class="qr-mock-code qr-mock-code-lg">
-                                                                    </div>
-                                                                    <div
-                                                                        class="position-absolute bottom-0 start-0 end-0 py-1 text-white fw-bold text-center do-not-remove-banner banner-black">
-                                                                        DO NOT REMOVE</div>
-                                                                </div>
+                                                                <img src="{{ asset('img/qr-label-layout-1.svg') }}" alt="Layout 1" class="mx-auto my-2 img-fluid shadow-sm border rounded" style="height: 120px; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                         <!-- Layout 2 Card -->
                                                         <div class="col-6" id="layout-2-col">
                                                             <div class="layout-card p-2 rounded border text-center"
                                                                 data-layout="layout_2">
-                                                                <!-- Mock layout design -->
-                                                                <div
-                                                                    class="mx-auto my-2 p-2 bg-white rounded shadow-sm border position-relative d-flex flex-column align-items-center justify-content-between mock-layout-container mock-layout-layout2">
-                                                                    <div class="qr-mock-code qr-mock-code-sm"></div>
-                                                                    <div class="w-100 text-start px-1 layout-details-text">
-                                                                        <div class="border-bottom layout-details-line">
-                                                                            Code: ________________</div>
-                                                                        <div class="border-bottom layout-details-line">Prop
-                                                                            No: ______________</div>
-                                                                        <div class="border-bottom layout-details-line">
-                                                                            Date: ________________</div>
-                                                                    </div>
-                                                                    <div
-                                                                        class="position-absolute bottom-0 start-0 end-0 py-1 text-white fw-bold text-center do-not-remove-banner banner-black">
-                                                                        DO NOT REMOVE</div>
-                                                                </div>
+                                                                <img src="{{ asset('img/qr-label-layout-2.svg') }}" alt="Layout 2" class="mx-auto my-2 img-fluid shadow-sm border rounded" style="height: 120px; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                     </div>
