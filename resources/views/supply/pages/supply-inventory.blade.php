@@ -261,7 +261,8 @@
                                         <!-- Tab 2: Item Label (Interactive Form State) -->
                                         <div class="tab-pane fade px-2" id="item-label-tab-pane" role="tabpanel"
                                             aria-labelledby="item-label-tab" tabindex="0">
-                                            <form id="createItemLabelForm">
+                                            <form id="createItemLabelForm" action="{{ route('inventory.generate-label') }}" method="GET">
+                                                <input type="hidden" name="mr_qr_code" id="mr_qr_code" value="">
                                                 <h6 class="fw-bold d-flex align-items-center red-text-2">
                                                     <img src="{{ asset('img/red-qr-code-icon.svg') }}">
                                                     <span class="ms-2">Create Item Label
