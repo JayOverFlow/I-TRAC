@@ -99,40 +99,28 @@ class DeliveryAttachmentController extends Controller
 
         if ($isSemiExpendable) {
             DB::transaction(function () use ($ris) {
-                // Find if we already have entries in mr_tbl for these items to reuse the QR code
-                $existingMr = null;
-                $poItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
-
-                if ($poItemIds->isNotEmpty()) {
-                    $existingMr = \App\Models\Mr::whereIn('po_item_id_fk', $poItemIds)->first();
-                }
-
-                if ($existingMr) {
-                    $qrCode = $existingMr->mr_qr_code;
-                } else {
-                    // Generate unique numeric code in the format MR-XXXX-XXXX
-                    do {
-                        $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
-                    } while (\App\Models\Mr::where('mr_qr_code', $qrCode)->exists());
-                }
-
                 foreach ($ris->risItems as $item) {
                     if ($item->poItem && $item->poItem->po_items_category === 'Semi-Expendable') {
-                        // Avoid duplicates
-                        $exists = \App\Models\Mr::where('po_item_id_fk', $item->ris_po_items_id_fk)->exists();
-                        if (!$exists) {
-                            \App\Models\Mr::create([
-                                'po_item_id_fk' => $item->ris_po_items_id_fk,
-                                'mr_qr_code'    => $qrCode,
-                                'item_name'     => $item->ris_items_descrip,
-                                'specification' => $item->risSpecs->pluck('ris_spec_description')->filter()->implode("\n"),
-                                'quantity'      => $item->ris_quantity,
-                                'unit'          => $item->ris_unit,
-                                'stock'         => $item->ris_stock_no,
-                                'is_assigned'   => 0,
-                                'assigned_to'   => null,
-                                'category'   => 'Semi-Expendable',
-                            ]);
+                        if ($item->ris_po_items_id_fk) {
+                            // Avoid duplicates using Eloquent relationship
+                            if (!$item->poItem->mrs()->exists()) {
+                                // Generate unique numeric code in the format MR-XXXX-XXXX
+                                do {
+                                    $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+                                } while (Mr::where('mr_qr_code', $qrCode)->exists());
+
+                                $item->poItem->mrs()->create([
+                                    'mr_qr_code'    => $qrCode,
+                                    'item_name'     => $item->ris_items_descrip,
+                                    'specification' => $item->risSpecs->pluck('ris_spec_description')->filter()->implode("\n"),
+                                    'quantity'      => $item->ris_quantity,
+                                    'unit'          => $item->ris_unit,
+                                    'stock'         => $item->ris_stock_no,
+                                    'is_assigned'   => 0,
+                                    'assigned_to'   => null,
+                                    'category'      => 'Semi-Expendable',
+                                ]);
+                            }
                         }
                     }
                 }
@@ -187,53 +175,42 @@ class DeliveryAttachmentController extends Controller
     {
         $par = Par::with([
             'parItems.parSpecs',
+            'parItems.poItem',
             'purchaseOrder',
             'receiver.departments',
             'issuer.roles'
         ])->findOrFail($par_id);
 
         DB::transaction(function () use ($par) {
-            // Find if we already have entries in mr_tbl for these items to reuse the QR code
-            $existingMr = null;
-            $poItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
-
-            if ($poItemIds->isNotEmpty()) {
-                $existingMr = Mr::whereIn('po_item_id_fk', $poItemIds)->first();
-            }
-
-            if ($existingMr) {
-                $qrCode = $existingMr->mr_qr_code;
-            } else {
-                // Generate unique numeric code in the format MR-XXXX-XXXX
-                do {
-                    $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
-                } while (Mr::where('mr_qr_code', $qrCode)->exists());
-            }
-
             foreach ($par->parItems as $item) {
                 if ($item->par_po_items_id_fk) {
-                    // Avoid duplicates
-                    $exists = Mr::where('po_item_id_fk', $item->par_po_items_id_fk)->exists();
-                    if (!$exists) {
-                        Mr::create([
-                            'po_item_id_fk' => $item->par_po_items_id_fk,
-                            'mr_qr_code'    => $qrCode,
-                            'item_name'     => $item->par_items_descrip,
-                            'specification' => $item->parSpecs->pluck('par_spec_description')->filter()->implode("\n"),
-                            'quantity'      => $item->par_quantity,
-                            'unit'          => $item->par_unit,
-                            'stock'         => $item->par_property_no,
-                            'is_assigned'   => 0,
-                            'assigned_to'   => null,
-                            'category'      => 'Equipment',
-                        ]);
+                    if ($item->poItem) {
+                        // Avoid duplicates using Eloquent relationship
+                        if (!$item->poItem->mrs()->exists()) {
+                            // Generate unique numeric code in the format MR-XXXX-XXXX
+                            do {
+                                $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+                            } while (Mr::where('mr_qr_code', $qrCode)->exists());
+
+                            $item->poItem->mrs()->create([
+                                'mr_qr_code'    => $qrCode,
+                                'item_name'     => $item->par_items_descrip,
+                                'specification' => $item->parSpecs->pluck('par_spec_description')->filter()->implode("\n"),
+                                'quantity'      => $item->par_quantity,
+                                'unit'          => $item->par_unit,
+                                'stock'         => $item->par_property_no,
+                                'is_assigned'   => 0,
+                                'assigned_to'   => null,
+                                'category'      => 'Equipment',
+                            ]);
+                        }
                     }
                 }
             }
         });
 
         // Reload par details to ensure latest values
-        $par->load('parItems.parSpecs');
+        $par->load('parItems.parSpecs', 'parItems.poItem');
 
         $pdfService = app(ParPdfExportService::class);
         return $pdfService->export($par);

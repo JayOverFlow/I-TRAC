@@ -34,11 +34,7 @@ class ParPdfExportService
         $sheet->getPageSetup()->setFitToWidth(1);
         $sheet->getPageSetup()->setFitToHeight(1);
 
-        $poItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
-        $hasQrCode = false;
-        if ($poItemIds->isNotEmpty()) {
-            $hasQrCode = Mr::whereIn('po_item_id_fk', $poItemIds)->whereNotNull('mr_qr_code')->exists();
-        }
+        $hasQrCode = (bool)$par->par_id;
         $printArea = $hasQrCode ? 'A1:F53' : 'A1:F52';
         $sheet->getPageSetup()->setPrintArea($printArea);
 
@@ -142,29 +138,28 @@ class ParPdfExportService
 
         // 5. Generate and Embed QR Code
         $tempImage = null;
-        if ($poItemIds->isNotEmpty()) {
-            $mrEntry = Mr::whereIn('po_item_id_fk', $poItemIds)->first();
-            if ($mrEntry && $mrEntry->mr_qr_code) {
-                $options = new \chillerlan\QRCode\QROptions([
-                    'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
-                    'scale'           => 10,
-                    'imageTransparent' => false,
-                ]);
-                $qrcode = new \chillerlan\QRCode\QRCode($options);
-                $tempImage = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
-                $qrcode->render($mrEntry->mr_qr_code, $tempImage);
+        if ($hasQrCode) {
+            $options = new \chillerlan\QRCode\QROptions([
+                'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+                'scale'           => 10,
+                'imageTransparent' => false,
+            ]);
+            $qrcode = new \chillerlan\QRCode\QRCode($options);
+            $tempImage = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
 
-                // Add Drawing to Sheet
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('MR QR Code');
-                $drawing->setDescription('QR Code for MR Assignment');
-                $drawing->setPath($tempImage);
-                $drawing->setCoordinates('A53');
-                $drawing->setHeight(110);
-                $drawing->setOffsetX(15);
-                $drawing->setOffsetY(10);
-                $drawing->setWorksheet($sheet);
-            }
+            $payload = 'PAR-' . $par->par_id;
+            $qrcode->render($payload, $tempImage);
+
+            // Add Drawing to Sheet
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setName('PAR QR Code');
+            $drawing->setDescription('QR Code for PAR');
+            $drawing->setPath($tempImage);
+            $drawing->setCoordinates('A53');
+            $drawing->setHeight(110);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(10);
+            $drawing->setWorksheet($sheet);
         }
 
         // Clear calculations and save to PDF using native mPDF writer
