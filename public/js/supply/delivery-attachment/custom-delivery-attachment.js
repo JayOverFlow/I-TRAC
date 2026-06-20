@@ -65,6 +65,7 @@ $(document).ready(function() {
             confirmButtonText: 'Yes, Save',
             cancelButtonText: 'Cancel',
             onConfirm: function() {
+                form.find('.export-pdf-flag').val('0');
                 form.submit();
             }
         });
@@ -73,21 +74,44 @@ $(document).ready(function() {
     // Confirmation Alert for Export as PDF
     $(document).on('click', '.iar-container a.btn-dark-red, .ics-container a.btn-dark-red, .par-container a.btn-dark-red, .ris-container a.btn-dark-red, .rsmi-container a.btn-dark-red, .rspi-container a.btn-dark-red', function(e) {
         e.preventDefault();
-        var url = $(this).attr('href');
+        var form = $(this).closest('form');
         var container = $(this).closest('.document-view-container');
         var docName = getDocumentTypeName(container);
 
-        if (url) {
-            window.confirmAction({
-                title: 'Export as PDF?',
-                text: 'Are you sure you want to export this ' + docName + ' as a PDF?',
-                icon: 'question',
-                confirmButtonText: 'Yes, Export',
-                cancelButtonText: 'Cancel',
-                onConfirm: function() {
-                    window.location.href = url;
-                }
-            });
-        }
+        window.confirmAction({
+            title: 'Export as PDF?',
+            text: 'Are you sure you want to save and export this ' + docName + ' as a PDF?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Export',
+            cancelButtonText: 'Cancel',
+            onConfirm: function() {
+                form.find('.export-pdf-flag').val('1');
+                form.submit();
+            }
+        });
     });
+
+    // Show loading overlay when form is submitted
+    $(document).on('submit', '.document-view-container form', function() {
+        $('#form-loader-overlay').css('display', 'flex');
+    });
+
+    // Automatically trigger PDF download if session redirect is present
+    var downloadTrigger = $('#download-pdf-trigger');
+    if (downloadTrigger.length) {
+        var downloadUrl = downloadTrigger.data('url');
+        if (downloadUrl) {
+            var triggerDownload = function() {
+                window.location.href = downloadUrl;
+            };
+
+            if (document.readyState === 'complete') {
+                setTimeout(triggerDownload, 500);
+            } else {
+                $(window).on('load', function() {
+                    setTimeout(triggerDownload, 500);
+                });
+            }
+        }
+    }
 });

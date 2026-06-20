@@ -316,9 +316,15 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()
+            $response = redirect()->back()
                 ->with('success', 'Inspection and Acceptance Report saved successfully.')
                 ->with('active_document', 'doc-iar-' . $iar->iar_id);
+
+            if ($request->input('export_pdf') === '1') {
+                $response->with('download_pdf', route('export.iar.pdf', $iar->iar_id));
+            }
+
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -412,9 +418,15 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()
+            $response = redirect()->back()
                 ->with('success', 'Requisition and Issue Slip saved successfully.')
                 ->with('active_document', 'doc-ris-' . $ris->ris_id);
+
+            if ($request->input('export_pdf') === '1') {
+                $response->with('download_pdf', route('export.ris.pdf', $ris->ris_id));
+            }
+
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -505,9 +517,15 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()
+            $response = redirect()->back()
                 ->with('success', 'Report of Supplies and Materials Issued saved successfully.')
                 ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
+
+            if ($request->input('export_pdf') === '1') {
+                $response->with('download_pdf', route('export.rsmi.pdf', $rsmi->rsmi_id));
+            }
+
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -596,9 +614,15 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()
+            $response = redirect()->back()
                 ->with('success', 'Inventory Custodian Slip saved successfully.')
                 ->with('active_document', 'doc-ics-' . $ics->ics_id);
+
+            if ($request->input('export_pdf') === '1') {
+                $response->with('download_pdf', route('export.ics.pdf', $ics->ics_id));
+            }
+
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -690,9 +714,15 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()
+            $response = redirect()->back()
                 ->with('success', 'Report of Semi-Expendable Property Issued saved successfully.')
                 ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
+
+            if ($request->input('export_pdf') === '1') {
+                $response->with('download_pdf', route('export.rspi.pdf', $rspi->rspi_id));
+            }
+
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -781,9 +811,15 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()
+            $response = redirect()->back()
                 ->with('success', 'Property Acknowledgement Receipt saved successfully.')
                 ->with('active_document', 'doc-par-' . $par->par_id);
+
+            if ($request->input('export_pdf') === '1') {
+                $response->with('download_pdf', route('export.par.pdf', $par->par_id));
+            }
+
+            return $response;
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('plugins/src/flatpickr/flatpickr.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/css/light/flatpickr/custom-flatpickr.css') }}">
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/page-specific/custom-tree_view.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/css/light/loaders/custom-loader.css') }}">
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/supply/delivery-attachment/custom-delivery-attachment.css') }}">
@@ -68,6 +69,7 @@
 @endphp
 
 @section('content')
+    @include('partials._loader')
     <div class="col-12 p-0">
         <div class="card shadow-sm border-0 mb-3 p-0">
             <div class="card-body px-0">
@@ -501,6 +503,9 @@
 
         </div>
     </div>
+    @if(session('download_pdf'))
+        <div id="download-pdf-trigger" data-url="{{ session('download_pdf') }}"></div>
+    @endif
 @endsection
 
 @push('js')
