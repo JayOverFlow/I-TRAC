@@ -49,13 +49,13 @@
 
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
-                        <input type="text" name="responsibility_center_code" value="{{ $iar->iar_center_code }}"
+                        <input type="text" name="iar_center_code" value="{{ $iar->iar_center_code }}"
                             class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
 
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
-                        <input type="text" name="fund_cluster" value="{{ $iar->iar_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="iar_fund_cluster" value="{{ $iar->iar_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                 </div>
 
@@ -70,11 +70,11 @@
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Invoice No.:</h6>
-                        <input type="text" name="invoice_no" value="{{ $iar->iar_invoice_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <input type="text" name="iar_invoice_no" value="{{ $iar->iar_invoice_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date:</h6>
-                        <input type="text" name="invoice_date" value="{{ $iar->iar_invoice_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
+                        <input type="text" name="iar_invoice_date" value="{{ $iar->iar_invoice_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                     <p class="black-text fw-bold text-center">Inspection</p>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Inspection Officer:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="inspection_officer" value="{{ $iar->iar_inspected_by }}"
+                        <input type="text" class="form-control form-control-sm ms-2 w-75" name="iar_inspected_by" value="{{ $iar->iar_inspected_by }}"
                             placeholder="Officer Name">
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                     <p class="black-text fw-bold text-center">Acceptance</p>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date Received:</h6>
-                        <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="date_received" value="{{ $iar->iar_date_accepted }}"
+                        <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="iar_date_accepted" value="{{ $iar->iar_date_accepted }}"
                             placeholder="Select Date..">
                     </div>
 
@@ -125,22 +125,22 @@
                             <td class="px-1">
                                 <input type="hidden" name="items[{{ $index }}][iar_items_id]" value="{{ $item->iar_items_id }}">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][stock_no]"
+                                    name="items[{{ $index }}][iar_stock_no]"
                                     value="{{ $item->iar_stock_no }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm"
-                                    name="items[{{ $index }}][description]"
+                                    name="items[{{ $index }}][iar_items_descrip]"
                                     value="{{ implode(', ', array_filter(array_merge([$item->iar_items_descrip], $item->iarSpecs->pluck('iar_spec_description')->toArray()))) }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][unit]"
+                                    name="items[{{ $index }}][iar_unit]"
                                     value="{{ $item->iar_unit }}">
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
-                                    name="items[{{ $index }}][quantity]"
+                                    name="items[{{ $index }}][iar_quantity]"
                                     value="{{ $item->iar_quantity }}">
                             </td>
                             <td class="p-0">
