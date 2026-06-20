@@ -1,6 +1,7 @@
 <div class="col-md-9 rspi-container document-view-container" id="doc-rspi-{{ $rspi->rspi_id }}" style="display: none;">
     <form action="{{ route('save.rspi', $rspi->rspi_id) }}" method="POST">
         @csrf
+        <input type="hidden" name="export_pdf" class="export-pdf-flag" value="0">
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body px-0 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3 px-3">
