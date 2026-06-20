@@ -220,22 +220,97 @@ class DeliveryAttachmentController extends Controller
     {
         $iar = Iar::findOrFail($iar_id);
 
-        $validated = $request->validate([
-            'iar_center_code' => 'nullable|string|max:50',
-            'iar_fund_cluster' => 'nullable|string|max:100',
-            'iar_no' => 'nullable|string|max:50',
-            'iar_date' => 'nullable|date',
-            'iar_invoice_no' => 'nullable|string|max:50',
-            'iar_invoice_date' => 'nullable|date',
-            'iar_inspected_by' => 'nullable|string|max:255',
-            'iar_date_accepted' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.iar_items_id' => 'nullable|integer',
-            'items.*.iar_stock_no' => 'nullable|string|max:50',
-            'items.*.iar_items_descrip' => 'nullable|string|max:255',
-            'items.*.iar_unit' => 'nullable|string|max:20',
-            'items.*.iar_quantity' => 'nullable|integer',
-        ]);
+        $intent = $request->input('export_pdf') === '1' ? 'Done' : 'Draft';
+
+        if ($intent === 'Done') {
+            $rules = [
+                'iar_center_code' => 'required|string|min:1|max:50',
+                'iar_fund_cluster' => 'required|string|min:1|max:50',
+                'iar_no' => 'required|string|min:2|max:50',
+                'iar_date' => 'required|date',
+                'iar_invoice_no' => 'required|string|min:2|max:50',
+                'iar_invoice_date' => 'required|date',
+                'iar_inspected_by' => 'required|string|min:5|max:50',
+                'iar_date_accepted' => 'required|date',
+                'items' => 'required|array|min:1',
+                'items.*.iar_items_id' => 'nullable|integer',
+                'items.*.iar_stock_no' => 'nullable|string|min:1|max:20',
+                'items.*.iar_items_descrip' => 'required|string|min:5|max:50',
+                'items.*.iar_unit' => 'required|string|min:2|max:20',
+                'items.*.iar_quantity' => 'required|integer|min:1|max:9999999',
+            ];
+        } else {
+            $rules = [
+                'iar_center_code' => 'nullable|string|min:1|max:50',
+                'iar_fund_cluster' => 'nullable|string|min:1|max:50',
+                'iar_no' => 'nullable|string|min:2|max:50',
+                'iar_date' => 'nullable|date',
+                'iar_invoice_no' => 'nullable|string|min:2|max:50',
+                'iar_invoice_date' => 'nullable|date',
+                'iar_inspected_by' => 'nullable|string|min:5|max:50',
+                'iar_date_accepted' => 'nullable|date',
+                'items' => 'nullable|array',
+                'items.*.iar_items_id' => 'nullable|integer',
+                'items.*.iar_stock_no' => 'nullable|string|min:1|max:20',
+                'items.*.iar_items_descrip' => 'nullable|string|min:5|max:50',
+                'items.*.iar_unit' => 'nullable|string|min:2|max:20',
+                'items.*.iar_quantity' => 'nullable|integer|min:1|max:9999999',
+            ];
+        }
+
+        $messages = [
+            'iar_center_code.required' => 'Responsibility Center Code is required.',
+            'iar_center_code.max' => 'Responsibility Center Code must not exceed 50 characters.',
+            'iar_fund_cluster.required' => 'Fund Cluster is required.',
+            'iar_fund_cluster.max' => 'Fund Cluster must not exceed 50 characters.',
+            'iar_no.required' => 'IAR Number is required.',
+            'iar_no.min' => 'IAR Number must be at least 2 characters.',
+            'iar_no.max' => 'IAR Number must not exceed 50 characters.',
+            'iar_date.required' => 'IAR Date is required.',
+            'iar_date.date' => 'Must be a valid date.',
+            'iar_invoice_no.required' => 'Invoice Number is required.',
+            'iar_invoice_no.min' => 'Invoice Number must be at least 2 characters.',
+            'iar_invoice_no.max' => 'Invoice Number must not exceed 50 characters.',
+            'iar_invoice_date.required' => 'Invoice Date is required.',
+            'iar_invoice_date.date' => 'Must be a valid date.',
+            'iar_inspected_by.required' => 'Inspection Officer Name is required.',
+            'iar_inspected_by.min' => 'Officer Name must be at least 5 characters.',
+            'iar_inspected_by.max' => 'Officer Name must not exceed 50 characters.',
+            'iar_date_accepted.required' => 'Date Received is required.',
+            'iar_date_accepted.date' => 'Must be a valid date.',
+            'items.required' => 'At least one item is required.',
+            'items.min' => 'At least one item is required.',
+            'items.*.iar_stock_no.min' => 'Stock Number must be at least 1 character.',
+            'items.*.iar_stock_no.max' => 'Stock Number must not exceed 20 characters.',
+            'items.*.iar_items_descrip.required' => 'Description is required.',
+            'items.*.iar_items_descrip.min' => 'Description must be at least 5 characters.',
+            'items.*.iar_items_descrip.max' => 'Description must not exceed 50 characters.',
+            'items.*.iar_unit.required' => 'Unit is required.',
+            'items.*.iar_unit.min' => 'Unit must be at least 2 characters.',
+            'items.*.iar_unit.max' => 'Unit must not exceed 20 characters.',
+            'items.*.iar_quantity.required' => 'Quantity is required.',
+            'items.*.iar_quantity.integer' => 'Quantity must be an integer.',
+            'items.*.iar_quantity.min' => 'Quantity must be at least 1.',
+            'items.*.iar_quantity.max' => 'Quantity exceeds maximum limit.',
+        ];
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_document', 'doc-iar-' . $iar->iar_id);
+        }
+
+        $validated = $validator->validated();
 
         DB::beginTransaction();
         try {
@@ -254,36 +329,38 @@ class DeliveryAttachmentController extends Controller
             // Track incoming item IDs to identify which ones to delete
             $incomingItemIds = [];
 
-            foreach ($validated['items'] as $itemData) {
-                if (!empty($itemData['iar_items_id'])) {
-                    // Update existing item
-                    $iarItem = IarItem::where('iar_id_fk', $iar->iar_id)
-                        ->findOrFail($itemData['iar_items_id']);
+            if (isset($validated['items']) && is_array($validated['items'])) {
+                foreach ($validated['items'] as $itemData) {
+                    if (!empty($itemData['iar_items_id'])) {
+                        // Update existing item
+                        $iarItem = IarItem::where('iar_id_fk', $iar->iar_id)
+                            ->findOrFail($itemData['iar_items_id']);
 
-                    $iarItem->update([
-                        'iar_stock_no' => $itemData['iar_stock_no'] ?? null,
-                        'iar_items_descrip' => $itemData['iar_items_descrip'] ?? null,
-                        'iar_unit' => $itemData['iar_unit'] ?? null,
-                        'iar_quantity' => $itemData['iar_quantity'] ?? null,
-                    ]);
+                        $iarItem->update([
+                            'iar_stock_no' => $itemData['iar_stock_no'] ?? null,
+                            'iar_items_descrip' => $itemData['iar_items_descrip'] ?? null,
+                            'iar_unit' => $itemData['iar_unit'] ?? null,
+                            'iar_quantity' => $itemData['iar_quantity'] ?? null,
+                        ]);
 
-                    $incomingItemIds[] = $iarItem->iar_items_id;
-                } else {
-                    // Create new item
-                    $iarItem = IarItem::create([
-                        'iar_id_fk' => $iar->iar_id,
-                        'iar_stock_no' => $itemData['iar_stock_no'] ?? null,
-                        'iar_items_descrip' => $itemData['iar_items_descrip'] ?? null,
-                        'iar_unit' => $itemData['iar_unit'] ?? null,
-                        'iar_quantity' => $itemData['iar_quantity'] ?? null,
-                    ]);
+                        $incomingItemIds[] = $iarItem->iar_items_id;
+                    } else {
+                        // Create new item
+                        $iarItem = IarItem::create([
+                            'iar_id_fk' => $iar->iar_id,
+                            'iar_stock_no' => $itemData['iar_stock_no'] ?? null,
+                            'iar_items_descrip' => $itemData['iar_items_descrip'] ?? null,
+                            'iar_unit' => $itemData['iar_unit'] ?? null,
+                            'iar_quantity' => $itemData['iar_quantity'] ?? null,
+                        ]);
 
-                    $incomingItemIds[] = $iarItem->iar_items_id;
+                        $incomingItemIds[] = $iarItem->iar_items_id;
+                    }
+
+                    // Since description and specifications are consolidated into iar_items_descrip,
+                    // we clear/delete any specs associated with this item to prevent duplicates
+                    $iarItem->iarSpecs()->delete();
                 }
-
-                // Since description and specifications are consolidated into iar_items_descrip,
-                // we clear/delete any specs associated with this item to prevent duplicates
-                $iarItem->iarSpecs()->delete();
             }
 
             // Delete items that were removed in the UI (not present in incoming request)
@@ -293,8 +370,21 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
+            $message = $intent === 'Done'
+                ? 'Inspection and Acceptance Report saved and exported successfully.'
+                : 'Inspection and Acceptance Report saved as draft.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'active_document' => 'doc-iar-' . $iar->iar_id,
+                    'download_pdf' => $request->input('export_pdf') === '1' ? route('export.iar.pdf', $iar->iar_id) : null
+                ]);
+            }
+
             $response = redirect()->back()
-                ->with('success', 'Inspection and Acceptance Report saved successfully.')
+                ->with('success', $message)
                 ->with('active_document', 'doc-iar-' . $iar->iar_id);
 
             if ($request->input('export_pdf') === '1') {
@@ -304,6 +394,14 @@ class DeliveryAttachmentController extends Controller
             return $response;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save Inspection and Acceptance Report: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Failed to save Inspection and Acceptance Report: ' . $e->getMessage())
                 ->with('active_document', 'doc-iar-' . $iar->iar_id);

@@ -51,11 +51,13 @@
                         <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
                         <input type="text" name="iar_center_code" value="{{ $iar->iar_center_code }}"
                             class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_center_code"></span>
                     </div>
 
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
                         <input type="text" name="iar_fund_cluster" value="{{ $iar->iar_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_fund_cluster"></span>
                     </div>
                 </div>
 
@@ -63,18 +65,22 @@
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">IAR No.:</h6>
                         <input type="text" name="iar_no" value="{{ $iar->iar_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_no"></span>
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date:</h6>
                         <input type="text" name="iar_date" value="{{ $iar->iar_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_date"></span>
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Invoice No.:</h6>
                         <input type="text" name="iar_invoice_no" value="{{ $iar->iar_invoice_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_invoice_no"></span>
                     </div>
                     <div class="row align-items-center mb-3">
                         <h6 class="mb-2 black-text fw-bold">Date:</h6>
                         <input type="text" name="iar_invoice_date" value="{{ $iar->iar_invoice_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_invoice_date"></span>
                     </div>
                 </div>
             </div>
@@ -86,6 +92,7 @@
                         <h6 class="mb-2 black-text fw-bold">Inspection Officer:</h6>
                         <input type="text" class="form-control form-control-sm ms-2 w-75" name="iar_inspected_by" value="{{ $iar->iar_inspected_by }}"
                             placeholder="Officer Name">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_inspected_by"></span>
                     </div>
                 </div>
 
@@ -95,6 +102,7 @@
                         <h6 class="mb-2 black-text fw-bold">Date Received:</h6>
                         <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="iar_date_accepted" value="{{ $iar->iar_date_accepted }}"
                             placeholder="Select Date..">
+                        <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_date_accepted"></span>
                     </div>
 
                     <div class="row align-items-center mb-3">
@@ -127,21 +135,25 @@
                                 <input type="text" class="form-control form-control-sm text-center"
                                     name="items[{{ $index }}][iar_stock_no]"
                                     value="{{ $item->iar_stock_no }}">
+                                <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][iar_stock_no]"></span>
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm"
                                     name="items[{{ $index }}][iar_items_descrip]"
                                     value="{{ implode(', ', array_filter(array_merge([$item->iar_items_descrip], $item->iarSpecs->pluck('iar_spec_description')->toArray()))) }}">
+                                <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][iar_items_descrip]"></span>
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
                                     name="items[{{ $index }}][iar_unit]"
                                     value="{{ $item->iar_unit }}">
+                                <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][iar_unit]"></span>
                             </td>
                             <td class="px-1">
                                 <input type="text" class="form-control form-control-sm text-center"
                                     name="items[{{ $index }}][iar_quantity]"
                                     value="{{ $item->iar_quantity }}">
+                                <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][iar_quantity]"></span>
                             </td>
                             <td class="p-0">
                                 <button type="button"
