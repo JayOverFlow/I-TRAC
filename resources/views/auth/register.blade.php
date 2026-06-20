@@ -49,14 +49,14 @@
 
 </head>
 
-<body class="layout-boxed">
+<body class="layout-boxed auth-page">
 
     <div class="main-container" id="container">
-        <div class="row">
-            <div id="cover" class="col-6 p-0">
+        <div class="row g-0 align-items-stretch">
+            <div id="cover" class="col-md-6 p-0">
                 <img src="{{ asset('img/Background.svg') }}" alt="Background" class="w-100 h-100" style="object-fit: cover;">
             </div>
-            <div class="col-6 px-4 py-2">
+            <div class="col-12 col-md-6 px-4 py-2" style="overflow-y: auto;">
                 <div class="mt-3 ms-4">
                     <h2 class="black-text">Register</h2>
                     <h5 class="black-text">Fill out the form to Register</h5>
