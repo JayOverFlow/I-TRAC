@@ -99,40 +99,28 @@ class DeliveryAttachmentController extends Controller
 
         if ($isSemiExpendable) {
             DB::transaction(function () use ($ris) {
-                // Find if we already have entries in mr_tbl for these items to reuse the QR code
-                $existingMr = null;
-                $poItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
-
-                if ($poItemIds->isNotEmpty()) {
-                    $existingMr = \App\Models\Mr::whereIn('po_item_id_fk', $poItemIds)->first();
-                }
-
-                if ($existingMr) {
-                    $qrCode = $existingMr->mr_qr_code;
-                } else {
-                    // Generate unique numeric code in the format MR-XXXX-XXXX
-                    do {
-                        $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
-                    } while (\App\Models\Mr::where('mr_qr_code', $qrCode)->exists());
-                }
-
                 foreach ($ris->risItems as $item) {
                     if ($item->poItem && $item->poItem->po_items_category === 'Semi-Expendable') {
-                        // Avoid duplicates
-                        $exists = \App\Models\Mr::where('po_item_id_fk', $item->ris_po_items_id_fk)->exists();
-                        if (!$exists) {
-                            \App\Models\Mr::create([
-                                'po_item_id_fk' => $item->ris_po_items_id_fk,
-                                'mr_qr_code'    => $qrCode,
-                                'item_name'     => $item->ris_items_descrip,
-                                'specification' => $item->risSpecs->pluck('ris_spec_description')->filter()->implode("\n"),
-                                'quantity'      => $item->ris_quantity,
-                                'unit'          => $item->ris_unit,
-                                'stock'         => $item->ris_stock_no,
-                                'is_assigned'   => 0,
-                                'assigned_to'   => null,
-                                'category'   => 'Semi-Expendable',
-                            ]);
+                        if ($item->ris_po_items_id_fk) {
+                            // Avoid duplicates using Eloquent relationship
+                            if (!$item->poItem->mrs()->exists()) {
+                                // Generate unique numeric code in the format MR-XXXX-XXXX
+                                do {
+                                    $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+                                } while (Mr::where('mr_qr_code', $qrCode)->exists());
+
+                                $item->poItem->mrs()->create([
+                                    'mr_qr_code'    => $qrCode,
+                                    'item_name'     => $item->ris_items_descrip,
+                                    'specification' => $item->risSpecs->pluck('ris_spec_description')->filter()->implode("\n"),
+                                    'quantity'      => $item->ris_quantity,
+                                    'unit'          => $item->ris_unit,
+                                    'stock'         => $item->ris_stock_no,
+                                    'is_assigned'   => 0,
+                                    'assigned_to'   => null,
+                                    'category'      => 'Semi-Expendable',
+                                ]);
+                            }
                         }
                     }
                 }

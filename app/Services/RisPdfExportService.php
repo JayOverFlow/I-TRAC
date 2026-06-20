@@ -160,32 +160,28 @@ class RisPdfExportService
 
         // 6. Generate and Embed QR Code if Semi-Expendable
         $tempImage = null;
-        if ($isSemiExpendable) {
-            $poItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
-            if ($poItemIds->isNotEmpty()) {
-                $mrEntry = \App\Models\Mr::whereIn('po_item_id_fk', $poItemIds)->first();
-                if ($mrEntry && $mrEntry->mr_qr_code) {
-                    $options = new \chillerlan\QRCode\QROptions([
-                        'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
-                        'scale'           => 10,
-                        'imageTransparent' => false,
-                    ]);
-                    $qrcode = new \chillerlan\QRCode\QRCode($options);
-                    $tempImage = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
-                    $qrcode->render($mrEntry->mr_qr_code, $tempImage);
+        if ($isSemiExpendable && $ris->ris_id) {
+            $options = new \chillerlan\QRCode\QROptions([
+                'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+                'scale'           => 10,
+                'imageTransparent' => false,
+            ]);
+            $qrcode = new \chillerlan\QRCode\QRCode($options);
+            $tempImage = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
 
-                    // Add Drawing to Sheet
-                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $drawing->setName('MR QR Code');
-                    $drawing->setDescription('QR Code for MR Assignment');
-                    $drawing->setPath($tempImage);
-                    $drawing->setCoordinates('A62');
-                    $drawing->setHeight(110);
-                    $drawing->setOffsetX(15);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWorksheet($sheet);
-                }
-            }
+            $payload = 'RIS-' . $ris->ris_id;
+            $qrcode->render($payload, $tempImage);
+
+            // Add Drawing to Sheet
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setName('RIS QR Code');
+            $drawing->setDescription('QR Code for RIS');
+            $drawing->setPath($tempImage);
+            $drawing->setCoordinates('A62');
+            $drawing->setHeight(110);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(10);
+            $drawing->setWorksheet($sheet);
         }
 
         // Clear calculations and save to PDF using native mPDF writer
