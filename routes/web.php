@@ -142,6 +142,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/cancel-pr/{task_id}', 'cancelPr')->name('cancel.pr');
         Route::post('/create-pr/{task_id}/export', 'exportPr')->name('export.pr.from_form');
         Route::get('/create-pr/{task_id}/download-pdf', 'downloadPdf')->name('export.pr.download');
+        // Lightweight polling endpoint for the stepper timeline (no page refresh needed)
+        Route::get('/create-pr/{task_id}/stepper-status', 'stepperStatus')->name('pr.stepper.status');
     });
 
     // Account Settings

@@ -1,6 +1,6 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // ─── Card collapse toggle ─────────────────────────────────────────────
-    $(document).on('click', '.collapse-toggle', function(e) {
+    $(document).on('click', '.collapse-toggle', function (e) {
         e.preventDefault();
         var targetCard = $(this).closest('.card-body').find('.pr-collapse-area');
         $(this).toggleClass('rotate-arrow');
@@ -8,7 +8,7 @@ $(document).ready(function() {
     });
 
     // ─── Specification: Add ───────────────────────────────────────────────
-    $(document).on('click', '.add-specification-btn', function() {
+    $(document).on('click', '.add-specification-btn', function () {
         var currentRow = $(this).closest('tr.pr-item-row');
         var specificationRow = currentRow.next('.pr-specification-row');
         specificationRow.removeClass('d-none');
@@ -17,7 +17,7 @@ $(document).ready(function() {
     });
 
     // ─── Specification: Remove ────────────────────────────────────────────
-    $(document).on('click', '.remove-specification-btn', function(e) {
+    $(document).on('click', '.remove-specification-btn', function (e) {
         e.stopPropagation();
         var specificationRow = $(this).closest('tr.pr-specification-row');
         specificationRow.find('textarea').val('');
@@ -25,12 +25,12 @@ $(document).ready(function() {
     });
 
     // ─── Specification: Toggle (Minimize/Maximize) ────────────────────────
-    $(document).on('click', '.toggle-specification-action', function(e) {
+    $(document).on('click', '.toggle-specification-action', function (e) {
         var container = $(this).closest('.custom-specification-container');
         var body = container.find('.specification-body');
         var arrow = container.find('.specification-arrow');
-        
-        body.slideToggle(300, function() {
+
+        body.slideToggle(300, function () {
             if ($(this).is(':visible')) {
                 arrow.css('transform', 'rotate(180deg)');
             } else {
@@ -40,12 +40,12 @@ $(document).ready(function() {
     });
 
     // ─── Add Item ─────────────────────────────────────────────────────────
-    $(document).on('click', '.add-item-btn', function(e) {
+    $(document).on('click', '.add-item-btn', function (e) {
         e.preventDefault();
         var tbody = $(this).closest('.card').find('tbody');
         var firstRow = tbody.find('tr.pr-item-row').first();
         var firstDescRow = tbody.find('tr.pr-specification-row').first();
-        
+
         var newRow = firstRow.clone();
         var newDescRow = firstDescRow.clone();
 
@@ -53,13 +53,13 @@ $(document).ready(function() {
         var newIndex = 'new_' + Date.now() + Math.floor(Math.random() * 1000);
 
         // Update all field names with the new unique index
-        newRow.find('[name*="items["]').each(function() {
+        newRow.find('[name*="items["]').each(function () {
             var name = $(this).attr('name');
             var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
             $(this).attr('name', newName);
         });
 
-        newDescRow.find('[name*="items["]').each(function() {
+        newDescRow.find('[name*="items["]').each(function () {
             var name = $(this).attr('name');
             var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
             $(this).attr('name', newName);
@@ -91,7 +91,7 @@ $(document).ready(function() {
     });
 
     // ─── Remove Row ───────────────────────────────────────────────────────
-    $(document).on('click', '.remove-row-btn', function() {
+    $(document).on('click', '.remove-row-btn', function () {
         var row = $(this).closest('tr.pr-item-row');
         var specificationRow = row.next('.pr-specification-row');
         var tbody = row.closest('tbody');
@@ -103,7 +103,7 @@ $(document).ready(function() {
             row.find('.amount-display').text('₱ 0.00').attr('data-amount', 0);
             row.find('.is-invalid').removeClass('is-invalid');
             row.find('.field-error').text('').addClass('d-none');
-            
+
             specificationRow.find('textarea').val('');
             specificationRow.addClass('d-none');
             specificationRow.find('.is-invalid').removeClass('is-invalid');
@@ -117,33 +117,33 @@ $(document).ready(function() {
     });
 
     // ─── Calculate Amount ─────────────────────────────────────────────────
-    $(document).on('input', '.qty-input, .cost-input', function() {
+    $(document).on('input', '.qty-input, .cost-input', function () {
         var row = $(this).closest('tr.pr-item-row');
         var qty = parseFloat(row.find('.qty-input').val()) || 0;
         var cost = parseFloat(row.find('.cost-input').val()) || 0;
         var amount = qty * cost;
-        
+
         var display = row.find('.amount-display');
         display.text('₱ ' + amount.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }));
         display.attr('data-amount', amount);
-        
+
         updateTotals();
     });
 
     // ─── Update Totals ────────────────────────────────────────────────────
     function updateTotals() {
         var totalAmount = 0;
-        $('.pr-card').each(function() {
+        $('.pr-card').each(function () {
             var cardTotal = 0;
             var rows = $(this).find('tr.pr-item-row');
             var itemCount = rows.length;
-            
+
             $(this).find('.item-count').text(itemCount + (itemCount === 1 ? ' Item' : ' Items'));
 
-            rows.find('.amount-display').each(function() {
+            rows.find('.amount-display').each(function () {
                 var val = parseFloat($(this).attr('data-amount')) || 0;
                 cardTotal += val;
             });
@@ -153,7 +153,7 @@ $(document).ready(function() {
                 maximumFractionDigits: 2
             }));
         });
-        
+
         var grandTotalEl = $('#grand-total-amount');
         grandTotalEl.text('₱ ' + totalAmount.toLocaleString('en-US', {
             minimumFractionDigits: 2,
@@ -188,7 +188,7 @@ $(document).ready(function() {
      * @param {Object} errors — shape: { "pr_section": ["msg"], "items.0.unit": ["msg"], ... }
      */
     function showFieldErrors(errors) {
-        $.each(errors, function(key, messages) {
+        $.each(errors, function (key, messages) {
             var msg = messages[0];
 
             // Header fields: pr_section, pr_purpose, pr_no
@@ -219,12 +219,12 @@ $(document).ready(function() {
             if (field === 'specification') {
                 var specRow = input.closest('.pr-specification-row');
                 specRow.find('.field-error').text(msg).removeClass('d-none');
-                
+
                 // Ensure the specification row is visible if there's an error
                 specRow.removeClass('d-none');
                 specRow.find('.specification-body').show();
                 specRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
-                
+
                 // Add invalid class to container for visual feedback
                 specRow.find('.custom-specification-container').addClass('is-invalid');
                 return;
@@ -255,16 +255,16 @@ $(document).ready(function() {
         var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
         var toast = $(
             '<div class="toast align-items-center text-white ' + bgClass + ' border-0 shadow-lg" role="alert">' +
-                '<div class="d-flex">' +
-                    '<div class="toast-body">' + message + '</div>' +
-                    '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
-                '</div>' +
+            '<div class="d-flex">' +
+            '<div class="toast-body">' + message + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+            '</div>' +
             '</div>'
         );
         $('.toast-container').append(toast);
         var bsToast = new bootstrap.Toast(toast[0], { delay: 5000 });
         bsToast.show();
-        toast.on('hidden.bs.toast', function() { toast.remove(); });
+        toast.on('hidden.bs.toast', function () { toast.remove(); });
     }
 
     // ─── AJAX form submission ─────────────────────────────────────────────
@@ -282,8 +282,8 @@ $(document).ready(function() {
         var totalAmount = 0;
         var costExceeded = false;
 
-        $('.pr-card').each(function() {
-            $(this).find('tr.pr-item-row').each(function() {
+        $('.pr-card').each(function () {
+            $(this).find('tr.pr-item-row').each(function () {
                 var qty = parseFloat($(this).find('.qty-input').val()) || 0;
                 var cost = parseFloat($(this).find('.cost-input').val()) || 0;
                 totalAmount += qty * cost;
@@ -321,66 +321,66 @@ $(document).ready(function() {
             },
             body: formData
         })
-        .then(function(response) {
-            return response.json().then(function(data) {
-                return { status: response.status, ok: response.ok, data: data };
-            });
-        })
-        .then(function(result) {
-            if (result.ok && result.data.success) {
-                // Success — download file if download_url provided, then redirect/show toast
-                if (result.data.download_url) {
-                    // Trigger download via a hidden iframe so it does not get cancelled by the redirect
-                    var $iframe = $('<iframe>', {
-                        src: result.data.download_url,
-                        style: 'display:none'
-                    }).appendTo('body');
+            .then(function (response) {
+                return response.json().then(function (data) {
+                    return { status: response.status, ok: response.ok, data: data };
+                });
+            })
+            .then(function (result) {
+                if (result.ok && result.data.success) {
+                    // Success — download file if download_url provided, then redirect/show toast
+                    if (result.data.download_url) {
+                        // Trigger download via a hidden iframe so it does not get cancelled by the redirect
+                        var $iframe = $('<iframe>', {
+                            src: result.data.download_url,
+                            style: 'display:none'
+                        }).appendTo('body');
 
-                    // Wait long enough for mPDF to generate the PDF before redirecting
-                    // (mPDF Excel-to-PDF conversion typically takes 2-5 seconds)
-                    if (result.data.redirect) {
-                        setTimeout(function() {
-                            $iframe.remove();
-                            window.location.href = result.data.redirect;
-                        }, 5000);
+                        // Wait long enough for mPDF to generate the PDF before redirecting
+                        // (mPDF Excel-to-PDF conversion typically takes 2-5 seconds)
+                        if (result.data.redirect) {
+                            setTimeout(function () {
+                                $iframe.remove();
+                                window.location.href = result.data.redirect;
+                            }, 5000);
+                        } else {
+                            setTimeout(function () {
+                                $iframe.remove();
+                            }, 10000);
+                        }
+                    } else if (result.data.redirect) {
+                        window.location.href = result.data.redirect;
                     } else {
-                        setTimeout(function() {
-                            $iframe.remove();
-                        }, 10000);
+                        showToast(result.data.message || 'Saved!', 'success');
                     }
-                } else if (result.data.redirect) {
-                    window.location.href = result.data.redirect;
-                } else {
-                    showToast(result.data.message || 'Saved!', 'success');
+                    return;
                 }
-                return;
-            }
 
-            if (result.status === 422 && result.data.errors) {
-                // Validation errors — show inline per field
-                console.warn('PR Validation Errors:', result.data.errors);
-                showFieldErrors(result.data.errors);
-                if (result.data.errors.general_budget) {
-                    showToast(result.data.errors.general_budget[0], 'error');
-                } else {
-                    showToast('Please fix the errors below.', 'error');
+                if (result.status === 422 && result.data.errors) {
+                    // Validation errors — show inline per field
+                    console.warn('PR Validation Errors:', result.data.errors);
+                    showFieldErrors(result.data.errors);
+                    if (result.data.errors.general_budget) {
+                        showToast(result.data.errors.general_budget[0], 'error');
+                    } else {
+                        showToast('Please fix the errors below.', 'error');
+                    }
+                    return;
                 }
-                return;
-            }
 
-            // Other server errors (409, 500, etc.)
-            showToast(result.data.message || 'Something went wrong.', 'error');
-        })
-        .catch(function() {
-            showToast('Network error. Check your connection.', 'error');
-        })
-        .finally(function() {
-            $('#submit-pr-btn, #export-pr-btn, #pr-form button[type="submit"]').prop('disabled', false);
-        });
+                // Other server errors (409, 500, etc.)
+                showToast(result.data.message || 'Something went wrong.', 'error');
+            })
+            .catch(function () {
+                showToast('Network error. Check your connection.', 'error');
+            })
+            .finally(function () {
+                $('#submit-pr-btn, #export-pr-btn, #pr-form button[type="submit"]').prop('disabled', false);
+            });
     }
 
     // ─── Submit button — strict validation ────────────────────────────────
-    $(document).on('click', '#submit-pr-btn', function(e) {
+    $(document).on('click', '#submit-pr-btn', function (e) {
         e.preventDefault();
         var url = $(this).data('url');
         if (url) {
@@ -390,7 +390,7 @@ $(document).ready(function() {
                 icon: 'question',
                 confirmButtonText: 'Yes, Complete',
                 cancelButtonText: 'Cancel',
-                onConfirm: function() {
+                onConfirm: function () {
                     submitPrForm('submit', url);
                 }
             });
@@ -398,7 +398,7 @@ $(document).ready(function() {
     });
 
     // ─── Export button — strict validation and PDF trigger ────────────────
-    $(document).on('click', '#export-pr-btn', function(e) {
+    $(document).on('click', '#export-pr-btn', function (e) {
         e.preventDefault();
         var url = $(this).data('url');
         if (url) {
@@ -408,7 +408,7 @@ $(document).ready(function() {
                 icon: 'question',
                 confirmButtonText: 'Yes, Export',
                 cancelButtonText: 'Cancel',
-                onConfirm: function() {
+                onConfirm: function () {
                     submitPrForm('submit', url);
                 }
             });
@@ -416,7 +416,7 @@ $(document).ready(function() {
     });
 
     // ─── Save as Draft — prevent default, use AJAX ────────────────────────
-    $('#pr-form').on('submit', function(e) {
+    $('#pr-form').on('submit', function (e) {
         e.preventDefault();
         var form = this;
         window.confirmAction({
@@ -425,14 +425,14 @@ $(document).ready(function() {
             icon: 'question',
             confirmButtonText: 'Yes, Save',
             cancelButtonText: 'Cancel',
-            onConfirm: function() {
+            onConfirm: function () {
                 submitPrForm('draft', form.action);
             }
         });
     });
 
     // ─── Cancel button logic ──────────────────────────────────────────────
-    $(document).on('click', '#cancel-pr-btn', function() {
+    $(document).on('click', '#cancel-pr-btn', function () {
         const url = $(this).data('url');
         const form = $('#cancel-pr-form');
         if (url) {
@@ -442,7 +442,7 @@ $(document).ready(function() {
                 icon: 'warning',
                 confirmButtonText: 'Yes, Cancel',
                 cancelButtonText: 'No, Keep It',
-                onConfirm: function() {
+                onConfirm: function () {
                     form.attr('action', url);
                     form.submit();
                 }
@@ -451,7 +451,7 @@ $(document).ready(function() {
     });
 
     // ─── Export PDF Again logic ───────────────────────────────────────────
-    $(document).on('click', '#export-again-btn', function(e) {
+    $(document).on('click', '#export-again-btn', function (e) {
         e.preventDefault();
         var url = $(this).attr('href');
         if (url) {
@@ -461,10 +461,167 @@ $(document).ready(function() {
                 icon: 'question',
                 confirmButtonText: 'Yes, Export',
                 cancelButtonText: 'Cancel',
-                onConfirm: function() {
+                onConfirm: function () {
                     window.location.href = url;
                 }
             });
         }
     });
+
+    // ─── Stepper real-time polling ────────────────────────────────────────
+    /**
+     * Polls GET /create-pr/{task_id}/stepper-status every POLL_INTERVAL ms.
+     * Surgically patches only the <li> elements whose state actually changed —
+     * no full page reload, no DOM flicker.
+     *
+     * Behaviour:
+     *  - Only runs on pages that render the stepper (#stepper-list).
+     *  - Reads the polling URL from data-stepper-url (set by the blade).
+     *  - Pauses automatically when the browser tab is hidden (visibilitychange)
+     *    and fires an immediate catch-up poll when the user returns.
+     *  - Stops itself permanently on 401 (session expired) or 5xx errors.
+     */
+    (function initStepperPoller() {
+        var POLL_INTERVAL = 30000;          // milliseconds between polls
+        var $list = $('#stepper-list');
+
+        // Only activate on pages that actually render the stepper
+        if (!$list.length) return;
+
+        var pollUrl = $list.data('stepper-url');
+        var timerId = null;
+        var stopped = false;
+
+        // ── SVG icons (must match the blade templates exactly) ────────────
+        var CHECK_ICON =
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">' +
+            '<polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+        var PARTIAL_ICON =
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+            'stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">' +
+            '<circle cx="12" cy="12" r="9"></circle>' +
+            '<line x1="12" y1="3" x2="12" y2="21"></line></svg>';
+
+        /**
+         * Derives the CSS classes and icon SVG for a single step.
+         * @param  {Object}  step      — one element from the JSON steps array
+         * @param  {boolean} isLatest  — whether this step is the current active one
+         * @returns {{ itemClass: string, circleClass: string, icon: string }}
+         */
+        function resolveClasses(step, isLatest) {
+            if (isLatest && step.partial) {
+                return {
+                    itemClass: 'stepper-item latest partial',
+                    circleClass: 'stepper-circle active-partial',
+                    icon: PARTIAL_ICON
+                };
+            }
+            if (isLatest) {
+                return {
+                    itemClass: 'stepper-item latest',
+                    circleClass: 'stepper-circle active-latest',
+                    icon: CHECK_ICON
+                };
+            }
+            if (step.active) {
+                return {
+                    itemClass: 'stepper-item completed',
+                    circleClass: 'stepper-circle active-historic',
+                    icon: CHECK_ICON
+                };
+            }
+            return {
+                itemClass: 'stepper-item pending',
+                circleClass: 'stepper-circle pending',
+                icon: ''
+            };
+        }
+
+        /**
+         * Fetch fresh step data and surgically patch any changed <li> elements.
+         */
+        function poll() {
+            fetch(pollUrl, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'  // forward the Laravel session cookie
+            })
+                .then(function (res) {
+                    // Stop polling permanently on auth / server errors
+                    if (res.status === 401 || res.status >= 500) {
+                        stopped = true;
+                        clearInterval(timerId);
+                        console.warn('[Stepper] Polling stopped — HTTP ' + res.status);
+                        return null;
+                    }
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (!data || !Array.isArray(data.steps) || !data.steps.length) return;
+
+                    var steps = data.steps;
+                    var latestActiveIndex = data.latestActiveIndex;
+
+                    steps.forEach(function (step, idx) {
+                        var $li = $list.find('[data-index="' + idx + '"]');
+                        if (!$li.length) return;
+
+                        var isLatest = (idx === latestActiveIndex);
+                        var cls = resolveClasses(step, isLatest);
+
+                        // Patch <li> classes (preserve data-index attribute)
+                        if ($li.attr('class') !== cls.itemClass) {
+                            $li.attr('class', cls.itemClass).attr('data-index', idx);
+                        }
+
+                        // Patch the circle: class + inner SVG icon
+                        var $circle = $li.find('[class*="stepper-circle"]').first();
+                        if ($circle.attr('class') !== cls.circleClass) {
+                            $circle.attr('class', cls.circleClass);
+                        }
+                        if ($circle.html().trim() !== cls.icon.trim()) {
+                            $circle.html(cls.icon);
+                        }
+
+                        // Patch label text
+                        var $label = $li.find('.stepper-label');
+                        if ($label.text() !== step.label) {
+                            $label.text(step.label);
+                        }
+
+                        // Patch date text
+                        var $date = $li.find('.stepper-date');
+                        var dateText = step.date || 'Pending';
+                        if ($date.text() !== dateText) {
+                            $date.text(dateText);
+                        }
+                    });
+                })
+                .catch(function (err) {
+                    // Network errors — log silently; will retry on the next interval tick
+                    console.warn('[Stepper] Poll error:', err.message);
+                });
+        }
+
+        // ── Start polling ─────────────────────────────────────────────────
+        timerId = setInterval(poll, POLL_INTERVAL);
+
+        // ── Visibility API: pause when tab is hidden, resume on return ────
+        document.addEventListener('visibilitychange', function () {
+            if (stopped) return;
+
+            if (document.hidden) {
+                clearInterval(timerId);
+                timerId = null;
+            } else {
+                poll();                                     // immediate catch-up
+                timerId = setInterval(poll, POLL_INTERVAL); // restart regular interval
+            }
+        });
+    })();
+    // ─── End stepper polling ──────────────────────────────────────────────
 });

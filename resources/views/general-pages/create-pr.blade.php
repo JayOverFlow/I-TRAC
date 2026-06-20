@@ -59,9 +59,12 @@
         $isReceivedByEndUser = false;
         $receivedDate = null;
 
+        // PO Coverage: 'none' | 'partial' | 'full'
+        $poCoverage = 'none';
+
         if ($pr) {
             $firstPo = $pr->purchaseOrders->first();
-            
+
             // Step 3 Date (RECEIVED BY PROCUREMENT)
             if ($pr->retrieved_by) {
                 if ($firstPo) {
@@ -72,10 +75,26 @@
                 }
             }
 
-            // Step 4 Date (PO CREATED)
+            // Step 4 Date (first PO created date)
             if ($firstPo) {
                 $poCreatedDate = \Carbon\Carbon::parse($firstPo->created_at ?? $firstPo->po_date)->format('d M, Y');
             }
+
+            // ── PO Coverage Calculation ──────────────────────────────────────
+            // Total quantity requested across all PR items
+            $totalPrQty = $pr->prItems->sum('pr_items_quantity');
+
+            // Total quantity allocated across all PO items linked to this PR
+            $totalPoQty = $pr->purchaseOrders->flatMap(fn($po) => $po->poItems)->sum('po_items_quantity');
+
+            if ($pr->purchaseOrders->isNotEmpty()) {
+                if ($totalPrQty > 0 && $totalPoQty >= $totalPrQty) {
+                    $poCoverage = 'full';
+                } else {
+                    $poCoverage = 'partial';
+                }
+            }
+            // ────────────────────────────────────────────────────────────────
 
             // Step 5 (DELIVERED) & Step 6 (RECEIVED BY END USER)
             foreach ($pr->purchaseOrders as $po) {
@@ -113,9 +132,14 @@
             ],
             [
                 'prefix' => 'Purchase Order:',
-                'label' => 'CREATED',
-                'active' => $firstPo ? true : false,
-                'date' => $poCreatedDate,
+                'label' => match($poCoverage) {
+                    'full'    => 'CREATED',
+                    'partial' => 'PARTIALLY CREATED',
+                    default   => 'CREATED',
+                },
+                'active'    => $poCoverage !== 'none',
+                'partial'   => $poCoverage === 'partial',
+                'date'      => $poCreatedDate,
             ],
             [
                 'prefix' => 'Purchase Request:',
@@ -146,31 +170,43 @@
                 <div class="card stepper-card">
                     <div class="card-body">
                         <h5 class="stepper-title text-center text-md-start">Purchase Request Status</h5>
-                        <ul class="stepper-container">
+                        <ul class="stepper-container"
+                            data-stepper-url="{{ route('pr.stepper.status', $task->task_id) }}"
+                            id="stepper-list">
                             @foreach ($steps as $index => $step)
                                 @php
-                                    $isLatest = ($index === $latestActiveIndex);
-                                    $isActive = $step['active'];
-                                    
-                                    $itemClass = '';
+                                    $isLatest  = ($index === $latestActiveIndex);
+                                    $isActive  = $step['active'];
+                                    $isPartial = $step['partial'] ?? false;
+
+                                    $itemClass   = '';
                                     $circleClass = '';
-                                    if ($isLatest) {
-                                        $itemClass = 'latest';
+                                    if ($isLatest && $isPartial) {
+                                        $itemClass   = 'latest partial';
+                                        $circleClass = 'active-partial';
+                                    } elseif ($isLatest) {
+                                        $itemClass   = 'latest';
                                         $circleClass = 'active-latest';
                                     } elseif ($isActive) {
-                                        $itemClass = 'completed';
+                                        $itemClass   = 'completed';
                                         $circleClass = 'active-historic';
                                     } else {
-                                        $itemClass = 'pending';
+                                        $itemClass   = 'pending';
                                         $circleClass = 'pending';
                                     }
                                 @endphp
-                                <li class="stepper-item {{ $itemClass }}">
+                                <li class="stepper-item {{ $itemClass }}" data-index="{{ $index }}">
                                     @if ($index < count($steps) - 1)
                                         <div class="stepper-line"></div>
                                     @endif
                                     <div class="stepper-circle {{ $circleClass }}">
-                                        @if ($isActive)
+                                        @if ($isPartial && $isLatest)
+                                            {{-- Half-filled icon for "Partially Created" --}}
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                                <circle cx="12" cy="12" r="9"></circle>
+                                                <line x1="12" y1="3" x2="12" y2="21"></line>
+                                            </svg>
+                                        @elseif ($isActive)
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
                                                 <polyline points="20 6 9 17 4 12"></polyline>
                                             </svg>
