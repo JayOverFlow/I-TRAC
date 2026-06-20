@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mr;
+use App\Models\MrItemImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use chillerlan\QRCode\QRCode;
@@ -25,7 +26,7 @@ class InventoryController extends Controller
             return redirect()->route('404');
         }
 
-        $mrItems = Mr::with(['assignedUser.departments'])->orderBy('date_scanned', 'desc')->get();
+        $mrItems = Mr::with(['assignedUser.departments', 'images'])->orderBy('date_scanned', 'desc')->get();
 
         $counts = [
             'all'             => $mrItems->count(),
@@ -298,4 +299,121 @@ class InventoryController extends Controller
             'pdf_urls' => $pdfUrls,
         ]);
     }
+
+    /**
+     * Upload an image for an item, appending it to the mr_item_img_tbl table.
+     * Max 5 images.
+     * (COMMENTED OUT FOR MODAL - WILL BE USED ON ANOTHER PAGE)
+     *
+    public function uploadImage(Request $request)
+    {
+        try {
+            $request->validate([
+                'mr_id' => 'required|integer',
+                'item_image' => 'required|image|max:5120', // Limit size to 5MB
+            ]);
+
+            $item = Mr::where('mr_id', $request->mr_id)->first();
+
+            if (!$item) {
+                return response()->json(['status' => 'error', 'message' => 'Item not found.'], 404);
+            }
+
+            // Check if limit of 5 is exceeded
+            $currentCount = \App\Models\MrItemImage::where('mr_id', $request->mr_id)->count();
+            if ($currentCount >= 5) {
+                return response()->json(['status' => 'error', 'message' => 'Maximum limit of 5 images reached.'], 400);
+            }
+
+            // Process New Upload
+            if ($request->hasFile('item_image')) {
+                $file = $request->file('item_image');
+                if ($file->isValid()) {
+                    $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path('img/items'), $filename);
+
+                    // Create new database record
+                    \App\Models\MrItemImage::create([
+                        'mr_id' => $request->mr_id,
+                        'image_path' => 'img/items/' . $filename
+                    ]);
+                }
+            }
+
+            // Return images with full asset URLs for rendering
+            $images = \App\Models\MrItemImage::where('mr_id', $request->mr_id)->get();
+            $formattedImages = $images->map(function($img) {
+                return [
+                    'url' => asset($img->image_path),
+                    'path' => $img->image_path
+                ];
+            })->all();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Image uploaded successfully!',
+                'images' => $formattedImages
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
+    */
+
+    /**
+     * Delete a specific image from the mr_item_img_tbl table and delete its file.
+     * (COMMENTED OUT FOR MODAL - WILL BE USED ON ANOTHER PAGE)
+     *
+    public function deleteImage(Request $request)
+    {
+        try {
+            $request->validate([
+                'mr_id' => 'required|integer',
+                'image_path' => 'required|string',
+            ]);
+
+            $item = Mr::where('mr_id', $request->mr_id)->first();
+
+            if (!$item) {
+                return response()->json(['status' => 'error', 'message' => 'Item not found.'], 404);
+            }
+
+            // Find image record
+            $imageRecord = \App\Models\MrItemImage::where('mr_id', $request->mr_id)
+                ->where('image_path', $request->image_path)
+                ->first();
+
+            if ($imageRecord) {
+                $fullPath = public_path($imageRecord->image_path);
+                if (file_exists($fullPath)) {
+                    @unlink($fullPath);
+                }
+
+                // Delete database record
+                $imageRecord->delete();
+
+                // Return updated images list
+                $images = \App\Models\MrItemImage::where('mr_id', $request->mr_id)->get();
+                $formattedImages = $images->map(function($img) {
+                    return [
+                        'url' => asset($img->image_path),
+                        'path' => $img->image_path
+                    ];
+                })->all();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Image deleted successfully.',
+                    'images' => $formattedImages
+                ]);
+            }
+
+            return response()->json(['status' => 'error', 'message' => 'Image path not found in item record.'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
+    */
 }

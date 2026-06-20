@@ -1,4 +1,239 @@
 $(document).ready(function () {
+    // Active item and image gallery states
+    var activeMrId = null;
+    var activeImages = []; // List of {url, path} objects
+    var activeImagePath = null; // The relative path of the currently viewed image
+    var $activeRow = null; // Reference to the clicked table row to update its data attribute
+
+    // Setup CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    // Dynamic toast message helper
+    function showToast(message, type) {
+        var toastId = 'dynamicToast_' + Date.now();
+        var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+        var icon = type === 'success' ? 
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' :
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        
+        var html = `
+            <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        ${icon}
+                        <div>${message}</div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+        
+        $('.toast-container').append(html);
+        var toastEl = document.getElementById(toastId);
+        if (toastEl) {
+            var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+            toast.show();
+            
+            toastEl.addEventListener('hidden.bs.toast', function () {
+                toastEl.remove();
+            });
+        }
+    }
+
+    // Render image gallery and thumbnails in the modal
+    function renderItemImages() {
+        var primaryImg = document.getElementById('modalPrimaryImage');
+        var noImgPlaceholder = document.getElementById('modalNoImagePlaceholder');
+        var gridContainer = document.getElementById('modalImageGrid');
+        var btnDelete = document.getElementById('btnDeleteActiveImage');
+        var countText = document.getElementById('modalImageCountText');
+
+        var totalImages = activeImages.length;
+        if (countText) {
+            countText.innerText = totalImages + '/5 Images';
+        }
+
+        if (totalImages > 0) {
+            // Find active image object, default to first if not found/null
+            var activeObj = activeImages.find(function (img) { return img.path === activeImagePath; });
+            if (!activeObj) {
+                activeObj = activeImages[0];
+                activeImagePath = activeObj.path;
+            }
+
+            // Show primary image
+            noImgPlaceholder.style.display = 'none';
+            primaryImg.src = activeObj.url;
+            primaryImg.style.display = 'block';
+            if (btnDelete) $(btnDelete).hide(); // Disable delete button overlay
+
+            // Render 4 slots below
+            gridContainer.innerHTML = '';
+            gridContainer.style.display = 'flex';
+
+            // Filter non-active images
+            var nonActiveImages = activeImages.filter(function (img) { return img.path !== activeImagePath; });
+
+            // Fill 4 slots (Only images or empty slots, no Add icon slot)
+            for (var i = 0; i < 4; i++) {
+                if (i < nonActiveImages.length) {
+                    // Image slot
+                    var imgObj = nonActiveImages[i];
+                    var slotHtml = `
+                        <div class="image-grid-slot slot-image" data-path="${imgObj.path}">
+                            <img src="${imgObj.url}" alt="Thumbnail">
+                        </div>
+                    `;
+                    gridContainer.insertAdjacentHTML('beforeend', slotHtml);
+                } else {
+                    // Empty slot
+                    var emptyHtml = '<div class="image-grid-slot slot-empty"></div>';
+                    gridContainer.insertAdjacentHTML('beforeend', emptyHtml);
+                }
+            }
+        } else {
+            // No images available
+            primaryImg.style.display = 'none';
+            if (btnDelete) $(btnDelete).hide();
+            noImgPlaceholder.style.display = 'block';
+            gridContainer.style.display = 'none';
+            activeImagePath = null;
+        }
+    }
+
+    /*
+    // Trigger file selection when clicking add image buttons
+    $(document).on('click', '#btnPlaceholderAddImage, .slot-add', function () {
+        $('#modalImageFileInput').click();
+    });
+    */
+
+    // Handle click on image slot to swap active image
+    $(document).on('click', '#modalImageGrid .slot-image', function () {
+        activeImagePath = $(this).data('path');
+        renderItemImages();
+    });
+
+    /*
+    // Handle File Input Change (Upload)
+    $(document).on('change', '#modalImageFileInput', function (e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        var inputEl = this;
+        var formData = new FormData();
+        formData.append('mr_id', activeMrId);
+        formData.append('item_image', file);
+
+        var $btnPlaceholder = $('#btnPlaceholderAddImage');
+        var $slotAdd = $('#modalImageGrid .slot-add');
+        var origPlaceholderHtml = $btnPlaceholder.html();
+        var origSlotHtml = $slotAdd.html();
+
+        if ($btnPlaceholder.is(':visible')) {
+            $btnPlaceholder.prop('disabled', true).html('Uploading...');
+        }
+        if ($slotAdd.length) {
+            $slotAdd.addClass('slot-uploading').html('<div class="spinner-border spinner-border-sm text-red" role="status" style="width: 14px; height: 14px;"></div>');
+        }
+
+        $.ajax({
+            url: '/inventory/upload-image',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.status === 'success') {
+                    showToast(response.message || 'Image uploaded successfully!', 'success');
+                    
+                    // Update state
+                    activeImages = response.images;
+                    
+                    // Update table row data attribute so it persists if reopened
+                    if ($activeRow) {
+                        $activeRow.data('item-images', activeImages);
+                    }
+
+                    // Re-render gallery
+                    renderItemImages();
+                } else {
+                    showToast(response.message || 'Failed to upload image.', 'danger');
+                }
+            },
+            error: function (xhr) {
+                var message = 'An error occurred during upload.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                showToast(message, 'danger');
+            },
+            complete: function () {
+                if ($btnPlaceholder.is(':visible')) {
+                    $btnPlaceholder.prop('disabled', false).html(origPlaceholderHtml);
+                }
+                if ($slotAdd.length) {
+                    $slotAdd.removeClass('slot-uploading').html(origSlotHtml);
+                }
+                inputEl.value = ''; // clear input
+            }
+        });
+    });
+    */
+
+    /*
+    // Handle Delete Image
+    $(document).on('click', '#btnDeleteActiveImage', function () {
+        if (!activeImagePath || !activeMrId) return;
+
+        if (!confirm('Are you sure you want to delete this image?')) return;
+
+        var $btn = $(this);
+        $btn.prop('disabled', true);
+
+        $.ajax({
+            url: '/inventory/delete-image',
+            type: 'POST',
+            data: {
+                mr_id: activeMrId,
+                image_path: activeImagePath
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    showToast(response.message || 'Image deleted successfully!', 'success');
+                    
+                    // Update state
+                    activeImages = response.images;
+                    
+                    // Update table row data attribute
+                    if ($activeRow) {
+                        $activeRow.data('item-images', activeImages);
+                    }
+
+                    // Re-render gallery
+                    renderItemImages();
+                } else {
+                    showToast(response.message || 'Failed to delete image.', 'danger');
+                }
+            },
+            error: function (xhr) {
+                var message = 'An error occurred during deletion.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                showToast(message, 'danger');
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+    */
+
     // Initialize Datatable
     $('#zero-config').DataTable({
         "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start align-items-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
@@ -36,9 +271,15 @@ $(document).ready(function () {
         var quantity = $row.data('quantity') || '—';
         var building = $row.data('building') || '—';
         var roomNo = $row.data('room-no') || '—';
-        var itemImage = $row.data('item-image');
+        
         // Extract the unique item QR code data attribute from the clicked row
         var mrQrCode = $row.data('mr-qr-code') || '';
+
+        // Populate active state variables
+        $activeRow = $row;
+        activeMrId = $row.data('mr-id');
+        activeImages = $row.data('item-images') || [];
+        activeImagePath = null; // Reset active image path to display the first image by default
 
         // Populate detail fields
         $('#detailItemName').text(itemName);
@@ -85,71 +326,8 @@ $(document).ready(function () {
         $('.paper-size-card[data-paper-size="A6"]').addClass('selected');
         $('#paper_size').val('A6');
 
-        // Handle Media/Image Gallery
-        var primaryImg = document.getElementById('modalPrimaryImage');
-        var noImgPlaceholder = document.getElementById('modalNoImagePlaceholder');
-        var thumbnailSliderContainer = document.getElementById('modalThumbnailSlider');
-        var thumbnailList = document.getElementById('modalThumbnailList');
-
-        // Clear dynamic slides
-        thumbnailList.innerHTML = '';
-
-        // Destroy old splide slider instance if exists
-        if (window.modalSplide) {
-            window.modalSplide.destroy();
-            window.modalSplide = null;
-        }
-
-        if (itemImage) {
-            // Render primary photo
-            primaryImg.src = itemImage;
-            primaryImg.style.display = 'block';
-            noImgPlaceholder.style.display = 'none';
-            thumbnailSliderContainer.style.display = 'block';
-
-            // Create three thumbnail slides using the item's main image
-            for (var i = 0; i < 3; i++) {
-                var li = document.createElement('li');
-                li.className = 'splide__slide';
-                li.innerHTML = '<img src="' + itemImage + '" alt="Thumbnail ' + (i + 1) + '">';
-                thumbnailList.appendChild(li);
-            }
-
-            // Initialize Splide for thumbnails
-            setTimeout(function () {
-                window.modalSplide = new Splide('#modalThumbnailSlider', {
-                    fixedWidth: 60,
-                    fixedHeight: 60,
-                    gap: 10,
-                    rewind: true,
-                    pagination: false,
-                    isNavigation: true,
-                    arrows: true,
-                    focus: 'center'
-                });
-
-                window.modalSplide.mount();
-
-                // Listen to Splide's active slide change to update primary image
-                window.modalSplide.on('active', function (slide) {
-                    var img = slide.slide.querySelector('img');
-                    if (img) {
-                        primaryImg.src = img.src;
-                    }
-                });
-
-                // Workaround for direct click syncing on images
-                $('#modalThumbnailList').on('click', '.splide__slide img', function () {
-                    primaryImg.src = this.src;
-                });
-            }, 150);
-
-        } else {
-            // "No image" text in container instead of image fallback
-            primaryImg.style.display = 'none';
-            noImgPlaceholder.style.display = 'block';
-            thumbnailSliderContainer.style.display = 'none';
-        }
+        // Render Media/Image Gallery
+        renderItemImages();
 
         // Show Bootstrap Modal
         var myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('itemDetailsModal'));

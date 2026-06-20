@@ -95,7 +95,16 @@
             </thead>
             <tbody>
                 @foreach ($mrItems as $item)
+                    @php
+                        $images = $item->images->map(function ($img) {
+                            return [
+                                'url' => asset($img->image_path),
+                                'path' => $img->image_path
+                            ];
+                        })->toArray();
+                    @endphp
                     <tr class="inventory-row" style="cursor: pointer;" data-item-name="{{ $item->item_name }}"
+                        data-mr-id="{{ $item->mr_id }}"
                         data-assignee="{{ $item->assignedUser?->user_fullname ?? '—' }}"
                         data-office="{{ $item->assignedUser?->departments->first()?->dep_name ?? '—' }}"
                         data-date-scanned="{{ $item->date_scanned ? \Carbon\Carbon::parse($item->date_scanned)->format('Y-m-d') : '—' }}"
@@ -103,7 +112,7 @@
                         data-specification="{{ $item->specification ?? '—' }}"
                         data-quantity="{{ $item->quantity ?? '—' }}" data-building="{{ $item->building ?? '—' }}"
                         data-room-no="{{ $item->room_no ?? '—' }}"
-                        data-item-image="{{ $item->item_image ? asset($item->item_image) : '' }}"
+                        data-item-images="{{ json_encode($images) }}"
                         data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}">
                         <td class="text-center">{{ $item->mr_qr_code }}</td>
                         <td>{{ $item->item_name }}</td>
@@ -143,12 +152,22 @@
                         <!-- Left Column: Media Canvas & Splide Sync -->
                         <div class="col-md-5 mb-4 mb-md-0 d-flex flex-column align-items-center">
                             <!-- Main Viewport Card -->
-                            <div class="card border-0 main-image-viewport-card mb-3 w-100">
+                            <div class="card border-0 main-image-viewport-card mb-3 w-100 position-relative">
                                 <div
                                     class="card-body p-0 d-flex align-items-center justify-content-center position-relative overflow-hidden">
                                     <!-- Active primary photo -->
                                     <img id="modalPrimaryImage" src="" alt="Primary Photo"
                                         class="img-fluid rounded-3" style="display: none;">
+
+                                    <!-- Delete Button Overlay (Commented out - managed on other page) -->
+                                    <!--
+                                    <button type="button" class="btn btn-danger btn-delete-image position-absolute top-0 end-0 m-2 shadow-sm rounded-circle d-flex align-items-center justify-content-center" id="btnDeleteActiveImage" style="display: none; width: 32px; height: 32px; z-index: 10;" title="Delete this image">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Zm3 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Zm3 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Z"/>
+                                        </svg>
+                                    </button>
+                                    -->
+
                                     <!-- No image placeholder text -->
                                     <div id="modalNoImagePlaceholder" class="text-center py-5 gray-text"
                                         style="display: none;">
@@ -157,15 +176,22 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Thumbnail Carousel -->
-                            <div id="modalThumbnailSlider" class="splide w-100">
-                                <div class="splide__track">
-                                    <ul class="splide__list" id="modalThumbnailList">
-                                        <!-- Dynamic thumbnails -->
-                                    </ul>
-                                </div>
+                                       <!-- Image Grid Slots -->
+                            <div id="modalImageGrid" class="image-grid-slots mt-2 w-100" style="display: none;">
+                                <!-- Dynamic slots (max 4) -->
                             </div>
+
+                            <!-- Bottom Action & Counter Bar -->
+                            <!--
+                            <div class="w-100 mt-2 px-3 d-flex justify-content-center align-items-center" id="modalImageActionsContainer">
+                                <span class="small text-muted fw-bold" id="modalImageCountText">0/5 Images</span>
+                            </div>
+                            -->
+
+                            <!-- Hidden Upload Input -->
+                            <!--
+                            <input type="file" id="modalImageFileInput" accept="image/*" style="display: none;">
+                            -->
                         </div>
 
                         <!-- Right Column: Navigation Tabs System -->
@@ -198,42 +224,36 @@
                                             <div class="mb-3">
                                                 <h6 class="fw-bold d-flex align-items-center red-text-2">
                                                     <img src="{{ asset('img/property-details-icon.svg') }}">
-                                                    <span class="ms-2">Property Details
+                                                    <span class="ms-2">Property Details</span>
                                                 </h6>
                                                 <div class="detail-rows">
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Item Name:</span>
-                                                        <span id="detailItemName"
-                                                            class="fw-bold text-start black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Item Name:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailItemName"></div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Assignee:</span>
-                                                        <span id="detailAssignee"
-                                                            class="fw-bold text-start black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Assignee:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailAssignee"></div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Date Scanned:</span>
-                                                        <span id="detailDateScanned"
-                                                            class="fw-bold text-start black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Date Scanned:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailDateScanned"></div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Stock:</span>
-                                                        <span id="detailStock" class="fw-bold text-start black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Stock:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailStock"></div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Unit:</span>
-                                                        <span id="detailUnit" class="fw-bold text-start black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Unit:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailUnit"></div>
                                                     </div>
-                                                    <div
-                                                        class="d-flex justify-content-between py-2 border-bottom align-items-start">
-                                                        <span class="black-text text-nowrap">Specifications:</span>
-                                                        <span id="detailSpecifications"
-                                                            class="fw-bold text-start black-text text-break detail-specifications"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-start">
+                                                        <div class="col-4 p-0 black-text text-nowrap">Specifications:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text text-break" id="detailSpecifications"></div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Quantity:</span>
-                                                        <span id="detailQuantity"
-                                                            class="fw-bold text-start black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Quantity:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailQuantity"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -242,17 +262,16 @@
                                             <div>
                                                 <h6 class="fw-bold d-flex align-items-center red-text-2">
                                                     <img src="{{ asset('img/location-icon.svg') }}">
-                                                    <span class="ms-2">Location Information
+                                                    <span class="ms-2">Location Information</span>
                                                 </h6>
                                                 <div class="detail-rows">
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Building:</span>
-                                                        <span id="detailBuilding"
-                                                            class="fw-bold text-end black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Building:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailBuilding"></div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between py-2 border-bottom">
-                                                        <span class="black-text">Room:</span>
-                                                        <span id="detailRoom" class="fw-bold text-end black-text"></span>
+                                                    <div class="row m-0 py-2 border-bottom align-items-center">
+                                                        <div class="col-4 p-0 black-text">Room:</div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailRoom"></div>
                                                     </div>
                                                 </div>
                                             </div>
