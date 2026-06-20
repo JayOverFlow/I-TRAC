@@ -1,7 +1,6 @@
 // import jquery from 'jquery';
 // window.$ = window.jQuery = jquery;
 import '../css/app.css'; // This line makes Vite process the app.css file
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 

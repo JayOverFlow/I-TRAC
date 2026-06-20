@@ -28,7 +28,7 @@
         rel="stylesheet">
 
     <!-- Vite for GLOBAL MANDATORY css and js-->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/bootstrap/bootstrap.bundle.min.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- NOTE: FIX THIS AND SET THIS TO A GLOBAL IN VITE --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
