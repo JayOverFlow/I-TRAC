@@ -221,34 +221,34 @@ class DeliveryAttachmentController extends Controller
         $iar = Iar::findOrFail($iar_id);
 
         $validated = $request->validate([
-            'responsibility_center_code' => 'nullable|string|max:50',
-            'fund_cluster' => 'nullable|string|max:100',
+            'iar_center_code' => 'nullable|string|max:50',
+            'iar_fund_cluster' => 'nullable|string|max:100',
             'iar_no' => 'nullable|string|max:50',
             'iar_date' => 'nullable|date',
-            'invoice_no' => 'nullable|string|max:50',
-            'invoice_date' => 'nullable|date',
-            'inspection_officer' => 'nullable|string|max:255',
-            'date_received' => 'nullable|date',
+            'iar_invoice_no' => 'nullable|string|max:50',
+            'iar_invoice_date' => 'nullable|date',
+            'iar_inspected_by' => 'nullable|string|max:255',
+            'iar_date_accepted' => 'nullable|date',
             'items' => 'required|array|min:1',
             'items.*.iar_items_id' => 'nullable|integer',
-            'items.*.stock_no' => 'nullable|string|max:50',
-            'items.*.description' => 'nullable|string|max:255',
-            'items.*.unit' => 'nullable|string|max:20',
-            'items.*.quantity' => 'nullable|integer',
+            'items.*.iar_stock_no' => 'nullable|string|max:50',
+            'items.*.iar_items_descrip' => 'nullable|string|max:255',
+            'items.*.iar_unit' => 'nullable|string|max:20',
+            'items.*.iar_quantity' => 'nullable|integer',
         ]);
 
         DB::beginTransaction();
         try {
             // Update the IAR header fields
             $iar->update([
-                'iar_center_code' => $validated['responsibility_center_code'] ?? null,
-                'iar_fund_cluster' => $validated['fund_cluster'] ?? null,
+                'iar_center_code' => $validated['iar_center_code'] ?? null,
+                'iar_fund_cluster' => $validated['iar_fund_cluster'] ?? null,
                 'iar_no' => $validated['iar_no'] ?? null,
                 'iar_date' => $validated['iar_date'] ?? null,
-                'iar_invoice_no' => $validated['invoice_no'] ?? null,
-                'iar_invoice_date' => $validated['invoice_date'] ?? null,
-                'iar_inspected_by' => $validated['inspection_officer'] ?? null,
-                'iar_date_accepted' => $validated['date_received'] ?? null,
+                'iar_invoice_no' => $validated['iar_invoice_no'] ?? null,
+                'iar_invoice_date' => $validated['iar_invoice_date'] ?? null,
+                'iar_inspected_by' => $validated['iar_inspected_by'] ?? null,
+                'iar_date_accepted' => $validated['iar_date_accepted'] ?? null,
             ]);
 
             // Track incoming item IDs to identify which ones to delete
@@ -261,10 +261,10 @@ class DeliveryAttachmentController extends Controller
                         ->findOrFail($itemData['iar_items_id']);
 
                     $iarItem->update([
-                        'iar_stock_no' => $itemData['stock_no'] ?? null,
-                        'iar_items_descrip' => $itemData['description'] ?? null,
-                        'iar_unit' => $itemData['unit'] ?? null,
-                        'iar_quantity' => $itemData['quantity'] ?? null,
+                        'iar_stock_no' => $itemData['iar_stock_no'] ?? null,
+                        'iar_items_descrip' => $itemData['iar_items_descrip'] ?? null,
+                        'iar_unit' => $itemData['iar_unit'] ?? null,
+                        'iar_quantity' => $itemData['iar_quantity'] ?? null,
                     ]);
 
                     $incomingItemIds[] = $iarItem->iar_items_id;
@@ -272,10 +272,10 @@ class DeliveryAttachmentController extends Controller
                     // Create new item
                     $iarItem = IarItem::create([
                         'iar_id_fk' => $iar->iar_id,
-                        'iar_stock_no' => $itemData['stock_no'] ?? null,
-                        'iar_items_descrip' => $itemData['description'] ?? null,
-                        'iar_unit' => $itemData['unit'] ?? null,
-                        'iar_quantity' => $itemData['quantity'] ?? null,
+                        'iar_stock_no' => $itemData['iar_stock_no'] ?? null,
+                        'iar_items_descrip' => $itemData['iar_items_descrip'] ?? null,
+                        'iar_unit' => $itemData['iar_unit'] ?? null,
+                        'iar_quantity' => $itemData['iar_quantity'] ?? null,
                     ]);
 
                     $incomingItemIds[] = $iarItem->iar_items_id;
