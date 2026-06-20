@@ -415,22 +415,93 @@ class DeliveryAttachmentController extends Controller
         $firstItem = $ris->risItems->first();
         $isSemiExpendable = $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
 
-        $validated = $request->validate([
-            'ris_fund_cluster' => 'nullable|string|max:100',
-            'ris_no' => 'nullable|string|max:50',
-            'ris_center_code' => 'nullable|string|max:50',
-            'ris_received_by' => 'nullable|integer|exists:users,user_id',
-            'ris_received_date' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.ris_items_id' => 'nullable|integer',
-            'items.*.ris_stock_no' => 'nullable|string|max:50',
-            'items.*.ris_unit' => 'nullable|string|max:20',
-            'items.*.ris_items_descrip' => 'nullable|string|max:255',
-            'items.*.ris_quantity' => 'nullable|integer',
-            'items.*.ris_stock_available' => 'nullable|in:Yes,No',
-            'items.*.ris_issued_quantity' => 'nullable|integer',
-            'items.*.ris_issued_remarks' => 'nullable|string|max:255',
-        ]);
+        $intent = $request->input('export_pdf') === '1' ? 'Done' : 'Draft';
+
+        if ($intent === 'Done') {
+            $rules = [
+                'ris_fund_cluster' => 'required|string|min:1|max:50',
+                'ris_no' => 'required|string|min:2|max:50',
+                'ris_center_code' => 'required|string|min:1|max:50',
+                'ris_received_date' => 'required|date',
+                'ris_received_by' => 'required|integer|exists:users,user_id',
+                'items' => 'required|array|min:1',
+                'items.*.ris_items_id' => 'nullable|integer',
+                'items.*.ris_stock_no' => 'nullable|string|min:1|max:20',
+                'items.*.ris_unit' => 'required|string|min:5|max:20',
+                'items.*.ris_items_descrip' => 'required|string|min:2|max:50',
+                'items.*.ris_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.ris_stock_available' => 'nullable|in:Yes,No',
+                'items.*.ris_issued_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.ris_issued_remarks' => 'nullable|string|max:50',
+            ];
+        } else {
+            $rules = [
+                'ris_fund_cluster' => 'nullable|string|max:50',
+                'ris_no' => 'nullable|string|max:50',
+                'ris_center_code' => 'nullable|string|max:50',
+                'ris_received_date' => 'nullable|date',
+                'ris_received_by' => 'nullable|integer|exists:users,user_id',
+                'items' => 'nullable|array',
+                'items.*.ris_items_id' => 'nullable|integer',
+                'items.*.ris_stock_no' => 'nullable|string|max:20',
+                'items.*.ris_unit' => 'nullable|string|max:20',
+                'items.*.ris_items_descrip' => 'nullable|string|max:255',
+                'items.*.ris_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.ris_stock_available' => 'nullable|in:Yes,No',
+                'items.*.ris_issued_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.ris_issued_remarks' => 'nullable|string|max:255',
+            ];
+        }
+
+        $messages = [
+            'ris_fund_cluster.required' => 'Fund Cluster is required.',
+            'ris_fund_cluster.max' => 'Must not exceed 50 characters.',
+            'ris_no.required' => 'RIS Number is required.',
+            'ris_no.min' => 'Must be at least 2 characters.',
+            'ris_no.max' => 'Must not exceed 50 characters.',
+            'ris_center_code.required' => 'Responsibility Center Code is required.',
+            'ris_center_code.max' => 'Must not exceed 50 characters.',
+            'ris_received_date.required' => 'Date is required.',
+            'ris_received_date.date' => 'Must be a valid date.',
+            'ris_received_by.required' => 'Received by is required.',
+            'ris_received_by.exists' => 'Selected user is invalid.',
+            'items.required' => 'At least one item is required.',
+            'items.min' => 'At least one item is required.',
+            'items.*.ris_stock_no.max' => 'Must not exceed 20 characters.',
+            'items.*.ris_unit.required' => 'Unit is required.',
+            'items.*.ris_unit.min' => 'Must be at least 5 characters.',
+            'items.*.ris_unit.max' => 'Must not exceed 20 characters.',
+            'items.*.ris_items_descrip.required' => 'Description is required.',
+            'items.*.ris_items_descrip.min' => 'Must be at least 2 characters.',
+            'items.*.ris_items_descrip.max' => 'Must not exceed 50 characters.',
+            'items.*.ris_quantity.required' => 'Quantity is required.',
+            'items.*.ris_quantity.integer' => 'Must be an integer.',
+            'items.*.ris_quantity.min' => 'Must be at least 1.',
+            'items.*.ris_quantity.max' => 'Exceeds maximum limit.',
+            'items.*.ris_issued_quantity.required' => 'Issued Qty is required.',
+            'items.*.ris_issued_quantity.integer' => 'Must be an integer.',
+            'items.*.ris_issued_quantity.min' => 'Must be at least 1.',
+            'items.*.ris_issued_quantity.max' => 'Exceeds maximum limit.',
+            'items.*.ris_issued_remarks.max' => 'Must not exceed 50 characters.',
+        ];
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_document', 'doc-ris-' . $ris->ris_id);
+        }
+
+        $validated = $validator->validated();
 
         DB::beginTransaction();
         try {
@@ -449,41 +520,43 @@ class DeliveryAttachmentController extends Controller
 
             $incomingItemIds = [];
 
-            foreach ($validated['items'] as $itemData) {
-                if (!empty($itemData['ris_items_id'])) {
-                    // Update existing item
-                    $risItem = RisItem::where('ris_id_fk', $ris->ris_id)
-                        ->findOrFail($itemData['ris_items_id']);
+            if (isset($validated['items']) && is_array($validated['items'])) {
+                foreach ($validated['items'] as $itemData) {
+                    if (!empty($itemData['ris_items_id'])) {
+                        // Update existing item
+                        $risItem = RisItem::where('ris_id_fk', $ris->ris_id)
+                            ->findOrFail($itemData['ris_items_id']);
 
-                    $risItem->update([
-                        'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
-                        'ris_unit' => $itemData['ris_unit'] ?? null,
-                        'ris_items_descrip' => $itemData['ris_items_descrip'] ?? null,
-                        'ris_quantity' => $itemData['ris_quantity'] ?? null,
-                        'ris_stock_available' => $itemData['ris_stock_available'] ?? null,
-                        'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
-                        'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
-                    ]);
+                        $risItem->update([
+                            'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
+                            'ris_unit' => $itemData['ris_unit'] ?? null,
+                            'ris_items_descrip' => $itemData['ris_items_descrip'] ?? null,
+                            'ris_quantity' => $itemData['ris_quantity'] ?? null,
+                            'ris_stock_available' => $itemData['ris_stock_available'] ?? null,
+                            'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
+                            'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
+                        ]);
 
-                    $incomingItemIds[] = $risItem->ris_items_id;
-                } else {
-                    // Create new item
-                    $risItem = RisItem::create([
-                        'ris_id_fk' => $ris->ris_id,
-                        'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
-                        'ris_unit' => $itemData['ris_unit'] ?? null,
-                        'ris_items_descrip' => $itemData['ris_items_descrip'] ?? null,
-                        'ris_quantity' => $itemData['ris_quantity'] ?? null,
-                        'ris_stock_available' => $itemData['ris_stock_available'] ?? null,
-                        'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
-                        'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
-                    ]);
+                        $incomingItemIds[] = $risItem->ris_items_id;
+                    } else {
+                        // Create new item
+                        $risItem = RisItem::create([
+                            'ris_id_fk' => $ris->ris_id,
+                            'ris_stock_no' => $itemData['ris_stock_no'] ?? null,
+                            'ris_unit' => $itemData['ris_unit'] ?? null,
+                            'ris_items_descrip' => $itemData['ris_items_descrip'] ?? null,
+                            'ris_quantity' => $itemData['ris_quantity'] ?? null,
+                            'ris_stock_available' => $itemData['ris_stock_available'] ?? null,
+                            'ris_issued_quantity' => $itemData['ris_issued_quantity'] ?? null,
+                            'ris_issued_remarks' => $itemData['ris_issued_remarks'] ?? null,
+                        ]);
 
-                    $incomingItemIds[] = $risItem->ris_items_id;
+                        $incomingItemIds[] = $risItem->ris_items_id;
+                    }
+
+                    // Delete specs associated with this item to prevent duplicates
+                    $risItem->risSpecs()->delete();
                 }
-
-                // Delete specs associated with this item to prevent duplicates
-                $risItem->risSpecs()->delete();
             }
 
             // Delete items that were removed in the UI (not present in incoming request)
@@ -493,8 +566,21 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
+            $message = $intent === 'Done'
+                ? 'Requisition and Issue Slip saved and exported successfully.'
+                : 'Requisition and Issue Slip saved as draft.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'active_document' => 'doc-ris-' . $ris->ris_id,
+                    'download_pdf' => $request->input('export_pdf') === '1' ? route('export.ris.pdf', $ris->ris_id) : null
+                ]);
+            }
+
             $response = redirect()->back()
-                ->with('success', 'Requisition and Issue Slip saved successfully.')
+                ->with('success', $message)
                 ->with('active_document', 'doc-ris-' . $ris->ris_id);
 
             if ($request->input('export_pdf') === '1') {
@@ -504,6 +590,14 @@ class DeliveryAttachmentController extends Controller
             return $response;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save Requisition and Issue Slip: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Failed to save Requisition and Issue Slip: ' . $e->getMessage())
                 ->with('active_document', 'doc-ris-' . $ris->ris_id);
