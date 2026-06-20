@@ -315,6 +315,17 @@ body.dark .specification-body textarea:focus {
     margin-top: 1px;
 }
 
+/* Partial PO coverage – amber/orange */
+.stepper-circle.active-partial {
+    background-color: #f59e0b;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+
+.stepper-item.partial .stepper-label,
+.stepper-item.latest.partial .stepper-label {
+    color: #d97706;
+}
+
 /* DARK MODE OVERRIDES */
 body.dark .stepper-card {
     background-color: #1D2127 !important;
@@ -361,4 +372,14 @@ body.dark .stepper-item.pending .stepper-label {
 body.dark .stepper-prefix,
 body.dark .stepper-date {
     color: #6B7280;
+}
+
+body.dark .stepper-circle.active-partial {
+    background-color: #f59e0b;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+body.dark .stepper-item.partial .stepper-label,
+body.dark .stepper-item.latest.partial .stepper-label {
+    color: #fbbf24;
 }

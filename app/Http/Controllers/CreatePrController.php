@@ -70,6 +70,7 @@ class CreatePrController extends Controller
         if ($task->pr_id_fk) {
             $existingPr = PrParent::with([
                 'prItems.prSpecs',
+                'purchaseOrders.poItems',
                 'purchaseOrders.iarReports',
                 'purchaseOrders.risSlips',
                 'purchaseOrders.icsSlips',
@@ -98,6 +99,133 @@ class CreatePrController extends Controller
             null, 'Unassigned' => view('unassigned/pages/unassigned-create-pr', compact('task', 'groupedItems', 'pr', 'savedItemsGrouped', 'breadcrumbs', 'isDirectCreation')),
             default            => abort(403),
         };
+    }
+
+    /**
+     * Lightweight JSON endpoint polled by the frontend stepper every 30 s.
+     * Returns only the data needed to redraw the stepper; no HTML rendered.
+     */
+    public function stepperStatus($task_id)
+    {
+        $task = Task::with(['appItems'])->findOrFail($task_id);
+        $this->authorizeTask($task);
+
+        if (!$task->pr_id_fk) {
+            return response()->json(['steps' => [], 'latestActiveIndex' => -1]);
+        }
+
+        $pr = PrParent::with([
+            'prItems',
+            'purchaseOrders.poItems',
+            'purchaseOrders.iarReports',
+            'purchaseOrders.risSlips',
+            'purchaseOrders.icsSlips',
+            'purchaseOrders.parReceipts',
+        ])->find($task->pr_id_fk);
+
+        if (!$pr) {
+            return response()->json(['steps' => [], 'latestActiveIndex' => -1]);
+        }
+
+        // PO Coverage
+        $firstPo    = $pr->purchaseOrders->first();
+        $totalPrQty = $pr->prItems->sum('pr_items_quantity');
+        $totalPoQty = $pr->purchaseOrders->flatMap(fn($po) => $po->poItems)->sum('po_items_quantity');
+        $poCoverage = 'none';
+
+        if ($pr->purchaseOrders->isNotEmpty()) {
+            $poCoverage = ($totalPrQty > 0 && $totalPoQty >= $totalPrQty) ? 'full' : 'partial';
+        }
+
+        // Date helpers
+        $prReceivedDate = null;
+        if ($pr->retrieved_by) {
+            $prReceivedDate = $firstPo && $firstPo->created_at
+                ? \Carbon\Carbon::parse($firstPo->created_at)->format('d M, Y')
+                : ($pr->submitted_at ? \Carbon\Carbon::parse($pr->submitted_at)->addDay()->format('d M, Y') : null);
+        }
+
+        $poCreatedDate       = $firstPo ? \Carbon\Carbon::parse($firstPo->created_at ?? $firstPo->po_date)->format('d M, Y') : null;
+        $isDelivered         = false;
+        $deliveryDate        = null;
+        $isReceivedByEndUser = false;
+        $receivedDate        = null;
+
+        foreach ($pr->purchaseOrders as $po) {
+            if (!$isDelivered && $po->iarReports->isNotEmpty()) {
+                $isDelivered  = true;
+                $iar          = $po->iarReports->first();
+                $deliveryDate = $iar->created_at ? \Carbon\Carbon::parse($iar->created_at)->format('d M, Y') : null;
+            }
+            if (!$isReceivedByEndUser && ($po->risSlips->isNotEmpty() || $po->icsSlips->isNotEmpty() || $po->parReceipts->isNotEmpty())) {
+                $isReceivedByEndUser = true;
+                $doc          = $po->risSlips->first() ?? $po->icsSlips->first() ?? $po->parReceipts->first();
+                $receivedDate = $doc->created_at ? \Carbon\Carbon::parse($doc->created_at)->format('d M, Y') : null;
+            }
+        }
+
+        $steps = [
+            [
+                'prefix'  => 'Purchase Request:',
+                'label'   => 'CREATED',
+                'active'  => true,
+                'partial' => false,
+                'date'    => \Carbon\Carbon::parse($pr->created_at ?? $pr->pr_date)->format('d M, Y'),
+            ],
+            [
+                'prefix'  => 'Purchase Request:',
+                'label'   => 'SUBMITTED',
+                'active'  => (bool) ($pr->submitted_at && $pr->pr_status !== 'Draft'),
+                'partial' => false,
+                'date'    => ($pr->submitted_at && $pr->pr_status !== 'Draft')
+                    ? \Carbon\Carbon::parse($pr->submitted_at)->format('d M, Y')
+                    : null,
+            ],
+            [
+                'prefix'  => 'Purchase Request:',
+                'label'   => 'RECEIVED BY PROCUREMENT OFFICE',
+                'active'  => (bool) $pr->retrieved_by,
+                'partial' => false,
+                'date'    => $prReceivedDate,
+            ],
+            [
+                'prefix'  => 'Purchase Order:',
+                'label'   => match ($poCoverage) {
+                    'full'    => 'FULLY CREATED',
+                    'partial' => 'PARTIALLY CREATED',
+                    default   => 'CREATED',
+                },
+                'active'  => $poCoverage !== 'none',
+                'partial' => $poCoverage === 'partial',
+                'date'    => $poCreatedDate,
+            ],
+            [
+                'prefix'  => 'Purchase Request:',
+                'label'   => 'DELIVERED',
+                'active'  => $isDelivered,
+                'partial' => false,
+                'date'    => $deliveryDate,
+            ],
+            [
+                'prefix'  => 'Purchase Order:',
+                'label'   => 'RECEIVED ITEM BY END USER',
+                'active'  => $isReceivedByEndUser,
+                'partial' => false,
+                'date'    => $receivedDate,
+            ],
+        ];
+
+        $latestActiveIndex = -1;
+        foreach ($steps as $i => $step) {
+            if ($step['active']) {
+                $latestActiveIndex = $i;
+            }
+        }
+
+        return response()->json([
+            'steps'             => $steps,
+            'latestActiveIndex' => $latestActiveIndex,
+        ]);
     }
 
     /**
