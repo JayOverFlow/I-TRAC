@@ -205,7 +205,7 @@ body.dark .image-grid-slot.slot-empty {
     transition: background-color 0.2s ease;
 }
 
-.nav-link.w-100.text-center.fw-bold.py-2.border-0.active {
+body.dark .nav-link.w-100.text-center.fw-bold.py-2.border-0.active {
     color: #EF4444 !important;
 }
 
