@@ -1,53 +1,115 @@
+/* =============================================
+   AUTH PAGES — Login / Admin Login / Admin Register
+   Shared layout stylesheet
+   ============================================= */
+
+body.auth-page {
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Base (mobile-first) --- */
 .main-container {
     width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .row {
     width: 100%;
-    height: 100%;
     margin: 0;
 }
 
-.col-6 {
-    width: 50vw !important;
-    height: 100vh;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
+/* Hide the decorative cover on small screens */
 #cover {
-    overflow: hidden;
-    width: 50vw;
-    height: 100vh;
+    display: none;
 }
 
-.col-5 {
-    width: 50vw !important;
-    height: 100vh;
-    padding: 0;
+/* Form column: full-width on mobile, centred content */
+.col-12.col-md-6 {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.col-5 .mt-5,
-.col-5 .p-4,
-.col-5 form {
+/* Inner form/heading widths */
+.col-12.col-md-6 .mt-5,
+.col-12.col-md-6 .p-4,
+.col-12.col-md-6 form {
     width: 100%;
-    max-width: 700px;
-}
-
-.col-5 form {
-    width: 100%;
-    max-width: 700px;
+    max-width: 480px;
 }
 
 .black-text-h5 {
-    margin-bottom: 40px;
+    margin-bottom: 24px;
+}
+
+/* =============================================
+   TABLET  (≥ 768px)
+   Cover visible but narrower; form gets more room
+   ============================================= */
+@media (min-width: 768px) {
+    #cover {
+        display: block;
+        overflow: hidden;
+    }
+
+    .main-container {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .row {
+        height: 100%;
+        flex-wrap: nowrap;
+    }
+
+    /* Cover: 35 % */
+    #cover {
+        flex: 0 0 35%;
+        max-width: 35%;
+        height: 100vh;
+    }
+
+    /* Form: 65 % */
+    .col-12.col-md-6 {
+        height: 100vh;
+        min-height: unset;
+        overflow-y: auto;
+    }
+
+    .col-12.col-md-6 .mt-5,
+    .col-12.col-md-6 .p-4,
+    .col-12.col-md-6 form {
+        max-width: 540px;
+    }
+}
+
+/* =============================================
+   DESKTOP  (≥ 992px)
+   Classic 50 / 50 split
+   ============================================= */
+@media (min-width: 992px) {
+    #cover {
+        flex: 0 0 50%;
+        max-width: 50%;
+        width: 50vw;
+        height: 100vh;
+    }
+
+    .col-12.col-md-6 {
+        height: 100vh;
+    }
+
+    .col-12.col-md-6 .mt-5,
+    .col-12.col-md-6 .p-4,
+    .col-12.col-md-6 form {
+        max-width: 700px;
+    }
+
+    .black-text-h5 {
+        margin-bottom: 40px;
+    }
 }

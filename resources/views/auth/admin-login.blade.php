@@ -26,13 +26,13 @@
     <link rel="stylesheet" href="{{ asset('css/auth-admin/admin-register.css') }}">
 </head>
 
-<body class="layout-boxed">
-    <div class="main-container vh-100" id="container">
-        <div class="row vh-100 g-0">
-            <div id="cover" class="col-6 p-0">
+<body class="layout-boxed auth-page">
+    <div class="main-container" id="container">
+        <div class="row g-0 align-items-stretch">
+            <div id="cover" class="col-md-6 p-0">
                 <img src="{{ asset('img/Background.svg') }}" alt="Background" class="w-100 h-100" style="object-fit: cover;">
             </div>
-            <div class="col-5 px-2 py-5">
+            <div class="col-12 col-md-6 px-2 py-5">
 
                 <div class="p-4">
                     <div class="mt-5">
