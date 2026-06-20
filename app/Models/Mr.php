@@ -21,7 +21,6 @@ class Mr extends Model
         'stock',
         'building',
         'room_no',
-        'item_image',
         'is_assigned',
         'date_scanned',
         'category',
@@ -35,5 +34,10 @@ class Mr extends Model
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'assigned_to', 'user_id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(MrItemImage::class, 'mr_id', 'mr_id');
     }
 }

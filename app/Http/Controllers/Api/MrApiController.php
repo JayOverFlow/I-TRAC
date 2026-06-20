@@ -96,7 +96,7 @@ class MrApiController extends Controller
 
         $items = Mr::where('assigned_to', $user->user_id)
             ->where('is_assigned', 1)
-            ->with('poItem')
+            ->with(['poItem', 'images'])
             ->get()
             ->map(function ($item) {
                 $dbCategory = $item->poItem ? $item->poItem->po_items_category : null;
@@ -109,6 +109,8 @@ class MrApiController extends Controller
                     $category = 'Equipment';
                 }
 
+                $paths = $item->images->pluck('image_path')->toArray();
+
                 return [
                     'mr_id' => $item->mr_id,
                     'item_name' => $item->item_name,
@@ -119,7 +121,7 @@ class MrApiController extends Controller
                     'location' => ($item->building && $item->room_no)
                         ? "{$item->building} - {$item->room_no}"
                         : ($item->building ?? $item->room_no ?? 'Unknown Location'),
-                    'item_image' => $item->item_image,
+                    'item_image' => empty($paths) ? null : json_encode($paths),
                     'date_scanned' => $item->date_scanned,
                     'category' => $category,
                 ];
@@ -144,37 +146,60 @@ class MrApiController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Item not found in database.'], 404);
             }
 
-            // 1. Process Existing Images (reordering)
-            $finalImages = [];
-            $existing = $request->input('existing_images');
-            if ($existing) {
-                $finalImages = is_array($existing) ? $existing : [$existing];
+            // 1. Process Existing Images (delete those that are not in the existing_images request list)
+            $existingPaths = $request->input('existing_images', []);
+            if (!is_array($existingPaths)) {
+                $existingPaths = [$existingPaths];
             }
+
+            // Find all current images in the database for this item
+            $currentImages = \App\Models\MrItemImage::where('mr_id', $item->mr_id)->get();
+
+            foreach ($currentImages as $dbImg) {
+                // If a database image is not in the request's existing images list, delete it
+                if (!in_array($dbImg->image_path, $existingPaths)) {
+                    $fullPath = public_path($dbImg->image_path);
+                    if (file_exists($fullPath)) {
+                        @unlink($fullPath);
+                    }
+                    $dbImg->delete();
+                }
+            }
+
+            // Get count of remaining images
+            $currentCount = \App\Models\MrItemImage::where('mr_id', $item->mr_id)->count();
 
             // 2. Process ALL New Uploads in one go
             if ($request->hasFile('item_image')) {
                 $uploaded = $request->file('item_image');
-
-                // Handle both single file and array of files
                 $files = is_array($uploaded) ? $uploaded : [$uploaded];
 
                 foreach ($files as $file) {
                     if ($file->isValid()) {
+                        if ($currentCount >= 5) {
+                            break; // Stop uploading if 5-image limit is reached
+                        }
+
                         $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
                         $file->move(public_path('img/items'), $filename);
-                        $finalImages[] = 'img/items/' . $filename;
+
+                        \App\Models\MrItemImage::create([
+                            'mr_id' => $item->mr_id,
+                            'image_path' => 'img/items/' . $filename
+                        ]);
+
+                        $currentCount++;
                     }
                 }
             }
 
-            // 3. Save definitive state
-            $item->item_image = empty($finalImages) ? null : json_encode(array_values($finalImages));
-            $item->save();
+            // Retrieve updated list of image paths
+            $updatedImages = \App\Models\MrItemImage::where('mr_id', $item->mr_id)->pluck('image_path')->toArray();
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Images synced successfully!',
-                'all_images' => $item->item_image
+                'all_images' => json_encode($updatedImages)
             ]);
 
         } catch (\Exception $e) {
@@ -196,35 +221,24 @@ class MrApiController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Item not found.'], 404);
             }
 
-            if (!$item->item_image) {
-                return response()->json(['status' => 'error', 'message' => 'No images found for this item.'], 400);
-            }
+            $imageRecord = \App\Models\MrItemImage::where('mr_id', $item->mr_id)
+                ->where('image_path', $request->image_path)
+                ->first();
 
-            $existingImages = [];
-            $decoded = json_decode($item->item_image, true);
-            if (is_array($decoded)) {
-                $existingImages = $decoded;
-            } else {
-                $existingImages = [$item->item_image];
-            }
-
-            $targetPath = $request->image_path;
-
-            if (($key = array_search($targetPath, $existingImages)) !== false) {
-                unset($existingImages[$key]);
-
-                $fullPath = public_path($targetPath);
+            if ($imageRecord) {
+                $fullPath = public_path($imageRecord->image_path);
                 if (File::exists($fullPath)) {
                     File::delete($fullPath);
                 }
 
-                $item->item_image = empty($existingImages) ? null : json_encode(array_values($existingImages));
-                $item->save();
+                $imageRecord->delete();
+
+                $updatedImages = \App\Models\MrItemImage::where('mr_id', $item->mr_id)->pluck('image_path')->toArray();
 
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Image deleted successfully.',
-                    'all_images' => $item->item_image
+                    'all_images' => json_encode($updatedImages)
                 ]);
             }
 

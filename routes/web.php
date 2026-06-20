@@ -95,6 +95,8 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::get('/inventory', 'showInventory')->name('show.inventory');
         // Route to generate and download the QR code item label
         Route::get('/inventory/generate-label', 'generateLabel')->name('inventory.generate-label');
+        // Route::post('/inventory/upload-image', 'uploadImage')->name('inventory.upload-image');
+        // Route::post('/inventory/delete-image', 'deleteImage')->name('inventory.delete-image');
         // Route::post('/po-review/{po_id}/generate-attachments', 'generateAttachments')->name('generate.attachments');
     });
 });
