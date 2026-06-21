@@ -1,0 +1,122 @@
+{
+  "form_name": "iar_form",
+  "table_identifier": "items",
+  "fields":{
+    "iar_center_code": {
+      "type": "text",
+      "label": "Responsibility Center Code:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 50
+      }
+    },
+    "iar_fund_cluster": {
+      "type": "text",
+      "label": "Fund Cluster:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 50
+      }
+    },
+    "iar_no": {
+      "type": "text",
+      "label": "IAR No.:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    "iar_date": {
+      "type": "text",
+      "label": "Date:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    },
+    "iar_invoice_no": {
+      "type": "text",
+      "label": "Invoice No.:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    "iar_invoice_date": {
+      "type": "text",
+      "label": "Date:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    },
+    "iar_inspected_by": {
+      "type": "text",
+      "label": "Inspection Officer:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "iar_date_accepted": {
+      "type": "text",
+      "label": "Date Received:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    }
+  },
+  "columns": {
+    "items[{{ $index }}][iar_items_id]": {
+      "type": "text",
+      "header_text": "Stock/Property No.",
+      "rules": {
+        "required": false,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][iar_items_descrip]": {
+      "type": "text",
+      "header_text": "Description",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "items[{{ $index }}][iar_unit]": {
+      "type": "text",
+      "header_text": "Unit",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 2,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][iar_quantity]": {
+      "type": "number",
+      "header_text": "Quantity",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    }
+  }
+}

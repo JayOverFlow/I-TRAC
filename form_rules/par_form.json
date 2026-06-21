@@ -1,0 +1,112 @@
+{
+  "form_name": "par_form",
+  "table_identifier": "items",
+  "fields":{
+    "par_fund_cluster": {
+      "type": "text",
+      "label": "Fund Cluster:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 50
+      }
+    },
+    "par_no": {
+      "type": "text",
+      "label": "PAR No:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    "par_code": {
+      "type": "text",
+      "label": "Code:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    "par_received_by_date": {
+      "type": "text",
+      "label": "Date:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    },
+    "par_issued_by_date": {
+      "type": "text",
+      "label": "Date:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    }
+  },
+  "columns": {
+    "items[{{ $index }}][par_quantity]": {
+      "type": "number",
+      "header_text": "Qty.",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    },
+    "items[{{ $index }}][par_unit]": {
+      "type": "text",
+      "header_text": "Unit",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][par_items_descrip]": {
+      "type": "text",
+      "header_text": "Description",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "items[{{ $index }}][par_property_no]": {
+      "type": "text",
+      "header_text": "Property No.",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][par_date_acquired]": {
+      "type": "text",
+      "header_text": "Date Required",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    },
+    "items[{{ $index }}][par_amount]": {
+      "type": "numeric",
+      "header_text": "Amount",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    }
+  }
+}

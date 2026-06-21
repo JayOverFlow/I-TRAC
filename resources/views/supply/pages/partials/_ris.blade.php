@@ -56,10 +56,12 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
                             <input type="text" name="ris_fund_cluster" value="{{ $ris->ris_fund_cluster }}" class="form-control form-control-sm ms-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_fund_cluster"></span>
                         </div>
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">RIS Number:</h6>
                             <input type="text" name="ris_no" value="{{ $ris->ris_no }}" class="form-control form-control-sm ms-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_no"></span>
                         </div>
                     </div>
 
@@ -68,6 +70,7 @@
                             <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
                             <input type="text" name="ris_center_code" value="{{ $ris->ris_center_code }}"
                                 class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_center_code"></span>
                         </div>
                     </div>
                 </div>
@@ -83,6 +86,7 @@
                                 <h6 class="mb-3 black-text fw-bold">Received by:</h6>
                                 <h6 class="ms-2 mb-2">{{ $ris->receiver ? $ris->receiver->user_fullname : 'No user assigned' }}</h6>
                                 <input type="hidden" name="ris_received_by" value="{{ $ris->receiver ? $ris->receiver->user_id : '' }}">
+                                <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_received_by"></span>
                             @else
                                 <h6 class="mb-2 black-text fw-bold">Received by:</h6>
                                 <select class="form-select form-select-sm ms-2 w-75" name="ris_received_by">
@@ -97,6 +101,7 @@
                                         <option value="">No department assigned</option>
                                     @endif
                                 </select>
+                                <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_received_by"></span>
                             @endif
                         </div>
                     </div>
@@ -105,6 +110,7 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" name="ris_received_date" value="{{ $ris->ris_received_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_received_date"></span>
                         </div>
                     </div>
                 </div>
@@ -137,21 +143,25 @@
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ris_stock_no]"
                                         value="{{ $item->ris_stock_no }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][ris_stock_no]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ris_unit]"
                                         value="{{ $item->ris_unit }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ris_unit]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm"
                                         name="items[{{ $index }}][ris_items_descrip]"
                                         value="{{ implode(', ', array_filter(array_merge([$item->ris_items_descrip], $item->risSpecs->pluck('ris_spec_description')->toArray()))) }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][ris_items_descrip]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ris_quantity]"
                                         value="{{ $item->ris_quantity }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ris_quantity]"></span>
                                 </td>
                                 <td class="px-1 text-center">
                                     <div class="form-check form-check-danger form-check-inline m-0">
@@ -169,11 +179,13 @@
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ris_issued_quantity]"
                                         value="{{ $item->ris_issued_quantity }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ris_issued_quantity]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ris_issued_remarks]"
                                         value="{{ $item->ris_issued_remarks }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ris_issued_remarks]"></span>
                                 </td>
                                 <td class="p-0">
                                     <button type="button"

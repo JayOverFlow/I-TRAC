@@ -1,0 +1,106 @@
+{
+  "form_name": "rspi_form",
+  "table_identifier": "items",
+  "fields":{
+    "rsmi_fund_cluster": {
+      "type": "text",
+      "label": "Fund Cluster:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 50
+      }
+    },
+    "rspi_serial_no": {
+      "type": "text",
+      "label": "Serial No.:",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 2,
+        "max_length": 50
+      }
+    },
+    "rspi_date": {
+      "type": "text",
+      "label": "Date:",
+      "rules": {
+        "required": true,
+        "date": true
+      }
+    }
+  },
+  "columns": {
+    "items[{{ $index }}][rspi_ics_no]": {
+      "type": "text",
+      "header_text": "ICS No.",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][rspi_center_code]": {
+      "type": "text",
+      "header_text": "Responsibility Center Code",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][rspi_property_no]": {
+      "type": "text",
+      "header_text": "Semi-expendable Property No.",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][rspi_items_descrip]": {
+      "type": "text",
+      "header_text": "Item Description",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 5,
+        "max_length": 50
+      }
+    },
+    "items[{{ $index }}][rspi_unit]": {
+      "type": "text",
+      "header_text": "Unit",
+      "rules": {
+        "required": true,
+        "string": true,
+        "min_length": 1,
+        "max_length": 20
+      }
+    },
+    "items[{{ $index }}][rspi_quantity]": {
+      "type": "number",
+      "header_text": "Qty. Issued",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    },
+    "items[{{ $index }}][rspi_unit_cost]": {
+      "type": "number",
+      "header_text": "Unit Cost",
+      "rules": {
+        "required": true,
+        "integer": true,
+        "min": 1,
+        "max": 9999999
+      }
+    }
+  }
+}

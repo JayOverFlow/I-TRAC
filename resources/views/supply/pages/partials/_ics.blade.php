@@ -23,6 +23,7 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
                             <input type="text" name="ics_fund_cluster" value="{{ $ics->ics_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_fund_cluster"></span>
                         </div>
 
                         <div class="row align-items-center mb-5">
@@ -39,10 +40,12 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">ICS No.:</h6>
                             <input type="text" name="ics_no" value="{{ $ics->ics_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_no"></span>
                         </div>
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Code No:</h6>
                             <input type="text" name="ics_code_no" value="{{ $ics->ics_code_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_code_no"></span>
                         </div>
                     </div>
                 </div>
@@ -69,6 +72,7 @@
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="ics_received_from_date" value="{{ $ics->ics_received_from_date }}"
                                 placeholder="Select Date..">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_received_from_date"></span>
                         </div>
                     </div>
 
@@ -93,6 +97,7 @@
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="ics_received_by_date" value="{{ $ics->ics_received_by_date }}"
                                 placeholder="Select Date..">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_received_by_date"></span>
                         </div>
                     </div>
                 </div>
@@ -118,15 +123,18 @@
                                     <input type="hidden" name="items[{{ $index }}][ics_items_id]" value="{{ $item->ics_items_id }}">
                                     <input type="text" class="form-control form-control-sm text-center qty-input"
                                         name="items[{{ $index }}][ics_quantity]" value="{{ $item->ics_quantity }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_quantity]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ics_unit]" value="{{ $item->ics_unit }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_unit]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center unit-cost-input"
                                         name="items[{{ $index }}][ics_unit_cost]" value="{{ $item->ics_unit_cost }}" data-field="unit_cost"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_unit_cost]"></span>
                                 </td>
                                 <td class="px-1 text-center">
                                     <span class="total-cost-display fw-bold" data-amount="{{ $item->ics_total_cost }}">₱{{ number_format($item->ics_total_cost, 2) }}</span>
@@ -134,14 +142,17 @@
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm"
                                         name="items[{{ $index }}][ics_items_descrip]" value="{{ implode(', ', array_filter(array_merge([$item->ics_items_descrip], $item->icsSpecs->pluck('ics_spec_description')->toArray()))) }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][ics_items_descrip]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ics_inventory_item_no]" value="{{ $item->ics_inventory_item_no }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_inventory_item_no]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][ics_estimated_useful_life]" value="{{ $item->ics_estimated_useful_life }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_estimated_useful_life]"></span>
                                 </td>
                                 <td class="p-0">
                                     <button type="button"

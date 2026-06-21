@@ -34,7 +34,7 @@ $(document).ready(function() {
                 var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
                 input.attr('name', newName);
             }
-            input.val('');
+            input.val('').removeClass('is-invalid');
 
             // Clean up flatpickr classes/attributes if any, and re-initialize
             if (input.hasClass('flatpickr')) {
@@ -49,8 +49,19 @@ $(document).ready(function() {
             }
         });
 
+        // Update error span targets inside the cloned row
+        newRow.find('.field-error').each(function() {
+            var span = $(this);
+            var forAttr = span.attr('data-valmsg-for');
+            if (forAttr) {
+                var newForAttr = forAttr.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+                span.attr('data-valmsg-for', newForAttr);
+            }
+            span.text('').addClass('d-none');
+        });
+
         // Reset the static amount display
-        newRow.find('.total-cost-display').text('₱ 0.00').attr('data-amount', '0');
+        newRow.find('.total-cost-display').text('₱0.00').attr('data-amount', '0');
 
         // Append the new row to the table body
         tbody.append(newRow);
@@ -100,6 +111,128 @@ $(document).ready(function() {
         // Format to 2 decimal places with commas
         var formattedTotal = total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        row.find('.total-cost-display').text('₱ ' + formattedTotal).attr('data-amount', total.toFixed(2));
+        row.find('.total-cost-display').text('₱' + formattedTotal).attr('data-amount', total.toFixed(2));
+    });
+
+    // ─── 5. Validation Helpers ────────────────────────────────────────────────
+    function convertLaravelKeyToInputName(key) {
+        // Convert e.g., "items.0.ics_quantity" to "items[0][ics_quantity]"
+        if (key.includes('.')) {
+            var parts = key.split('.');
+            var name = parts[0];
+            for (var i = 1; i < parts.length; i++) {
+                name += '[' + parts[i] + ']';
+            }
+            return name;
+        }
+        return key;
+    }
+
+    function showToast(message, type) {
+        var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+        var toast = $(
+            '<div class="toast align-items-center text-white ' + bgClass + ' border-0 shadow-lg" role="alert">' +
+                '<div class="d-flex">' +
+                    '<div class="toast-body">' + message + '</div>' +
+                    '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+                '</div>' +
+            '</div>'
+        );
+        $('.toast-container').append(toast);
+        var bsToast = new bootstrap.Toast(toast[0], { delay: 5000 });
+        bsToast.show();
+        toast.on('hidden.bs.toast', function() { toast.remove(); });
+    }
+
+    function clearIcsErrors(form) {
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.field-error').text('').addClass('d-none');
+    }
+
+    function showIcsErrors(form, errors) {
+        $.each(errors, function(key, messages) {
+            var inputName = convertLaravelKeyToInputName(key);
+            var inputElement = form.find('[name="' + inputName + '"]');
+            if (inputElement.length) {
+                inputElement.addClass('is-invalid');
+                var errorSpan = inputElement.siblings('.field-error');
+                if (errorSpan.length) {
+                    errorSpan.text(messages[0]).removeClass('d-none');
+                }
+            }
+        });
+
+        // Scroll to the first invalid input
+        var firstInvalid = form.find('.is-invalid').first();
+        if (firstInvalid.length) {
+            $('html, body').animate({
+                scrollTop: firstInvalid.offset().top - 150
+            }, 500);
+        }
+    }
+
+    // ─── 6. AJAX Form Submission Handler ──────────────────────────────────────
+    $(document).on('submit', '.ics-container form', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var formData = new FormData(form[0]);
+        var submitBtn = form.find('button[type="submit"]');
+        var exportBtn = form.find('a.btn-dark-red');
+
+        // Disable submission triggers
+        submitBtn.prop('disabled', true);
+        exportBtn.addClass('disabled');
+
+        // Show general form loader overlay
+        $('#form-loader-overlay').css('display', 'flex');
+
+        // Clear previous error messages
+        clearIcsErrors(form);
+
+        fetch(form.attr('action'), {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': form.find('input[name="_token"]').val()
+            },
+            body: formData
+        })
+        .then(function(response) {
+            return response.json().then(function(data) {
+                return { status: response.status, ok: response.ok, data: data };
+            });
+        })
+        .then(function(result) {
+            if (result.ok && result.data.success) {
+                // Success: Toast feedback and trigger pdf download if requested
+                showToast(result.data.message, 'success');
+                if (result.data.download_pdf) {
+                    setTimeout(function() {
+                        window.location.href = result.data.download_pdf;
+                    }, 1000);
+                }
+                return;
+            }
+
+            if (result.status === 422 && result.data.errors) {
+                // Validation error: render error feedback inline and show error toast
+                showIcsErrors(form, result.data.errors);
+                showToast('Please check and correct the highlighted fields.', 'error');
+                return;
+            }
+
+            // General/server error
+            showToast(result.data.message || 'An unexpected error occurred while saving.', 'error');
+        })
+        .catch(function() {
+            showToast('Could not connect to the server. Please check your network connection.', 'error');
+        })
+        .finally(function() {
+            // Re-enable triggers and hide overlay loader
+            submitBtn.prop('disabled', false);
+            exportBtn.removeClass('disabled');
+            $('#form-loader-overlay').hide();
+        });
     });
 });
