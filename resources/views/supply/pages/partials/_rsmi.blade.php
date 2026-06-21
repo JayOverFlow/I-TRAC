@@ -23,6 +23,7 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
                             <input type="text" name="rsmi_fund_cluster" value="{{ $rsmi->rsmi_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="rsmi_fund_cluster"></span>
                         </div>
 
                         <div class="row align-items-center mb-5">
@@ -39,11 +40,13 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Serial No.:</h6>
                             <input type="text" name="rsmi_serial_no" value="{{ $rsmi->rsmi_serial_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="rsmi_serial_no"></span>
                         </div>
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="rsmi_date" value="{{ $rsmi->rsmi_date }}"
                                 placeholder="Select Date..">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="rsmi_date"></span>
                         </div>
                     </div>
                 </div>
@@ -94,30 +97,37 @@
                                     <input type="hidden" name="items[{{ $index }}][rsmi_items_id]" value="{{ $item->rsmi_items_id }}">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][rsmi_ris_no]" value="{{ $item->rsmi_ris_no }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][rsmi_ris_no]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][rsmi_center_code]" value="{{ $item->rsmi_center_code }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][rsmi_center_code]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][rsmi_stock_no]" value="{{ $item->rsmi_stock_no }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][rsmi_stock_no]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm"
                                         name="items[{{ $index }}][rsmi_items_descrip]" value="{{ implode(', ', array_filter(array_merge([$item->rsmi_items_descrip], $item->rsmiSpecs->pluck('rsmi_spec_description')->toArray()))) }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][rsmi_items_descrip]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][rsmi_unit]" value="{{ $item->rsmi_unit }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][rsmi_unit]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center qty-input"
                                         name="items[{{ $index }}][rsmi_quantity]" value="{{ $item->rsmi_quantity }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][rsmi_quantity]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center unit-cost-input"
                                         name="items[{{ $index }}][rsmi_unit_cost]" value="{{ $item->rsmi_unit_cost }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][rsmi_unit_cost]"></span>
                                 </td>
                                 <td class="px-1 text-center">
                                     <span class="total-cost-display fw-bold" data-amount="{{ $item->rsmi_amount }}">₱{{ number_format($item->rsmi_amount, 2) }}</span>

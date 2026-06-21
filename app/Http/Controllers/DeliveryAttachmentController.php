@@ -608,67 +608,141 @@ class DeliveryAttachmentController extends Controller
     {
         $rsmi = Rsmi::findOrFail($rsmi_id);
 
-        $validated = $request->validate([
-            'rsmi_fund_cluster' => 'nullable|string|max:100',
-            'rsmi_serial_no' => 'nullable|string|max:50',
-            'rsmi_date' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.rsmi_items_id' => 'nullable|integer',
-            'items.*.rsmi_ris_no' => 'nullable|string|max:50',
-            'items.*.rsmi_center_code' => 'nullable|string|max:50',
-            'items.*.rsmi_stock_no' => 'nullable|string|max:50',
-            'items.*.rsmi_items_descrip' => 'nullable|string|max:255',
-            'items.*.rsmi_unit' => 'nullable|string|max:20',
-            'items.*.rsmi_quantity' => 'nullable|integer',
-            'items.*.rsmi_unit_cost' => 'nullable|numeric',
-        ]);
+        $intent = $request->input('export_pdf') === '1' ? 'Done' : 'Draft';
+
+        if ($intent === 'Done') {
+            $rules = [
+                'rsmi_fund_cluster' => 'required|string|min:1|max:50',
+                'rsmi_serial_no' => 'required|string|min:2|max:50',
+                'rsmi_date' => 'required|date',
+                'items' => 'required|array|min:1',
+                'items.*.rsmi_items_id' => 'nullable|integer',
+                'items.*.rsmi_ris_no' => 'required|string|min:1|max:20',
+                'items.*.rsmi_center_code' => 'required|string|min:1|max:20',
+                'items.*.rsmi_stock_no' => 'nullable|string|min:1|max:20',
+                'items.*.rsmi_items_descrip' => 'required|string|min:5|max:50',
+                'items.*.rsmi_unit' => 'required|string|min:1|max:20',
+                'items.*.rsmi_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.rsmi_unit_cost' => 'required|numeric|min:1|max:9999999',
+            ];
+        } else {
+            $rules = [
+                'rsmi_fund_cluster' => 'nullable|string|min:1|max:50',
+                'rsmi_serial_no' => 'nullable|string|min:2|max:50',
+                'rsmi_date' => 'nullable|date',
+                'items' => 'nullable|array',
+                'items.*.rsmi_items_id' => 'nullable|integer',
+                'items.*.rsmi_ris_no' => 'nullable|string|min:1|max:20',
+                'items.*.rsmi_center_code' => 'nullable|string|min:1|max:20',
+                'items.*.rsmi_stock_no' => 'nullable|string|min:1|max:20',
+                'items.*.rsmi_items_descrip' => 'nullable|string|min:5|max:50',
+                'items.*.rsmi_unit' => 'nullable|string|min:1|max:20',
+                'items.*.rsmi_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.rsmi_unit_cost' => 'nullable|numeric|min:1|max:9999999',
+            ];
+        }
+
+        $messages = [
+            'rsmi_fund_cluster.required' => 'Fund cluster is required.',
+            'rsmi_fund_cluster.min' => 'Must be at least 1 character.',
+            'rsmi_fund_cluster.max' => 'Must not exceed 50 characters.',
+            'rsmi_serial_no.required' => 'Serial number is required.',
+            'rsmi_serial_no.min' => 'Must be at least 2 characters.',
+            'rsmi_serial_no.max' => 'Must not exceed 50 characters.',
+            'rsmi_date.required' => 'Date is required.',
+            'rsmi_date.date' => 'Must be a valid date.',
+            'items.required' => 'At least one item is required.',
+            'items.min' => 'At least one item is required.',
+            'items.*.rsmi_ris_no.required' => 'RIS No. is required.',
+            'items.*.rsmi_ris_no.min' => 'Must be at least 1 character.',
+            'items.*.rsmi_ris_no.max' => 'Must not exceed 20 characters.',
+            'items.*.rsmi_center_code.required' => 'Center code is required.',
+            'items.*.rsmi_center_code.min' => 'Must be at least 1 character.',
+            'items.*.rsmi_center_code.max' => 'Must not exceed 20 characters.',
+            'items.*.rsmi_stock_no.min' => 'Must be at least 1 character.',
+            'items.*.rsmi_stock_no.max' => 'Must not exceed 20 characters.',
+            'items.*.rsmi_items_descrip.required' => 'Description is required.',
+            'items.*.rsmi_items_descrip.min' => 'Must be at least 5 characters.',
+            'items.*.rsmi_items_descrip.max' => 'Must not exceed 50 characters.',
+            'items.*.rsmi_unit.required' => 'Unit is required.',
+            'items.*.rsmi_unit.min' => 'Must be at least 1 character.',
+            'items.*.rsmi_unit.max' => 'Must not exceed 20 characters.',
+            'items.*.rsmi_quantity.required' => 'Quantity is required.',
+            'items.*.rsmi_quantity.integer' => 'Must be an integer.',
+            'items.*.rsmi_quantity.min' => 'Must be at least 1.',
+            'items.*.rsmi_quantity.max' => 'Exceeds maximum limit.',
+            'items.*.rsmi_unit_cost.required' => 'Unit cost is required.',
+            'items.*.rsmi_unit_cost.numeric' => 'Must be a number.',
+            'items.*.rsmi_unit_cost.min' => 'Must be at least 1.',
+            'items.*.rsmi_unit_cost.max' => 'Exceeds maximum limit.',
+        ];
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
+        }
+
+        $validated = $validator->validated();
 
         DB::beginTransaction();
         try {
             $rsmiTotal = 0;
             $incomingItemIds = [];
 
-            foreach ($validated['items'] as $itemData) {
-                $qty = isset($itemData['rsmi_quantity']) ? intval($itemData['rsmi_quantity']) : 0;
-                $unitCost = isset($itemData['rsmi_unit_cost']) ? floatval($itemData['rsmi_unit_cost']) : 0;
-                $amount = $qty * $unitCost;
-                $rsmiTotal += $amount;
+            if (isset($validated['items']) && is_array($validated['items'])) {
+                foreach ($validated['items'] as $itemData) {
+                    $qty = isset($itemData['rsmi_quantity']) ? intval($itemData['rsmi_quantity']) : 0;
+                    $unitCost = isset($itemData['rsmi_unit_cost']) ? floatval($itemData['rsmi_unit_cost']) : 0.0;
+                    $amount = $qty * $unitCost;
+                    $rsmiTotal += $amount;
 
-                if (!empty($itemData['rsmi_items_id'])) {
-                    // Update existing item
-                    $rsmiItem = RsmiItem::where('rsmi_id_fk', $rsmi->rsmi_id)
-                        ->findOrFail($itemData['rsmi_items_id']);
+                    if (!empty($itemData['rsmi_items_id'])) {
+                        // Update existing item
+                        $rsmiItem = RsmiItem::where('rsmi_id_fk', $rsmi->rsmi_id)
+                            ->findOrFail($itemData['rsmi_items_id']);
 
-                    $rsmiItem->update([
-                        'rsmi_ris_no' => $itemData['rsmi_ris_no'] ?? null,
-                        'rsmi_center_code' => $itemData['rsmi_center_code'] ?? null,
-                        'rsmi_stock_no' => $itemData['rsmi_stock_no'] ?? null,
-                        'rsmi_items_descrip' => $itemData['rsmi_items_descrip'] ?? null,
-                        'rsmi_unit' => $itemData['rsmi_unit'] ?? null,
-                        'rsmi_quantity' => $qty,
-                        'rsmi_unit_cost' => $unitCost,
-                        'rsmi_amount' => $amount,
-                    ]);
+                        $rsmiItem->update([
+                            'rsmi_ris_no' => $itemData['rsmi_ris_no'] ?? null,
+                            'rsmi_center_code' => $itemData['rsmi_center_code'] ?? null,
+                            'rsmi_stock_no' => $itemData['rsmi_stock_no'] ?? null,
+                            'rsmi_items_descrip' => $itemData['rsmi_items_descrip'] ?? null,
+                            'rsmi_unit' => $itemData['rsmi_unit'] ?? null,
+                            'rsmi_quantity' => $qty,
+                            'rsmi_unit_cost' => $unitCost,
+                            'rsmi_amount' => $amount,
+                        ]);
 
-                    $incomingItemIds[] = $rsmiItem->rsmi_items_id;
-                } else {
-                    // Create new item
-                    $rsmiItem = RsmiItem::create([
-                        'rsmi_id_fk' => $rsmi->rsmi_id,
-                        'rsmi_ris_no' => $itemData['rsmi_ris_no'] ?? null,
-                        'rsmi_center_code' => $itemData['rsmi_center_code'] ?? null,
-                        'rsmi_stock_no' => $itemData['rsmi_stock_no'] ?? null,
-                        'rsmi_items_descrip' => $itemData['rsmi_items_descrip'] ?? null,
-                        'rsmi_unit' => $itemData['rsmi_unit'] ?? null,
-                        'rsmi_quantity' => $qty,
-                        'rsmi_unit_cost' => $unitCost,
-                        'rsmi_amount' => $amount,
-                    ]);
+                        $incomingItemIds[] = $rsmiItem->rsmi_items_id;
+                    } else {
+                        // Create new item
+                        $rsmiItem = RsmiItem::create([
+                            'rsmi_id_fk' => $rsmi->rsmi_id,
+                            'rsmi_ris_no' => $itemData['rsmi_ris_no'] ?? null,
+                            'rsmi_center_code' => $itemData['rsmi_center_code'] ?? null,
+                            'rsmi_stock_no' => $itemData['rsmi_stock_no'] ?? null,
+                            'rsmi_items_descrip' => $itemData['rsmi_items_descrip'] ?? null,
+                            'rsmi_unit' => $itemData['rsmi_unit'] ?? null,
+                            'rsmi_quantity' => $qty,
+                            'rsmi_unit_cost' => $unitCost,
+                            'rsmi_amount' => $amount,
+                        ]);
 
-                    $incomingItemIds[] = $rsmiItem->rsmi_items_id;
+                        $incomingItemIds[] = $rsmiItem->rsmi_items_id;
+                    }
+
+                    $rsmiItem->rsmiSpecs()->delete();
                 }
-
-                $rsmiItem->rsmiSpecs()->delete();
             }
 
             // Update RSMI Header
@@ -686,8 +760,21 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
+            $message = $intent === 'Done'
+                ? 'Report of Supplies and Materials Issued saved and exported successfully.'
+                : 'Report of Supplies and Materials Issued saved as draft.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'active_document' => 'doc-rsmi-' . $rsmi->rsmi_id,
+                    'download_pdf' => $request->input('export_pdf') === '1' ? route('export.rsmi.pdf', $rsmi->rsmi_id) : null
+                ]);
+            }
+
             $response = redirect()->back()
-                ->with('success', 'Report of Supplies and Materials Issued saved successfully.')
+                ->with('success', $message)
                 ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
 
             if ($request->input('export_pdf') === '1') {
@@ -697,6 +784,14 @@ class DeliveryAttachmentController extends Controller
             return $response;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save Report of Supplies and Materials Issued: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Failed to save Report of Supplies and Materials Issued: ' . $e->getMessage())
                 ->with('active_document', 'doc-rsmi-' . $rsmi->rsmi_id);
