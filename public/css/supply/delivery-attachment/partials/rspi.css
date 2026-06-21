@@ -8,3 +8,14 @@
     cursor: pointer;
 }
 
+.rspi-container .field-error {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.rspi-container .is-invalid {
+    border-color: #dc3545 !important;
+}
+

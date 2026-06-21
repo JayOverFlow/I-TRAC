@@ -997,68 +997,138 @@ class DeliveryAttachmentController extends Controller
     {
         $rspi = Rspi::findOrFail($rspi_id);
 
-        $validated = $request->validate([
-            'rspi_fund_cluster' => 'nullable|string|max:100',
-            'rspi_serial_no' => 'nullable|string|max:50',
-            'rspi_date' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.rspi_items_id' => 'nullable|integer',
-            'items.*.rspi_ics_no' => 'nullable|string|max:50',
-            'items.*.rspi_center_code' => 'nullable|string|max:50',
-            'items.*.rspi_property_no' => 'nullable|string|max:50',
-            'items.*.rspi_items_descrip' => 'nullable|string|max:255',
-            'items.*.rspi_unit' => 'nullable|string|max:20',
-            'items.*.rspi_quantity' => 'nullable|integer',
-            'items.*.rspi_unit_cost' => 'nullable|numeric',
-        ]);
+        $intent = $request->input('export_pdf') === '1' ? 'Done' : 'Draft';
+
+        if ($intent === 'Done') {
+            $rules = [
+                'rspi_fund_cluster' => 'required|string|min:1|max:50',
+                'rspi_serial_no' => 'required|string|min:2|max:50',
+                'rspi_date' => 'required|date',
+                'items' => 'required|array|min:1',
+                'items.*.rspi_items_id' => 'nullable|integer',
+                'items.*.rspi_ics_no' => 'required|string|min:1|max:20',
+                'items.*.rspi_center_code' => 'required|string|min:1|max:20',
+                'items.*.rspi_property_no' => 'required|string|min:1|max:20',
+                'items.*.rspi_items_descrip' => 'required|string|min:5|max:50',
+                'items.*.rspi_unit' => 'required|string|min:1|max:20',
+                'items.*.rspi_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.rspi_unit_cost' => 'required|numeric|min:1|max:9999999',
+            ];
+        } else {
+            $rules = [
+                'rspi_fund_cluster' => 'nullable|string|max:50',
+                'rspi_serial_no' => 'nullable|string|max:50',
+                'rspi_date' => 'nullable|date',
+                'items' => 'nullable|array',
+                'items.*.rspi_items_id' => 'nullable|integer',
+                'items.*.rspi_ics_no' => 'nullable|string|max:20',
+                'items.*.rspi_center_code' => 'nullable|string|max:20',
+                'items.*.rspi_property_no' => 'nullable|string|max:20',
+                'items.*.rspi_items_descrip' => 'nullable|string|max:50',
+                'items.*.rspi_unit' => 'nullable|string|max:20',
+                'items.*.rspi_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.rspi_unit_cost' => 'nullable|numeric|min:1|max:9999999',
+            ];
+        }
+
+        $messages = [
+            'rspi_fund_cluster.required' => 'Fund Cluster is required.',
+            'rspi_fund_cluster.max' => 'Must not exceed 50 characters.',
+            'rspi_serial_no.required' => 'Serial No. is required.',
+            'rspi_serial_no.min' => 'Must be at least 2 characters.',
+            'rspi_serial_no.max' => 'Must not exceed 50 characters.',
+            'rspi_date.required' => 'Date is required.',
+            'rspi_date.date' => 'Must be a valid date.',
+            'items.required' => 'At least one item is required.',
+            'items.min' => 'At least one item is required.',
+            'items.*.rspi_ics_no.required' => 'ICS No. is required.',
+            'items.*.rspi_ics_no.max' => 'Must not exceed 20 characters.',
+            'items.*.rspi_center_code.required' => 'Center Code is required.',
+            'items.*.rspi_center_code.max' => 'Must not exceed 20 characters.',
+            'items.*.rspi_property_no.required' => 'Property No. is required.',
+            'items.*.rspi_property_no.max' => 'Must not exceed 20 characters.',
+            'items.*.rspi_items_descrip.required' => 'Description is required.',
+            'items.*.rspi_items_descrip.min' => 'Must be at least 5 characters.',
+            'items.*.rspi_items_descrip.max' => 'Must not exceed 50 characters.',
+            'items.*.rspi_unit.required' => 'Unit is required.',
+            'items.*.rspi_unit.max' => 'Must not exceed 20 characters.',
+            'items.*.rspi_quantity.required' => 'Quantity is required.',
+            'items.*.rspi_quantity.integer' => 'Must be an integer.',
+            'items.*.rspi_quantity.min' => 'Must be at least 1.',
+            'items.*.rspi_quantity.max' => 'Exceeds maximum limit.',
+            'items.*.rspi_unit_cost.required' => 'Unit Cost is required.',
+            'items.*.rspi_unit_cost.numeric' => 'Must be a number.',
+            'items.*.rspi_unit_cost.min' => 'Must be at least 1.',
+            'items.*.rspi_unit_cost.max' => 'Exceeds maximum limit.',
+        ];
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
+        }
+
+        $validated = $validator->validated();
 
         DB::beginTransaction();
         try {
             $rspiTotal = 0;
             $incomingItemIds = [];
 
-            foreach ($validated['items'] as $itemData) {
-                $qty = isset($itemData['rspi_quantity']) ? intval($itemData['rspi_quantity']) : 0;
-                $unitCost = isset($itemData['rspi_unit_cost']) ? floatval($itemData['rspi_unit_cost']) : 0;
-                $amount = $qty * $unitCost;
-                $rspiTotal += $amount;
+            if (isset($validated['items']) && is_array($validated['items'])) {
+                foreach ($validated['items'] as $itemData) {
+                    $qty = isset($itemData['rspi_quantity']) ? intval($itemData['rspi_quantity']) : 0;
+                    $unitCost = isset($itemData['rspi_unit_cost']) ? floatval($itemData['rspi_unit_cost']) : 0;
+                    $amount = $qty * $unitCost;
+                    $rspiTotal += $amount;
 
-                if (!empty($itemData['rspi_items_id'])) {
-                    // Update existing item
-                    $rspiItem = RspiItem::where('rspi_id_fk', $rspi->rspi_id)
-                        ->findOrFail($itemData['rspi_items_id']);
+                    if (!empty($itemData['rspi_items_id'])) {
+                        // Update existing item
+                        $rspiItem = RspiItem::where('rspi_id_fk', $rspi->rspi_id)
+                            ->findOrFail($itemData['rspi_items_id']);
 
-                    $rspiItem->update([
-                        'rspi_ics_no' => $itemData['rspi_ics_no'] ?? null,
-                        'rspi_center_code' => $itemData['rspi_center_code'] ?? null,
-                        'rspi_property_no' => $itemData['rspi_property_no'] ?? null,
-                        'rspi_items_descrip' => $itemData['rspi_items_descrip'] ?? null,
-                        'rspi_unit' => $itemData['rspi_unit'] ?? null,
-                        'rspi_quantity' => $qty,
-                        'rspi_unit_cost' => $unitCost,
-                        'rspi_amount' => $amount,
-                    ]);
+                        $rspiItem->update([
+                            'rspi_ics_no' => $itemData['rspi_ics_no'] ?? null,
+                            'rspi_center_code' => $itemData['rspi_center_code'] ?? null,
+                            'rspi_property_no' => $itemData['rspi_property_no'] ?? null,
+                            'rspi_items_descrip' => $itemData['rspi_items_descrip'] ?? null,
+                            'rspi_unit' => $itemData['rspi_unit'] ?? null,
+                            'rspi_quantity' => $qty,
+                            'rspi_unit_cost' => $unitCost,
+                            'rspi_amount' => $amount,
+                        ]);
 
-                    $incomingItemIds[] = $rspiItem->rspi_items_id;
-                } else {
-                    // Create new item
-                    $rspiItem = RspiItem::create([
-                        'rspi_id_fk' => $rspi->rspi_id,
-                        'rspi_ics_no' => $itemData['rspi_ics_no'] ?? null,
-                        'rspi_center_code' => $itemData['rspi_center_code'] ?? null,
-                        'rspi_property_no' => $itemData['rspi_property_no'] ?? null,
-                        'rspi_items_descrip' => $itemData['rspi_items_descrip'] ?? null,
-                        'rspi_unit' => $itemData['rspi_unit'] ?? null,
-                        'rspi_quantity' => $qty,
-                        'rspi_unit_cost' => $unitCost,
-                        'rspi_amount' => $amount,
-                    ]);
+                        $incomingItemIds[] = $rspiItem->rspi_items_id;
+                    } else {
+                        // Create new item
+                        $rspiItem = RspiItem::create([
+                            'rspi_id_fk' => $rspi->rspi_id,
+                            'rspi_ics_no' => $itemData['rspi_ics_no'] ?? null,
+                            'rspi_center_code' => $itemData['rspi_center_code'] ?? null,
+                            'rspi_property_no' => $itemData['rspi_property_no'] ?? null,
+                            'rspi_items_descrip' => $itemData['rspi_items_descrip'] ?? null,
+                            'rspi_unit' => $itemData['rspi_unit'] ?? null,
+                            'rspi_quantity' => $qty,
+                            'rspi_unit_cost' => $unitCost,
+                            'rspi_amount' => $amount,
+                        ]);
 
-                    $incomingItemIds[] = $rspiItem->rspi_items_id;
+                        $incomingItemIds[] = $rspiItem->rspi_items_id;
+                    }
+
+                    // Since description and specifications are consolidated, clear/delete specs to prevent duplication
+                    $rspiItem->rspiSpecs()->delete();
                 }
-
-                // Since description and specifications are consolidated, clear/delete specs to prevent duplication
-                $rspiItem->rspiSpecs()->delete();
             }
 
             // Update RSPI Header
@@ -1076,8 +1146,21 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
+            $message = $intent === 'Done'
+                ? 'Report of Semi-Expendable Property Issued saved and exported successfully.'
+                : 'Report of Semi-Expendable Property Issued saved as draft.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'active_document' => 'doc-rspi-' . $rspi->rspi_id,
+                    'download_pdf' => $request->input('export_pdf') === '1' ? route('export.rspi.pdf', $rspi->rspi_id) : null
+                ]);
+            }
+
             $response = redirect()->back()
-                ->with('success', 'Report of Semi-Expendable Property Issued saved successfully.')
+                ->with('success', $message)
                 ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
 
             if ($request->input('export_pdf') === '1') {
@@ -1087,6 +1170,14 @@ class DeliveryAttachmentController extends Controller
             return $response;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save Report of Semi-Expendable Property Issued: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Failed to save Report of Semi-Expendable Property Issued: ' . $e->getMessage())
                 ->with('active_document', 'doc-rspi-' . $rspi->rspi_id);
