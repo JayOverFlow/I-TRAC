@@ -135,6 +135,12 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(MrController::class)->group(function () {
         Route::get('/mr', 'showMr')->name('show.mr');
+        Route::post('/mr/update-location', 'updateLocation')->name('mr.update-location');
+    });
+
+    Route::controller(InventoryController::class)->group(function () {
+        Route::post('/inventory/upload-image', 'uploadImage')->name('inventory.upload-image');
+        Route::post('/inventory/delete-image', 'deleteImage')->name('inventory.delete-image');
     });
 
     Route::controller(CreatePrController::class)->group(function () {

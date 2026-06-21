@@ -65,11 +65,47 @@ $(document).ready(function () {
                 activeImagePath = activeObj.path;
             }
 
-            // Show primary image
+            // Clear no-image stretching
+            var card = document.querySelector('.main-image-viewport-card');
+            var cardBody = document.querySelector('.main-image-viewport-card .card-body');
+            if (card) {
+                card.style.height = '';
+                card.classList.remove('flex-grow-1');
+                card.classList.add('mb-3');
+            }
+            if (cardBody) {
+                cardBody.classList.remove('flex-grow-1');
+            }
+
+            // Show primary image with dynamic aspect ratio scaling
+            primaryImg.onload = function() {
+                var isPortrait = primaryImg.naturalHeight > primaryImg.naturalWidth;
+                var card = document.querySelector('.main-image-viewport-card');
+                var cardBody = document.querySelector('.main-image-viewport-card .card-body');
+                if (card && cardBody && primaryImg.naturalHeight > 0) {
+                    var aspectRatio = primaryImg.naturalWidth / primaryImg.naturalHeight;
+                    if (isPortrait) {
+                        cardBody.style.height = '400px';
+                        cardBody.style.minHeight = '400px';
+                        card.style.width = Math.round(400 * aspectRatio) + 'px';
+                        card.style.margin = '0 auto';
+                    } else {
+                        cardBody.style.height = '250px';
+                        cardBody.style.minHeight = '250px';
+                        card.style.width = '100%';
+                        card.style.margin = '';
+                    }
+                }
+            };
+
             noImgPlaceholder.style.display = 'none';
             primaryImg.src = activeObj.url;
             primaryImg.style.display = 'block';
             if (btnDelete) $(btnDelete).hide(); // Disable delete button overlay
+
+            if (primaryImg.complete) {
+                primaryImg.onload();
+            }
 
             // Render 4 slots below
             gridContainer.innerHTML = '';
@@ -101,6 +137,20 @@ $(document).ready(function () {
             if (btnDelete) $(btnDelete).hide();
             noImgPlaceholder.style.display = 'block';
             gridContainer.style.display = 'none';
+            var card = document.querySelector('.main-image-viewport-card');
+            var cardBody = document.querySelector('.main-image-viewport-card .card-body');
+            if (card) {
+                card.style.width = '100%';
+                card.style.margin = '';
+                card.style.height = '100%';
+                card.classList.add('flex-grow-1');
+                card.classList.remove('mb-3');
+            }
+            if (cardBody) {
+                cardBody.style.height = '';
+                cardBody.style.minHeight = '';
+                cardBody.classList.add('flex-grow-1');
+            }
             activeImagePath = null;
         }
     }
@@ -447,6 +497,49 @@ $(document).ready(function () {
             console.error('Label generation failed:', err);
             alert('Failed to generate labels. Please try again.');
         });
+    });
+
+    // Open fullscreen lightbox when clicking the primary image
+    $(document).on('click', '#modalPrimaryImage', function () {
+        var src = $(this).attr('src');
+        if (!src) return;
+        $('#lightboxImage').attr('src', src);
+        $('#imageLightbox').removeClass('d-none').css('opacity', '1');
+        $('body').addClass('modal-open'); // Prevent background scrolling
+    });
+
+    // Close lightbox when clicking the close button or outside the image
+    $(document).on('click', '#imageLightbox', function (e) {
+        if ($(e.target).is('#imageLightbox') || $(e.target).is('.lightbox-close')) {
+            $('#imageLightbox').addClass('d-none');
+            $('body').removeClass('modal-open');
+        }
+    });
+
+    // Support closing with escape key
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && !$('#imageLightbox').hasClass('d-none')) {
+            $('#imageLightbox').addClass('d-none');
+            $('body').removeClass('modal-open');
+        }
+    });
+
+    // Clean up viewport scale on modal hidden
+    $('#itemDetailsModal').on('hidden.bs.modal', function () {
+        var card = document.querySelector('.main-image-viewport-card');
+        var cardBody = document.querySelector('.main-image-viewport-card .card-body');
+        if (card) {
+            card.style.width = '100%';
+            card.style.margin = '';
+            card.style.height = '';
+            card.classList.remove('flex-grow-1');
+            card.classList.add('mb-3');
+        }
+        if (cardBody) {
+            cardBody.style.height = '250px';
+            cardBody.style.minHeight = '250px';
+            cardBody.classList.remove('flex-grow-1');
+        }
     });
 });
 

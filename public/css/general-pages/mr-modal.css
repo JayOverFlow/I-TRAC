@@ -1,0 +1,499 @@
+/* Property Assignment Details Modal Custom Style */
+
+#propertyAssignmentModal .modal-content {
+    border-radius: 16px;
+    border: none !important;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+}
+
+#propertyAssignmentModal .modal-header {
+    background-color: #ffffff;
+    border-bottom: none !important;
+    padding: 10px 30px 10px 30px;
+}
+
+#propertyAssignmentModal .modal-body {
+    background-color: #f8f9fa;
+    padding: 10px 30px 30px 30px;
+}
+
+/* Containers (Cards) - Smooth shadows, no borders */
+#propertyAssignmentModal .card {
+    border: none !important;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03) !important;
+}
+
+#propertyAssignmentModal .modal-title {
+    color: #9e1b1b !important;
+    font-weight: 700 !important;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+
+#propertyAssignmentModal .upload-label {
+    color: #515365;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+#propertyAssignmentModal .upload-footer-text {
+    color: #888ea8;
+    font-size: 12px;
+}
+
+/* FilePond Mockup Style: Transparent inside wrapper */
+#propertyAssignmentModal .filepond--root {
+    margin-bottom: 0 !important;
+}
+
+#propertyAssignmentModal .filepond--root .filepond--drop-label {
+    min-height: 150px;
+    background-color: transparent !important;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#propertyAssignmentModal .filepond--panel-root {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+#propertyAssignmentModal .filepond--credits {
+    display: none;
+}
+
+/* Details and Location Layout spacing */
+#propertyAssignmentModal .detail-row {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #515365;
+    margin-bottom: 12px;
+}
+
+#propertyAssignmentModal .detail-row .detail-label {
+    color: #7c838a;
+    font-weight: 400;
+}
+
+#propertyAssignmentModal .detail-row .detail-value {
+    color: #000000;
+    font-weight: 600;
+}
+
+#propertyAssignmentModal .form-label {
+    font-weight: 500;
+    color: #3b3f5c;
+    font-size: 14px;
+}
+
+#propertyAssignmentModal .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #3b3f5c;
+    background-color: #ffffff;
+}
+
+#propertyAssignmentModal .multiple-file-upload {
+    border: 1.5px dashed #f5c2c1 !important;
+    border-radius: 8px;
+    background-color: #fff8f8 !important;
+    padding: 6px;
+    overflow: hidden;
+}
+
+#propertyAssignmentModal .form-control:focus {
+    border-color: #d9534f;
+    box-shadow: 0 0 0 0.2rem rgba(217, 83, 79, 0.15);
+}
+
+/* Responsive adjustments for left column image upload height */
+@media (min-width: 768px) {
+    #propertyAssignmentModal .multiple-file-upload {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    #propertyAssignmentModal .filepond--root {
+        flex-grow: 1;
+        margin-bottom: 0 !important;
+        height: 100%;
+    }
+    #propertyAssignmentModal .filepond--root .filepond--drop-label {
+        flex-grow: 1;
+        min-height: 380px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+@media (max-width: 767px) {
+    #propertyAssignmentModal .filepond--root .filepond--drop-label {
+        min-height: 200px !important;
+    }
+}
+
+/* ==========================================
+   DARK MODE OVERRIDES (No dark blues/navy)
+   ========================================== */
+.dark #propertyAssignmentModal .modal-content,
+.dark #propertyAssignmentModal .modal-header,
+.dark #propertyAssignmentModal .modal-body {
+    background-color: #121212 !important; /* Pure charcoal dark background */
+    color: #bfc9d4 !important;
+}
+
+.dark #propertyAssignmentModal .card {
+    background-color: #1c1c1c !important; /* Darker charcoal for cards */
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark #propertyAssignmentModal .modal-title {
+    color: #ff5252 !important;
+}
+
+.dark #propertyAssignmentModal .upload-label {
+    color: #bfc9d4;
+}
+
+.dark #propertyAssignmentModal .detail-row {
+    color: #bfc9d4;
+}
+
+.dark #propertyAssignmentModal .detail-row .detail-label {
+    color: #a0a6ac;
+}
+
+.dark #propertyAssignmentModal .detail-row .detail-value {
+    color: #ffffff;
+}
+
+.dark #propertyAssignmentModal .form-label {
+    color: #bfc9d4;
+}
+
+.dark #propertyAssignmentModal .form-control {
+    background-color: #2b2b2b !important;
+    border: 1px solid #3d3d3d !important;
+    color: #e0e0e0 !important;
+}
+
+.dark #propertyAssignmentModal .form-control:focus {
+    border-color: #ff5252 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 82, 82, 0.15) !important;
+}
+
+.dark #propertyAssignmentModal .form-control::placeholder {
+    color: #666666 !important;
+}
+
+.dark #propertyAssignmentModal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+
+.dark #propertyAssignmentModal .multiple-file-upload {
+    border: 1.5px dashed #8a4a49 !important;
+    background-color: #2b1f1f !important;
+}
+
+.dark #propertyAssignmentModal .filepond--root .filepond--drop-label {
+    background-color: transparent !important;
+}
+
+.dark #propertyAssignmentModal .filepond--panel-root {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.dark #propertyAssignmentModal .fw-bold {
+    color: var(--gray-text) !important;
+}
+
+.dark #propertyAssignmentModal .red-text-2 {
+    color: #ff5252 !important;
+}
+
+/* Image Grid Layout Styles */
+#propertyAssignmentModal .image-grid-slots {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+#propertyAssignmentModal .image-grid-slot {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+#propertyAssignmentModal .image-grid-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#propertyAssignmentModal .image-grid-slot.slot-image:hover {
+    border-color: #d9534f;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(217, 83, 79, 0.15);
+}
+
+#propertyAssignmentModal .image-grid-slot.slot-add {
+    border-style: dashed;
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+#propertyAssignmentModal .image-grid-slot.slot-add:hover {
+    border-color: #d9534f;
+    color: #d9534f;
+    
+    background: #fffcfc;
+}
+
+#propertyAssignmentModal .image-grid-slot.slot-empty {
+    border-color: #f1f5f9;
+    background: #f8fafc;
+    cursor: default;
+}
+
+/* Delete Overlay Button */
+#propertyAssignmentModal .btn-delete-image {
+    background-color: transparent !important;
+    border: none !important;
+    color: #dc3545 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    transition: transform 0.2s ease-in-out !important;
+}
+
+#propertyAssignmentModal .btn-delete-image:hover {
+    color: #b91c1c !important;
+    transform: scale(1.1);
+}
+
+.dark #propertyAssignmentModal .btn-delete-image {
+    background-color: transparent !important;
+    border: none !important;
+    color: #ff5252 !important;
+}
+
+.dark #propertyAssignmentModal .btn-delete-image:hover {
+    color: #ff8585 !important;
+}
+
+#propertyAssignmentModal #modalPrimaryImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dark mode overrides for image grid */
+.dark #propertyAssignmentModal .image-grid-slot {
+    background: #1c1c1c !important;
+    border-color: #3d3d3d !important;
+}
+
+.dark #propertyAssignmentModal .image-grid-slot.slot-image:hover {
+    border-color: #ff5252 !important;
+}
+
+.dark #propertyAssignmentModal .image-grid-slot.slot-add {
+    border-color: #4b5563 !important;
+    color: #a1a1aa !important;
+}
+
+.dark #propertyAssignmentModal .image-grid-slot.slot-add:hover {
+    border-color: #ff5252 !important;
+    color: #ff5252 !important;
+    background: #251b1d !important;
+}
+
+.dark #propertyAssignmentModal .image-grid-slot.slot-empty {
+    border-color: #2b2b2b !important;
+    background: #1c1c1c !important;
+}
+
+/* Strip out FilePond's default file preview, status, loading, and action elements */
+#propertyAssignmentModal .filepond--list-scroller,
+#propertyAssignmentModal .filepond--list,
+#propertyAssignmentModal .filepond--item,
+#propertyAssignmentModal .filepond--file-info,
+#propertyAssignmentModal .filepond--file-status,
+#propertyAssignmentModal .filepond--progress-indicator,
+#propertyAssignmentModal .filepond--action-retry-measure,
+#propertyAssignmentModal .filepond--action-remove-item,
+#propertyAssignmentModal .filepond--item-panel,
+#propertyAssignmentModal .filepond--file {
+    display: none !important;
+}
+
+/* Custom Uploading Overlay */
+#propertyAssignmentModal .custom-upload-overlay {
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: 10;
+}
+
+.dark #propertyAssignmentModal .custom-upload-overlay {
+    background-color: rgba(43, 31, 31, 0.9) !important;
+    color: #bfc9d4 !important;
+}
+
+/* Custom styles for uploading state in image slots */
+#propertyAssignmentModal .image-grid-slot.slot-add.uploading {
+    cursor: not-allowed;
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.dark #propertyAssignmentModal .image-grid-slot.slot-add.uploading {
+    background-color: #2b2b2b !important;
+    border-color: #4b5563 !important;
+}
+
+/* Make main primary image clickable for fullscreen viewing */
+#propertyAssignmentModal #modalPrimaryImage {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+#propertyAssignmentModal #modalPrimaryImage:hover {
+    transform: scale(1.02);
+}
+
+/* Lightbox Overlay */
+.lightbox-overlay {
+    position: fixed;
+    z-index: 2000; /* Above bootstrap modals */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    animation: zoom 0.3s ease-in-out;
+}
+
+@keyframes zoom {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+    color: #ff5252;
+    text-decoration: none;
+}
+
+/* Property Details Scroll Container */
+#propertyAssignmentModal .property-details-scroll-container {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+}
+
+#propertyAssignmentModal .property-details-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#propertyAssignmentModal .property-details-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#propertyAssignmentModal .property-details-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+}
+
+.dark #propertyAssignmentModal .property-details-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+}
+
+/* Disabled Inputs formatting (Light + Dark Mode) */
+#propertyAssignmentModal input.form-control:disabled {
+    background-color: #f8fafc;
+    color: #475569;
+    border-color: #e2e8f0;
+    opacity: 0.85;
+    cursor: not-allowed;
+}
+
+.dark #propertyAssignmentModal input.form-control:disabled {
+    background-color: #1a1f2c;
+    color: #94a3b8;
+    border-color: #374151;
+    opacity: 0.85;
+}
+
+/* Location edit buttons hover states and dark mode overrides */
+#propertyAssignmentModal #locationEditControlsContainer button {
+    transition: all 0.2s ease-in-out;
+}
+
+#propertyAssignmentModal #locationEditControlsContainer .location-edit-btn:hover svg {
+    color: var(--red-1) !important;
+}
+
+#propertyAssignmentModal #btnSaveLocation:hover {
+    background-color: #7b0000 !important;
+    transform: scale(1.05);
+}
+
+#propertyAssignmentModal #btnCancelLocation:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    transform: scale(1.05);
+}
+
+.dark #propertyAssignmentModal #btnCancelLocation {
+    background-color: #15181d !important;
+    border-color: #4b5563 !important;
+    color: #cbd5e1 !important;
+}
+
+.dark #propertyAssignmentModal #btnCancelLocation:hover {
+    background-color: #242933 !important;
+    border-color: #6b7280 !important;
+    color: #f1f2f3 !important;
+}
