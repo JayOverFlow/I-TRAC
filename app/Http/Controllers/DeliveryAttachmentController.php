@@ -802,21 +802,96 @@ class DeliveryAttachmentController extends Controller
     {
         $ics = Ics::findOrFail($ics_id);
 
-        $validated = $request->validate([
-            'ics_fund_cluster' => 'nullable|string|max:100',
-            'ics_no' => 'nullable|string|max:50',
-            'ics_code_no' => 'nullable|string|max:50',
-            'ics_received_from_date' => 'nullable|date',
-            'ics_received_by_date' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.ics_items_id' => 'nullable|integer',
-            'items.*.ics_quantity' => 'nullable|integer',
-            'items.*.ics_unit' => 'nullable|string|max:20',
-            'items.*.ics_unit_cost' => 'nullable|numeric',
-            'items.*.ics_items_descrip' => 'nullable|string|max:255',
-            'items.*.ics_inventory_item_no' => 'nullable|string|max:50',
-            'items.*.ics_estimated_useful_life' => 'nullable|string|max:50',
-        ]);
+        $intent = $request->input('export_pdf') === '1' ? 'Done' : 'Draft';
+
+        if ($intent === 'Done') {
+            $rules = [
+                'ics_fund_cluster' => 'required|string|min:1|max:50',
+                'ics_no' => 'required|string|min:2|max:50',
+                'ics_code_no' => 'required|string|min:1|max:50',
+                'ics_received_from_date' => 'required|date',
+                'ics_received_by_date' => 'required|date',
+                'items' => 'required|array|min:1',
+                'items.*.ics_items_id' => 'nullable|integer',
+                'items.*.ics_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.ics_unit' => 'required|string|min:5|max:20',
+                'items.*.ics_unit_cost' => 'required|numeric|min:1|max:9999999',
+                'items.*.ics_items_descrip' => 'required|string|min:5|max:50',
+                'items.*.ics_inventory_item_no' => 'required|string|min:2|max:20',
+                'items.*.ics_estimated_useful_life' => 'nullable|string|min:2|max:20',
+            ];
+        } else {
+            $rules = [
+                'ics_fund_cluster' => 'nullable|string|min:1|max:50',
+                'ics_no' => 'nullable|string|min:2|max:50',
+                'ics_code_no' => 'nullable|string|min:1|max:50',
+                'ics_received_from_date' => 'nullable|date',
+                'ics_received_by_date' => 'nullable|date',
+                'items' => 'nullable|array',
+                'items.*.ics_items_id' => 'nullable|integer',
+                'items.*.ics_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.ics_unit' => 'nullable|string|min:5|max:20',
+                'items.*.ics_unit_cost' => 'nullable|numeric|min:1|max:9999999',
+                'items.*.ics_items_descrip' => 'nullable|string|min:5|max:50',
+                'items.*.ics_inventory_item_no' => 'nullable|string|min:2|max:20',
+                'items.*.ics_estimated_useful_life' => 'nullable|string|min:2|max:20',
+            ];
+        }
+
+        $messages = [
+            'ics_fund_cluster.required' => 'Fund Cluster is required.',
+            'ics_fund_cluster.min' => 'Fund Cluster must be at least 1 character.',
+            'ics_fund_cluster.max' => 'Fund Cluster must not exceed 50 characters.',
+            'ics_no.required' => 'ICS No. is required.',
+            'ics_no.min' => 'ICS No. must be at least 2 characters.',
+            'ics_no.max' => 'ICS No. must not exceed 50 characters.',
+            'ics_code_no.required' => 'Code No. is required.',
+            'ics_code_no.min' => 'Code No. must be at least 1 character.',
+            'ics_code_no.max' => 'Code No. must not exceed 50 characters.',
+            'ics_received_from_date.required' => 'Received from Date is required.',
+            'ics_received_from_date.date' => 'Must be a valid date.',
+            'ics_received_by_date.required' => 'Received by Date is required.',
+            'ics_received_by_date.date' => 'Must be a valid date.',
+            'items.required' => 'At least one item is required.',
+            'items.min' => 'At least one item is required.',
+            'items.*.ics_quantity.required' => 'Quantity is required.',
+            'items.*.ics_quantity.integer' => 'Quantity must be an integer.',
+            'items.*.ics_quantity.min' => 'Quantity must be at least 1.',
+            'items.*.ics_quantity.max' => 'Quantity exceeds maximum limit.',
+            'items.*.ics_unit.required' => 'Unit is required.',
+            'items.*.ics_unit.min' => 'Unit must be at least 5 characters.',
+            'items.*.ics_unit.max' => 'Unit must not exceed 20 characters.',
+            'items.*.ics_unit_cost.required' => 'Unit Cost is required.',
+            'items.*.ics_unit_cost.numeric' => 'Unit Cost must be a number.',
+            'items.*.ics_unit_cost.min' => 'Unit Cost must be at least 1.',
+            'items.*.ics_unit_cost.max' => 'Unit Cost exceeds maximum limit.',
+            'items.*.ics_items_descrip.required' => 'Description is required.',
+            'items.*.ics_items_descrip.min' => 'Description must be at least 5 characters.',
+            'items.*.ics_items_descrip.max' => 'Description must not exceed 50 characters.',
+            'items.*.ics_inventory_item_no.required' => 'This is required.',
+            'items.*.ics_inventory_item_no.min' => 'Must be at least 2 characters.',
+            'items.*.ics_inventory_item_no.max' => 'Must not exceed 20 characters.',
+            'items.*.ics_estimated_useful_life.min' => 'Must be at least 2 characters.',
+            'items.*.ics_estimated_useful_life.max' => 'Must not exceed 20 characters.',
+        ];
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_document', 'doc-ics-' . $ics->ics_id);
+        }
+
+        $validated = $validator->validated();
 
         DB::beginTransaction();
         try {
@@ -830,45 +905,47 @@ class DeliveryAttachmentController extends Controller
 
             $incomingItemIds = [];
 
-            foreach ($validated['items'] as $itemData) {
-                $qty = isset($itemData['ics_quantity']) ? intval($itemData['ics_quantity']) : 0;
-                $unitCost = isset($itemData['ics_unit_cost']) ? floatval($itemData['ics_unit_cost']) : 0;
-                $totalCost = $qty * $unitCost;
+            if (isset($validated['items']) && is_array($validated['items'])) {
+                foreach ($validated['items'] as $itemData) {
+                    $qty = isset($itemData['ics_quantity']) ? intval($itemData['ics_quantity']) : 0;
+                    $unitCost = isset($itemData['ics_unit_cost']) ? floatval($itemData['ics_unit_cost']) : 0;
+                    $totalCost = $qty * $unitCost;
 
-                if (!empty($itemData['ics_items_id'])) {
-                    // Update existing item
-                    $icsItem = IcsItem::where('ics_id_fk', $ics->ics_id)
-                        ->findOrFail($itemData['ics_items_id']);
+                    if (!empty($itemData['ics_items_id'])) {
+                        // Update existing item
+                        $icsItem = IcsItem::where('ics_id_fk', $ics->ics_id)
+                            ->findOrFail($itemData['ics_items_id']);
 
-                    $icsItem->update([
-                        'ics_quantity' => $qty,
-                        'ics_unit' => $itemData['ics_unit'] ?? null,
-                        'ics_unit_cost' => $unitCost,
-                        'ics_total_cost' => $totalCost,
-                        'ics_items_descrip' => $itemData['ics_items_descrip'] ?? null,
-                        'ics_inventory_item_no' => $itemData['ics_inventory_item_no'] ?? null,
-                        'ics_estimated_useful_life' => $itemData['ics_estimated_useful_life'] ?? null,
-                    ]);
+                        $icsItem->update([
+                            'ics_quantity' => $qty,
+                            'ics_unit' => $itemData['ics_unit'] ?? null,
+                            'ics_unit_cost' => $unitCost,
+                            'ics_total_cost' => $totalCost,
+                            'ics_items_descrip' => $itemData['ics_items_descrip'] ?? null,
+                            'ics_inventory_item_no' => $itemData['ics_inventory_item_no'] ?? null,
+                            'ics_estimated_useful_life' => $itemData['ics_estimated_useful_life'] ?? null,
+                        ]);
 
-                    $incomingItemIds[] = $icsItem->ics_items_id;
-                } else {
-                    // Create new item
-                    $icsItem = IcsItem::create([
-                        'ics_id_fk' => $ics->ics_id,
-                        'ics_quantity' => $qty,
-                        'ics_unit' => $itemData['ics_unit'] ?? null,
-                        'ics_unit_cost' => $unitCost,
-                        'ics_total_cost' => $totalCost,
-                        'ics_items_descrip' => $itemData['ics_items_descrip'] ?? null,
-                        'ics_inventory_item_no' => $itemData['ics_inventory_item_no'] ?? null,
-                        'ics_estimated_useful_life' => $itemData['ics_estimated_useful_life'] ?? null,
-                    ]);
+                        $incomingItemIds[] = $icsItem->ics_items_id;
+                    } else {
+                        // Create new item
+                        $icsItem = IcsItem::create([
+                            'ics_id_fk' => $ics->ics_id,
+                            'ics_quantity' => $qty,
+                            'ics_unit' => $itemData['ics_unit'] ?? null,
+                            'ics_unit_cost' => $unitCost,
+                            'ics_total_cost' => $totalCost,
+                            'ics_items_descrip' => $itemData['ics_items_descrip'] ?? null,
+                            'ics_inventory_item_no' => $itemData['ics_inventory_item_no'] ?? null,
+                            'ics_estimated_useful_life' => $itemData['ics_estimated_useful_life'] ?? null,
+                        ]);
 
-                    $incomingItemIds[] = $icsItem->ics_items_id;
+                        $incomingItemIds[] = $icsItem->ics_items_id;
+                    }
+
+                    // Since description and specifications are consolidated, clear/delete specs to prevent duplication
+                    $icsItem->icsSpecs()->delete();
                 }
-
-                // Since description and specifications are consolidated, clear/delete specs to prevent duplication
-                $icsItem->icsSpecs()->delete();
             }
 
             // Delete items that were removed in the UI (not present in incoming request)
@@ -878,8 +955,21 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
+            $message = $intent === 'Done'
+                ? 'Inventory Custodian Slip saved and exported successfully.'
+                : 'Inventory Custodian Slip saved as draft.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'active_document' => 'doc-ics-' . $ics->ics_id,
+                    'download_pdf' => $request->input('export_pdf') === '1' ? route('export.ics.pdf', $ics->ics_id) : null
+                ]);
+            }
+
             $response = redirect()->back()
-                ->with('success', 'Inventory Custodian Slip saved successfully.')
+                ->with('success', $message)
                 ->with('active_document', 'doc-ics-' . $ics->ics_id);
 
             if ($request->input('export_pdf') === '1') {
@@ -889,6 +979,14 @@ class DeliveryAttachmentController extends Controller
             return $response;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save Inventory Custodian Slip: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Failed to save Inventory Custodian Slip: ' . $e->getMessage())
                 ->with('active_document', 'doc-ics-' . $ics->ics_id);
