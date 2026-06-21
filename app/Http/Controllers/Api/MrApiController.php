@@ -16,24 +16,73 @@ class MrApiController extends Controller
             'mr_qr_code' => 'required|string',
         ]);
 
-        $qrCode = $request->mr_qr_code;
+        $payload = $request->mr_qr_code;
         $user = Auth::user();
 
-        // 1. Check if the QR code exists in the database
-        $itemsExist = Mr::where('mr_qr_code', $qrCode)->exists();
-        if (!$itemsExist) {
+        // 1. Parse the payload (e.g., RIS-11, PAR-5)
+        if (!preg_match('/^(RIS|PAR)-(\d+)$/', $payload, $matches)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'No items found matching the scanned QR code.'
+                'message' => 'Invalid QR code format. Please scan a valid RIS or PAR form.'
+            ], 400);
+        }
+
+        $type = $matches[1];
+        $id = $matches[2];
+
+        // 2. Resolve the form items to MR records and validate ownership
+        if ($type === 'RIS') {
+            $form = \App\Models\Ris::find($id);
+            if (!$form) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'RIS form not found.'
+                ], 404);
+            }
+            if ($form->ris_received_by != $user->user_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not the designated receiver for this RIS.'
+                ], 403);
+            }
+            $poItemIds = \App\Models\RisItem::where('ris_id_fk', $id)->pluck('ris_po_items_id_fk');
+        } else {
+            $form = \App\Models\Par::find($id);
+            if (!$form) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'PAR form not found.'
+                ], 404);
+            }
+            if ($form->par_received_by != $user->user_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not the designated receiver for this PAR.'
+                ], 403);
+            }
+            $poItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_po_items_id_fk');
+        }
+
+        if ($poItemIds->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "No items found for this {$type} form."
             ], 404);
         }
 
-        // 2. Check if any items are already assigned to someone else
-        $assignedToOthers = Mr::where('mr_qr_code', $qrCode)
-            ->where('is_assigned', 1)
-            ->where('assigned_to', '!=', $user->user_id)
-            ->with('assignedUser')
-            ->get();
+        $itemsToAssign = Mr::whereIn('po_item_id_fk', $poItemIds)->get();
+
+        if ($itemsToAssign->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "No trackable inventory items found for this {$type} form."
+            ], 404);
+        }
+
+        // 3. Check for existing assignments
+        $assignedToOthers = $itemsToAssign->filter(function ($item) use ($user) {
+            return $item->is_assigned && $item->assigned_to != $user->user_id;
+        });
 
         if ($assignedToOthers->isNotEmpty()) {
             $otherNames = $assignedToOthers->map(function ($item) {
@@ -44,49 +93,36 @@ class MrApiController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => "These items have already been claimed by: {$otherNames}."
+                'message' => "Some items in this form have already been claimed by: {$otherNames}."
             ], 400);
         }
 
-        // 3. Find items that are currently pending assignment (is_assigned = 0)
-        $pendingItems = Mr::where('mr_qr_code', $qrCode)
-            ->where('is_assigned', 0)
-            ->get();
+        // 4. Find pending items
+        $pendingItems = $itemsToAssign->where('is_assigned', 0);
 
         if ($pendingItems->isEmpty()) {
-            // Check if they are already assigned to the current user
-            $alreadyAssignedToMe = Mr::where('mr_qr_code', $qrCode)
-                ->where('is_assigned', 1)
-                ->where('assigned_to', $user->user_id)
-                ->get();
-
-            if ($alreadyAssignedToMe->isNotEmpty()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'You have already claimed these items.',
-                    'items' => $alreadyAssignedToMe
-                ], 200);
-            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'You have already claimed all items in this form.',
+                'items' => $itemsToAssign
+            ], 200);
         }
 
-        // 4. Update the pending items
-        Mr::where('mr_qr_code', $qrCode)
-            ->where('is_assigned', 0)
-            ->update([
-                'is_assigned' => 1,
-                'assigned_to' => $user->user_id,
-                'date_scanned' => now(),
-            ]);
+        // 5. Batch update
+        $pendingIds = $pendingItems->pluck('mr_id');
+        Mr::whereIn('mr_id', $pendingIds)->update([
+            'is_assigned' => 1,
+            'assigned_to' => $user->user_id,
+            'date_scanned' => now(),
+        ]);
 
-        // Fetch the updated items to return to the mobile app
-        $assignedItems = Mr::where('mr_qr_code', $qrCode)
-            ->where('assigned_to', $user->user_id)
-            ->get();
+        // Fetch fully updated items for the response
+        $finalItems = Mr::whereIn('mr_id', $itemsToAssign->pluck('mr_id'))->get();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Items successfully claimed and recorded to your account.',
-            'items' => $assignedItems
+            'items' => $finalItems
         ], 200);
     }
 
