@@ -23,6 +23,7 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
                             <input type="text" name="par_fund_cluster" value="{{ $par->par_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="par_fund_cluster"></span>
                         </div>
 
                         <div class="row align-items-center mb-5">
@@ -39,10 +40,12 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">PAR No.:</h6>
                             <input type="text" name="par_no" value="{{ $par->par_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="par_no"></span>
                         </div>
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Code:</h6>
                             <input type="text" name="par_code" value="{{ $par->par_code }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="par_code"></span>
                         </div>
                     </div>
                 </div>
@@ -68,6 +71,7 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="par_received_by_date" value="{{ $par->par_received_by_date }}" placeholder="Select Date..">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="par_received_by_date"></span>
                         </div>
                     </div>
 
@@ -91,6 +95,7 @@
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="par_issued_by_date" value="{{ $par->par_issued_by_date }}" placeholder="Select Date..">
+                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="par_issued_by_date"></span>
                         </div>
                     </div>
                 </div>
@@ -116,26 +121,32 @@
                                     <input type="hidden" name="items[{{ $index }}][par_po_items_id_fk]" value="{{ $item->par_po_items_id_fk }}">
                                     <input type="text" class="form-control form-control-sm text-center qty-input"
                                         name="items[{{ $index }}][par_quantity]" value="{{ $item->par_quantity }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][par_quantity]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][par_unit]" value="{{ $item->par_unit }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][par_unit]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm"
                                         name="items[{{ $index }}][par_items_descrip]" value="{{ implode(', ', array_filter(array_merge([$item->par_items_descrip], $item->parSpecs->pluck('par_spec_description')->toArray()))) }}">
+                                    <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][par_items_descrip]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
                                         name="items[{{ $index }}][par_property_no]" value="{{ $item->par_property_no }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][par_property_no]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm flatpickr"
                                         name="items[{{ $index }}][par_date_acquired]" value="{{ $item->par_date_acquired }}" placeholder="Select Date..">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][par_date_acquired]"></span>
                                 </td>
                                 <td class="px-1 text-center">
                                     <input type="text" class="form-control form-control-sm text-center amount-input"
                                         name="items[{{ $index }}][par_amount]" value="{{ $item->par_amount }}">
+                                    <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][par_amount]"></span>
                                 </td>
                                 <td class="p-0">
                                     <button type="button"

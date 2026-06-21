@@ -1187,23 +1187,98 @@ class DeliveryAttachmentController extends Controller
     public function savePar($par_id, Request $request)
     {
         $par = Par::findOrFail($par_id);
+        $intent = $request->input('export_pdf') === '1' ? 'Done' : 'Draft';
 
-        $validated = $request->validate([
-            'par_fund_cluster' => 'nullable|string|max:100',
-            'par_no' => 'nullable|string|max:50',
-            'par_code' => 'nullable|string|max:50',
-            'par_received_by_date' => 'nullable|date',
-            'par_issued_by_date' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.par_items_id' => 'nullable|integer',
-            'items.*.par_po_items_id_fk' => 'nullable|integer|exists:po_items_tbl,po_items_id',
-            'items.*.par_quantity' => 'nullable|integer',
-            'items.*.par_unit' => 'nullable|string|max:20',
-            'items.*.par_items_descrip' => 'nullable|string|max:255',
-            'items.*.par_property_no' => 'nullable|string|max:50',
-            'items.*.par_date_acquired' => 'nullable|date',
-            'items.*.par_amount' => 'nullable|numeric',
-        ]);
+        if ($intent === 'Done') {
+            $rules = [
+                'par_fund_cluster' => 'required|string|min:1|max:50',
+                'par_no' => 'required|string|min:2|max:50',
+                'par_code' => 'required|string|min:2|max:50',
+                'par_received_by_date' => 'required|date',
+                'par_issued_by_date' => 'required|date',
+                'items' => 'required|array|min:1',
+                'items.*.par_items_id' => 'nullable|integer',
+                'items.*.par_po_items_id_fk' => 'nullable|integer|exists:po_items_tbl,po_items_id',
+                'items.*.par_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.par_unit' => 'required|string|min:1|max:20',
+                'items.*.par_items_descrip' => 'required|string|min:5|max:50',
+                'items.*.par_property_no' => 'required|string|min:1|max:20',
+                'items.*.par_date_acquired' => 'required|date',
+                'items.*.par_amount' => 'required|numeric|min:1|max:9999999',
+            ];
+        } else {
+            $rules = [
+                'par_fund_cluster' => 'nullable|string|min:1|max:50',
+                'par_no' => 'nullable|string|min:2|max:50',
+                'par_code' => 'nullable|string|min:2|max:50',
+                'par_received_by_date' => 'nullable|date',
+                'par_issued_by_date' => 'nullable|date',
+                'items' => 'nullable|array',
+                'items.*.par_items_id' => 'nullable|integer',
+                'items.*.par_po_items_id_fk' => 'nullable|integer|exists:po_items_tbl,po_items_id',
+                'items.*.par_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.par_unit' => 'nullable|string|min:1|max:20',
+                'items.*.par_items_descrip' => 'nullable|string|min:5|max:50',
+                'items.*.par_property_no' => 'nullable|string|min:1|max:20',
+                'items.*.par_date_acquired' => 'nullable|date',
+                'items.*.par_amount' => 'nullable|numeric|min:1|max:9999999',
+            ];
+        }
+
+        $messages = [
+            'par_fund_cluster.required' => 'Fund Cluster is required.',
+            'par_fund_cluster.min' => 'Must be at least 1 character.',
+            'par_fund_cluster.max' => 'Must not exceed 50 characters.',
+            'par_no.required' => 'PAR No. is required.',
+            'par_no.min' => 'Must be at least 2 characters.',
+            'par_no.max' => 'Must not exceed 50 characters.',
+            'par_code.required' => 'Code is required.',
+            'par_code.min' => 'Must be at least 2 characters.',
+            'par_code.max' => 'Must not exceed 50 characters.',
+            'par_received_by_date.required' => 'Date is required.',
+            'par_received_by_date.date' => 'Must be a valid date.',
+            'par_issued_by_date.required' => 'Date is required.',
+            'par_issued_by_date.date' => 'Must be a valid date.',
+            'items.required' => 'At least one item is required.',
+            'items.min' => 'At least one item is required.',
+            'items.*.par_quantity.required' => 'Qty. is required.',
+            'items.*.par_quantity.integer' => 'Must be an integer.',
+            'items.*.par_quantity.min' => 'Must be at least 1.',
+            'items.*.par_quantity.max' => 'Exceeds maximum limit.',
+            'items.*.par_unit.required' => 'Unit is required.',
+            'items.*.par_unit.min' => 'Must be at least 1 character.',
+            'items.*.par_unit.max' => 'Must not exceed 20 characters.',
+            'items.*.par_items_descrip.required' => 'Description is required.',
+            'items.*.par_items_descrip.min' => 'Must be at least 5 characters.',
+            'items.*.par_items_descrip.max' => 'Must not exceed 50 characters.',
+            'items.*.par_property_no.required' => 'Property No. is required.',
+            'items.*.par_property_no.min' => 'Must be at least 1 character.',
+            'items.*.par_property_no.max' => 'Must not exceed 20 characters.',
+            'items.*.par_date_acquired.required' => 'Date Required is required.',
+            'items.*.par_date_acquired.date' => 'Must be a valid date.',
+            'items.*.par_amount.required' => 'Amount is required.',
+            'items.*.par_amount.numeric' => 'Must be a number.',
+            'items.*.par_amount.min' => 'Must be at least 1.',
+            'items.*.par_amount.max' => 'Exceeds maximum limit.',
+        ];
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('active_document', 'doc-par-' . $par->par_id);
+        }
+
+        $validated = $validator->validated();
 
         DB::beginTransaction();
         try {
@@ -1217,44 +1292,46 @@ class DeliveryAttachmentController extends Controller
 
             $incomingItemIds = [];
 
-            foreach ($validated['items'] as $itemData) {
-                $qty = isset($itemData['par_quantity']) ? intval($itemData['par_quantity']) : null;
-                $amount = isset($itemData['par_amount']) ? floatval($itemData['par_amount']) : null;
+            if (isset($validated['items']) && is_array($validated['items'])) {
+                foreach ($validated['items'] as $itemData) {
+                    $qty = isset($itemData['par_quantity']) ? intval($itemData['par_quantity']) : null;
+                    $amount = isset($itemData['par_amount']) ? floatval($itemData['par_amount']) : null;
 
-                if (!empty($itemData['par_items_id'])) {
-                    // Update existing item
-                    $parItem = ParItem::where('par_id_fk', $par->par_id)
-                        ->findOrFail($itemData['par_items_id']);
+                    if (!empty($itemData['par_items_id'])) {
+                        // Update existing item
+                        $parItem = ParItem::where('par_id_fk', $par->par_id)
+                            ->findOrFail($itemData['par_items_id']);
 
-                    $parItem->update([
-                        'par_po_items_id_fk' => $itemData['par_po_items_id_fk'] ?? null,
-                        'par_quantity' => $qty,
-                        'par_unit' => $itemData['par_unit'] ?? null,
-                        'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
-                        'par_property_no' => $itemData['par_property_no'] ?? null,
-                        'par_date_acquired' => $itemData['par_date_acquired'] ?? null,
-                        'par_amount' => $amount,
-                    ]);
+                        $parItem->update([
+                            'par_po_items_id_fk' => $itemData['par_po_items_id_fk'] ?? null,
+                            'par_quantity' => $qty,
+                            'par_unit' => $itemData['par_unit'] ?? null,
+                            'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
+                            'par_property_no' => $itemData['par_property_no'] ?? null,
+                            'par_date_acquired' => $itemData['par_date_acquired'] ?? null,
+                            'par_amount' => $amount,
+                        ]);
 
-                    $incomingItemIds[] = $parItem->par_items_id;
-                } else {
-                    // Create new item
-                    $parItem = ParItem::create([
-                        'par_id_fk' => $par->par_id,
-                        'par_po_items_id_fk' => $itemData['par_po_items_id_fk'] ?? null,
-                        'par_quantity' => $qty,
-                        'par_unit' => $itemData['par_unit'] ?? null,
-                        'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
-                        'par_property_no' => $itemData['par_property_no'] ?? null,
-                        'par_date_acquired' => $itemData['par_date_acquired'] ?? null,
-                        'par_amount' => $amount,
-                    ]);
+                        $incomingItemIds[] = $parItem->par_items_id;
+                    } else {
+                        // Create new item
+                        $parItem = ParItem::create([
+                            'par_id_fk' => $par->par_id,
+                            'par_po_items_id_fk' => $itemData['par_po_items_id_fk'] ?? null,
+                            'par_quantity' => $qty,
+                            'par_unit' => $itemData['par_unit'] ?? null,
+                            'par_items_descrip' => $itemData['par_items_descrip'] ?? null,
+                            'par_property_no' => $itemData['par_property_no'] ?? null,
+                            'par_date_acquired' => $itemData['par_date_acquired'] ?? null,
+                            'par_amount' => $amount,
+                        ]);
 
-                    $incomingItemIds[] = $parItem->par_items_id;
+                        $incomingItemIds[] = $parItem->par_items_id;
+                    }
+
+                    // Consolidate specifications, clear existing specs
+                    $parItem->parSpecs()->delete();
                 }
-
-                // Consolidate specifications, clear existing specs
-                $parItem->parSpecs()->delete();
             }
 
             // Remove deleted items
@@ -1264,8 +1341,21 @@ class DeliveryAttachmentController extends Controller
 
             DB::commit();
 
+            $message = $intent === 'Done'
+                ? 'Property Acknowledgement Receipt saved and exported successfully.'
+                : 'Property Acknowledgement Receipt saved as draft.';
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'active_document' => 'doc-par-' . $par->par_id,
+                    'download_pdf' => $request->input('export_pdf') === '1' ? route('export.par.pdf', $par->par_id) : null
+                ]);
+            }
+
             $response = redirect()->back()
-                ->with('success', 'Property Acknowledgement Receipt saved successfully.')
+                ->with('success', $message)
                 ->with('active_document', 'doc-par-' . $par->par_id);
 
             if ($request->input('export_pdf') === '1') {
@@ -1275,6 +1365,14 @@ class DeliveryAttachmentController extends Controller
             return $response;
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save Property Acknowledgement Receipt: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Failed to save Property Acknowledgement Receipt: ' . $e->getMessage())
                 ->with('active_document', 'doc-par-' . $par->par_id);
