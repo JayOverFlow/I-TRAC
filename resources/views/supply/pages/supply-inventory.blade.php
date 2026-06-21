@@ -218,7 +218,7 @@
 
                                     <div class="tab-content" id="itemModalTabContent">
                                         <!-- Tab 1: Details (Read-Only State) -->
-                                        <div class="tab-pane fade px-2 show active" id="details-tab-pane" role="tabpanel"
+                                        <div class="tab-pane fade px-4 show active" id="details-tab-pane" role="tabpanel"
                                             aria-labelledby="details-tab" tabindex="0">
                                             <!-- Property Details Section -->
                                             <div class="mb-3">
@@ -406,6 +406,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Fullscreen Lightbox Overlay -->
+    <div id="imageLightbox" class="lightbox-overlay d-none">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightboxImage" src="" alt="Fullscreen View">
     </div>
 @endsection
 

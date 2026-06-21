@@ -131,10 +131,10 @@ body.dark .detail-rows .border-bottom {
 }
 
 .image-grid-slot {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 8px;
-    border: 2px solid #e2e8f0;
+    border: 2.5px solid #e2e8f0;
     background: #f8fafc;
     display: flex;
     justify-content: center;
@@ -227,15 +227,15 @@ body.dark .main-image-viewport-card {
 }
 
 .main-image-viewport-card .card-body {
-    height: 380px;
-    min-height: 380px;
+    height: 250px;
+    min-height: 250px;
     border-radius: 12px;
 }
 
 #modalPrimaryImage {
-    max-height: 95%;
-    max-width: 95%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .icon-no-image {
@@ -531,4 +531,73 @@ body.dark .btn-outline-red:hover {
 
 body.dark #modalImageActionsContainer {
     border-color: #2A2F38;
+}
+
+/* Make main primary image clickable for fullscreen viewing */
+#modalPrimaryImage {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+#modalPrimaryImage:hover {
+    transform: scale(1.02);
+}
+
+/* Lightbox Overlay */
+.lightbox-overlay {
+    position: fixed;
+    z-index: 2000; /* Above bootstrap modals */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    animation: zoom 0.3s ease-in-out;
+}
+
+@keyframes zoom {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+    color: #ff5252;
+    text-decoration: none;
+}
+
+/* Stretch main viewport card to match right column height when no image is available */
+.main-image-viewport-card.flex-grow-1 {
+    height: 100%;
+    margin-bottom: 0 !important;
+}
+
+.main-image-viewport-card.flex-grow-1 .card-body {
+    height: 100% !important;
+    min-height: 100% !important;
 }

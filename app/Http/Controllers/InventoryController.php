@@ -303,8 +303,7 @@ class InventoryController extends Controller
     /**
      * Upload an image for an item, appending it to the mr_item_img_tbl table.
      * Max 5 images.
-     * (COMMENTED OUT FOR MODAL - WILL BE USED ON ANOTHER PAGE)
-     *
+     */
     public function uploadImage(Request $request)
     {
         try {
@@ -359,12 +358,10 @@ class InventoryController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
     }
-    */
 
     /**
      * Delete a specific image from the mr_item_img_tbl table and delete its file.
-     * (COMMENTED OUT FOR MODAL - WILL BE USED ON ANOTHER PAGE)
-     *
+     */
     public function deleteImage(Request $request)
     {
         try {
@@ -415,5 +412,4 @@ class InventoryController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
     }
-    */
 }
