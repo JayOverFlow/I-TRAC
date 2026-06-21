@@ -35,7 +35,7 @@
         </li>
 
         <li class="nav-item dropdown notification-dropdown">
-            <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" aria-haspopup="true" aria-expanded="false">
                 <img src="{{ asset('img/logs.svg') }}" class="header-logs-icon" alt="Activity Log" width="19" height="19" style="object-fit: contain;">
             </a>
 
@@ -88,7 +88,7 @@
         </li>
 
         <li class="nav-item dropdown user-profile-dropdown order-lg-0 order-1 ms-3">
-            <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar-container">
                     <div class="avatar avatar-sm">
                         <img alt="avatar" src="{{ asset('img/admin-icon.svg') }}" class="rounded-circle">
@@ -124,6 +124,7 @@
             $(document).ready(function() {
                 $('#userProfileDropdown, #notificationDropdown').on('click', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     
                     var $dropdown = $(this).next('.dropdown-menu');
                     var isOpening = !$dropdown.hasClass('show');
