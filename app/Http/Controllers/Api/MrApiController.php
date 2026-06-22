@@ -157,7 +157,7 @@ class MrApiController extends Controller
                     'location' => ($item->building && $item->room_no)
                         ? "{$item->building} - {$item->room_no}"
                         : ($item->building ?? $item->room_no ?? 'Unknown Location'),
-                    'item_image' => empty($paths) ? null : json_encode($paths),
+                    'item_image' => empty($paths) ? null : $paths,
                     'date_scanned' => $item->date_scanned,
                     'category' => $category,
                 ];
@@ -184,6 +184,12 @@ class MrApiController extends Controller
 
             // 1. Process Existing Images (delete those that are not in the existing_images request list)
             $existingPaths = $request->input('existing_images', []);
+
+            // Handle JSON-encoded string from mobile app
+            if (is_string($existingPaths)) {
+                $existingPaths = json_decode($existingPaths, true) ?? [];
+            }
+
             if (!is_array($existingPaths)) {
                 $existingPaths = [$existingPaths];
             }
@@ -235,7 +241,7 @@ class MrApiController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Images synced successfully!',
-                'all_images' => json_encode($updatedImages)
+                'all_images' => $updatedImages
             ]);
 
         } catch (\Exception $e) {
@@ -274,7 +280,7 @@ class MrApiController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Image deleted successfully.',
-                    'all_images' => json_encode($updatedImages)
+                    'all_images' => $updatedImages
                 ]);
             }
 
