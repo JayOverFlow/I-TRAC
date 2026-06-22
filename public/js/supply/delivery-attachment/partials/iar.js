@@ -18,16 +18,17 @@ $(document).ready(function() {
         e.preventDefault();
         
         var tbody = $(this).closest('.card').find('tbody');
-        var firstRow = tbody.find('tr').first();
+        var firstRow = tbody.find('tr.iar-item-row').first();
+        var firstSpecRow = tbody.find('tr.specification-row').first();
         
         if (firstRow.length === 0) return;
 
-        // Clone the first row as the template
+        // Clone the item row
         var newRow = firstRow.clone();
         var newIndex = Date.now();
 
         // Update all field names to avoid inputs sharing the same post name array key
-        newRow.find('input').each(function() {
+        newRow.find('input, textarea, select').each(function() {
             var input = $(this);
             var name = input.attr('name');
             if (name) {
@@ -48,8 +49,39 @@ $(document).ready(function() {
             span.text('').addClass('d-none');
         });
 
-        // Append the new row to the table body
+        // Clone the specification row if it exists
+        var newSpecRow = null;
+        if (firstSpecRow.length > 0) {
+            newSpecRow = firstSpecRow.clone();
+            // Hide the new spec row and reset textarea
+            newSpecRow.addClass('d-none');
+            newSpecRow.find('.specification-body').css('display', 'none');
+            newSpecRow.find('.specification-arrow').css('transform', '');
+            newSpecRow.find('textarea').each(function() {
+                var input = $(this);
+                var name = input.attr('name');
+                if (name) {
+                    var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+                    input.attr('name', newName);
+                }
+                input.val('').removeClass('is-invalid');
+            });
+            newSpecRow.find('.field-error').each(function() {
+                var span = $(this);
+                var forAttr = span.attr('data-valmsg-for');
+                if (forAttr) {
+                    var newForAttr = forAttr.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+                    span.attr('data-valmsg-for', newForAttr);
+                }
+                span.text('').addClass('d-none');
+            });
+        }
+
+        // Append the new row and spec row to the table body
         tbody.append(newRow);
+        if (newSpecRow) {
+            tbody.append(newSpecRow);
+        }
     });
 
     // ─── 3. Remove Item Row (Scope-Locked to IAR Table) ───────────────────────
@@ -58,7 +90,7 @@ $(document).ready(function() {
         var tbody = $(this).closest('tbody');
 
         // Enforce the requirement that the table must always contain at least one row
-        if (tbody.find('tr').length <= 1) {
+        if (tbody.find('tr.iar-item-row').length <= 1) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Action Denied',
@@ -68,7 +100,12 @@ $(document).ready(function() {
             return;
         }
 
-        $(this).closest('tr').remove();
+        var row = $(this).closest('tr');
+        var specRow = row.next('.specification-row');
+        row.remove();
+        if (specRow.length) {
+            specRow.remove();
+        }
     });
 
     // ─── 4. Validation Helpers ────────────────────────────────────────────────
@@ -112,6 +149,12 @@ $(document).ready(function() {
             var inputElement = form.find('[name="' + inputName + '"]');
             if (inputElement.length) {
                 inputElement.addClass('is-invalid');
+                if (inputElement.hasClass('specification-textarea')) {
+                    var specRow = inputElement.closest('tr.specification-row');
+                    specRow.removeClass('d-none');
+                    specRow.find('.specification-body').show();
+                    specRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
+                }
                 var errorSpan = inputElement.siblings('.field-error');
                 if (errorSpan.length) {
                     errorSpan.text(messages[0]).removeClass('d-none');

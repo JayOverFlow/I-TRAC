@@ -57,7 +57,8 @@ $(document).ready(function() {
         e.preventDefault();
         
         var tbody = $('#rsmiItemsTbody');
-        var firstRow = tbody.find('tr').first();
+        var firstRow = tbody.find('tr.rsmi-item-row').first();
+        var firstSpecRow = tbody.find('tr.specification-row').first();
         
         if (firstRow.length === 0) return;
 
@@ -66,7 +67,7 @@ $(document).ready(function() {
         var newIndex = Date.now();
 
         // Update all field names to avoid inputs sharing the same post name array key
-        newRow.find('input').each(function() {
+        newRow.find('input, textarea, select').each(function() {
             var input = $(this);
             var name = input.attr('name');
             if (name) {
@@ -97,8 +98,38 @@ $(document).ready(function() {
             totalDisplay.attr('data-amount', '0');
         }
 
+        // Clone specification row if exists
+        var newSpecRow = null;
+        if (firstSpecRow.length > 0) {
+            newSpecRow = firstSpecRow.clone();
+            newSpecRow.addClass('d-none');
+            newSpecRow.find('.specification-body').css('display', 'none');
+            newSpecRow.find('.specification-arrow').css('transform', '');
+            newSpecRow.find('textarea').each(function() {
+                var input = $(this);
+                var name = input.attr('name');
+                if (name) {
+                    var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+                    input.attr('name', newName);
+                }
+                input.val('').removeClass('is-invalid');
+            });
+            newSpecRow.find('.field-error').each(function() {
+                var span = $(this);
+                var forAttr = span.attr('data-valmsg-for');
+                if (forAttr) {
+                    var newForAttr = forAttr.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+                    span.attr('data-valmsg-for', newForAttr);
+                }
+                span.text('').addClass('d-none');
+            });
+        }
+
         // Append the new row to the table body
         tbody.append(newRow);
+        if (newSpecRow) {
+            tbody.append(newSpecRow);
+        }
         
         // Re-apply indexing to be safe (in case order is important)
         updateRowIndices();
@@ -110,7 +141,7 @@ $(document).ready(function() {
         var tbody = $('#rsmiItemsTbody');
 
         // Enforce the requirement that the table must always contain at least one row
-        if (tbody.find('tr').length <= 1) {
+        if (tbody.find('tr.rsmi-item-row').length <= 1) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Action Denied',
@@ -120,14 +151,19 @@ $(document).ready(function() {
             return;
         }
 
-        $(this).closest('tr').remove();
+        var row = $(this).closest('tr');
+        var specRow = row.next('.specification-row');
+        row.remove();
+        if (specRow.length) {
+            specRow.remove();
+        }
         updateRowIndices();
     });
 
     function updateRowIndices() {
         var tbody = $('#rsmiItemsTbody');
         if (!tbody.length) return;
-        tbody.find('tr').each(function(index) {
+        tbody.find('tr.rsmi-item-row').each(function(index) {
             var row = $(this);
             row.find('input, select, textarea').each(function() {
                 var input = $(this);
@@ -145,6 +181,26 @@ $(document).ready(function() {
                     span.attr('data-valmsg-for', newForAttr);
                 }
             });
+
+            var specRow = row.next('tr.specification-row');
+            if (specRow.length) {
+                specRow.find('input, select, textarea').each(function() {
+                    var input = $(this);
+                    var name = input.attr('name');
+                    if (name) {
+                        var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + index + ']');
+                        input.attr('name', newName);
+                    }
+                });
+                specRow.find('.field-error').each(function() {
+                    var span = $(this);
+                    var forAttr = span.attr('data-valmsg-for');
+                    if (forAttr) {
+                        var newForAttr = forAttr.replace(/items\[\s*\d+\s*\]/, 'items[' + index + ']');
+                        span.attr('data-valmsg-for', newForAttr);
+                    }
+                });
+            }
         });
     }
 
@@ -189,6 +245,12 @@ $(document).ready(function() {
             var inputElement = form.find('[name="' + inputName + '"]');
             if (inputElement.length) {
                 inputElement.addClass('is-invalid');
+                if (inputElement.hasClass('specification-textarea')) {
+                    var specRow = inputElement.closest('tr.specification-row');
+                    specRow.removeClass('d-none');
+                    specRow.find('.specification-body').show();
+                    specRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
+                }
                 var errorSpan = inputElement.siblings('.field-error');
                 if (errorSpan.length) {
                     errorSpan.text(messages[0]).removeClass('d-none');
