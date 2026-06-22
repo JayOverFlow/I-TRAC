@@ -323,4 +323,43 @@ class MrApiController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
     }
+
+    public function lookupItem(Request $request)
+    {
+        try {
+            $request->validate([
+                'mr_qr_code' => 'required|string',
+            ]);
+
+            $qrCode = trim($request->mr_qr_code);
+            $item = Mr::where('mr_qr_code', $qrCode)
+                ->with(['assignedUser', 'images'])
+                ->first();
+
+            if (!$item) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Item not found.'
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'item_name' => $item->item_name,
+                    'specification' => $item->specification,
+                    'owner' => $item->assignedUser ? $item->assignedUser->user_fullname : 'Unassigned',
+                    'date_scanned' => $item->date_scanned,
+                    'category' => $item->category,
+                    'image' => $item->images->first() ? $item->images->first()->image_path : null,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Server Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
+

@@ -341,8 +341,9 @@ $(document).ready(function () {
         $('#detailQuantity').text(quantity);
         $('#detailBuilding').text(building);
         $('#detailRoom').text(roomNo);
-        // Set the extracted QR code string to the hidden form input
+        // Set the extracted QR code string and MR ID to the hidden form inputs
         $('#mr_qr_code').val(mrQrCode);
+        $('#mr_id').val(activeMrId);
 
         // Reset Tab State to first tab (Details)
         var detailsTabEl = document.querySelector('#details-tab');

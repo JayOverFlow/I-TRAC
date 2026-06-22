@@ -54,8 +54,34 @@ class InventoryController extends Controller
         // -------------------------------------------------------------
         $size   = $request->query('label_size') ?: 'Small';
         $layout = $request->query('qr_layout') ?: 'layout_1';
-        $qrText = $request->query('mr_qr_code') ?: 'https://example.com';
         $stickerQuantity = max(1, (int) ($request->query('sticker_quantity') ?: 1));
+
+        // Get mr_id or mr_ids from query
+        $mrIdsInput = $request->query('mr_ids') ?: $request->query('mr_id');
+        $items = collect();
+
+        if ($mrIdsInput) {
+            if (is_array($mrIdsInput)) {
+                $mrIds = $mrIdsInput;
+            } else {
+                $mrIds = explode(',', $mrIdsInput);
+            }
+            $mrIds = array_filter(array_map('intval', $mrIds));
+
+            if (!empty($mrIds)) {
+                $items = Mr::whereIn('mr_id', $mrIds)->get();
+            }
+        }
+
+        // Fallback to mr_qr_code query param if no items found (backward compatibility / testing)
+        if ($items->isEmpty() && $request->has('mr_qr_code')) {
+            $items = collect([
+                (object)[
+                    'mr_id' => null,
+                    'mr_qr_code' => $request->query('mr_qr_code')
+                ]
+            ]);
+        }
 
         // Dictionary defining parameters for each of the 5 configurations.
         // You can manually adjust qr_width, qr_height, x_offset, and y_offset below.
@@ -154,75 +180,92 @@ class InventoryController extends Controller
             mkdir($qrStickersDir, 0755, true);
         }
 
-        // Generate a unique temporary path for the raw QR code PNG
-        $tempQrName = 'temp_qr_' . uniqid() . '.png';
-        $tempQrPath = $qrCodesDir . '/' . $tempQrName;
-
-        // Render and write the raw QR code to the temporary file path
-        $qrcode->render($qrText, $tempQrPath);
-
         // -------------------------------------------------------------
         // 3. Background Template Verification & Manipulation via intervention/image
         // -------------------------------------------------------------
         $templatePath = public_path('img/qr_templates/' . $templateName);
         if (!file_exists($templatePath)) {
-            // Clean up temporary raw QR code file if template doesn't exist
-            if (file_exists($tempQrPath)) {
-                @unlink($tempQrPath);
-            }
             abort(404, "Background template image not found at {$templatePath}");
         }
 
         // Initialize Intervention Image Manager with the GD driver
         $manager = new ImageManager(new Driver());
 
-        // Read background template and temporary QR code into Image instances using decode()
-        $backgroundImage = $manager->decode($templatePath);
-        $qrImage         = $manager->decode($tempQrPath);
+        $stickerPaths = [];
+        $tempFilesToClean = [];
 
-        // Access the raw GD image resource to convert white pixels to true transparent alpha pixels.
-        // This avoids GD losing transparency when resizing color-keyed palette images.
-        $gdImage = $qrImage->core()->first()->native();
-        imagealphablending($gdImage, false);
-        imagesavealpha($gdImage, true);
+        foreach ($items as $item) {
+            $qrText = $item->mr_qr_code;
+            if (empty($qrText)) {
+                continue;
+            }
 
-        $width  = imagesx($gdImage);
-        $height = imagesy($gdImage);
+            // Generate a unique temporary path for the raw QR code PNG
+            $tempQrName = 'temp_qr_' . uniqid() . '.png';
+            $tempQrPath = $qrCodesDir . '/' . $tempQrName;
 
-        for ($x = 0; $x < $width; $x++) {
-            for ($y = 0; $y < $height; $y++) {
-                $colorIndex = imagecolorat($gdImage, $x, $y);
-                $colorInfo  = imagecolorsforindex($gdImage, $colorIndex);
+            // Render and write the raw QR code to the temporary file path
+            $qrcode->render($qrText, $tempQrPath);
+            $tempFilesToClean[] = $tempQrPath;
 
-                // If the pixel is pure white (used for background and light modules), set it to transparent
-                if ($colorInfo['red'] === 255 && $colorInfo['green'] === 255 && $colorInfo['blue'] === 255) {
-                    $transparentColor = imagecolorallocatealpha($gdImage, 255, 255, 255, 127);
-                    imagesetpixel($gdImage, $x, $y, $transparentColor);
+            // Read background template and temporary QR code into Image instances using decode()
+            $backgroundImage = $manager->decode($templatePath);
+            $qrImage         = $manager->decode($tempQrPath);
+
+            // Access the raw GD image resource to convert white pixels to true transparent alpha pixels.
+            // This avoids GD losing transparency when resizing color-keyed palette images.
+            $gdImage = $qrImage->core()->first()->native();
+            imagealphablending($gdImage, false);
+            imagesavealpha($gdImage, true);
+
+            $width  = imagesx($gdImage);
+            $height = imagesy($gdImage);
+
+            for ($x = 0; $x < $width; $x++) {
+                for ($y = 0; $y < $height; $y++) {
+                    $colorIndex = imagecolorat($gdImage, $x, $y);
+                    $colorInfo  = imagecolorsforindex($gdImage, $colorIndex);
+
+                    // If the pixel is pure white (used for background and light modules), set it to transparent
+                    if ($colorInfo['red'] === 255 && $colorInfo['green'] === 255 && $colorInfo['blue'] === 255) {
+                        $transparentColor = imagecolorallocatealpha($gdImage, 255, 255, 255, 127);
+                        imagesetpixel($gdImage, $x, $y, $transparentColor);
+                    }
                 }
+            }
+
+            // Resize the transparent QR code image using the configurable dimensions
+            $qrImage->resize($qrWidth, $qrHeight);
+
+            // Insert the resized QR code onto the background template at the defined X and Y offsets.
+            $backgroundImage->insert($qrImage, $xOffset, $yOffset);
+
+            // Save the final merged PNG image (the single sticker) into public/img/qr_stickers/.
+            $stickerName = 'sticker_' . uniqid() . '.png';
+            $stickerPath = $qrStickersDir . '/' . $stickerName;
+            $backgroundImage->save($stickerPath);
+            
+            $tempFilesToClean[] = $stickerPath;
+
+            // Add the sticker path to our list repeated sticker_quantity times
+            for ($i = 0; $i < $stickerQuantity; $i++) {
+                $stickerPaths[] = $stickerPath;
             }
         }
 
-        // Resize the transparent QR code image using the configurable dimensions
-        $qrImage->resize($qrWidth, $qrHeight);
-
-        // Insert the resized QR code onto the background template at the defined X and Y offsets.
-        $backgroundImage->insert($qrImage, $xOffset, $yOffset);
-
-        // Save the final merged PNG image (the single sticker) into public/img/qr_stickers/.
-        $stickerName = 'sticker_' . uniqid() . '.png';
-        $stickerPath = $qrStickersDir . '/' . $stickerName;
-        $backgroundImage->save($stickerPath);
-
-        // Clean up the temporary raw QR code file since it's no longer needed
-        if (file_exists($tempQrPath)) {
-            @unlink($tempQrPath);
+        if (empty($stickerPaths)) {
+            return response()->json([
+                'error' => 'No valid QR codes found to generate.',
+                'pdf_urls' => []
+            ], 400);
         }
 
         // -------------------------------------------------------------
         // 4. Batch PDF Generation using mPDF directly
         // -------------------------------------------------------------
+        $totalStickersCount = count($stickerPaths);
         // Calculate how many A6 pages (PDF files) are needed
-        $totalPages = (int) ceil($stickerQuantity / $stickersPerPage);
+        $totalPages = (int) ceil($totalStickersCount / $stickersPerPage);
 
         // Track which sticker number we're on across all pages
         $stickerIndex = 0;
@@ -250,7 +293,7 @@ class InventoryController extends Controller
             ]);
 
             // Determine how many stickers to place on this specific page
-            $stickersOnThisPage = min($stickersPerPage, $stickerQuantity - $stickerIndex);
+            $stickersOnThisPage = min($stickersPerPage, $totalStickersCount - $stickerIndex);
 
             // Build an HTML table that fills the entire A6 page with sticker images.
             $html  = '<table style="width:105mm; height:148mm; border-collapse:collapse; table-layout:fixed;">';
@@ -263,7 +306,8 @@ class InventoryController extends Controller
 
                     // Only insert an image if we still have stickers to place
                     if ($placed < $stickersOnThisPage) {
-                        $html .= '<img src="' . $stickerPath . '" style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm; display:block;" />';
+                        $currentStickerPath = $stickerPaths[$stickerIndex];
+                        $html .= '<img src="' . $currentStickerPath . '" style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm; display:block;" />';
                         $placed++;
                         $stickerIndex++;
                     }
@@ -287,9 +331,11 @@ class InventoryController extends Controller
             $pdfUrls[] = asset('img/qr_stickers/' . $pdfName);
         }
 
-        // Clean up the single sticker PNG since it has been embedded into the PDFs
-        if (file_exists($stickerPath)) {
-            @unlink($stickerPath);
+        // Clean up all temporary files (raw QR codes and merged stickers)
+        foreach ($tempFilesToClean as $file) {
+            if (file_exists($file)) {
+                @unlink($file);
+            }
         }
 
         // -------------------------------------------------------------
