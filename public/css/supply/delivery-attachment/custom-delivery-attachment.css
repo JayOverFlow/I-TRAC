@@ -14,3 +14,85 @@ thead.bg-transparent th {
     font-weight: bold;
     color: #dc3545;
 }
+
+/* Custom Description Toggle Styling */
+.custom-specification-header {
+    background-color: #ffffff;
+    border: 1px solid #bfc9d4 !important;
+}
+
+.specification-body {
+    background-color: #ffffff;
+    border: 1px solid #bfc9d4 !important;
+    border-top: none !important;
+}
+
+.custom-specification-header {
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.custom-specification-header:hover {
+    background-color: #f1f2f3 !important;
+}
+
+body.dark .custom-specification-header {
+    background-color: #2a2f38 !important;
+    border: 1px solid #2a2f38 !important;
+}
+
+body.dark .specification-body {
+    background-color: #2a2f38 !important;
+    border: 1px solid #2a2f38 !important;
+    border-top: none !important;
+}
+
+body.dark .custom-specification-container.is-disabled .custom-specification-header,
+body.dark .custom-specification-container.is-disabled .specification-body {
+    background-color: #2a2f38 !important;
+    border-color: transparent !important;
+}
+
+body.dark .custom-specification-header:hover {
+    background-color: #2A2F38 !important;
+}
+
+body.dark .specification-textarea {
+    background-color: transparent !important;
+    color: #bfc9d4 !important;
+}
+
+body.dark .specification-textarea:focus {
+    color: #ffffff !important;
+}
+
+.specification-arrow {
+    transition: transform 0.3s ease;
+    transform: rotate(180deg);
+    /* Default open state */
+}
+
+.specification-body {
+    display: block;
+    /* Default open state */
+}
+
+.remove-specification-btn {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.remove-specification-btn:hover {
+    opacity: 1;
+}
+
+.custom-specification-container.is-invalid .custom-specification-header,
+.custom-specification-container.is-invalid .specification-body {
+    border-color: #dc3545 !important;
+}
+
+/* Seamless look for specification rows */
+.specification-row td {
+    border-top: none !important;
+    padding-top: 0 !important;
+}

@@ -68,7 +68,11 @@
                     </thead>
                     <tbody id="rspiItemsTbody">
                         @foreach($rspi->rspiItems as $index => $item)
-                        <tr>
+                        @php
+                            $specDescription = $item->rspiSpecs->first()->rspi_spec_description ?? '';
+                            $hasSpec = !empty($specDescription);
+                        @endphp
+                        <tr class="rspi-item-row">
                             <td class="px-1">
                                 <input type="hidden" name="items[{{ $index }}][rspi_items_id]" value="{{ $item->rspi_items_id }}">
                                 <input type="text" class="form-control form-control-sm text-center"
@@ -86,8 +90,15 @@
                                 <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][rspi_property_no]"></span>
                             </td>
                             <td class="px-1">
-                                <input type="text" class="form-control form-control-sm"
-                                    name="items[{{ $index }}][rspi_items_descrip]" value="{{ implode(', ', array_filter(array_merge([$item->rspi_items_descrip], $item->rspiSpecs->pluck('rspi_spec_description')->toArray()))) }}">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm"
+                                        name="items[{{ $index }}][rspi_items_descrip]" value="{{ $item->rspi_items_descrip }}">
+                                    <span class="input-group-text bg-white border-start-0 add-specification-btn"
+                                        title="Add Specifications" style="cursor: pointer;">
+                                        <img src="{{ asset('img/add-description-btn.png') }}" alt="Add"
+                                            style="width: 14px; height: 14px;">
+                                    </span>
+                                </div>
                                 <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][rspi_items_descrip]"></span>
                             </td>
                             <td class="px-1">
@@ -114,6 +125,36 @@
                                     <img src="{{ asset('img/remove.svg') }}" alt="Remove">
                                 </button>
                             </td>
+                        </tr>
+                        <tr class="specification-row {{ $hasSpec ? '' : 'd-none' }}">
+                            <td colspan="3"></td>
+                            <td class="px-1">
+                                <div class="custom-specification-container">
+                                    <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
+                                        style="cursor: pointer;">
+                                        <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
+                                            Specification</div>
+                                        <div class="d-flex align-items-center pe-3">
+                                            <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
+                                                aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
+                                            <svg class="specification-arrow" width="12" height="12"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                style="{{ $hasSpec ? 'transform: rotate(180deg);' : '' }}">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="specification-body rounded-bottom"
+                                        style="{{ $hasSpec ? '' : 'display: none;' }}">
+                                        <textarea class="form-control form-control-sm border-0 shadow-none px-2 specification-textarea" 
+                                            name="items[{{ $index }}][specification]" data-field="specification"
+                                            rows="2" placeholder="Enter specification details.">{{ $specDescription }}</textarea>
+                                        <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][specification]"></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td colspan="5"></td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -238,6 +238,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.iar_items_descrip' => 'required|string|min:5|max:50',
                 'items.*.iar_unit' => 'required|string|min:2|max:20',
                 'items.*.iar_quantity' => 'required|integer|min:1|max:9999999',
+                'items.*.specification' => 'required|string|min:10|max:500',
             ];
         } else {
             $rules = [
@@ -255,6 +256,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.iar_items_descrip' => 'nullable|string|min:5|max:50',
                 'items.*.iar_unit' => 'nullable|string|min:2|max:20',
                 'items.*.iar_quantity' => 'nullable|integer|min:1|max:9999999',
+                'items.*.specification' => 'nullable|string|max:500',
             ];
         }
 
@@ -292,6 +294,9 @@ class DeliveryAttachmentController extends Controller
             'items.*.iar_quantity.integer' => 'Quantity must be an integer.',
             'items.*.iar_quantity.min' => 'Quantity must be at least 1.',
             'items.*.iar_quantity.max' => 'Quantity exceeds maximum limit.',
+            'items.*.specification.required' => 'Specification is required.',
+            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
@@ -357,9 +362,18 @@ class DeliveryAttachmentController extends Controller
                         $incomingItemIds[] = $iarItem->iar_items_id;
                     }
 
-                    // Since description and specifications are consolidated into iar_items_descrip,
-                    // we clear/delete any specs associated with this item to prevent duplicates
-                    $iarItem->iarSpecs()->delete();
+                    $spec = $iarItem->iarSpecs()->first();
+                    if (!empty($itemData['specification'])) {
+                        if ($spec) {
+                            $spec->update(['iar_spec_description' => $itemData['specification']]);
+                        } else {
+                            $iarItem->iarSpecs()->create(['iar_spec_description' => $itemData['specification']]);
+                        }
+                    } else {
+                        if ($spec) {
+                            $spec->delete();
+                        }
+                    }
                 }
             }
 
@@ -433,6 +447,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.ris_stock_available' => 'nullable|in:Yes,No',
                 'items.*.ris_issued_quantity' => 'required|integer|min:1|max:9999999',
                 'items.*.ris_issued_remarks' => 'nullable|string|max:50',
+                'items.*.specification' => 'required|string|min:10|max:500',
             ];
         } else {
             $rules = [
@@ -450,6 +465,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.ris_stock_available' => 'nullable|in:Yes,No',
                 'items.*.ris_issued_quantity' => 'nullable|integer|min:1|max:9999999',
                 'items.*.ris_issued_remarks' => 'nullable|string|max:255',
+                'items.*.specification' => 'nullable|string|max:500',
             ];
         }
 
@@ -483,6 +499,9 @@ class DeliveryAttachmentController extends Controller
             'items.*.ris_issued_quantity.min' => 'Must be at least 1.',
             'items.*.ris_issued_quantity.max' => 'Exceeds maximum limit.',
             'items.*.ris_issued_remarks.max' => 'Must not exceed 50 characters.',
+            'items.*.specification.required' => 'Specification is required.',
+            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
@@ -554,8 +573,18 @@ class DeliveryAttachmentController extends Controller
                         $incomingItemIds[] = $risItem->ris_items_id;
                     }
 
-                    // Delete specs associated with this item to prevent duplicates
-                    $risItem->risSpecs()->delete();
+                    $spec = $risItem->risSpecs()->first();
+                    if (!empty($itemData['specification'])) {
+                        if ($spec) {
+                            $spec->update(['ris_spec_description' => $itemData['specification']]);
+                        } else {
+                            $risItem->risSpecs()->create(['ris_spec_description' => $itemData['specification']]);
+                        }
+                    } else {
+                        if ($spec) {
+                            $spec->delete();
+                        }
+                    }
                 }
             }
 
@@ -624,6 +653,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.rsmi_unit' => 'required|string|min:1|max:20',
                 'items.*.rsmi_quantity' => 'required|integer|min:1|max:9999999',
                 'items.*.rsmi_unit_cost' => 'required|numeric|min:1|max:9999999',
+                'items.*.specification' => 'required|string|min:10|max:500',
             ];
         } else {
             $rules = [
@@ -639,6 +669,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.rsmi_unit' => 'nullable|string|min:1|max:20',
                 'items.*.rsmi_quantity' => 'nullable|integer|min:1|max:9999999',
                 'items.*.rsmi_unit_cost' => 'nullable|numeric|min:1|max:9999999',
+                'items.*.specification' => 'nullable|string|max:500',
             ];
         }
 
@@ -675,6 +706,9 @@ class DeliveryAttachmentController extends Controller
             'items.*.rsmi_unit_cost.numeric' => 'Must be a number.',
             'items.*.rsmi_unit_cost.min' => 'Must be at least 1.',
             'items.*.rsmi_unit_cost.max' => 'Exceeds maximum limit.',
+            'items.*.specification.required' => 'Specification is required.',
+            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
@@ -741,7 +775,18 @@ class DeliveryAttachmentController extends Controller
                         $incomingItemIds[] = $rsmiItem->rsmi_items_id;
                     }
 
-                    $rsmiItem->rsmiSpecs()->delete();
+                    $spec = $rsmiItem->rsmiSpecs()->first();
+                    if (!empty($itemData['specification'])) {
+                        if ($spec) {
+                            $spec->update(['rsmi_spec_description' => $itemData['specification']]);
+                        } else {
+                            $rsmiItem->rsmiSpecs()->create(['rsmi_spec_description' => $itemData['specification']]);
+                        }
+                    } else {
+                        if ($spec) {
+                            $spec->delete();
+                        }
+                    }
                 }
             }
 
@@ -819,6 +864,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.ics_items_descrip' => 'required|string|min:5|max:50',
                 'items.*.ics_inventory_item_no' => 'required|string|min:2|max:20',
                 'items.*.ics_estimated_useful_life' => 'nullable|string|min:2|max:20',
+                'items.*.specification' => 'required|string|min:10|max:500',
             ];
         } else {
             $rules = [
@@ -835,6 +881,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.ics_items_descrip' => 'nullable|string|min:5|max:50',
                 'items.*.ics_inventory_item_no' => 'nullable|string|min:2|max:20',
                 'items.*.ics_estimated_useful_life' => 'nullable|string|min:2|max:20',
+                'items.*.specification' => 'nullable|string|max:500',
             ];
         }
 
@@ -873,6 +920,9 @@ class DeliveryAttachmentController extends Controller
             'items.*.ics_inventory_item_no.max' => 'Must not exceed 20 characters.',
             'items.*.ics_estimated_useful_life.min' => 'Must be at least 2 characters.',
             'items.*.ics_estimated_useful_life.max' => 'Must not exceed 20 characters.',
+            'items.*.specification.required' => 'Specification is required.',
+            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
@@ -943,8 +993,18 @@ class DeliveryAttachmentController extends Controller
                         $incomingItemIds[] = $icsItem->ics_items_id;
                     }
 
-                    // Since description and specifications are consolidated, clear/delete specs to prevent duplication
-                    $icsItem->icsSpecs()->delete();
+                    $spec = $icsItem->icsSpecs()->first();
+                    if (!empty($itemData['specification'])) {
+                        if ($spec) {
+                            $spec->update(['ics_spec_description' => $itemData['specification']]);
+                        } else {
+                            $icsItem->icsSpecs()->create(['ics_spec_description' => $itemData['specification']]);
+                        }
+                    } else {
+                        if ($spec) {
+                            $spec->delete();
+                        }
+                    }
                 }
             }
 
@@ -1013,6 +1073,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.rspi_unit' => 'required|string|min:1|max:20',
                 'items.*.rspi_quantity' => 'required|integer|min:1|max:9999999',
                 'items.*.rspi_unit_cost' => 'required|numeric|min:1|max:9999999',
+                'items.*.specification' => 'required|string|min:10|max:500',
             ];
         } else {
             $rules = [
@@ -1028,6 +1089,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.rspi_unit' => 'nullable|string|max:20',
                 'items.*.rspi_quantity' => 'nullable|integer|min:1|max:9999999',
                 'items.*.rspi_unit_cost' => 'nullable|numeric|min:1|max:9999999',
+                'items.*.specification' => 'nullable|string|max:500',
             ];
         }
 
@@ -1060,6 +1122,9 @@ class DeliveryAttachmentController extends Controller
             'items.*.rspi_unit_cost.numeric' => 'Must be a number.',
             'items.*.rspi_unit_cost.min' => 'Must be at least 1.',
             'items.*.rspi_unit_cost.max' => 'Exceeds maximum limit.',
+            'items.*.specification.required' => 'Specification is required.',
+            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
@@ -1126,8 +1191,18 @@ class DeliveryAttachmentController extends Controller
                         $incomingItemIds[] = $rspiItem->rspi_items_id;
                     }
 
-                    // Since description and specifications are consolidated, clear/delete specs to prevent duplication
-                    $rspiItem->rspiSpecs()->delete();
+                    $spec = $rspiItem->rspiSpecs()->first();
+                    if (!empty($itemData['specification'])) {
+                        if ($spec) {
+                            $spec->update(['rspi_spec_description' => $itemData['specification']]);
+                        } else {
+                            $rspiItem->rspiSpecs()->create(['rspi_spec_description' => $itemData['specification']]);
+                        }
+                    } else {
+                        if ($spec) {
+                            $spec->delete();
+                        }
+                    }
                 }
             }
 
@@ -1205,6 +1280,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.par_property_no' => 'required|string|min:1|max:20',
                 'items.*.par_date_acquired' => 'required|date',
                 'items.*.par_amount' => 'required|numeric|min:1|max:9999999',
+                'items.*.specification' => 'required|string|min:10|max:500',
             ];
         } else {
             $rules = [
@@ -1222,6 +1298,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.par_property_no' => 'nullable|string|min:1|max:20',
                 'items.*.par_date_acquired' => 'nullable|date',
                 'items.*.par_amount' => 'nullable|numeric|min:1|max:9999999',
+                'items.*.specification' => 'nullable|string|max:500',
             ];
         }
 
@@ -1260,6 +1337,9 @@ class DeliveryAttachmentController extends Controller
             'items.*.par_amount.numeric' => 'Must be a number.',
             'items.*.par_amount.min' => 'Must be at least 1.',
             'items.*.par_amount.max' => 'Exceeds maximum limit.',
+            'items.*.specification.required' => 'Specification is required.',
+            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages);
@@ -1329,8 +1409,18 @@ class DeliveryAttachmentController extends Controller
                         $incomingItemIds[] = $parItem->par_items_id;
                     }
 
-                    // Consolidate specifications, clear existing specs
-                    $parItem->parSpecs()->delete();
+                    $spec = $parItem->parSpecs()->first();
+                    if (!empty($itemData['specification'])) {
+                        if ($spec) {
+                            $spec->update(['par_spec_description' => $itemData['specification']]);
+                        } else {
+                            $parItem->parSpecs()->create(['par_spec_description' => $itemData['specification']]);
+                        }
+                    } else {
+                        if ($spec) {
+                            $spec->delete();
+                        }
+                    }
                 }
             }
 

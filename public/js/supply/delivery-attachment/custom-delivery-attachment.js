@@ -114,4 +114,43 @@ $(document).ready(function() {
             }
         }
     }
+
+    // ─── Specification handlers (delegated) ───
+    // Click on Add Specification button in item row
+    $(document).on('click', '.add-specification-btn', function(e) {
+        e.preventDefault();
+        var currentRow = $(this).closest('tr');
+        var specRow = currentRow.next('tr.specification-row');
+        if (specRow.length) {
+            specRow.removeClass('d-none');
+            specRow.find('.specification-body').show();
+            specRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
+            specRow.find('.specification-textarea').focus();
+        }
+    });
+
+    // Click on remove specification button inside spec container
+    $(document).on('click', '.remove-specification-btn', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var specRow = $(this).closest('tr.specification-row');
+        specRow.find('textarea').val('');
+        specRow.addClass('d-none');
+    });
+
+    // Slide toggle click on specification header bar
+    $(document).on('click', '.toggle-specification-action', function(e) {
+        e.preventDefault();
+        var container = $(this).closest('.custom-specification-container');
+        var body = container.find('.specification-body');
+        var arrow = container.find('.specification-arrow');
+        
+        body.slideToggle(300, function() {
+            if ($(this).is(':visible')) {
+                arrow.css('transform', 'rotate(180deg)');
+            } else {
+                arrow.css('transform', 'rotate(0deg)');
+            }
+        });
+    });
 });
