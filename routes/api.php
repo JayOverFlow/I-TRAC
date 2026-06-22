@@ -18,6 +18,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::post('password/update', [AccountSettingsController::class, 'updatePassword'])->middleware('auth:sanctum');
     Route::post('avatar/update', [AccountSettingsController::class, 'updateAvatar'])->middleware('auth:sanctum');
     Route::post('mr/assign',    [MrApiController::class, 'assignItems'])->middleware('auth:sanctum');
+    Route::post('mr/lookup',    [MrApiController::class, 'lookupItem'])->middleware('auth:sanctum');
     Route::get('mr/items',     [MrApiController::class, 'getUserItems'])->middleware('auth:sanctum');
     Route::post('mr/items/update-image', [MrApiController::class, 'updateItemImage'])->middleware('auth:sanctum');
     Route::post('mr/items/delete-image', [MrApiController::class, 'deleteItemImage'])->middleware('auth:sanctum');
