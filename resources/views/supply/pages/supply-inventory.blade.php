@@ -95,44 +95,46 @@
             </thead>
             <tbody>
                 @foreach ($mrItems as $item)
-                    @php
-                        $images = $item->images->map(function ($img) {
-                            return [
-                                'url' => asset($img->image_path),
-                                'path' => $img->image_path
-                            ];
-                        })->toArray();
-                    @endphp
-                    <tr class="inventory-row" style="cursor: pointer;" data-item-name="{{ $item->item_name }}"
-                        data-mr-id="{{ $item->mr_id }}"
-                        data-assignee="{{ $item->assignedUser?->user_fullname ?? '—' }}"
-                        data-office="{{ $item->assignedUser?->departments->first()?->dep_name ?? '—' }}"
-                        data-date-scanned="{{ $item->date_scanned ? \Carbon\Carbon::parse($item->date_scanned)->format('Y-m-d') : '—' }}"
-                        data-stock="{{ $item->stock ?? '—' }}" data-unit="{{ $item->unit ?? '—' }}"
-                        data-specification="{{ $item->specification ?? '—' }}"
-                        data-quantity="{{ $item->quantity ?? '—' }}" data-building="{{ $item->building ?? '—' }}"
-                        data-room-no="{{ $item->room_no ?? '—' }}"
-                        data-item-images="{{ json_encode($images) }}"
-                        data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}">
-                        <td class="text-center">{{ $item->mr_qr_code }}</td>
-                        <td>{{ $item->item_name }}</td>
-                        <td>{{ $item->assignedUser?->user_fullname ?? '—' }}</td>
-                        <td class="text-center">{{ $item->assignedUser?->departments->first()?->dep_name ?? '—' }}</td>
-                        <td class="text-center">
-                            {{ $item->date_scanned ? \Carbon\Carbon::parse($item->date_scanned)->format('Y-m-d') : '—' }}
-                        </td>
-                        <td class="text-center">
-                            @if ($item->category === 'Supply and Materials')
-                                <span class="badge badge-light-info">Supplies and Materials</span>
-                            @elseif ($item->category === 'Semi-Expendable')
-                                <span class="badge badge-light-success">Semi-Expendable</span>
-                            @elseif ($item->category === 'Equipment')
-                                <span class="badge badge-light-danger">Equipment</span>
-                            @else
-                                <span>—</span>
-                            @endif
-                        </td>
-                    </tr>
+                    @if ($item->category === 'Semi-Expendable' || $item->category === 'Equipment')
+                        @php
+                            $images = $item->images->map(function ($img) {
+                                return [
+                                    'url' => asset($img->image_path),
+                                    'path' => $img->image_path
+                                ];
+                            })->toArray();
+                        @endphp
+                        <tr class="inventory-row" style="cursor: pointer;" data-item-name="{{ $item->item_name }}"
+                            data-mr-id="{{ $item->mr_id }}"
+                            data-assignee="{{ $item->assignedUser?->user_fullname ?? '—' }}"
+                            data-office="{{ $item->assignedUser?->departments->first()?->dep_name ?? '—' }}"
+                            data-date-scanned="{{ $item->date_scanned ? \Carbon\Carbon::parse($item->date_scanned)->format('Y-m-d') : '—' }}"
+                            data-stock="{{ $item->stock ?? '—' }}" data-unit="{{ $item->unit ?? '—' }}"
+                            data-specification="{{ $item->specification ?? '—' }}"
+                            data-quantity="{{ $item->quantity ?? '—' }}" data-building="{{ $item->building ?? '—' }}"
+                            data-room-no="{{ $item->room_no ?? '—' }}"
+                            data-item-images="{{ json_encode($images) }}"
+                            data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}">
+                            <td class="text-center">{{ $item->mr_qr_code }}</td>
+                            <td>{{ $item->item_name }}</td>
+                            <td>{{ $item->assignedUser?->user_fullname ?? '—' }}</td>
+                            <td class="text-center">{{ $item->assignedUser?->departments->first()?->dep_name ?? '—' }}</td>
+                            <td class="text-center">
+                                {{ $item->date_scanned ? \Carbon\Carbon::parse($item->date_scanned)->format('Y-m-d') : '—' }}
+                            </td>
+                            <td class="text-center">
+                                @if ($item->category === 'Supply and Materials')
+                                    <span class="badge badge-light-info">Supplies and Materials</span>
+                                @elseif ($item->category === 'Semi-Expendable')
+                                    <span class="badge badge-light-success">Semi-Expendable</span>
+                                @elseif ($item->category === 'Equipment')
+                                    <span class="badge badge-light-danger">Equipment</span>
+                                @else
+                                    <span>—</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>
