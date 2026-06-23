@@ -306,10 +306,10 @@ $(document).ready(function () {
         "initComplete": function () {
             var printBtn =
                 '<button id="btnOpenPrintQueue"'
-                + ' class="btn fw-bold me-2 d-flex align-items-center flex-shrink-0"'
+                + ' class="btn btn-dark-red fw-bold me-2 d-flex align-items-center flex-shrink-0"'
                 + ' data-bs-toggle="modal" data-bs-target="#exportQueueModal">'
                 + 'Export Queue'
-                + ' <span id="queueBadgeCount" class="fw-bold ms-2" style="color: #8C0404;">0</span>'
+                + ' <span id="queueBadgeCount" class="fw-bold ms-2">0</span>'
                 + '</button>';
             $('.dataTables_filter')
                 .css({ 'display': 'flex', 'align-items': 'center' })
