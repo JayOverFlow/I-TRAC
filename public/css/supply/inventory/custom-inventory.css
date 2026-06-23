@@ -119,7 +119,7 @@ body.dark .detail-rows .border-bottom {
 }
 
 .btn-dark-red:hover {
-    background-color: var(--red-2) !important;
+    background-color: var(--red-1) !important;
 }
 
 /* Image Grid Layout Styles */
@@ -600,4 +600,234 @@ body.dark #modalImageActionsContainer {
 .main-image-viewport-card.flex-grow-1 .card-body {
     height: 100% !important;
     min-height: 100% !important;
+}
+
+/* -------------------------------------------------------------
+   Export Queue & Item Details Modal Custom Styling Refactoring
+   ------------------------------------------------------------- */
+
+/* Equal button widths in Item Label Form */
+#createItemLabelForm .d-flex.gap-2 button {
+    flex: 1 1 0% !important;
+    width: 50% !important;
+}
+
+/* Button Colors & Transitions - Light Mode */
+#btnAddToQueue {
+    color: #8C0404 !important;
+    border: 1px solid #8C0404 !important;
+    background-color: transparent !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+#btnAddToQueue:hover,
+#btnAddToQueue:active,
+#btnAddToQueue:focus {
+    color: #ffffff !important;
+    background-color: var(--red-1) !important;
+    border-color: var(--red-1) !important;
+    box-shadow: none !important;
+}
+
+#btnAddToQueue:disabled {
+    color: #cbd5e1 !important;
+    border-color: #cbd5e1 !important;
+    background-color: transparent !important;
+}
+
+/* Create Item Label Solid Button - Dark Mode Override */
+body.dark .btn-dark-red {
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+    color: #ffffff !important;
+}
+
+body.dark .btn-dark-red:hover {
+    background-color: #d32f2f !important;
+    border-color: #d32f2f !important;
+}
+
+/* Add to Export Queue Outline Button - Dark Mode Override */
+body.dark #btnAddToQueue {
+    color: #EF4444 !important;
+    border-color: #EF4444 !important;
+    background-color: transparent !important;
+}
+
+body.dark #btnAddToQueue:hover,
+body.dark #btnAddToQueue:active,
+body.dark #btnAddToQueue:focus {
+    color: #ffffff !important;
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+}
+
+body.dark #btnAddToQueue:disabled {
+    color: #4b5563 !important;
+    border-color: #4b5563 !important;
+    background-color: transparent !important;
+}
+
+/* Export Queue Modal Title */
+#exportQueueModalLabel {
+    color: #8C0404 !important;
+}
+
+body.dark #exportQueueModalLabel {
+    color: #8C0404 !important;
+}
+
+/* Export Queue Table Headers */
+#exportQueueTableWrap table th {
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    color: #212529 !important;
+    border: none !important;
+}
+
+body.dark #exportQueueTableWrap table th {
+    color: #bfc9d4 !important;
+    background-color: #1a1c23 !important;
+}
+
+/* Export Queue Table Body Cells */
+#exportQueueTableBody td {
+    padding: 12px 24px !important;
+    color: #212529 !important;
+}
+
+body.dark #exportQueueTableBody td {
+    color: #bfc9d4 !important;
+}
+
+/* Export Queue Trash Remove Action Button */
+.btn-remove-queue-item {
+    color: #8C0404 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.btn-remove-queue-item svg {
+    fill: #8C0404 !important;
+}
+
+body.dark .btn-remove-queue-item {
+    color: #EF4444 !important;
+}
+
+body.dark .btn-remove-queue-item svg {
+    fill: #EF4444 !important;
+}
+
+/* Items Table - Export Queue Trigger Button (Light Mode) */
+#btnOpenPrintQueue {
+    color: #8C0404 !important;
+    border: 1px solid #8C0404 !important;
+    background-color: transparent !important;
+    font-size: 14px !important;
+    padding: 6px 16px !important;
+    border-radius: 6px !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+#btnOpenPrintQueue:hover {
+    color: #ffffff !important;
+    background-color: var(--red-1) !important;
+    border-color: var(--red-1) !important;
+    box-shadow: none !important;
+}
+
+#queueBadgeCount {
+    color: #8C0404 !important;
+    font-weight: bold !important;
+}
+
+/* Items Table - Export Queue Trigger Button (Dark Mode Override - Solid Red) */
+body.dark #btnOpenPrintQueue {
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+    color: #ffffff !important;
+}
+
+body.dark #btnOpenPrintQueue:hover {
+    background-color: #d32f2f !important;
+    border-color: #d32f2f !important;
+    color: #ffffff !important;
+}
+
+body.dark #queueBadgeCount {
+    color: #ffffff !important;
+}
+
+/* Export Queue Footer Stats & Action Buttons styling */
+.queue-stats-container {
+    color: #333 !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+}
+
+.queue-stats-container span {
+    color: #000 !important;
+}
+
+body.dark .queue-stats-container {
+    color: #bfc9d4 !important;
+}
+
+body.dark .queue-stats-container span {
+    color: #ffffff !important;
+}
+
+#btnClearQueue {
+    border: 1px solid #8C0404 !important;
+    color: #8C0404 !important;
+    background-color: #fff !important;
+    border-radius: 6px !important;
+    padding: 8px 24px !important;
+    font-size: 14px !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+#btnClearQueue:hover {
+    background-color: #8C0404 !important;
+    color: #ffffff !important;
+}
+
+body.dark #btnClearQueue {
+    border: 1px solid #A8B1BB !important;
+    background-color: transparent !important;
+    color: #A8B1BB !important;
+}
+
+body.dark #btnClearQueue:hover {
+    background-color: #8C0404 !important;
+    color: #ffffff !important;
+}
+
+#btnExportQueuePdf {
+    background-color: #8C0404 !important;
+    border: 1px solid #8C0404 !important;
+    border-radius: 6px !important;
+    padding: 8px 24px !important;
+    font-size: 14px !important;
+    color: #ffffff !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+#btnExportQueuePdf:hover {
+    background-color: var(--red-1) !important;
+    border-color: var(--red-1) !important;
+}
+
+#btnExportQueuePdf:disabled {
+    background-color: #cbd5e1 !important;
+    border-color: #cbd5e1 !important;
+    color: #64748b !important;
+}
+
+body.dark #btnExportQueuePdf:disabled {
+    background-color: #4b5563 !important;
+    border-color: #4b5563 !important;
+    color: #9ca3af !important;
 }

@@ -55,6 +55,10 @@ class InventoryController extends Controller
         $size   = $request->query('label_size') ?: 'Small';
         $layout = $request->query('qr_layout') ?: 'layout_1';
         $stickerQuantity = max(1, (int) ($request->query('sticker_quantity') ?: 1));
+        $paperSize       = strtoupper($request->query('paper_size') ?: 'A6');
+        if (!in_array($paperSize, ['A6', 'A4'])) {
+            $paperSize = 'A6';
+        }
 
         // Get mr_id or mr_ids from query
         $mrIdsInput = $request->query('mr_ids') ?: $request->query('mr_id');
@@ -143,9 +147,71 @@ class InventoryController extends Controller
             ],
         ];
 
-        // Resolve selected configuration; fallback to Small Layout 1 if mismatch
-        $configKey = $size . '_' . $layout;
-        $config    = isset($configs[$configKey]) ? $configs[$configKey] : $configs['Small_layout_1'];
+        // A4 configuration dictionary — same PNG templates, larger grid (more stickers per page).
+        // Grid dimensions derived from Excel-for-QR-Labels_A4.xlsx sheet cell counts.
+        $a4Configs = [
+            'Small_layout_1'  => [
+                'template'  => 'small.png',
+                'sheet'     => '2X2',
+                'cols'      => 10,
+                'rows'      => 14,
+                'desc'      => 'A4_Small_NoText',
+                'qr_width'  => 298,
+                'qr_height' => 253,
+                'x_offset'  => -25,
+                'y_offset'  => -21,
+            ],
+            'Medium_layout_1' => [
+                'template'  => 'medium-qr.png',
+                'sheet'     => '3X3',
+                'cols'      => 6,
+                'rows'      => 9,
+                'desc'      => 'A4_Medium_NoText',
+                'qr_width'  => 455,
+                'qr_height' => 380,
+                'x_offset'  => -38,
+                'y_offset'  => -32,
+            ],
+            'Large_layout_1'  => [
+                'template'  => 'large-qr.png',
+                'sheet'     => '4X4',
+                'cols'      => 4,
+                'rows'      => 7,
+                'desc'      => 'A4_Large_NoText',
+                'qr_width'  => 620,
+                'qr_height' => 517,
+                'x_offset'  => -50,
+                'y_offset'  => -35,
+            ],
+            'Medium_layout_2' => [
+                'template'  => 'medium-qr-text.png',
+                'sheet'     => '3X4.5',
+                'cols'      => 6,
+                'rows'      => 6,
+                'desc'      => 'A4_Medium_WithText',
+                'qr_width'  => 470,
+                'qr_height' => 387,
+                'x_offset'  => -45,
+                'y_offset'  => -35,
+            ],
+            'Large_layout_2'  => [
+                'template'  => 'large-qr-text.png',
+                'sheet'     => '4X6',
+                'cols'      => 4,
+                'rows'      => 4,
+                'desc'      => 'A4_Large_WithText',
+                'qr_width'  => 625,
+                'qr_height' => 530,
+                'x_offset'  => -52,
+                'y_offset'  => -44,
+            ],
+        ];
+
+        // Resolve selected configuration; fallback to Small Layout 1 if mismatch.
+        // Source dict is chosen based on the requested paper size.
+        $configKey    = $size . '_' . $layout;
+        $configSource = ($paperSize === 'A4') ? $a4Configs : $configs;
+        $config       = isset($configSource[$configKey]) ? $configSource[$configKey] : $configSource['Small_layout_1'];
 
         $qrWidth      = $config['qr_width'];
         $qrHeight     = $config['qr_height'];
@@ -273,15 +339,17 @@ class InventoryController extends Controller
         // Collect the public-accessible URLs for all generated PDFs
         $pdfUrls = [];
 
-        // A6 dimensions: 105mm × 148mm. Each cell size is derived by dividing
-        // the page area evenly across the grid (cols × rows).
-        $cellWidth  = 105 / $gridCols;
-        $cellHeight = 148 / $gridRows;
+        // Page dimensions in mm (A6: 105×148mm | A4: 210×297mm).
+        // Cell size is derived by dividing the page area evenly across the grid (cols × rows).
+        $pageWidth  = ($paperSize === 'A4') ? 210 : 105;
+        $pageHeight = ($paperSize === 'A4') ? 297 : 148;
+        $cellWidth  = $pageWidth  / $gridCols;
+        $cellHeight = $pageHeight / $gridRows;
 
         for ($page = 0; $page < $totalPages; $page++) {
-            // Create a new mPDF instance with A6 portrait, zero margins
+            // Create a new mPDF instance with the selected paper size, portrait, zero margins
             $mpdf = new MpdfLib([
-                'format'        => 'A6',
+                'format'        => $paperSize,
                 'orientation'   => 'P',
                 'margin_left'   => 0,
                 'margin_right'  => 0,
@@ -296,7 +364,7 @@ class InventoryController extends Controller
             $stickersOnThisPage = min($stickersPerPage, $totalStickersCount - $stickerIndex);
 
             // Build an HTML table that fills the entire A6 page with sticker images.
-            $html  = '<table style="width:105mm; height:148mm; border-collapse:collapse; table-layout:fixed;">';
+            $html  = '<table style="width:' . $pageWidth . 'mm; height:' . $pageHeight . 'mm; border-collapse:collapse; table-layout:fixed;">';
             $placed = 0;
 
             for ($r = 0; $r < $gridRows; $r++) {
@@ -457,5 +525,320 @@ class InventoryController extends Controller
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()], 500);
         }
+    }
+
+    // =========================================================
+    // PRIVATE HELPER — used by exportQueuePdf
+    // =========================================================
+
+    /**
+     * Generates a merged sticker PNG: QR code rendered and overlaid onto the template background.
+     *
+     * @param  string  $qrText      The QR code data string to encode.
+     * @param  array   $config      A config entry from getA4Configs() dict.
+     * @param  array   &$tempFiles  Accumulates file paths to be cleaned up by the caller.
+     * @return string|null          Absolute path of the saved sticker PNG, or null on failure.
+     */
+    private function generateStickerPng(string $qrText, array $config, array &$tempFiles): ?string
+    {
+        $qrCodesDir    = public_path('img/qr_codes');
+        $qrStickersDir = public_path('img/qr_stickers');
+
+        foreach ([$qrCodesDir, $qrStickersDir] as $dir) {
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+        }
+
+        $templatePath = public_path('img/qr_templates/' . $config['template']);
+        if (!file_exists($templatePath)) {
+            return null;
+        }
+
+        // Render raw QR code to a temp PNG
+        $options = new QROptions([
+            'outputInterface'  => QRGdImagePNG::class,
+            'scale'            => 10,
+            'eccLevel'         => EccLevel::H,
+            'imageTransparent' => true,
+        ]);
+        $qrcode     = new QRCode($options);
+        $tempQrPath = $qrCodesDir . '/temp_qr_' . uniqid() . '.png';
+        $qrcode->render($qrText, $tempQrPath);
+        $tempFiles[] = $tempQrPath;
+
+        // Load via Intervention Image
+        $manager         = new ImageManager(new Driver());
+        $backgroundImage = $manager->decode($templatePath);
+        $qrImage         = $manager->decode($tempQrPath);
+
+        // Convert white pixels → transparent (preserves QR clarity on coloured backgrounds)
+        $gdImage = $qrImage->core()->first()->native();
+        imagealphablending($gdImage, false);
+        imagesavealpha($gdImage, true);
+        $w = imagesx($gdImage);
+        $h = imagesy($gdImage);
+        for ($x = 0; $x < $w; $x++) {
+            for ($y = 0; $y < $h; $y++) {
+                $ci = imagecolorat($gdImage, $x, $y);
+                $c  = imagecolorsforindex($gdImage, $ci);
+                if ($c['red'] === 255 && $c['green'] === 255 && $c['blue'] === 255) {
+                    imagesetpixel($gdImage, $x, $y, imagecolorallocatealpha($gdImage, 255, 255, 255, 127));
+                }
+            }
+        }
+
+        // Resize QR and overlay onto background
+        $qrImage->resize($config['qr_width'], $config['qr_height']);
+        $backgroundImage->insert($qrImage, $config['x_offset'], $config['y_offset']);
+
+        // Save merged sticker PNG
+        $stickerPath = $qrStickersDir . '/sticker_' . uniqid() . '.png';
+        $backgroundImage->save($stickerPath);
+        $tempFiles[] = $stickerPath;
+
+        return $stickerPath;
+    }
+
+    /**
+     * Returns the A4 sticker configuration dictionary.
+     * Identical to the inline $a4Configs array inside generateLabel(),
+     * extracted here so exportQueuePdf() can share it without duplication.
+     */
+    private function getA4Configs(): array
+    {
+        return [
+            'Small_layout_1'  => ['template' => 'small.png',          'cols' => 10, 'rows' => 14, 'qr_width' => 298, 'qr_height' => 253, 'x_offset' => -25, 'y_offset' => -21],
+            'Medium_layout_1' => ['template' => 'medium-qr.png',      'cols' => 6,  'rows' => 9,  'qr_width' => 455, 'qr_height' => 380, 'x_offset' => -38, 'y_offset' => -32],
+            'Large_layout_1'  => ['template' => 'large-qr.png',       'cols' => 4,  'rows' => 7,  'qr_width' => 620, 'qr_height' => 517, 'x_offset' => -50, 'y_offset' => -35],
+            'Medium_layout_2' => ['template' => 'medium-qr-text.png', 'cols' => 6,  'rows' => 6,  'qr_width' => 470, 'qr_height' => 387, 'x_offset' => -45, 'y_offset' => -35],
+            'Large_layout_2'  => ['template' => 'large-qr-text.png',  'cols' => 4,  'rows' => 4,  'qr_width' => 625, 'qr_height' => 530, 'x_offset' => -52, 'y_offset' => -44],
+        ];
+    }
+
+    // =========================================================
+    // EXPORT QUEUE — Session-based batch multi-item PDF export
+    // =========================================================
+
+    /**
+     * Add one item + its A4 label config to the export queue stored in the session.
+     */
+    public function addToQueue(Request $request)
+    {
+        $request->validate([
+            'mr_id'           => 'required|integer',
+            'label_size'      => 'required|string',
+            'qr_layout'       => 'required|string',
+            'sticker_quantity' => 'required|integer|min:1',
+        ]);
+
+        $item = Mr::find($request->mr_id);
+        if (!$item) {
+            return response()->json(['status' => 'error', 'message' => 'Item not found.'], 404);
+        }
+
+        $queue   = session('qr_export_queue', []);
+        $queue[] = [
+            'mr_id'           => $item->mr_id,
+            'item_name'       => $item->item_name,
+            'mr_qr_code'      => $item->mr_qr_code,
+            'label_size'      => $request->label_size,
+            'qr_layout'       => $request->qr_layout,
+            'sticker_quantity' => (int) $request->sticker_quantity,
+        ];
+        session(['qr_export_queue' => $queue]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => '"' . $item->item_name . '" added to Export Queue.',
+            'count'   => count($queue),
+        ]);
+    }
+
+    /**
+     * Return the current export queue as JSON.
+     */
+    public function getQueue(Request $request)
+    {
+        $queue = session('qr_export_queue', []);
+        return response()->json([
+            'queue' => array_values($queue),
+            'count' => count($queue),
+        ]);
+    }
+
+    /**
+     * Remove one entry from the queue by its 0-based index.
+     */
+    public function removeFromQueue(Request $request, int $index)
+    {
+        $queue = session('qr_export_queue', []);
+        if (isset($queue[$index])) {
+            array_splice($queue, $index, 1);
+        }
+        $queue = array_values($queue);
+        session(['qr_export_queue' => $queue]);
+
+        return response()->json([
+            'status' => 'success',
+            'queue'  => $queue,
+            'count'  => count($queue),
+        ]);
+    }
+
+    /**
+     * Update an existing entry in the export queue by its 0-based index.
+     */
+    public function updateQueue(Request $request, int $index)
+    {
+        $request->validate([
+            'label_size'       => 'required|string',
+            'qr_layout'        => 'required|string',
+            'sticker_quantity' => 'required|integer|min:1',
+        ]);
+
+        $queue = session('qr_export_queue', []);
+        if (!isset($queue[$index])) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Queue item not found.'
+            ], 404);
+        }
+
+        $queue[$index]['label_size']       = $request->label_size;
+        $queue[$index]['qr_layout']        = $request->qr_layout;
+        $queue[$index]['sticker_quantity'] = (int) $request->sticker_quantity;
+
+        session(['qr_export_queue' => $queue]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Export queue entry updated successfully.',
+            'count'   => count($queue),
+        ]);
+    }
+
+    /**
+     * Clear the entire export queue.
+     */
+    public function clearQueue(Request $request)
+    {
+        session(['qr_export_queue' => []]);
+        return response()->json(['status' => 'success', 'count' => 0]);
+    }
+
+    /**
+     * Generate and return a single A4 PDF containing all queued items.
+     *
+     * Each item gets its own labelled header + sticker grid block.
+     * Items may have different size/layout configurations in the same PDF.
+     * mPDF handles page breaks automatically across item blocks.
+     */
+    public function exportQueuePdf(Request $request)
+    {
+        $queue = session('qr_export_queue', []);
+
+        if (empty($queue)) {
+            return response()->json(['error' => 'Export Queue is empty.'], 400);
+        }
+
+        $a4Configs     = $this->getA4Configs();
+        $qrStickersDir = public_path('img/qr_stickers');
+        $tempFiles     = [];
+        $allHtml       = '';
+
+        foreach ($queue as $entry) {
+            $configKey = $entry['label_size'] . '_' . $entry['qr_layout'];
+            $config    = $a4Configs[$configKey] ?? $a4Configs['Small_layout_1'];
+
+            $gridCols = $config['cols'];
+            $gridRows = $config['rows'];
+            $qty      = (int) $entry['sticker_quantity'];
+
+            // Build the sticker PNG for this item
+            $stickerPath = $this->generateStickerPng($entry['mr_qr_code'], $config, $tempFiles);
+            if (!$stickerPath) {
+                continue;
+            }
+
+            // Cell dimensions on A4 (210×297mm)
+            $cellWidth  = 210 / $gridCols;
+            $cellHeight = 297 / $gridRows;
+
+            // Item header bar — sits above the sticker table, outside the grid
+            $layoutLabel = ($entry['qr_layout'] === 'layout_2') ? 'With Text' : 'No Text';
+            $headerText  = htmlspecialchars($entry['item_name'])
+                         . ' &nbsp;&middot;&nbsp; ' . htmlspecialchars($entry['label_size'])
+                         . ' / ' . $layoutLabel
+                         . ' &nbsp;&middot;&nbsp; ' . $qty . ' sticker' . ($qty !== 1 ? 's' : '');
+
+            $allHtml .= '<div style="width:210mm; background:#e8e8e8; padding:2mm 4mm;'
+                      . ' font-size:8pt; font-weight:bold; font-family:Arial,sans-serif;'
+                      . ' color:#222; box-sizing:border-box;">'
+                      . $headerText . '</div>';
+
+            // Sticker table — one row at a time so mPDF can break pages naturally
+            $placed = 0;
+            while ($placed < $qty) {
+                $allHtml .= '<table style="width:210mm; border-collapse:collapse; table-layout:fixed;">';
+
+                for ($r = 0; $r < $gridRows && $placed < $qty; $r++) {
+                    $allHtml .= '<tr>';
+                    for ($c = 0; $c < $gridCols; $c++) {
+                        $allHtml .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm;'
+                                 . ' text-align:center; vertical-align:middle; padding:0; margin:0;">';
+                        if ($placed < $qty) {
+                            $allHtml .= '<img src="' . $stickerPath . '" style="width:' . $cellWidth . 'mm;'
+                                     . ' height:' . $cellHeight . 'mm; display:block;" />';
+                            $placed++;
+                        }
+                        $allHtml .= '</td>';
+                    }
+                    $allHtml .= '</tr>';
+                }
+
+                $allHtml .= '</table>';
+            }
+
+            // Spacer between items
+            $allHtml .= '<div style="height:3mm;"></div>';
+        }
+
+        if (empty($allHtml)) {
+            return response()->json(['error' => 'No valid QR codes found in queue.'], 400);
+        }
+
+        // Render the combined PDF
+        $mpdf = new MpdfLib([
+            'format'        => 'A4',
+            'orientation'   => 'P',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0,
+            'margin_header' => 0,
+            'margin_footer' => 0,
+            'tempDir'       => storage_path('app/mpdf_tmp'),
+        ]);
+
+        $mpdf->WriteHTML($allHtml);
+
+        $pdfName = 'export_queue_' . uniqid() . '.pdf';
+        $pdfPath = $qrStickersDir . '/' . $pdfName;
+        $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
+
+        // Cleanup temp files
+        foreach ($tempFiles as $file) {
+            if (file_exists($file)) {
+                @unlink($file);
+            }
+        }
+
+        // Clear queue after successful export
+        session(['qr_export_queue' => []]);
+
+        return response()->json([
+            'pdf_url' => asset('img/qr_stickers/' . $pdfName),
+        ]);
     }
 }

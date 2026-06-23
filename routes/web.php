@@ -94,7 +94,14 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
     Route::controller(InventoryController::class)->group(function () {
         Route::get('/inventory', 'showInventory')->name('show.inventory');
         // Route to generate and download the QR code item label
-        Route::get('/inventory/generate-label', 'generateLabel')->name('inventory.generate-label');
+        Route::get('/inventory/generate-label',   'generateLabel') ->name('inventory.generate-label');
+        // Export Queue routes (A4 only, session-persisted)
+        Route::post('/inventory/queue/add',       'addToQueue')    ->name('inventory.queue.add');
+        Route::get('/inventory/queue',            'getQueue')      ->name('inventory.queue.get');
+        Route::put('/inventory/queue/{index}',    'updateQueue')   ->name('inventory.queue.update');
+        Route::delete('/inventory/queue/{index}', 'removeFromQueue')->name('inventory.queue.remove');
+        Route::post('/inventory/queue/clear',     'clearQueue')    ->name('inventory.queue.clear');
+        Route::get('/inventory/queue/export',     'exportQueuePdf')->name('inventory.queue.export');
         // Route::post('/inventory/upload-image', 'uploadImage')->name('inventory.upload-image');
         // Route::post('/inventory/delete-image', 'deleteImage')->name('inventory.delete-image');
         // Route::post('/po-review/{po_id}/generate-attachments', 'generateAttachments')->name('generate.attachments');
