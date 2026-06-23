@@ -9,7 +9,8 @@ $(document).ready(function() {
         flatpickr(".iar-container .flatpickr", {
             dateFormat: "Y-m-d",
             allowInput: true,
-            disableMobile: "true"
+            disableMobile: "true",
+            minDate: "today"
         });
     }
 

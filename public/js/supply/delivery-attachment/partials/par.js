@@ -9,7 +9,8 @@ $(document).ready(function() {
         flatpickr(".par-container .flatpickr", {
             dateFormat: "Y-m-d",
             allowInput: true,
-            disableMobile: "true"
+            disableMobile: "true",
+            minDate: "today"
         });
     }
 
@@ -44,7 +45,8 @@ $(document).ready(function() {
                     flatpickr(input[0], {
                         dateFormat: "Y-m-d",
                         allowInput: true,
-                        disableMobile: "true"
+                        disableMobile: "true",
+                        minDate: "today"
                     });
                 }
             }
