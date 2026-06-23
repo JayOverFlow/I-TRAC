@@ -11,7 +11,8 @@ $(document).ready(function() {
             altInput: true,
             altFormat: "F j, Y",
             allowInput: true,
-            disableMobile: "true"
+            disableMobile: "true",
+            minDate: "today"
         });
     }
 
