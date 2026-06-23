@@ -370,31 +370,39 @@
                                                     <h6 class="fw-bold red-text-2 d-block small mb-2">4. Paper Size</h6>
                                                     <div class="row g-2 justify-content-center">
                                                         <input type="hidden" name="paper_size" id="paper_size"
-                                                            value="A6">
+                                                            value="A4">
                                                         <div class="col-5">
                                                             <div class="paper-size-card p-2 text-center rounded border selected"
-                                                                data-paper-size="A6">
-                                                                <div class="paper-title small">A6</div>
-                                                                <div class="paper-dim text-muted small">(105 x 148 mm)</div>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        <div class="col-5">
-                                                            <div class="paper-size-card p-2 text-center rounded border"
                                                                 data-paper-size="A4">
                                                                 <div class="paper-title small">A4</div>
                                                                 <div class="paper-dim text-muted small">(210 x 297mm)</div>
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-5">
+                                                            <div class="paper-size-card p-2 text-center rounded border"
+                                                                data-paper-size="A6">
+                                                                <div class="paper-title small">A6</div>
+                                                                <div class="paper-dim text-muted small">(105 x 148 mm)</div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Footer button inside the card -->
-                                                <div class="text-center">
+                                                <!-- Footer buttons — side by side -->
+                                                <div class="d-flex gap-2">
                                                     <button type="submit"
-                                                        class="btn btn-red btn-md w-100 py-2 d-flex align-items-center justify-content-center fw-bold">
+                                                        class="btn btn-dark-red btn-md flex-fill py-2 d-flex align-items-center justify-content-center fw-bold">
                                                         <img src="{{ asset('img/white-qr-code-icon.svg') }}">
                                                         <span class="ms-2">Create Item Label</span>
+                                                    </button>
+                                                    <!-- Add to Queue — always visible; disabled when A6 is selected -->
+                                                    <button type="button" id="btnAddToQueue"
+                                                        class="btn btn-custom-outline-red btn-md flex-fill py-2 d-flex align-items-center justify-content-center fw-bold">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" class="me-1 flex-shrink-0">
+                                                            <path d="M8 1a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 1"/>
+                                                        </svg>
+                                                        <span>Add to Export Queue</span>
                                                     </button>
                                                 </div>
                                             </form>
@@ -414,6 +422,60 @@
         <span class="lightbox-close">&times;</span>
         <img class="lightbox-content" id="lightboxImage" src="" alt="Fullscreen View">
     </div>
+
+    <!-- Print Queue Modal -->
+    <div class="modal fade" id="exportQueueModal" tabindex="-1"
+         aria-labelledby="exportQueueModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h4 class="modal-title fw-bold" id="exportQueueModalLabel">
+                        Export Queue
+                    </h4>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0 mt-3">
+                    <div id="exportQueueEmpty" class="text-center py-5 text-muted" style="display:none;">
+                        <p class="mb-0">No items in queue. Select an item, choose A4, and click <em>Add to Export Queue</em>.</p>
+                    </div>
+                    <div id="exportQueueTableWrap">
+                        <table class="table align-middle mb-0" style="border-collapse: collapse; width: 100%;">
+                            <thead>
+                                <tr style="background-color: #EFEFEF; border-bottom: 2px solid #dee2e6;">
+                                    <th>Property-ID</th>
+                                    <th>Item Name</th>
+                                    <th class="text-center">Size</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">QR Layout</th>
+                                    <th style="width: 60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="exportQueueTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 d-flex justify-content-between align-items-center p-4">
+                    <div class="text-start queue-stats-container">
+                        <div>Total Items: <span id="queueTotalItems" class="fw-bold">0</span></div>
+                        <div>Total Quantity: <span id="queueTotalQty" class="fw-bold">0</span></div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="btnClearQueue" class="btn fw-bold">
+                            Clear All
+                        </button>
+                        <button type="button" id="btnExportQueuePdf"
+                            class="btn text-white fw-bold d-flex align-items-center justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">
+                                <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -425,6 +487,12 @@
     <!-- Splide.js js -->
     <script src="{{ asset('plugins/src/splide/splide.min.js') }}"></script>
 
-    <!-- CUSTOM js -->
+    <!-- CUSTOM js —- inject queue route URLs as global vars before the script -->
+    <script>
+        window.queueAddUrl    = '{{ route("inventory.queue.add") }}';
+        window.queueGetUrl    = '{{ route("inventory.queue.get") }}';
+        window.queueClearUrl  = '{{ route("inventory.queue.clear") }}';
+        window.queueExportUrl = '{{ route("inventory.queue.export") }}';
+    </script>
     <script src="{{ asset('js/supply/inventory/custom-inventory.js') }}"></script>
 @endpush
