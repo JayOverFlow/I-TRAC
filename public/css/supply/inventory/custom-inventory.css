@@ -720,44 +720,22 @@ body.dark .btn-remove-queue-item svg {
     fill: #EF4444 !important;
 }
 
-/* Items Table - Export Queue Trigger Button (Light Mode) */
+/* Items Table - Export Queue Trigger Button */
 #btnOpenPrintQueue {
-    color: #8C0404 !important;
-    border: 1px solid #8C0404 !important;
-    background-color: transparent !important;
     font-size: 14px !important;
     padding: 6px 16px !important;
     border-radius: 6px !important;
     transition: all 0.15s ease-in-out !important;
+    border: 1px solid transparent !important;
 }
 
 #btnOpenPrintQueue:hover {
-    color: #ffffff !important;
-    background-color: var(--red-1) !important;
-    border-color: var(--red-1) !important;
     box-shadow: none !important;
 }
 
 #queueBadgeCount {
-    color: #8C0404 !important;
+    color: #ffffff !important;
     font-weight: bold !important;
-}
-
-/* Items Table - Export Queue Trigger Button (Dark Mode Override - Solid Red) */
-body.dark #btnOpenPrintQueue {
-    background-color: #8C0404 !important;
-    border-color: #8C0404 !important;
-    color: #ffffff !important;
-}
-
-body.dark #btnOpenPrintQueue:hover {
-    background-color: #d32f2f !important;
-    border-color: #d32f2f !important;
-    color: #ffffff !important;
-}
-
-body.dark #queueBadgeCount {
-    color: #ffffff !important;
 }
 
 /* Export Queue Footer Stats & Action Buttons styling */
