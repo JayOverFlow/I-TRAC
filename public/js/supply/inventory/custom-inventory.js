@@ -4,6 +4,7 @@ $(document).ready(function () {
     var activeImages = []; // List of {url, path} objects
     var activeImagePath = null; // The relative path of the currently viewed image
     var $activeRow = null; // Reference to the clicked table row to update its data attribute
+    var editingQueueIndex = null; // Stores index of queue item currently being edited
 
     // Setup CSRF token for all AJAX requests
     $.ajaxSetup({
@@ -301,7 +302,19 @@ $(document).ready(function () {
         },
         "stripeClasses": [],
         "lengthMenu": [5, 10, 20, 50],
-        "pageLength": 5
+        "pageLength": 5,
+        "initComplete": function () {
+            var printBtn =
+                '<button id="btnOpenPrintQueue"'
+                + ' class="btn fw-bold me-2 d-flex align-items-center flex-shrink-0"'
+                + ' data-bs-toggle="modal" data-bs-target="#exportQueueModal">'
+                + 'Export Queue'
+                + ' <span id="queueBadgeCount" class="fw-bold ms-2" style="color: #8C0404;">0</span>'
+                + '</button>';
+            $('.dataTables_filter')
+                .css({ 'display': 'flex', 'align-items': 'center' })
+                .prepend(printBtn);
+        }
     });
 
     // Row click handler to open Details Modal
@@ -330,6 +343,8 @@ $(document).ready(function () {
         activeMrId = $row.data('mr-id');
         activeImages = $row.data('item-images') || [];
         activeImagePath = null; // Reset active image path to display the first image by default
+        editingQueueIndex = null; // Reset edit queue state when opening a new detail modal
+        $('#btnAddToQueue span').text('Add to Export Queue');
 
         // Populate detail fields
         $('#detailItemName').text(itemName);
@@ -368,14 +383,16 @@ $(document).ready(function () {
         $('#qr_layout').val('layout_1');
 
         // Hide Layout 2 since Small is selected by default
-        $('#layout-2-col').hide();
+        $('#layout-2-col').css({'visibility': 'hidden', 'pointer-events': 'none'});
 
         $('.stepper-quantity').val('15');
 
-        // Reset paper size selection to A4
+        // Reset paper size selection to A4 (default)
         $('.paper-size-card').removeClass('selected');
-        $('.paper-size-card[data-paper-size="A6"]').addClass('selected');
-        $('#paper_size').val('A6');
+        $('.paper-size-card[data-paper-size="A4"]').addClass('selected');
+        $('#paper_size').val('A4');
+        // Add to Queue is enabled by default because A4 is selected
+        $('#btnAddToQueue').prop('disabled', false);
 
         // Render Media/Image Gallery
         renderItemImages();
@@ -396,14 +413,14 @@ $(document).ready(function () {
 
         // Dynamic QR Label Layout selection based on selected size
         if (selectedSize === 'Small') {
-            $('#layout-2-col').hide();
+            $('#layout-2-col').css({'visibility': 'hidden', 'pointer-events': 'none'});
             if ($('#qr_layout').val() === 'layout_2') {
                 $('.layout-card').removeClass('selected');
                 $('.layout-card[data-layout="layout_1"]').addClass('selected');
                 $('#qr_layout').val('layout_1');
             }
         } else {
-            $('#layout-2-col').show();
+            $('#layout-2-col').css({'visibility': 'visible', 'pointer-events': 'auto'});
         }
     });
 
@@ -414,11 +431,14 @@ $(document).ready(function () {
         $('#qr_layout').val($(this).data('layout'));
     });
 
-    // Paper size selectors toggles
+    // Paper size selector toggle — also enables/disables the queue button
     $(document).on('click', '.paper-size-card', function() {
         $('.paper-size-card').removeClass('selected');
         $(this).addClass('selected');
-        $('#paper_size').val($(this).data('paper-size'));
+        var ps = $(this).data('paper-size');
+        $('#paper_size').val(ps);
+        // Queue button enabled only for A4
+        $('#btnAddToQueue').prop('disabled', ps !== 'A4');
     });
 
     // Stepper Quantity buttons logic
@@ -525,6 +545,294 @@ $(document).ready(function () {
         }
     });
 
+    // ---------------------------------------------------------------
+    // EXPORT QUEUE
+    // ---------------------------------------------------------------
+
+    var queueAddUrl    = window.queueAddUrl;
+    var queueGetUrl    = window.queueGetUrl;
+    var queueClearUrl  = window.queueClearUrl;
+    var queueExportUrl = window.queueExportUrl;
+    var csrfToken      = $('meta[name="csrf-token"]').attr('content');
+
+    /**
+     * Fetch the current queue, update the badge count, and re-render the modal table.
+     */
+    function refreshQueueBadge() {
+        $.getJSON(queueGetUrl, function (data) {
+            var count = data.count || 0;
+            $('#queueBadgeCount').text(count);
+
+            // Re-render the modal table body
+            var $tbody = $('#exportQueueTableBody');
+            $tbody.empty();
+            var totalQty = 0;
+
+            if (!data.queue || data.queue.length === 0) {
+                $('#exportQueueEmpty').show();
+                $('#exportQueueTableWrap').hide();
+                $('#btnExportQueuePdf').prop('disabled', true);
+            } else {
+                $('#exportQueueEmpty').hide();
+                $('#exportQueueTableWrap').show();
+                $('#btnExportQueuePdf').prop('disabled', false);
+
+                $.each(data.queue, function (i, entry) {
+                    var layoutLabel = (entry.qr_layout === 'layout_2') ? 'QR Code with Label' : 'QR Code Only';
+                    totalQty += entry.sticker_quantity;
+                    var row = '<tr class="queue-row" style="border-bottom: 1px solid #dee2e6; cursor: pointer;"'
+                        + ' data-index="' + i + '"'
+                        + ' data-mr-id="' + entry.mr_id + '"'
+                        + ' data-size="' + entry.label_size + '"'
+                        + ' data-layout="' + entry.qr_layout + '"'
+                        + ' data-qty="' + entry.sticker_quantity + '">'
+                        + '<td>'   + $('<span>').text(entry.mr_qr_code).html()       + '</td>'
+                        + '<td class="fw-normal">' + $('<span>').text(entry.item_name).html() + '</td>'
+                        + '<td class="text-center">' + entry.label_size                     + '</td>'
+                        + '<td class="text-center">' + entry.sticker_quantity              + '</td>'
+                        + '<td class="text-center">' + layoutLabel                         + '</td>'
+                        + '<td class="text-center">'
+                        +   '<button class="btn btn-sm btn-link p-0 btn-remove-queue-item" data-index="' + i + '" title="Remove">'
+                        +     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-trash" viewBox="0 0 16 16">'
+                        +       '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>'
+                        +       '<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>'
+                        +     '</svg>'
+                        +   '</button>'
+                        + '</td>'
+                        + '</tr>';
+                    $tbody.append(row);
+                });
+            }
+
+            $('#queueTotalItems').text(count);
+            $('#queueTotalQty').text(totalQty);
+        });
+    }
+
+    // Load queue badge on page ready
+    refreshQueueBadge();
+
+
+    // Add to Export Queue button
+    $(document).on('click', '#btnAddToQueue', function () {
+        var mrId            = $('#mr_id').val();
+        var labelSize       = $('#label_size').val();
+        var qrLayout        = $('#qr_layout').val();
+        var stickerQuantity = $('.stepper-quantity').val();
+
+        if (!mrId) {
+            showToast('No item selected.', 'danger');
+            return;
+        }
+
+        var $btn = $(this);
+        var isEditing = (editingQueueIndex !== null);
+        var url = isEditing ? ('/inventory/queue/' + editingQueueIndex) : queueAddUrl;
+        var type = isEditing ? 'PUT' : 'POST';
+
+        $btn.prop('disabled', true).text(isEditing ? 'Updating…' : 'Adding…');
+
+        $.ajax({
+            url: url,
+            type: type,
+            data: {
+                _token:           csrfToken,
+                mr_id:            mrId,
+                label_size:       labelSize,
+                qr_layout:        qrLayout,
+                sticker_quantity: stickerQuantity,
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    showToast(response.message, 'success');
+                    refreshQueueBadge();
+                    // Close the item details modal
+                    var myModal = bootstrap.Modal.getInstance(document.getElementById('itemDetailsModal'));
+                    if (myModal) { myModal.hide(); }
+
+                    // If we were editing, reopen the Export Queue modal after detail modal closes
+                    if (isEditing) {
+                        setTimeout(function () {
+                            var queueModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('exportQueueModal'));
+                            queueModal.show();
+                        }, 400);
+                    }
+                } else {
+                    showToast(response.message || 'Failed to process request.', 'danger');
+                }
+            },
+            error: function (xhr) {
+                var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Server error.';
+                showToast(msg, 'danger');
+            },
+            complete: function () {
+                var btnText = (editingQueueIndex !== null) ? 'Update Export Queue' : 'Add to Export Queue';
+                $btn.prop('disabled', false).html(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-2">'
+                    + '<path d="M8 1a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 1"/>'
+                    + '</svg><span>' + btnText + '</span>'
+                );
+            }
+        });
+    });
+
+    // Row click handler for items in Export Queue modal
+    $(document).on('click', '#exportQueueTableBody tr.queue-row', function (e) {
+        // If clicking delete/remove, ignore
+        if ($(e.target).closest('.btn-remove-queue-item').length) {
+            e.stopPropagation();
+            return;
+        }
+
+        var index = $(this).data('index');
+        var mrId = $(this).data('mr-id');
+        var size = $(this).data('size');
+        var layout = $(this).data('layout');
+        var qty = $(this).data('qty');
+
+        // Hide export queue modal
+        var queueModal = bootstrap.Modal.getInstance(document.getElementById('exportQueueModal'));
+        if (queueModal) {
+            queueModal.hide();
+        }
+
+        // Find the main inventory table row with this mr-id
+        var $invRow = $('tr.inventory-row[data-mr-id="' + mrId + '"]');
+        if ($invRow.length) {
+            // Trigger row click to populate modal details
+            $invRow.click();
+
+            // Set edit mode index
+            editingQueueIndex = index;
+
+            // Switch to Item Label tab (Tab 2)
+            var itemLabelTabEl = document.querySelector('#item-label-tab');
+            if (itemLabelTabEl) {
+                var itemLabelTab = bootstrap.Tab.getOrCreateInstance(itemLabelTabEl);
+                itemLabelTab.show();
+            }
+
+            // Pre-select label size card
+            $('.size-card').removeClass('selected');
+            $('.size-card .size-dim').removeClass('black-text');
+            var $sizeCard = $('.size-card[data-size="' + size + '"]');
+            $sizeCard.addClass('selected');
+            $sizeCard.find('.size-dim').addClass('black-text');
+            $('#label_size').val(size);
+
+            // Toggle layout columns visibility depending on size choice
+            if (size === 'Small') {
+                $('#layout-2-col').css({'visibility': 'hidden', 'pointer-events': 'none'});
+            } else {
+                $('#layout-2-col').css({'visibility': 'visible', 'pointer-events': 'auto'});
+            }
+
+            // Pre-select layout card
+            $('.layout-card').removeClass('selected');
+            $('.layout-card[data-layout="' + layout + '"]').addClass('selected');
+            $('#qr_layout').val(layout);
+
+            // Pre-fill quantity stepper
+            $('.stepper-quantity').val(qty);
+
+            // Change button text
+            $('#btnAddToQueue span').text('Update Export Queue');
+        } else {
+            showToast('Item details could not be found in the current view.', 'danger');
+        }
+    });
+
+    // Remove item from queue by index
+    $(document).on('click', '.btn-remove-queue-item', function () {
+        var index = $(this).data('index');
+        var removeUrl = '/inventory/queue/' + index;
+
+        $.ajax({
+            url: removeUrl,
+            type: 'DELETE',
+            data: { _token: csrfToken },
+            success: function () {
+                refreshQueueBadge();
+            },
+            error: function () {
+                showToast('Failed to remove item from queue.', 'danger');
+            }
+        });
+    });
+
+    // Clear entire queue
+    $(document).on('click', '#btnClearQueue', function () {
+        $.ajax({
+            url: queueClearUrl,
+            type: 'POST',
+            data: { _token: csrfToken },
+            success: function () {
+                refreshQueueBadge();
+            }
+        });
+    });
+
+    // Refresh queue table when modal opens
+    $('#exportQueueModal').on('show.bs.modal', function () {
+        refreshQueueBadge();
+    });
+
+    // Export Queue to PDF
+    $(document).on('click', '#btnExportQueuePdf', function () {
+        var $btn = $(this);
+
+        window.confirmAction({
+            title: 'Export Queue?',
+            text: 'Are you sure you want to export all queued items to a combined A4 PDF?',
+            icon: 'question',
+            confirmButtonText: 'Yes, Export',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#8C0404',
+            onConfirm: function () {
+                $btn.prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm me-2"></span>Generating…'
+                );
+
+                // Close the queue modal
+                var queueModal = bootstrap.Modal.getInstance(document.getElementById('exportQueueModal'));
+                if (queueModal) { queueModal.hide(); }
+
+                fetch(queueExportUrl, { headers: { 'Accept': 'application/json' } })
+                    .then(function (response) {
+                        if (!response.ok) { throw new Error('Server returned ' + response.status); }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (data.pdf_url) {
+                            var a = document.createElement('a');
+                            a.href = data.pdf_url;
+                            a.download = '';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            showToast('Export Queue PDF downloaded!', 'success');
+                            refreshQueueBadge(); // queue is cleared server-side after export
+                        } else if (data.error) {
+                            showToast(data.error, 'danger');
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('Export queue failed:', err);
+                        showToast('Failed to export queue PDF. Please try again.', 'danger');
+                    })
+                    .finally(function () {
+                        $btn.prop('disabled', false).html(
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">'
+                            + '<path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>'
+                            + '<path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>'
+                            + '</svg> Export'
+                        );
+                    });
+            }
+        });
+    });
+
+
     // Clean up viewport scale on modal hidden
     $('#itemDetailsModal').on('hidden.bs.modal', function () {
         var card = document.querySelector('.main-image-viewport-card');
@@ -541,6 +849,7 @@ $(document).ready(function () {
             cardBody.style.minHeight = '250px';
             cardBody.classList.remove('flex-grow-1');
         }
+        editingQueueIndex = null;
+        $('#btnAddToQueue span').text('Add to Export Queue');
     });
 });
-
