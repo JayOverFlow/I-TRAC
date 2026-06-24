@@ -72,9 +72,9 @@ class CreatePrController extends Controller
                 'prItems.prSpecs',
                 'purchaseOrders.poItems',
                 'purchaseOrders.iarReports',
-                'purchaseOrders.risSlips',
+                'purchaseOrders.risSlips.risItems',
                 'purchaseOrders.icsSlips',
-                'purchaseOrders.parReceipts'
+                'purchaseOrders.parReceipts.parItems'
             ])->find($task->pr_id_fk);
 
             if ($existingPr) {
@@ -118,9 +118,9 @@ class CreatePrController extends Controller
             'prItems',
             'purchaseOrders.poItems',
             'purchaseOrders.iarReports',
-            'purchaseOrders.risSlips',
+            'purchaseOrders.risSlips.risItems',
             'purchaseOrders.icsSlips',
-            'purchaseOrders.parReceipts',
+            'purchaseOrders.parReceipts.parItems',
         ])->find($task->pr_id_fk);
 
         if (!$pr) {
@@ -140,45 +140,82 @@ class CreatePrController extends Controller
         // Date helpers
         $prReceivedDate = null;
         if ($pr->retrieved_by) {
-            $prReceivedDate = $firstPo && $firstPo->created_at
-                ? \Carbon\Carbon::parse($firstPo->created_at)->format('d M, Y')
-                : ($pr->submitted_at ? \Carbon\Carbon::parse($pr->submitted_at)->addDay()->format('d M, Y') : null);
+            $prReceivedDate = $pr->retrieved_at ? \Carbon\Carbon::parse($pr->retrieved_at)->format('d M, Y') : null;
         }
 
         $poCreatedDate       = $firstPo ? \Carbon\Carbon::parse($firstPo->created_at ?? $firstPo->po_date)->format('d M, Y') : null;
-        $isDelivered         = false;
-        $deliveryDate        = null;
-        $isReceivedByEndUser = false;
-        $receivedDate        = null;
+        $isDelivered         = $pr->da_exported_at !== null;
+        $deliveryDate        = $pr->da_exported_at ? \Carbon\Carbon::parse($pr->da_exported_at)->format('d M, Y') : null;
+        $isReceivedByEndUser = $pr->scanned_at !== null;
+        $receivedDate        = $pr->scanned_at ? \Carbon\Carbon::parse($pr->scanned_at)->format('d M, Y') : null;
 
-        foreach ($pr->purchaseOrders as $po) {
-            if (!$isDelivered && $po->iarReports->isNotEmpty()) {
-                $isDelivered  = true;
-                $iar          = $po->iarReports->first();
-                $deliveryDate = $iar->created_at ? \Carbon\Carbon::parse($iar->created_at)->format('d M, Y') : null;
-            }
-            if (!$isReceivedByEndUser && ($po->risSlips->isNotEmpty() || $po->icsSlips->isNotEmpty() || $po->parReceipts->isNotEmpty())) {
-                $isReceivedByEndUser = true;
-                $doc          = $po->risSlips->first() ?? $po->icsSlips->first() ?? $po->parReceipts->first();
-                $receivedDate = $doc->created_at ? \Carbon\Carbon::parse($doc->created_at)->format('d M, Y') : null;
+        $daSubsteps = [];
+        if ($pr) {
+            foreach ($pr->purchaseOrders as $po) {
+                foreach ($po->risSlips as $ris) {
+                    $risPoItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
+                    if ($risPoItemIds->isNotEmpty()) {
+                        $mrItems = \App\Models\Mr::whereIn('po_item_id_fk', $risPoItemIds)->get();
+                        if ($mrItems->isNotEmpty()) {
+                            $isAllScanned = $mrItems->every(fn($item) => $item->is_assigned == 1);
+                            $hasAnyScanned = $mrItems->contains(fn($item) => $item->is_assigned == 1);
+                            
+                            $latestScanDate = null;
+                            if ($isAllScanned) {
+                                $latestScan = $mrItems->whereNotNull('date_scanned')->max('date_scanned');
+                                $latestScanDate = $latestScan ? \Carbon\Carbon::parse($latestScan)->format('d M, Y') : null;
+                            }
+
+                            $daSubsteps[] = [
+                                'prefix'  => 'RIS No. ' . ($ris->ris_no ?? $ris->ris_id),
+                                'label'   => $isAllScanned ? 'Completed' : 'Pending',
+                                'active'  => (bool) ($isAllScanned || $hasAnyScanned),
+                                'partial' => (bool) (!$isAllScanned && $hasAnyScanned),
+                                'date'    => $latestScanDate,
+                            ];
+                        }
+                    }
+                }
+
+                foreach ($po->parReceipts as $par) {
+                    $parPoItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
+                    if ($parPoItemIds->isNotEmpty()) {
+                        $mrItems = \App\Models\Mr::whereIn('po_item_id_fk', $parPoItemIds)->get();
+                        if ($mrItems->isNotEmpty()) {
+                            $isAllScanned = $mrItems->every(fn($item) => $item->is_assigned == 1);
+                            $hasAnyScanned = $mrItems->contains(fn($item) => $item->is_assigned == 1);
+                            
+                            $latestScanDate = null;
+                            if ($isAllScanned) {
+                                $latestScan = $mrItems->whereNotNull('date_scanned')->max('date_scanned');
+                                $latestScanDate = $latestScan ? \Carbon\Carbon::parse($latestScan)->format('d M, Y') : null;
+                            }
+
+                            $daSubsteps[] = [
+                                'prefix'  => 'PAR No. ' . ($par->par_property_no ?? $par->par_id),
+                                'label'   => $isAllScanned ? 'Completed' : 'Pending',
+                                'active'  => (bool) ($isAllScanned || $hasAnyScanned),
+                                'partial' => (bool) (!$isAllScanned && $hasAnyScanned),
+                                'date'    => $latestScanDate,
+                            ];
+                        }
+                    }
+                }
             }
         }
+
+        $isAnyScanned = collect($daSubsteps)->contains('active', true);
+
+        $isSelfCreated = ($task->task_type === 'PR Assignment' && $task->assigned_by === $task->assigned_to);
 
         $steps = [
             [
                 'prefix'  => 'Purchase Request:',
                 'label'   => 'CREATED',
-                'active'  => true,
+                'active'  => (bool) ($pr->pr_status === 'Exported' || ($isSelfCreated && $pr->pr_status === 'Complete')),
                 'partial' => false,
-                'date'    => \Carbon\Carbon::parse($pr->created_at ?? $pr->pr_date)->format('d M, Y'),
-            ],
-            [
-                'prefix'  => 'Purchase Request:',
-                'label'   => 'SUBMITTED',
-                'active'  => (bool) ($pr->submitted_at && $pr->pr_status !== 'Draft'),
-                'partial' => false,
-                'date'    => ($pr->submitted_at && $pr->pr_status !== 'Draft')
-                    ? \Carbon\Carbon::parse($pr->submitted_at)->format('d M, Y')
+                'date'    => ($pr->submitted_at ?? $pr->updated_at ?? $pr->created_at)
+                    ? \Carbon\Carbon::parse($pr->submitted_at ?? $pr->updated_at ?? $pr->created_at)->format('d M, Y')
                     : null,
             ],
             [
@@ -190,28 +227,39 @@ class CreatePrController extends Controller
             ],
             [
                 'prefix'  => 'Purchase Order:',
-                'label'   => match ($poCoverage) {
-                    'full'    => 'FULLY CREATED',
-                    'partial' => 'PARTIALLY CREATED',
-                    default   => 'CREATED',
-                },
-                'active'  => $poCoverage !== 'none',
-                'partial' => $poCoverage === 'partial',
-                'date'    => $poCreatedDate,
-            ],
-            [
-                'prefix'  => 'Purchase Request:',
-                'label'   => 'DELIVERED',
-                'active'  => $isDelivered,
-                'partial' => false,
-                'date'    => $deliveryDate,
+                'label'   => ($pr->is_po_done == 0 && $pr->purchaseOrders->isNotEmpty()) ? 'PARTIALLY CREATED' : 'CREATED',
+                'active'  => (bool) ($pr->is_po_done == 1 || $pr->purchaseOrders->isNotEmpty()),
+                'partial' => (bool) ($pr->is_po_done == 0 && $pr->purchaseOrders->isNotEmpty()),
+                'date'    => $pr->po_done_at ? \Carbon\Carbon::parse($pr->po_done_at)->format('d M, Y') : null,
+                'sub_steps' => $pr->purchaseOrders->map(fn($po) => [
+                    'prefix'  => $po->po_title,
+                    'label'   => $po->po_status === 'Done' ? 'Completed' : 'Draft',
+                    'active'  => true,
+                    'partial' => $po->po_status !== 'Done',
+                    'date'    => $po->po_status === 'Done' && $po->updated_at ? \Carbon\Carbon::parse($po->updated_at)->format('d M, Y') : null,
+                ])->toArray(),
             ],
             [
                 'prefix'  => 'Purchase Order:',
-                'label'   => 'RECEIVED ITEM BY END USER',
-                'active'  => $isReceivedByEndUser,
-                'partial' => false,
+                'label'   => ($pr->da_exported_at === null && $pr->purchaseOrders->contains(fn($po) => $po->hasAnyDaExported())) ? 'PARTIALLY DELIVERED' : 'DELIVERED',
+                'active'  => (bool) ($pr->da_exported_at !== null || $pr->purchaseOrders->contains(fn($po) => $po->hasAnyDaExported())),
+                'partial' => (bool) ($pr->da_exported_at === null && $pr->purchaseOrders->contains(fn($po) => $po->hasAnyDaExported())),
+                'date'    => $deliveryDate,
+                'sub_steps' => $pr->purchaseOrders->map(fn($po) => [
+                    'prefix'  => $po->po_title,
+                    'label'   => $po->is_da_exported == 1 ? 'Completed' : 'Pending',
+                    'active'  => (bool) ($po->is_da_exported == 1 || $po->hasAnyDaExported()),
+                    'partial' => (bool) ($po->is_da_exported == 0 && $po->hasAnyDaExported()),
+                    'date'    => $po->is_da_exported == 1 && $po->updated_at ? \Carbon\Carbon::parse($po->updated_at)->format('d M, Y') : null,
+                ])->toArray(),
+            ],
+            [
+                'prefix'  => 'Purchase Order:',
+                'label'   => ($pr->scanned_at === null && $isAnyScanned) ? 'PARTIALLY RECEIVED BY END USER' : 'RECEIVED ITEM BY END USER',
+                'active'  => (bool) ($pr->scanned_at !== null || $isAnyScanned),
+                'partial' => (bool) ($pr->scanned_at === null && $isAnyScanned),
                 'date'    => $receivedDate,
+                'sub_steps' => $daSubsteps,
             ],
         ];
 

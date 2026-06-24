@@ -340,11 +340,21 @@ class InventoryController extends Controller
         $pdfUrls = [];
 
         // Page dimensions in mm (A6: 105×148mm | A4: 210×297mm).
-        // Cell size is derived by dividing the page area evenly across the grid (cols × rows).
         $pageWidth  = ($paperSize === 'A4') ? 210 : 105;
         $pageHeight = ($paperSize === 'A4') ? 297 : 148;
+
+        // Header height adjustments (reduced height to text height to maximize sticker space)
+        $headerHeight = ($paperSize === 'A4') ? 4.5 : 3.5;
+        $gridHeight   = $pageHeight - $headerHeight;
+        $scaleFactor  = $gridHeight / $pageHeight;
+
+        // Cell size is derived by dividing the remaining grid area evenly across the grid (cols × rows).
         $cellWidth  = $pageWidth  / $gridCols;
-        $cellHeight = $pageHeight / $gridRows;
+        $cellHeight = $gridHeight / $gridRows;
+
+        // Scale image width and height down proportionally and leave a small 2% padding/gap inside cell
+        $imgWidth  = $cellWidth * $scaleFactor * 0.98;
+        $imgHeight = $cellHeight * 0.98;
 
         for ($page = 0; $page < $totalPages; $page++) {
             // Create a new mPDF instance with the selected paper size, portrait, zero margins
@@ -363,23 +373,57 @@ class InventoryController extends Controller
             // Determine how many stickers to place on this specific page
             $stickersOnThisPage = min($stickersPerPage, $totalStickersCount - $stickerIndex);
 
-            // Build an HTML table that fills the entire A6 page with sticker images.
-            $html  = '<table style="width:' . $pageWidth . 'mm; height:' . $pageHeight . 'mm; border-collapse:collapse; table-layout:fixed;">';
+            // Build header text & div
+            $itemName = 'Item QR Label';
+            if ($items->isNotEmpty()) {
+                $firstItem = $items->first();
+                $itemName = isset($firstItem->item_name) ? $firstItem->item_name : 'Item QR Label';
+            }
+            $layoutLabel = ($layout === 'layout_2') ? 'With Text' : 'No Text';
+            $headerText  = htmlspecialchars($itemName)
+                         . ' &nbsp;&middot;&nbsp; ' . htmlspecialchars($size)
+                         . ' / ' . $layoutLabel
+                         . ' &nbsp;&middot;&nbsp; ' . $stickerQuantity . ' sticker' . ($stickerQuantity !== 1 ? 's' : '');
+
+            // Compact styling matching paper size (smaller font and padding to maximize sticker layout space)
+            if ($paperSize === 'A4') {
+                $headerHtml = '<div style="width:' . $pageWidth . 'mm; background:#e8e8e8; padding:0.5mm 2mm;'
+                            . ' font-size:7pt; font-weight:bold; font-family:Arial,sans-serif;'
+                            . ' color:#222; box-sizing:border-box; height:' . $headerHeight . 'mm; overflow:hidden;">'
+                            . $headerText . '</div>';
+            } else {
+                $headerHtml = '<div style="width:' . $pageWidth . 'mm; background:#e8e8e8; padding:0.3mm 1mm;'
+                            . ' font-size:6.5pt; font-weight:bold; font-family:Arial,sans-serif;'
+                            . ' color:#222; box-sizing:border-box; height:' . $headerHeight . 'mm; overflow:hidden;">'
+                            . $headerText . '</div>';
+            }
+
+            // Determine how many rows are needed for the stickers on this page
+            $rowsOnThisPage = min($gridRows, (int) ceil($stickersOnThisPage / $gridCols));
+
+            // Build an HTML table that fits the required sticker rows.
+            $html  = $headerHtml;
+            $html .= '<table style="width:' . $pageWidth . 'mm; border-collapse:collapse; table-layout:fixed;">';
             $placed = 0;
 
-            for ($r = 0; $r < $gridRows; $r++) {
+            for ($r = 0; $r < $rowsOnThisPage; $r++) {
                 $html .= '<tr>';
                 for ($c = 0; $c < $gridCols; $c++) {
-                    $html .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm; text-align:center; vertical-align:middle; padding:0; margin:0;">';
-
-                    // Only insert an image if we still have stickers to place
                     if ($placed < $stickersOnThisPage) {
                         $currentStickerPath = $stickerPaths[$stickerIndex];
-                        $html .= '<img src="' . $currentStickerPath . '" style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm; display:block;" />';
+                        $html .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm;'
+                               . ' text-align:center; vertical-align:middle; padding:0; margin:0;'
+                               . ' border:0.1mm solid #000000;">';
+                        $html .= '<img src="' . $currentStickerPath . '" style="width:' . $imgWidth . 'mm;'
+                               . ' height:' . $imgHeight . 'mm; display:block; margin:auto;" />';
                         $placed++;
                         $stickerIndex++;
+                    } else {
+                        // Empty cell has no cutting guide border
+                        $html .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm;'
+                               . ' text-align:center; vertical-align:middle; padding:0; margin:0;'
+                               . ' border:none;">';
                     }
-
                     $html .= '</td>';
                 }
                 $html .= '</tr>';
@@ -761,9 +805,18 @@ class InventoryController extends Controller
                 continue;
             }
 
-            // Cell dimensions on A4 (210×297mm)
+            // Header height adjustments (A4 only, reduced height to text height to maximize sticker space)
+            $headerHeight = 4.5;
+            $gridHeight   = 297 - $headerHeight;
+            $scaleFactor  = $gridHeight / 297;
+
+            // Cell dimensions on A4 (210×297mm page, but using gridHeight)
             $cellWidth  = 210 / $gridCols;
-            $cellHeight = 297 / $gridRows;
+            $cellHeight = $gridHeight / $gridRows;
+
+            // Scale image width and height down proportionally and leave a small 2% padding/gap inside cell
+            $imgWidth  = $cellWidth * $scaleFactor * 0.98;
+            $imgHeight = $cellHeight * 0.98;
 
             // Item header bar — sits above the sticker table, outside the grid
             $layoutLabel = ($entry['qr_layout'] === 'layout_2') ? 'With Text' : 'No Text';
@@ -772,25 +825,34 @@ class InventoryController extends Controller
                          . ' / ' . $layoutLabel
                          . ' &nbsp;&middot;&nbsp; ' . $qty . ' sticker' . ($qty !== 1 ? 's' : '');
 
-            $allHtml .= '<div style="width:210mm; background:#e8e8e8; padding:2mm 4mm;'
-                      . ' font-size:8pt; font-weight:bold; font-family:Arial,sans-serif;'
-                      . ' color:#222; box-sizing:border-box;">'
+            $allHtml .= '<div style="width:210mm; background:#e8e8e8; padding:0.5mm 2mm;'
+                      . ' font-size:7pt; font-weight:bold; font-family:Arial,sans-serif;'
+                      . ' color:#222; box-sizing:border-box; height:' . $headerHeight . 'mm; overflow:hidden;">'
                       . $headerText . '</div>';
 
             // Sticker table — one row at a time so mPDF can break pages naturally
             $placed = 0;
             while ($placed < $qty) {
+                // Determine how many rows are needed for the remaining stickers of this item on this page
+                $remaining = $qty - $placed;
+                $rowsOnThisPage = min($gridRows, (int) ceil($remaining / $gridCols));
+
                 $allHtml .= '<table style="width:210mm; border-collapse:collapse; table-layout:fixed;">';
 
-                for ($r = 0; $r < $gridRows && $placed < $qty; $r++) {
+                for ($r = 0; $r < $rowsOnThisPage; $r++) {
                     $allHtml .= '<tr>';
                     for ($c = 0; $c < $gridCols; $c++) {
-                        $allHtml .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm;'
-                                 . ' text-align:center; vertical-align:middle; padding:0; margin:0;">';
                         if ($placed < $qty) {
-                            $allHtml .= '<img src="' . $stickerPath . '" style="width:' . $cellWidth . 'mm;'
-                                     . ' height:' . $cellHeight . 'mm; display:block;" />';
+                            $allHtml .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm;'
+                                     . ' text-align:center; vertical-align:middle; padding:0; margin:0;'
+                                     . ' border:0.1mm solid #000000;">';
+                            $allHtml .= '<img src="' . $stickerPath . '" style="width:' . $imgWidth . 'mm;'
+                                     . ' height:' . $imgHeight . 'mm; display:block; margin:auto;" />';
                             $placed++;
+                        } else {
+                            $allHtml .= '<td style="width:' . $cellWidth . 'mm; height:' . $cellHeight . 'mm;'
+                                     . ' text-align:center; vertical-align:middle; padding:0; margin:0;'
+                                     . ' border:none;">';
                         }
                         $allHtml .= '</td>';
                     }

@@ -599,6 +599,60 @@ $(document).ready(function () {
                         if ($date.text() !== dateText) {
                             $date.text(dateText);
                         }
+
+                        // Patch sub-steps if any
+                        var $subContainer = $li.find('.stepper-sub-container');
+                        if (step.sub_steps && step.sub_steps.length) {
+                            var subHtml = '';
+                            step.sub_steps.forEach(function (sub) {
+                                var subCircleClass = 'pending';
+                                var subStatusClass = 'status-pending';
+                                var innerIcon = '';
+                                if (sub.active) {
+                                    if (sub.partial) {
+                                        subCircleClass = 'active-partial';
+                                        subStatusClass = 'status-partial';
+                                        innerIcon = '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="3" x2="12" y2="21"></line></svg>';
+                                    } else if (isLatest) {
+                                        subCircleClass = 'active-latest';
+                                        subStatusClass = 'status-active';
+                                        innerIcon = '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                                    } else {
+                                        subCircleClass = 'active-historic';
+                                        subStatusClass = 'status-active';
+                                        innerIcon = '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                                    }
+                                }
+
+                                subHtml += '<div class="stepper-sub-item">';
+                                subHtml += '  <div class="stepper-sub-line"></div>';
+                                subHtml += '  <div class="stepper-sub-circle ' + subCircleClass + '">' + innerIcon + '</div>';
+                                subHtml += '  <span class="stepper-sub-title d-block fw-semibold" style="font-size: 0.8rem; margin-left: 0.25rem;">';
+                                subHtml += '    ' + sub.prefix;
+                                subHtml += '  </span>';
+                                subHtml += '  <span class="stepper-sub-status d-block text-uppercase ' + subStatusClass + '" style="font-size: 0.7rem; font-weight: 600; margin-left: 0.25rem;">';
+                                subHtml += '    ' + sub.label;
+                                subHtml += '  </span>';
+                                if (sub.date) {
+                                    subHtml += '  <span class="stepper-sub-date d-block" style="font-size: 0.7rem; margin-left: 0.25rem;">' + sub.date + '</span>';
+                                }
+                                subHtml += '</div>';
+                            });
+
+                            if (!$subContainer.length) {
+                                $li.find('.stepper-content').first().append('<div class="stepper-sub-container mt-2">' + subHtml + '</div>');
+                            } else {
+                                var cleanExisting = $subContainer.html().replace(/\s+/g, ' ').trim();
+                                var cleanNew = subHtml.replace(/\s+/g, ' ').trim();
+                                if (cleanExisting !== cleanNew) {
+                                    $subContainer.html(subHtml);
+                                }
+                            }
+                        } else {
+                            if ($subContainer.length) {
+                                $subContainer.remove();
+                            }
+                        }
                     });
                 })
                 .catch(function (err) {

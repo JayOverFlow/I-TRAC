@@ -78,6 +78,12 @@ class DeliveryAttachmentController extends Controller
     {
         $iar = Iar::with(['iarItems.iarSpecs', 'purchaseOrder'])->findOrFail($iar_id);
 
+        $iar->is_exported = 1;
+        $iar->save();
+        if ($iar->purchaseOrder) {
+            $iar->purchaseOrder->checkAndSetDaExportStatus();
+        }
+
         $pdfService = app(IarPdfExportService::class);
         return $pdfService->export($iar);
     }
@@ -130,6 +136,12 @@ class DeliveryAttachmentController extends Controller
             $ris->load('risItems.risSpecs', 'risItems.poItem');
         }
 
+        $ris->is_exported = 1;
+        $ris->save();
+        if ($ris->purchaseOrder) {
+            $ris->purchaseOrder->checkAndSetDaExportStatus();
+        }
+
         $pdfService = app(RisPdfExportService::class);
         return $pdfService->export($ris);
     }
@@ -141,6 +153,12 @@ class DeliveryAttachmentController extends Controller
             'purchaseOrder',
             'user'
         ])->findOrFail($rsmi_id);
+
+        $rsmi->is_exported = 1;
+        $rsmi->save();
+        if ($rsmi->purchaseOrder) {
+            $rsmi->purchaseOrder->checkAndSetDaExportStatus();
+        }
 
         $pdfService = app(RsmiPdfExportService::class);
         return $pdfService->export($rsmi);
@@ -155,6 +173,12 @@ class DeliveryAttachmentController extends Controller
             'giver'
         ])->findOrFail($ics_id);
 
+        $ics->is_exported = 1;
+        $ics->save();
+        if ($ics->purchaseOrder) {
+            $ics->purchaseOrder->checkAndSetDaExportStatus();
+        }
+
         $pdfService = app(IcsPdfExportService::class);
         return $pdfService->export($ics);
     }
@@ -166,6 +190,12 @@ class DeliveryAttachmentController extends Controller
             'purchaseOrder',
             'user.roles'
         ])->findOrFail($rspi_id);
+
+        $rspi->is_exported = 1;
+        $rspi->save();
+        if ($rspi->purchaseOrder) {
+            $rspi->purchaseOrder->checkAndSetDaExportStatus();
+        }
 
         $pdfService = app(RspiPdfExportService::class);
         return $pdfService->export($rspi);
@@ -211,6 +241,12 @@ class DeliveryAttachmentController extends Controller
 
         // Reload par details to ensure latest values
         $par->load('parItems.parSpecs', 'parItems.poItem');
+
+        $par->is_exported = 1;
+        $par->save();
+        if ($par->purchaseOrder) {
+            $par->purchaseOrder->checkAndSetDaExportStatus();
+        }
 
         $pdfService = app(ParPdfExportService::class);
         return $pdfService->export($par);

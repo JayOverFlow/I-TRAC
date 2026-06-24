@@ -42,6 +42,7 @@ Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
 
     Route::controller(PrPreviewController::class)->group(function () {
         Route::get('/pr-preview/{pr_id}', 'showPrPreview')->name('show.pr.preview');
+        Route::post('/pr-preview/{pr_id}/po-done', 'markPoDone')->name('pr.po.done');
     });
 
     Route::controller(CreateAppController::class)->group(function () {

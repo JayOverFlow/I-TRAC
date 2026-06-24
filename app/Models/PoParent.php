@@ -42,6 +42,7 @@ class PoParent extends Model
         'po_unique_code',
         'po_status',
         'retrieved_by',
+        'is_da_exported',
     ];
 
     protected $casts = [
@@ -117,5 +118,52 @@ class PoParent extends Model
                ($this->relationLoaded('parReceipts') ? $this->parReceipts->isNotEmpty() : $this->parReceipts()->exists()) ||
                ($this->relationLoaded('rsmiReports') ? $this->rsmiReports->isNotEmpty() : $this->rsmiReports()->exists()) ||
                ($this->relationLoaded('rspiReports') ? $this->rspiReports->isNotEmpty() : $this->rspiReports()->exists());
+    }
+
+    public function hasAnyDaExported()
+    {
+        $this->load(['iarReports', 'risSlips', 'icsSlips', 'parReceipts', 'rsmiReports', 'rspiReports']);
+
+        $das = collect()
+            ->concat($this->iarReports)
+            ->concat($this->risSlips)
+            ->concat($this->icsSlips)
+            ->concat($this->parReceipts)
+            ->concat($this->rsmiReports)
+            ->concat($this->rspiReports);
+
+        return $das->contains('is_exported', 1);
+    }
+
+    public function checkAndSetDaExportStatus()
+    {
+        $this->load(['iarReports', 'risSlips', 'icsSlips', 'parReceipts', 'rsmiReports', 'rspiReports']);
+
+        $das = collect()
+            ->concat($this->iarReports)
+            ->concat($this->risSlips)
+            ->concat($this->icsSlips)
+            ->concat($this->parReceipts)
+            ->concat($this->rsmiReports)
+            ->concat($this->rspiReports);
+
+        if ($das->isEmpty()) {
+            return;
+        }
+
+        $allExported = $das->every(fn($da) => $da->is_exported == 1);
+
+        if ($allExported) {
+            $this->update(['is_da_exported' => 1]);
+
+            $pr = $this->purchaseRequest;
+            if ($pr) {
+                $pr->load('purchaseOrders');
+                $allPosExported = $pr->purchaseOrders->every(fn($po) => $po->is_da_exported == 1);
+                if ($allPosExported) {
+                    $pr->update(['da_exported_at' => now()]);
+                }
+            }
+        }
     }
 }

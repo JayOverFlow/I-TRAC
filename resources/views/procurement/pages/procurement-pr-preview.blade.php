@@ -43,11 +43,26 @@
                     </div>
 
                     <button type="button" data-bs-toggle="modal" data-bs-target="#createPoModal"
-                        class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                        class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3"
+                        {{ $pr->is_po_done == 1 ? 'disabled' : '' }}>
                         <img src="{{ asset('img/PO.svg') }}" width="18" height="18" class="img-white-icon"
                             style="filter: invert(1) brightness(100);">
                         <span>Create Purchase Order</span>
                     </button>
+
+                    @if ($pr->is_po_done == 0)
+                        <form action="{{ route('pr.po.done', $pr->pr_id) }}" method="POST" class="d-inline mb-0">
+                            @csrf
+                            <button type="submit" class="btn border btn-brand-red-outline d-inline-flex align-items-center gap-1 px-3 fw-bold"
+                                {{ $pr->purchaseOrders->isEmpty() ? 'disabled' : '' }}>
+                                <span>✓ Done</span>
+                            </button>
+                        </form>
+                    @else
+                        <span class="badge bg-success p-2 px-3 text-uppercase d-inline-flex align-items-center fw-bold" style="font-size: 0.85rem; line-height: 1.5;">
+                            ✓ Done
+                        </span>
+                    @endif
                 </div>
             </div>
         </div>

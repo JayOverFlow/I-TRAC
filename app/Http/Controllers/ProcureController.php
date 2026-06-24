@@ -77,7 +77,10 @@ class ProcureController extends Controller
         }
 
         // Assign retrieval to current user
-        $pr->update(['retrieved_by' => Auth::id()]);
+        $pr->update([
+            'retrieved_by' => Auth::id(),
+            'retrieved_at' => now(),
+        ]);
 
         return redirect(route('show.procure'))->with('success', "Purchase Request '$prCode' successfully retrieved.");
     }
