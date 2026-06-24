@@ -809,3 +809,89 @@ body.dark #btnExportQueuePdf:disabled {
     border-color: #4b5563 !important;
     color: #9ca3af !important;
 }
+
+/* -------------------------------------------------------------
+   Segmented Mode Toggle and Export Paper Cards (New Feature)
+   ------------------------------------------------------------- */
+.toggle-export-mode-container {
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    padding: 4px;
+    display: flex;
+    gap: 4px;
+    border: 1px solid #e2e8f0;
+    width: 50% !important;
+}
+
+body.dark .toggle-export-mode-container {
+    background-color: #15181D;
+    border-color: #2A2F38;
+}
+
+.toggle-export-mode {
+    border-radius: 6px !important;
+    font-size: 0.85rem !important;
+    transition: all 0.2s ease-in-out !important;
+    color: #64748b !important;
+    background-color: transparent !important;
+}
+
+body.dark .toggle-export-mode {
+    color: #9ca3af !important;
+}
+
+.toggle-export-mode.active {
+    background-color: #ffffff !important;
+    color: var(--red-2) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    font-weight: bold !important;
+}
+
+body.dark .toggle-export-mode.active {
+    background-color: #2A2F38 !important;
+    color: #EF4444 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.export-paper-card {
+    border: 1.5px solid #e2e8f0 !important;
+    background: #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.export-paper-card:hover {
+    border-color: var(--red-1) !important;
+    background: #fffcfc !important;
+}
+
+.export-paper-card.selected {
+    border-color: var(--red-2) !important;
+    border-width: 2px !important;
+    background: #fdf2f2 !important;
+    box-shadow: 0 4px 12px rgba(99, 4, 24, 0.08);
+}
+
+.export-paper-card.selected .paper-title {
+    color: var(--red-2) !important;
+    font-weight: 800;
+}
+
+/* Dark mode overrides */
+body.dark .export-paper-card {
+    background: #15181D !important;
+    border-color: #2A2F38 !important;
+}
+
+body.dark .export-paper-card:hover {
+    border-color: #EF4444 !important;
+    background: #251b1d !important;
+}
+
+body.dark .export-paper-card.selected {
+    border-color: #EF4444 !important;
+    background: #2d181c !important;
+}
+
+body.dark .export-paper-card.selected .paper-title {
+    color: #EF4444 !important;
+}
