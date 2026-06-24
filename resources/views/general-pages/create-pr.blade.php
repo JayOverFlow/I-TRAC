@@ -536,7 +536,7 @@
                     </div>
                     <div class="d-flex align-items-baseline gap-2 me-4">
                         <p class="project-total-amount mb-0 fw-bold">₱ 0.00</p>
-                        <button type="button" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
+                        <button type="button" id="pr-create-collapse" class="collapse-toggle bg-transparent text-black btn p-0 border-0"
                             style="text-decoration: none; box-shadow: none;">
                             <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
