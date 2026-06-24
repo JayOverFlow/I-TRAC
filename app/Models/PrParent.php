@@ -27,11 +27,20 @@ class PrParent extends Model
         'pr_total',
         'retrieved_by',
         'app_id_fk',
+        'retrieved_at',
+        'is_po_done',
+        'po_done_at',
+        'da_exported_at',
+        'scanned_at',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
         'created_at'   => 'datetime',
+        'retrieved_at' => 'datetime',
+        'po_done_at'   => 'datetime',
+        'da_exported_at' => 'datetime',
+        'scanned_at'   => 'datetime',
     ];
 
     // Belongs to one APP Parent

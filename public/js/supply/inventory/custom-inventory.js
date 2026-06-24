@@ -383,7 +383,7 @@ $(document).ready(function () {
         $('#qr_layout').val('layout_1');
 
         // Hide Layout 2 since Small is selected by default
-        $('#layout-2-col').css({'visibility': 'hidden', 'pointer-events': 'none'});
+        $('#layout-2-col').hide();
 
         $('.stepper-quantity').val('15');
 
@@ -413,14 +413,14 @@ $(document).ready(function () {
 
         // Dynamic QR Label Layout selection based on selected size
         if (selectedSize === 'Small') {
-            $('#layout-2-col').css({'visibility': 'hidden', 'pointer-events': 'none'});
+            $('#layout-2-col').hide();
             if ($('#qr_layout').val() === 'layout_2') {
                 $('.layout-card').removeClass('selected');
                 $('.layout-card[data-layout="layout_1"]').addClass('selected');
                 $('#qr_layout').val('layout_1');
             }
         } else {
-            $('#layout-2-col').css({'visibility': 'visible', 'pointer-events': 'auto'});
+            $('#layout-2-col').show();
         }
     });
 
@@ -722,9 +722,9 @@ $(document).ready(function () {
 
             // Toggle layout columns visibility depending on size choice
             if (size === 'Small') {
-                $('#layout-2-col').css({'visibility': 'hidden', 'pointer-events': 'none'});
+                $('#layout-2-col').hide();
             } else {
-                $('#layout-2-col').css({'visibility': 'visible', 'pointer-events': 'auto'});
+                $('#layout-2-col').show();
             }
 
             // Pre-select layout card

@@ -24,4 +24,15 @@ class PrPreviewController extends Controller
 
         return view('procurement.pages.procurement-pr-preview', compact('pr', 'groupedItems', 'breadcrumbs'));
     }
+
+    public function markPoDone($pr_id)
+    {
+        $pr = PrParent::findOrFail($pr_id);
+        $pr->update([
+            'is_po_done' => 1,
+            'po_done_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Purchase Order creation phase marked as completed.');
+    }
 }

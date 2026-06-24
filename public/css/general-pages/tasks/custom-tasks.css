@@ -381,3 +381,39 @@ body.dark .form-check-input:disabled:checked {
     border-color: #B91C1C !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
 }
+
+.btn-brand-red-outline {
+    border-color: #8B0000 !important;
+    color: #8B0000 !important;
+    background-color: transparent !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.btn-brand-red-outline:hover:not(:disabled) {
+    background-color: #8B0000 !important;
+    color: white !important;
+}
+
+.btn-brand-red-outline:disabled {
+    border-color: #e0e6ed !important;
+    color: #bfc9d4 !important;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+body.dark .btn-brand-red-outline {
+    border-color: #ff5a5a !important;
+    color: #ff5a5a !important;
+    background-color: transparent !important;
+}
+
+body.dark .btn-brand-red-outline:hover:not(:disabled) {
+    background-color: #ff5a5a !important;
+    color: #15181D !important;
+}
+
+body.dark .btn-brand-red-outline:disabled {
+    border-color: #2a2f38 !important;
+    color: #6b7280 !important;
+    opacity: 0.5;
+}

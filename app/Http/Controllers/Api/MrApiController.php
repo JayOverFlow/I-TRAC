@@ -119,6 +119,49 @@ class MrApiController extends Controller
         // Fetch fully updated items for the response
         $finalItems = Mr::whereIn('mr_id', $itemsToAssign->pluck('mr_id'))->get();
 
+        // 6. Update PR scanned_at if all RIS/PAR DAs are fully scanned
+        $po = $form->purchaseOrder;
+        if ($po && $po->purchaseRequest) {
+            $pr = $po->purchaseRequest;
+            $pr->load('purchaseOrders.risSlips.risItems', 'purchaseOrders.parReceipts.parItems');
+
+            $allDAsScanned = true;
+            $hasAnyDa = false;
+
+            foreach ($pr->purchaseOrders as $p) {
+                // Check RIS forms
+                foreach ($p->risSlips as $ris) {
+                    $risPoItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
+                    if ($risPoItemIds->isNotEmpty()) {
+                        $hasAnyDa = true;
+                        $hasPending = Mr::whereIn('po_item_id_fk', $risPoItemIds)->where('is_assigned', 0)->exists();
+                        if ($hasPending) {
+                            $allDAsScanned = false;
+                        }
+                    }
+                }
+
+                // Check PAR forms
+                foreach ($p->parReceipts as $par) {
+                    $parPoItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
+                    if ($parPoItemIds->isNotEmpty()) {
+                        $hasAnyDa = true;
+                        $hasPending = Mr::whereIn('po_item_id_fk', $parPoItemIds)->where('is_assigned', 0)->exists();
+                        if ($hasPending) {
+                            $allDAsScanned = false;
+                        }
+                    }
+                }
+            }
+
+            // Supplies' logic placement (left blank as requested)
+            // [SUPPLIES_PLACEHOLDER]
+
+            if ($hasAnyDa && $allDAsScanned) {
+                $pr->update(['scanned_at' => now()]);
+            }
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Items successfully claimed and recorded to your account.',

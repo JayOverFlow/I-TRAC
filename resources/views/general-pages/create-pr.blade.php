@@ -65,17 +65,12 @@
         if ($pr) {
             $firstPo = $pr->purchaseOrders->first();
 
-            // Step 3 Date (RECEIVED BY PROCUREMENT)
+            // Step 2 Date (RECEIVED BY PROCUREMENT)
             if ($pr->retrieved_by) {
-                if ($firstPo) {
-                    $prReceivedDate = $firstPo->created_at ? \Carbon\Carbon::parse($firstPo->created_at)->format('d M, Y') : null;
-                }
-                if (!$prReceivedDate && $pr->submitted_at) {
-                    $prReceivedDate = \Carbon\Carbon::parse($pr->submitted_at)->addDay()->format('d M, Y');
-                }
+                $prReceivedDate = $pr->retrieved_at ? \Carbon\Carbon::parse($pr->retrieved_at)->format('d M, Y') : null;
             }
 
-            // Step 4 Date (first PO created date)
+            // Step 3 Date (first PO created date)
             if ($firstPo) {
                 $poCreatedDate = \Carbon\Carbon::parse($firstPo->created_at ?? $firstPo->po_date)->format('d M, Y');
             }
@@ -96,33 +91,74 @@
             }
             // ────────────────────────────────────────────────────────────────
 
-            // Step 5 (DELIVERED) & Step 6 (RECEIVED BY END USER)
+            // Step 4 (DELIVERED) & Step 5 (RECEIVED BY END USER)
+            $isDelivered = $pr->da_exported_at !== null;
+            $deliveryDate = $pr->da_exported_at ? \Carbon\Carbon::parse($pr->da_exported_at)->format('d M, Y') : null;
+            $isReceivedByEndUser = $pr->scanned_at !== null;
+            $receivedDate = $pr->scanned_at ? \Carbon\Carbon::parse($pr->scanned_at)->format('d M, Y') : null;
+
+            $daSubsteps = [];
             foreach ($pr->purchaseOrders as $po) {
-                if (!$isDelivered && $po->iarReports->isNotEmpty()) {
-                    $isDelivered = true;
-                    $iar = $po->iarReports->first();
-                    $deliveryDate = $iar->created_at ? \Carbon\Carbon::parse($iar->created_at)->format('d M, Y') : null;
+                foreach ($po->risSlips as $ris) {
+                    $risPoItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
+                    if ($risPoItemIds->isNotEmpty()) {
+                        $mrItems = \App\Models\Mr::whereIn('po_item_id_fk', $risPoItemIds)->get();
+                        if ($mrItems->isNotEmpty()) {
+                            $isAllScanned = $mrItems->every(fn($item) => $item->is_assigned == 1);
+                            $hasAnyScanned = $mrItems->contains(fn($item) => $item->is_assigned == 1);
+                            
+                            $latestScanDate = null;
+                            if ($isAllScanned) {
+                                $latestScan = $mrItems->whereNotNull('date_scanned')->max('date_scanned');
+                                $latestScanDate = $latestScan ? \Carbon\Carbon::parse($latestScan)->format('d M, Y') : null;
+                            }
+
+                            $daSubsteps[] = [
+                                'prefix'  => 'RIS No. ' . ($ris->ris_no ?? $ris->ris_id),
+                                'label'   => $isAllScanned ? 'Completed' : 'Pending',
+                                'active'  => (bool) ($isAllScanned || $hasAnyScanned),
+                                'partial' => (bool) (!$isAllScanned && $hasAnyScanned),
+                                'date'    => $latestScanDate,
+                            ];
+                        }
+                    }
                 }
-                if (!$isReceivedByEndUser && ($po->risSlips->isNotEmpty() || $po->icsSlips->isNotEmpty() || $po->parReceipts->isNotEmpty())) {
-                    $isReceivedByEndUser = true;
-                    $doc = $po->risSlips->first() ?? $po->icsSlips->first() ?? $po->parReceipts->first();
-                    $receivedDate = $doc->created_at ? \Carbon\Carbon::parse($doc->created_at)->format('d M, Y') : null;
+
+                foreach ($po->parReceipts as $par) {
+                    $parPoItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
+                    if ($parPoItemIds->isNotEmpty()) {
+                        $mrItems = \App\Models\Mr::whereIn('po_item_id_fk', $parPoItemIds)->get();
+                        if ($mrItems->isNotEmpty()) {
+                            $isAllScanned = $mrItems->every(fn($item) => $item->is_assigned == 1);
+                            $hasAnyScanned = $mrItems->contains(fn($item) => $item->is_assigned == 1);
+                            
+                            $latestScanDate = null;
+                            if ($isAllScanned) {
+                                $latestScan = $mrItems->whereNotNull('date_scanned')->max('date_scanned');
+                                $latestScanDate = $latestScan ? \Carbon\Carbon::parse($latestScan)->format('d M, Y') : null;
+                            }
+
+                            $daSubsteps[] = [
+                                'prefix'  => 'PAR No. ' . ($par->par_property_no ?? $par->par_id),
+                                'label'   => $isAllScanned ? 'Completed' : 'Pending',
+                                'active'  => (bool) ($isAllScanned || $hasAnyScanned),
+                                'partial' => (bool) (!$isAllScanned && $hasAnyScanned),
+                                'date'    => $latestScanDate,
+                            ];
+                        }
+                    }
                 }
             }
+
+            $isAnyScanned = collect($daSubsteps)->contains('active', true);
         }
 
         $steps = [
             [
                 'prefix' => 'Purchase Request:',
                 'label' => 'CREATED',
-                'active' => $pr ? true : false,
-                'date' => $pr ? \Carbon\Carbon::parse($pr->created_at ?? $pr->pr_date)->format('d M, Y') : null,
-            ],
-            [
-                'prefix' => 'Purchase Request:',
-                'label' => 'SUBMITTED',
-                'active' => ($pr && $pr->submitted_at && $pr->pr_status !== 'Draft') ? true : false,
-                'date' => ($pr && $pr->submitted_at && $pr->pr_status !== 'Draft') ? \Carbon\Carbon::parse($pr->submitted_at)->format('d M, Y') : null,
+                'active' => ($pr && ($pr->pr_status === 'Exported' || ($isDirectCreation && $pr->pr_status === 'Complete'))),
+                'date' => ($pr && ($pr->submitted_at ?? $pr->updated_at ?? $pr->created_at)) ? \Carbon\Carbon::parse($pr->submitted_at ?? $pr->updated_at ?? $pr->created_at)->format('d M, Y') : null,
             ],
             [
                 'prefix' => 'Purchase Request:',
@@ -132,26 +168,39 @@
             ],
             [
                 'prefix' => 'Purchase Order:',
-                'label' => match($poCoverage) {
-                    'full'    => 'CREATED',
-                    'partial' => 'PARTIALLY CREATED',
-                    default   => 'CREATED',
-                },
-                'active'    => $poCoverage !== 'none',
-                'partial'   => $poCoverage === 'partial',
-                'date'      => $poCreatedDate,
-            ],
-            [
-                'prefix' => 'Purchase Request:',
-                'label' => 'DELIVERED',
-                'active' => $isDelivered,
-                'date' => $deliveryDate,
+                'label' => ($pr && $pr->is_po_done == 0 && $pr->purchaseOrders->isNotEmpty()) ? 'PARTIALLY CREATED' : 'CREATED',
+                'active' => ($pr && ($pr->is_po_done == 1 || $pr->purchaseOrders->isNotEmpty())) ? true : false,
+                'partial' => ($pr && $pr->is_po_done == 0 && $pr->purchaseOrders->isNotEmpty()) ? true : false,
+                'date' => ($pr && $pr->po_done_at) ? \Carbon\Carbon::parse($pr->po_done_at)->format('d M, Y') : null,
+                'sub_steps' => $pr ? $pr->purchaseOrders->map(fn($po) => [
+                    'prefix'  => $po->po_title,
+                    'label'   => $po->po_status === 'Done' ? 'Completed' : 'Draft',
+                    'active'  => true,
+                    'partial' => $po->po_status !== 'Done',
+                    'date'    => $po->po_status === 'Done' && $po->updated_at ? \Carbon\Carbon::parse($po->updated_at)->format('d M, Y') : null,
+                ])->toArray() : [],
             ],
             [
                 'prefix' => 'Purchase Order:',
-                'label' => 'RECEIVED ITEM BY END USER',
-                'active' => $isReceivedByEndUser,
+                'label' => ($pr && $pr->da_exported_at === null && $pr->purchaseOrders->contains(fn($po) => $po->hasAnyDaExported())) ? 'PARTIALLY DELIVERED' : 'DELIVERED',
+                'active' => ($pr && ($pr->da_exported_at !== null || $pr->purchaseOrders->contains(fn($po) => $po->hasAnyDaExported()))) ? true : false,
+                'partial' => ($pr && $pr->da_exported_at === null && $pr->purchaseOrders->contains(fn($po) => $po->hasAnyDaExported())) ? true : false,
+                'date' => $deliveryDate,
+                'sub_steps' => $pr ? $pr->purchaseOrders->map(fn($po) => [
+                    'prefix'  => $po->po_title,
+                    'label'   => $po->is_da_exported == 1 ? 'Completed' : 'Pending',
+                    'active'  => ($po->is_da_exported == 1 || $po->hasAnyDaExported()) ? true : false,
+                    'partial' => ($po->is_da_exported == 0 && $po->hasAnyDaExported()) ? true : false,
+                    'date'    => $po->is_da_exported == 1 && $po->updated_at ? \Carbon\Carbon::parse($po->updated_at)->format('d M, Y') : null,
+                ])->toArray() : [],
+            ],
+            [
+                'prefix' => 'Purchase Order:',
+                'label' => ($pr && $pr->scanned_at === null && $isAnyScanned) ? 'PARTIALLY RECEIVED BY END USER' : 'RECEIVED ITEM BY END USER',
+                'active' => ($pr && ($pr->scanned_at !== null || $isAnyScanned)) ? true : false,
+                'partial' => ($pr && $pr->scanned_at === null && $isAnyScanned) ? true : false,
                 'date' => $receivedDate,
+                'sub_steps' => $daSubsteps,
             ],
         ];
 
@@ -198,6 +247,8 @@
                                 <li class="stepper-item {{ $itemClass }}" data-index="{{ $index }}">
                                     @if ($index < count($steps) - 1)
                                         <div class="stepper-line"></div>
+                                    @elseif (!empty($step['sub_steps']))
+                                        <div class="stepper-line stepper-line-short"></div>
                                     @endif
                                     <div class="stepper-circle {{ $circleClass }}">
                                         @if ($isPartial && $isLatest)
@@ -219,6 +270,53 @@
                                             <span class="stepper-date">{{ $step['date'] }}</span>
                                         @else
                                             <span class="stepper-date">Pending</span>
+                                        @endif
+
+                                        @if (!empty($step['sub_steps']))
+                                            <div class="stepper-sub-container mt-2">
+                                                @foreach ($step['sub_steps'] as $sub)
+                                                    @php
+                                                        $subCircleClass = 'pending';
+                                                        $subStatusClass = 'status-pending';
+                                                        if ($sub['active']) {
+                                                            if ($sub['partial'] ?? false) {
+                                                                $subCircleClass = 'active-partial';
+                                                                $subStatusClass = 'status-partial';
+                                                            } elseif ($isLatest) {
+                                                                $subCircleClass = 'active-latest';
+                                                                $subStatusClass = 'status-active';
+                                                            } else {
+                                                                $subCircleClass = 'active-historic';
+                                                                $subStatusClass = 'status-active';
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    <div class="stepper-sub-item">
+                                                        <div class="stepper-sub-line"></div>
+                                                        <div class="stepper-sub-circle {{ $subCircleClass }}">
+                                                            @if ($sub['active'] && !($sub['partial'] ?? false))
+                                                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                                </svg>
+                                                            @elseif ($sub['active'] && ($sub['partial'] ?? false))
+                                                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                                                    <circle cx="12" cy="12" r="9"></circle>
+                                                                    <line x1="12" y1="3" x2="12" y2="21"></line>
+                                                                </svg>
+                                                            @endif
+                                                        </div>
+                                                        <span class="stepper-sub-title d-block fw-semibold" style="font-size: 0.8rem; margin-left: 0.25rem;">
+                                                            {{ $sub['prefix'] }}
+                                                        </span>
+                                                        <span class="stepper-sub-status d-block text-uppercase {{ $subStatusClass }}" style="font-size: 0.7rem; font-weight: 600; margin-left: 0.25rem;">
+                                                            {{ $sub['label'] }}
+                                                        </span>
+                                                        @if ($sub['date'])
+                                                            <span class="stepper-sub-date d-block" style="font-size: 0.7rem; margin-left: 0.25rem;">{{ $sub['date'] }}</span>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         @endif
                                     </div>
                                 </li>
