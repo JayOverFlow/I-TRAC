@@ -167,13 +167,13 @@
                 <table id="app-items-config" class="table dt-table-hover border-top-0" style="width:100%; border-top: none !important; table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th style="width: 4%;"></th>
+                            <th style="width: 5%;"></th>
                             <th class="fw-bold" style="width: 22%;">Project Title</th>
-                            <th class="fw-bold" style="width: 26%;">General Description</th>
-                            <th class="fw-bold" style="width: 12%;">Mode of Procurement</th>
-                            <th class="fw-bold" style="width: 10%;">Start of Procurement</th>
-                            <th class="fw-bold" style="width: 10%;">End of Procurement</th>
-                            <th class="fw-bold" style="width: 11%;">Estimated Budget</th>
+                            <th class="fw-bold" style="width: 17%;">General Description</th>
+                            <th class="fw-bold" style="width: 20%;">Mode of Procurement</th>
+                            <th class="fw-bold" style="width: 12%;">Start</th>
+                            <th class="fw-bold" style="width: 12%;">End</th>
+                            <th class="fw-bold" style="width: 12%;">Estimated Budget</th>
                         </tr>
                     </thead>
                     <tbody>
