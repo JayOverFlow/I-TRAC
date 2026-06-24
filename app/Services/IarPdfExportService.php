@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class IarPdfExportService
@@ -27,6 +28,15 @@ class IarPdfExportService
 
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getSheetByName('IAR') ?? $spreadsheet->getActiveSheet();
+
+        // Prevent "Worksheet already assigned" Drawing errors by clearing existing drawings
+        $drawings = [];
+        foreach ($sheet->getDrawingCollection() as $drawing) {
+            $drawings[] = $drawing;
+        }
+        foreach ($drawings as $drawing) {
+            $drawing->setWorksheet(null, true);
+        }
 
         // 1. General Page Setup
         $spreadsheet->getDefaultStyle()->getFont()->setName('Aptos Narrow');
@@ -172,6 +182,20 @@ class IarPdfExportService
             $acceptedBy = $headPropertySupply ? $headPropertySupply->user_fullname : 'RONNIE A. RAMOS';
         }
         $sheet->setCellValue('D51', strtoupper($acceptedBy));
+
+        // Inject TUP Logo
+        $logoPath = public_path('img/tup-logo.png');
+        if (file_exists($logoPath)) {
+            $drawing = new Drawing();
+            $drawing->setName('TUP Logo');
+            $drawing->setDescription('TUP Logo');
+            $drawing->setPath($logoPath);
+            $drawing->setCoordinates('A2');
+            $drawing->setHeight(70);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(5);
+            $drawing->setWorksheet($sheet);
+        }
 
         // Clear calculations and save to PDF using native mPDF writer
         Calculation::getInstance($spreadsheet)->clearCalculationCache();
