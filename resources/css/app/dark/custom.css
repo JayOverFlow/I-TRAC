@@ -1,2 +1,81 @@
+/* Date Fields (Flatpickr inputs) */
+body.dark .form-control.flatpickr-input,
+body.dark .form-control.flatpickr-input[readonly],
+body.dark .form-control.flatpickr-input:disabled {
+    background-color: #2A2F38 !important;
+    color: #bfc9d4 !important;
+    border-color: #2a2f38 !important;
+}
 
-/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJjdXN0b20uc2NzcyJdLCJzb3VyY2VzQ29udGVudCI6WyIiXSwiZmlsZSI6ImN1c3RvbS5jc3MifQ== */
+/* "Add Specification" Button */
+body.dark .input-group-text.add-specification-btn {
+    background-color: #1D2127 !important;
+    border-color: #2a2f38 !important;
+    color: #bfc9d4 !important;
+}
+body.dark .input-group-text.add-specification-btn img {
+    filter: invert(1) brightness(100) !important;
+}
+
+/* File Icon adjustment for dark mode */
+body.dark img[src*="File.svg"] {
+    filter: invert(1) brightness(1.5) !important;
+}
+
+/* Sidebar & General Scrollbar styling */
+body.dark {
+    scrollbar-width: thin;
+    scrollbar-color: #3b3f5c #0e1726;
+    color-scheme: dark;
+}
+body.dark ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+body.dark ::-webkit-scrollbar-track {
+    background: #0e1726;
+}
+body.dark ::-webkit-scrollbar-thumb {
+    background: #3b3f5c;
+    border-radius: 4px;
+}
+body.dark ::-webkit-scrollbar-thumb:hover {
+    background: #515365;
+}
+
+/* White Flashes: Style HTML and Body early */
+html.dark, html.dark body {
+    background: #0E0F11 !important;
+    color: #A1A1AA !important;
+}
+
+/* Validation Errors Border/Shadow */
+body.dark .form-control.is-invalid:focus,
+body.dark .was-validated .form-control:invalid:focus {
+    border-color: #e7515a !important;
+    box-shadow: 0 0 0 0.25rem rgba(231, 81, 90, 0.25) !important;
+}
+body.dark .form-select.is-invalid:focus,
+body.dark .was-validated .form-select:invalid:focus {
+    border-color: #e7515a !important;
+    box-shadow: 0 0 0 0.25rem rgba(231, 81, 90, 0.25) !important;
+}
+
+/* SweetAlert2 Success Checkmark & Dialog adaptation */
+body.dark .swal2-popup .swal2-success-fix,
+body.dark .swal2-popup [class^=swal2-success-circular-line] {
+    background-color: #15181D !important;
+}
+
+/* Profile Dropdown adaptation */
+body.dark .user-profile-dropdown .dropdown-menu {
+    background-color: #1D2127 !important;
+    border-color: #2a2f38 !important;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.4) !important;
+}
+body.dark .user-profile-dropdown .dropdown-item a {
+    color: #bfc9d4 !important;
+}
+body.dark .user-profile-dropdown .dropdown-item a:hover {
+    color: #ffffff !important;
+}
