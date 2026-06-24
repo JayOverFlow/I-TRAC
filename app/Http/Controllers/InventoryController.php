@@ -660,6 +660,20 @@ class InventoryController extends Controller
         ];
     }
 
+    /**
+     * Returns the A6 sticker configuration dictionary.
+     */
+    private function getA6Configs(): array
+    {
+        return [
+            'Small_layout_1'  => ['template' => 'small.png',          'cols' => 4, 'rows' => 6, 'qr_width' => 298, 'qr_height' => 253, 'x_offset' => -25, 'y_offset' => -21],
+            'Medium_layout_1' => ['template' => 'medium-qr.png',      'cols' => 3, 'rows' => 4, 'qr_width' => 455, 'qr_height' => 380, 'x_offset' => -38, 'y_offset' => -32],
+            'Large_layout_1'  => ['template' => 'large-qr.png',       'cols' => 2, 'rows' => 3, 'qr_width' => 620, 'qr_height' => 517, 'x_offset' => -50, 'y_offset' => -35],
+            'Medium_layout_2' => ['template' => 'medium-qr-text.png', 'cols' => 3, 'rows' => 3, 'qr_width' => 470, 'qr_height' => 387, 'x_offset' => -45, 'y_offset' => -35],
+            'Large_layout_2'  => ['template' => 'large-qr-text.png',  'cols' => 2, 'rows' => 2, 'qr_width' => 625, 'qr_height' => 530, 'x_offset' => -52, 'y_offset' => -44],
+        ];
+    }
+
     // =========================================================
     // EXPORT QUEUE — Session-based batch multi-item PDF export
     // =========================================================
@@ -786,14 +800,15 @@ class InventoryController extends Controller
             return response()->json(['error' => 'Export Queue is empty.'], 400);
         }
 
-        $a4Configs     = $this->getA4Configs();
+        $paperSize     = $request->query('paper_size', 'A4');
+        $configs       = ($paperSize === 'A6') ? $this->getA6Configs() : $this->getA4Configs();
         $qrStickersDir = public_path('img/qr_stickers');
         $tempFiles     = [];
         $allHtml       = '';
 
         foreach ($queue as $entry) {
             $configKey = $entry['label_size'] . '_' . $entry['qr_layout'];
-            $config    = $a4Configs[$configKey] ?? $a4Configs['Small_layout_1'];
+            $config    = $configs[$configKey] ?? $configs['Small_layout_1'];
 
             $gridCols = $config['cols'];
             $gridRows = $config['rows'];
@@ -805,13 +820,16 @@ class InventoryController extends Controller
                 continue;
             }
 
-            // Header height adjustments (A4 only, reduced height to text height to maximize sticker space)
-            $headerHeight = 4.5;
-            $gridHeight   = 297 - $headerHeight;
-            $scaleFactor  = $gridHeight / 297;
+            // Header height adjustments (A6: 3.5mm | A4: 4.5mm)
+            $pageWidth  = ($paperSize === 'A6') ? 105 : 210;
+            $pageHeight = ($paperSize === 'A6') ? 148 : 297;
 
-            // Cell dimensions on A4 (210×297mm page, but using gridHeight)
-            $cellWidth  = 210 / $gridCols;
+            $headerHeight = ($paperSize === 'A6') ? 3.5 : 4.5;
+            $gridHeight   = $pageHeight - $headerHeight;
+            $scaleFactor  = $gridHeight / $pageHeight;
+
+            // Cell dimensions on page (using gridHeight)
+            $cellWidth  = $pageWidth  / $gridCols;
             $cellHeight = $gridHeight / $gridRows;
 
             // Scale image width and height down proportionally and leave a small 2% padding/gap inside cell
@@ -825,10 +843,17 @@ class InventoryController extends Controller
                          . ' / ' . $layoutLabel
                          . ' &nbsp;&middot;&nbsp; ' . $qty . ' sticker' . ($qty !== 1 ? 's' : '');
 
-            $allHtml .= '<div style="width:210mm; background:#e8e8e8; padding:0.5mm 2mm;'
-                      . ' font-size:7pt; font-weight:bold; font-family:Arial,sans-serif;'
-                      . ' color:#222; box-sizing:border-box; height:' . $headerHeight . 'mm; overflow:hidden;">'
-                      . $headerText . '</div>';
+            if ($paperSize === 'A6') {
+                $allHtml .= '<div style="width:105mm; background:#e8e8e8; padding:0.3mm 1mm;'
+                          . ' font-size:6.5pt; font-weight:bold; font-family:Arial,sans-serif;'
+                          . ' color:#222; box-sizing:border-box; height:' . $headerHeight . 'mm; overflow:hidden;">'
+                          . $headerText . '</div>';
+            } else {
+                $allHtml .= '<div style="width:210mm; background:#e8e8e8; padding:0.5mm 2mm;'
+                          . ' font-size:7pt; font-weight:bold; font-family:Arial,sans-serif;'
+                          . ' color:#222; box-sizing:border-box; height:' . $headerHeight . 'mm; overflow:hidden;">'
+                          . $headerText . '</div>';
+            }
 
             // Sticker table — one row at a time so mPDF can break pages naturally
             $placed = 0;
@@ -837,7 +862,7 @@ class InventoryController extends Controller
                 $remaining = $qty - $placed;
                 $rowsOnThisPage = min($gridRows, (int) ceil($remaining / $gridCols));
 
-                $allHtml .= '<table style="width:210mm; border-collapse:collapse; table-layout:fixed;">';
+                $allHtml .= '<table style="width:' . $pageWidth . 'mm; border-collapse:collapse; table-layout:fixed;">';
 
                 for ($r = 0; $r < $rowsOnThisPage; $r++) {
                     $allHtml .= '<tr>';
@@ -872,7 +897,7 @@ class InventoryController extends Controller
 
         // Render the combined PDF
         $mpdf = new MpdfLib([
-            'format'        => 'A4',
+            'format'        => $paperSize,
             'orientation'   => 'P',
             'margin_left'   => 0,
             'margin_right'  => 0,

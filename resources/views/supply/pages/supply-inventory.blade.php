@@ -285,10 +285,22 @@
                                             <form id="createItemLabelForm" action="{{ route('inventory.generate-label') }}" method="GET">
                                                 <input type="hidden" name="mr_id" id="mr_id" value="">
                                                 <input type="hidden" name="mr_qr_code" id="mr_qr_code" value="">
-                                                <h6 class="fw-bold d-flex align-items-center red-text-2">
-                                                    <img src="{{ asset('img/red-qr-code-icon.svg') }}">
-                                                    <span class="ms-2">Create Item Label
-                                                </h6>
+                                                <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
+                                                    <h6 class="fw-bold d-flex align-items-center red-text-2 mb-0">
+                                                        <img src="{{ asset('img/red-qr-code-icon.svg') }}">
+                                                        <span class="ms-2">Create Item Label</span>
+                                                    </h6>
+                                                    <!-- Toggle: Individual vs Batch Export -->
+                                                    <div id="exportModeToggleContainer" class="d-flex toggle-export-mode-container align-items-center" style="padding: 2px; border-radius: 6px; gap: 1px;">
+                                                        <button type="button" class="btn btn-xs py-1 px-2 fw-bold toggle-export-mode active" data-mode="individual" style="font-size: 0.7rem; border: none; border-radius: 4px; padding: 2px 8px !important;">
+                                                            Individual
+                                                        </button>
+                                                        <button type="button" class="btn btn-xs py-1 px-2 fw-bold toggle-export-mode" data-mode="batch" style="font-size: 0.7rem; border: none; border-radius: 4px; padding: 2px 8px !important;">
+                                                            Batch
+                                                        </button>
+                                                    </div>
+                                                    <input type="hidden" name="export_mode" id="export_mode" value="individual">
+                                                </div>
 
                                                 <!-- 1. Size Selection -->
                                                 <div class="mb-3">
@@ -368,7 +380,7 @@
                                                 </div>
 
                                                 <!-- 4. Paper Size -->
-                                                <div class="mb-3">
+                                                <div class="mb-3" id="paper-size-section">
                                                     <h6 class="fw-bold red-text-2 d-block small mb-2">4. Paper Size</h6>
                                                     <div class="row g-2 justify-content-center">
                                                         <input type="hidden" name="paper_size" id="paper_size"
@@ -391,20 +403,22 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Footer buttons — side by side -->
-                                                <div class="d-flex gap-2">
-                                                    <button type="submit"
-                                                        class="btn btn-dark-red btn-md flex-fill py-2 d-flex align-items-center justify-content-center fw-bold">
+                                                <!-- Footer buttons — side by side and centered with reduced width -->
+                                                <div class="d-flex justify-content-center mt-4">
+                                                    <button type="submit" id="btnCreateItemLabel"
+                                                        class="btn btn-dark-red btn-md py-2 px-4 d-flex align-items-center justify-content-center fw-bold"
+                                                        style="width: 220px; max-width: 100%;">
                                                         <img src="{{ asset('img/white-qr-code-icon.svg') }}">
-                                                        <span class="ms-2">Create Item Label</span>
+                                                        <span class="ms-2">Create Label</span>
                                                     </button>
-                                                    <!-- Add to Queue — always visible; disabled when A6 is selected -->
+                                                    <!-- Add to Queue — hidden by default in Individual mode -->
                                                     <button type="button" id="btnAddToQueue"
-                                                        class="btn btn-custom-outline-red btn-md flex-fill py-2 d-flex align-items-center justify-content-center fw-bold">
+                                                        class="btn btn-custom-outline-red btn-md py-2 px-4 d-flex align-items-center justify-content-center fw-bold d-none"
+                                                        style="width: 220px; max-width: 100%;">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" class="me-1 flex-shrink-0">
                                                             <path d="M8 1a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 1"/>
                                                         </svg>
-                                                        <span>Add to Export Queue</span>
+                                                        <span>Add to Queue</span>
                                                     </button>
                                                 </div>
                                             </form>
@@ -474,6 +488,44 @@
                             Export
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paper Size Selection Modal (Export Time) -->
+    <div class="modal fade" id="exportPaperSizeModal" tabindex="-1" aria-labelledby="exportPaperSizeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h4 class="modal-title fw-bold red-text-2" id="exportPaperSizeModalLabel">Select Paper Size</h4>
+                    <button type="button" class="btn-close shadow-none btn-close-custom-paper" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-1">
+                    <p class="text-muted mb-3">Choose the paper size for exporting your batched QR stickers:</p>
+                    <div class="row g-3">
+                        <!-- A4 Card -->
+                        <div class="col-6">
+                            <div class="export-paper-card p-3 text-center rounded border selected" data-paper-size="A4" style="cursor: pointer;">
+                                <div class="fw-bold mb-1 fs-5 paper-title">A4</div>
+                                <div class="text-muted small paper-dim mb-2">(210 x 297 mm)</div>
+                            </div>
+                        </div>
+                        <!-- A6 Card -->
+                        <div class="col-6">
+                            <div class="export-paper-card p-3 text-center rounded border" data-paper-size="A6" style="cursor: pointer;">
+                                <div class="fw-bold mb-1 fs-5 paper-title">A6</div>
+                                <div class="text-muted small paper-dim mb-2">(105 x 148 mm)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="export_paper_size_choice" value="A4">
+                </div>
+                <div class="modal-footer border-top-0 d-flex gap-2 justify-content-center px-4 py-2">
+                    <button type="button" class="btn btn-dark-red text-white fw-bold px-4 d-flex align-items-center" id="btnConfirmExport">
+                        <span class="spinner-border spinner-border-sm me-2 d-none" id="exportSpinner" role="status" aria-hidden="true"></span>
+                        Export PDF
+                    </button>
                 </div>
             </div>
         </div>

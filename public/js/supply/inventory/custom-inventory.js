@@ -5,6 +5,7 @@ $(document).ready(function () {
     var activeImagePath = null; // The relative path of the currently viewed image
     var $activeRow = null; // Reference to the clicked table row to update its data attribute
     var editingQueueIndex = null; // Stores index of queue item currently being edited
+    var shouldRestoreQueueModal = false; // Flag to indicate if we should reopen queue modal on hide
 
     // Setup CSRF token for all AJAX requests
     $.ajaxSetup({
@@ -344,7 +345,7 @@ $(document).ready(function () {
         activeImages = $row.data('item-images') || [];
         activeImagePath = null; // Reset active image path to display the first image by default
         editingQueueIndex = null; // Reset edit queue state when opening a new detail modal
-        $('#btnAddToQueue span').text('Add to Export Queue');
+        $('#btnAddToQueue span').text('Add to Queue');
 
         // Populate detail fields
         $('#detailItemName').text(itemName);
@@ -387,11 +388,20 @@ $(document).ready(function () {
 
         $('.stepper-quantity').val('15');
 
+        // Reset toggle to Individual Export mode
+        $('.toggle-export-mode').removeClass('active');
+        $('.toggle-export-mode[data-mode="individual"]').addClass('active');
+        $('#export_mode').val('individual');
+        $('#exportModeToggleContainer').removeClass('d-none');
+        $('#paper-size-section').removeClass('d-none');
+        $('#btnCreateItemLabel').removeClass('d-none');
+        $('#btnAddToQueue').addClass('d-none');
+
         // Reset paper size selection to A4 (default)
         $('.paper-size-card').removeClass('selected');
         $('.paper-size-card[data-paper-size="A4"]').addClass('selected');
         $('#paper_size').val('A4');
-        // Add to Queue is enabled by default because A4 is selected
+        // Add to Queue is enabled by default
         $('#btnAddToQueue').prop('disabled', false);
 
         // Render Media/Image Gallery
@@ -431,14 +441,12 @@ $(document).ready(function () {
         $('#qr_layout').val($(this).data('layout'));
     });
 
-    // Paper size selector toggle — also enables/disables the queue button
+    // Paper size selector toggle
     $(document).on('click', '.paper-size-card', function() {
         $('.paper-size-card').removeClass('selected');
         $(this).addClass('selected');
         var ps = $(this).data('paper-size');
         $('#paper_size').val(ps);
-        // Queue button enabled only for A4
-        $('#btnAddToQueue').prop('disabled', ps !== 'A4');
     });
 
     // Stepper Quantity buttons logic
@@ -702,6 +710,15 @@ $(document).ready(function () {
             // Trigger row click to populate modal details
             $invRow.click();
 
+            // Switch to Batch Export mode
+            $('.toggle-export-mode').removeClass('active');
+            $('.toggle-export-mode[data-mode="batch"]').addClass('active');
+            $('#export_mode').val('batch');
+            $('#exportModeToggleContainer').addClass('d-none');
+            $('#paper-size-section').addClass('d-none');
+            $('#btnCreateItemLabel').addClass('d-none');
+            $('#btnAddToQueue').removeClass('d-none');
+
             // Set edit mode index
             editingQueueIndex = index;
 
@@ -736,7 +753,7 @@ $(document).ready(function () {
             $('.stepper-quantity').val(qty);
 
             // Change button text
-            $('#btnAddToQueue span').text('Update Export Queue');
+            $('#btnAddToQueue span').text('Update Queue');
         } else {
             showToast('Item details could not be found in the current view.', 'danger');
         }
@@ -777,61 +794,105 @@ $(document).ready(function () {
         refreshQueueBadge();
     });
 
-    // Export Queue to PDF
-    $(document).on('click', '#btnExportQueuePdf', function () {
-        var $btn = $(this);
+    // Toggle between Individual and Batch Export mode in details modal
+    $(document).on('click', '.toggle-export-mode', function () {
+        var mode = $(this).data('mode');
+        $('.toggle-export-mode').removeClass('active');
+        $(this).addClass('active');
+        $('#export_mode').val(mode);
 
-        window.confirmAction({
-            title: 'Export Queue?',
-            text: 'Are you sure you want to export all queued items to a combined A4 PDF?',
-            icon: 'question',
-            confirmButtonText: 'Yes, Export',
-            cancelButtonText: 'Cancel',
-            confirmButtonColor: '#8C0404',
-            onConfirm: function () {
-                $btn.prop('disabled', true).html(
-                    '<span class="spinner-border spinner-border-sm me-2"></span>Generating…'
-                );
-
-                // Close the queue modal
-                var queueModal = bootstrap.Modal.getInstance(document.getElementById('exportQueueModal'));
-                if (queueModal) { queueModal.hide(); }
-
-                fetch(queueExportUrl, { headers: { 'Accept': 'application/json' } })
-                    .then(function (response) {
-                        if (!response.ok) { throw new Error('Server returned ' + response.status); }
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        if (data.pdf_url) {
-                            var a = document.createElement('a');
-                            a.href = data.pdf_url;
-                            a.download = '';
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            showToast('Export Queue PDF downloaded!', 'success');
-                            refreshQueueBadge(); // queue is cleared server-side after export
-                        } else if (data.error) {
-                            showToast(data.error, 'danger');
-                        }
-                    })
-                    .catch(function (err) {
-                        console.error('Export queue failed:', err);
-                        showToast('Failed to export queue PDF. Please try again.', 'danger');
-                    })
-                    .finally(function () {
-                        $btn.prop('disabled', false).html(
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">'
-                            + '<path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>'
-                            + '<path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>'
-                            + '</svg> Export'
-                        );
-                    });
-            }
-        });
+        if (mode === 'individual') {
+            $('#paper-size-section').removeClass('d-none');
+            $('#btnCreateItemLabel').removeClass('d-none');
+            $('#btnAddToQueue').addClass('d-none');
+        } else {
+            $('#paper-size-section').addClass('d-none');
+            $('#btnCreateItemLabel').addClass('d-none');
+            $('#btnAddToQueue').removeClass('d-none');
+        }
     });
 
+    // Open Paper Size Selection Modal from Export Queue Modal
+    $(document).on('click', '#btnExportQueuePdf', function () {
+        // Hide Export Queue modal
+        var queueModal = bootstrap.Modal.getInstance(document.getElementById('exportQueueModal'));
+        if (queueModal) {
+            queueModal.hide();
+        }
+        // Show Export Paper Size Modal
+        var paperSizeModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('exportPaperSizeModal'));
+        paperSizeModal.show();
+    });
+
+    // Toggle selected paper size in export paper size modal
+    $(document).on('click', '.export-paper-card', function () {
+        $('.export-paper-card').removeClass('selected');
+        $(this).addClass('selected');
+        var ps = $(this).data('paper-size');
+        $('#export_paper_size_choice').val(ps);
+    });
+
+    // Back/Cancel button on paper size modal: returns to export queue modal
+    $(document).on('click', '#btnCancelPaperSize, .btn-close-custom-paper', function () {
+        var paperSizeModal = bootstrap.Modal.getInstance(document.getElementById('exportPaperSizeModal'));
+        if (paperSizeModal) {
+            paperSizeModal.hide();
+        }
+        var queueModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('exportQueueModal'));
+        queueModal.show();
+    });
+
+    // Confirm Export Queue PDF with selected paper size
+    $(document).on('click', '#btnConfirmExport', function () {
+        var $btn = $(this);
+        var selectedPaperSize = $('#export_paper_size_choice').val() || 'A4';
+        var $spinner = $('#exportSpinner');
+
+        $btn.prop('disabled', true);
+        $spinner.removeClass('d-none');
+
+        // Hide Paper Size Modal
+        var paperSizeModal = bootstrap.Modal.getInstance(document.getElementById('exportPaperSizeModal'));
+        if (paperSizeModal) {
+            paperSizeModal.hide();
+        }
+
+        fetch(queueExportUrl + '?paper_size=' + selectedPaperSize, { headers: { 'Accept': 'application/json' } })
+            .then(function (response) {
+                if (!response.ok) { throw new Error('Server returned ' + response.status); }
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.pdf_url) {
+                    var a = document.createElement('a');
+                    a.href = data.pdf_url;
+                    a.download = '';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    showToast('Export Queue PDF downloaded!', 'success');
+                    refreshQueueBadge(); // queue is cleared server-side after export
+                } else if (data.error) {
+                    showToast(data.error, 'danger');
+                }
+            })
+            .catch(function (err) {
+                console.error('Export queue failed:', err);
+                showToast('Failed to export queue PDF. Please try again.', 'danger');
+            })
+            .finally(function () {
+                $btn.prop('disabled', false);
+                $spinner.addClass('d-none');
+            });
+    });
+
+
+    // Intercept click on Item Details Modal close button to return to the Export Queue modal when editing
+    $(document).on('click', '#itemDetailsModal .btn-close-custom', function () {
+        if (editingQueueIndex !== null) {
+            shouldRestoreQueueModal = true;
+        }
+    });
 
     // Clean up viewport scale on modal hidden
     $('#itemDetailsModal').on('hidden.bs.modal', function () {
@@ -849,7 +910,19 @@ $(document).ready(function () {
             cardBody.style.minHeight = '250px';
             cardBody.classList.remove('flex-grow-1');
         }
+        var wasEditing = (editingQueueIndex !== null);
         editingQueueIndex = null;
-        $('#btnAddToQueue span').text('Add to Export Queue');
+        $('#btnAddToQueue span').text('Add to Queue');
+
+        if (wasEditing && shouldRestoreQueueModal) {
+            shouldRestoreQueueModal = false;
+            // Restore the export queue modal
+            var queueModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('exportQueueModal'));
+            if (queueModal) {
+                queueModal.show();
+            }
+        } else {
+            shouldRestoreQueueModal = false;
+        }
     });
 });
