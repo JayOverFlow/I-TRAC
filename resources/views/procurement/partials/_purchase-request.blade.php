@@ -85,6 +85,7 @@
                     "sSearchPlaceholder": "Search...",
                     "sLengthMenu": "Results :  _MENU_",
                 },
+                "order": [[2, "desc"]],
                 "stripeClasses": [],
                 "lengthMenu": [5, 10, 20, 50],
                 "pageLength": 5

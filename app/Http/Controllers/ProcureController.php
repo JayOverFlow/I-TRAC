@@ -18,8 +18,8 @@ class ProcureController extends Controller
         
         if ($userRole === 'Procurement') {
             // Fetch Retrieved Purchase Requests and Created Purchase Orders
-            $retrievedPrs = PrParent::where('retrieved_by', $user->user_id)->get();
-            $pos = PoParent::with('purchaseRequest.app')->where('saved_by_user_id_fk', $user->user_id)->get();
+            $retrievedPrs = PrParent::where('retrieved_by', $user->user_id)->latest('created_at')->get();
+            $pos = PoParent::with('purchaseRequest.app')->where('saved_by_user_id_fk', $user->user_id)->latest('created_at')->get();
             
             return view('procurement.pages.procurement-procure', compact('user', 'retrievedPrs', 'pos'));
         }
@@ -35,7 +35,7 @@ class ProcureController extends Controller
                 'parReceipts',
                 'rsmiReports',
                 'rspiReports'
-            ])->where('retrieved_by', $user->user_id)->get();
+            ])->where('retrieved_by', $user->user_id)->latest('created_at')->get();
             
             return view('supply.pages.supply-procure', compact('user', 'pos'));
         }
