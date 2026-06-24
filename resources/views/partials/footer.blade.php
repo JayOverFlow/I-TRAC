@@ -5,11 +5,11 @@
             <img src="{{ asset('img/itrac-header-logo-white.svg') }}" alt="I-TRAC Logo" class="footer-logo">
         </div>
         <p class="footer-description">
-            Leveraging technology to streamline property<br>assignments and elevate teams
+            A Digital System for Item Status Tracking and QR-Code Enabled Property Assignment
         </p>
         <div class="footer-divider"></div>
         <p class="footer-copyright">
-            Copyright &copy; 2024 I-TRAC. All rights reserved.
+            Copyright &copy; 2026 I-TRAC. All rights reserved.
         </p>
     </div>
 </div>
