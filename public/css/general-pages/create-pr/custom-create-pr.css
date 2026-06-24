@@ -542,3 +542,7 @@ body.dark .stepper-sub-date {
 body.dark .stepper-item:last-child .stepper-line.stepper-line-short {
     background-color: #2a2f38 !important;
 }
+
+body.dark #pr-create-collapse {
+    color: #e5e7eb !important;
+}
