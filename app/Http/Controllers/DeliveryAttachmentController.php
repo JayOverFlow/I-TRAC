@@ -262,9 +262,9 @@ class DeliveryAttachmentController extends Controller
             $rules = [
                 'iar_center_code' => 'required|string|min:1|max:50',
                 'iar_fund_cluster' => 'required|string|min:1|max:50',
-                'iar_no' => 'required|string|min:2|max:50',
+                'iar_no' => 'required|string|min:1|max:50',
                 'iar_date' => 'required|date',
-                'iar_invoice_no' => 'required|string|min:2|max:50',
+                'iar_invoice_no' => 'required|string|min:1|max:50',
                 'iar_invoice_date' => 'required|date',
                 'iar_inspected_by' => 'required|string|min:5|max:50',
                 'iar_date_accepted' => 'required|date',
@@ -274,7 +274,7 @@ class DeliveryAttachmentController extends Controller
                 'items.*.iar_items_descrip' => 'required|string|min:5|max:50',
                 'items.*.iar_unit' => 'required|string|min:2|max:20',
                 'items.*.iar_quantity' => 'required|integer|min:1|max:9999999',
-                'items.*.specification' => 'required|string|min:10|max:500',
+                'items.*.specification' => 'required|string|min:5|max:500',
             ];
         } else {
             $rules = [
@@ -331,7 +331,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.iar_quantity.min' => 'Quantity must be at least 1.',
             'items.*.iar_quantity.max' => 'Quantity exceeds maximum limit.',
             'items.*.specification.required' => 'Specification is required.',
-            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.min' => 'Specification must be at least 5 characters.',
             'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
@@ -477,13 +477,13 @@ class DeliveryAttachmentController extends Controller
                 'items' => 'required|array|min:1',
                 'items.*.ris_items_id' => 'nullable|integer',
                 'items.*.ris_stock_no' => 'nullable|string|min:1|max:20',
-                'items.*.ris_unit' => 'required|string|min:5|max:20',
+                'items.*.ris_unit' => 'required|string|min:2|max:20',
                 'items.*.ris_items_descrip' => 'required|string|min:2|max:50',
                 'items.*.ris_quantity' => 'required|integer|min:1|max:9999999',
                 'items.*.ris_stock_available' => 'nullable|in:Yes,No',
                 'items.*.ris_issued_quantity' => 'required|integer|min:1|max:9999999',
                 'items.*.ris_issued_remarks' => 'nullable|string|max:50',
-                'items.*.specification' => 'required|string|min:10|max:500',
+                'items.*.specification' => 'required|string|min:5|max:500',
             ];
         } else {
             $rules = [
@@ -521,7 +521,7 @@ class DeliveryAttachmentController extends Controller
             'items.min' => 'At least one item is required.',
             'items.*.ris_stock_no.max' => 'Must not exceed 20 characters.',
             'items.*.ris_unit.required' => 'Unit is required.',
-            'items.*.ris_unit.min' => 'Must be at least 5 characters.',
+            'items.*.ris_unit.min' => 'Must be at least 2 characters.',
             'items.*.ris_unit.max' => 'Must not exceed 20 characters.',
             'items.*.ris_items_descrip.required' => 'Description is required.',
             'items.*.ris_items_descrip.min' => 'Must be at least 2 characters.',
@@ -536,7 +536,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.ris_issued_quantity.max' => 'Exceeds maximum limit.',
             'items.*.ris_issued_remarks.max' => 'Must not exceed 50 characters.',
             'items.*.specification.required' => 'Specification is required.',
-            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.min' => 'Specification must be at least 5 characters.',
             'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
@@ -895,12 +895,12 @@ class DeliveryAttachmentController extends Controller
                 'items' => 'required|array|min:1',
                 'items.*.ics_items_id' => 'nullable|integer',
                 'items.*.ics_quantity' => 'required|integer|min:1|max:9999999',
-                'items.*.ics_unit' => 'required|string|min:5|max:20',
+                'items.*.ics_unit' => 'required|string|min:2|max:20',
                 'items.*.ics_unit_cost' => 'required|numeric|min:1|max:9999999',
                 'items.*.ics_items_descrip' => 'required|string|min:5|max:50',
                 'items.*.ics_inventory_item_no' => 'required|string|min:2|max:20',
                 'items.*.ics_estimated_useful_life' => 'nullable|string|min:2|max:20',
-                'items.*.specification' => 'required|string|min:10|max:500',
+                'items.*.specification' => 'required|string|min:5|max:500',
             ];
         } else {
             $rules = [
@@ -912,7 +912,7 @@ class DeliveryAttachmentController extends Controller
                 'items' => 'nullable|array',
                 'items.*.ics_items_id' => 'nullable|integer',
                 'items.*.ics_quantity' => 'nullable|integer|min:1|max:9999999',
-                'items.*.ics_unit' => 'nullable|string|min:5|max:20',
+                'items.*.ics_unit' => 'nullable|string|min:2|max:20',
                 'items.*.ics_unit_cost' => 'nullable|numeric|min:1|max:9999999',
                 'items.*.ics_items_descrip' => 'nullable|string|min:5|max:50',
                 'items.*.ics_inventory_item_no' => 'nullable|string|min:2|max:20',
@@ -942,7 +942,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.ics_quantity.min' => 'Quantity must be at least 1.',
             'items.*.ics_quantity.max' => 'Quantity exceeds maximum limit.',
             'items.*.ics_unit.required' => 'Unit is required.',
-            'items.*.ics_unit.min' => 'Unit must be at least 5 characters.',
+            'items.*.ics_unit.min' => 'Unit must be at least 2 characters.',
             'items.*.ics_unit.max' => 'Unit must not exceed 20 characters.',
             'items.*.ics_unit_cost.required' => 'Unit Cost is required.',
             'items.*.ics_unit_cost.numeric' => 'Unit Cost must be a number.',
@@ -957,7 +957,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.ics_estimated_useful_life.min' => 'Must be at least 2 characters.',
             'items.*.ics_estimated_useful_life.max' => 'Must not exceed 20 characters.',
             'items.*.specification.required' => 'Specification is required.',
-            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.min' => 'Specification must be at least 5 characters.',
             'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
@@ -1106,10 +1106,10 @@ class DeliveryAttachmentController extends Controller
                 'items.*.rspi_center_code' => 'required|string|min:1|max:20',
                 'items.*.rspi_property_no' => 'required|string|min:1|max:20',
                 'items.*.rspi_items_descrip' => 'required|string|min:5|max:50',
-                'items.*.rspi_unit' => 'required|string|min:1|max:20',
+                'items.*.rspi_unit' => 'required|string|min:2|max:20',
                 'items.*.rspi_quantity' => 'required|integer|min:1|max:9999999',
                 'items.*.rspi_unit_cost' => 'required|numeric|min:1|max:9999999',
-                'items.*.specification' => 'required|string|min:10|max:500',
+                'items.*.specification' => 'required|string|min:5|max:500',
             ];
         } else {
             $rules = [
@@ -1159,7 +1159,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.rspi_unit_cost.min' => 'Must be at least 1.',
             'items.*.rspi_unit_cost.max' => 'Exceeds maximum limit.',
             'items.*.specification.required' => 'Specification is required.',
-            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.min' => 'Specification must be at least 5 characters.',
             'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 
@@ -1311,12 +1311,12 @@ class DeliveryAttachmentController extends Controller
                 'items.*.par_items_id' => 'nullable|integer',
                 'items.*.par_po_items_id_fk' => 'nullable|integer|exists:po_items_tbl,po_items_id',
                 'items.*.par_quantity' => 'required|integer|min:1|max:9999999',
-                'items.*.par_unit' => 'required|string|min:1|max:20',
+                'items.*.par_unit' => 'required|string|min:2|max:20',
                 'items.*.par_items_descrip' => 'required|string|min:5|max:50',
                 'items.*.par_property_no' => 'required|string|min:1|max:20',
                 'items.*.par_date_acquired' => 'required|date',
                 'items.*.par_amount' => 'required|numeric|min:1|max:9999999',
-                'items.*.specification' => 'required|string|min:10|max:500',
+                'items.*.specification' => 'required|string|min:5|max:500',
             ];
         } else {
             $rules = [
@@ -1359,7 +1359,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.par_quantity.min' => 'Must be at least 1.',
             'items.*.par_quantity.max' => 'Exceeds maximum limit.',
             'items.*.par_unit.required' => 'Unit is required.',
-            'items.*.par_unit.min' => 'Must be at least 1 character.',
+            'items.*.par_unit.min' => 'Must be at least 2 character.',
             'items.*.par_unit.max' => 'Must not exceed 20 characters.',
             'items.*.par_items_descrip.required' => 'Description is required.',
             'items.*.par_items_descrip.min' => 'Must be at least 5 characters.',
@@ -1374,7 +1374,7 @@ class DeliveryAttachmentController extends Controller
             'items.*.par_amount.min' => 'Must be at least 1.',
             'items.*.par_amount.max' => 'Exceeds maximum limit.',
             'items.*.specification.required' => 'Specification is required.',
-            'items.*.specification.min' => 'Specification must be at least 10 characters.',
+            'items.*.specification.min' => 'Specification must be at least 5 characters.',
             'items.*.specification.max' => 'Specification must not exceed 500 characters.',
         ];
 

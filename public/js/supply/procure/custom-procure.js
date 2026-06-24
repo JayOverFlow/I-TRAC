@@ -30,6 +30,7 @@ $(document).ready(function() {
                 "sSearchPlaceholder": "Search...",
                 "sLengthMenu": "<h4 class='fw-bold mb-0 red-text-2'>Purchase Orders</h4>",
             },
+            "order": [[2, "desc"]],
             "stripeClasses": [],
             "lengthMenu": [5, 10, 20, 50],
             "pageLength": 5

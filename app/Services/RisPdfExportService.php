@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RisPdfExportService
@@ -26,6 +27,15 @@ class RisPdfExportService
 
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getSheetByName('RIS') ?? $spreadsheet->getActiveSheet();
+
+        // Prevent "Worksheet already assigned" Drawing errors by clearing existing drawings
+        $drawings = [];
+        foreach ($sheet->getDrawingCollection() as $drawing) {
+            $drawings[] = $drawing;
+        }
+        foreach ($drawings as $drawing) {
+            $drawing->setWorksheet(null, true);
+        }
 
         // 1. General Page Setup
         $spreadsheet->getDefaultStyle()->getFont()->setName('Aptos Narrow');
@@ -181,6 +191,20 @@ class RisPdfExportService
             $drawing->setHeight(110);
             $drawing->setOffsetX(15);
             $drawing->setOffsetY(10);
+            $drawing->setWorksheet($sheet);
+        }
+
+        // Inject TUP Logo
+        $logoPath = public_path('img/tup-logo.png');
+        if (file_exists($logoPath)) {
+            $drawing = new Drawing();
+            $drawing->setName('TUP Logo');
+            $drawing->setDescription('TUP Logo');
+            $drawing->setPath($logoPath);
+            $drawing->setCoordinates('A1');
+            $drawing->setHeight(70);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(5);
             $drawing->setWorksheet($sheet);
         }
 
