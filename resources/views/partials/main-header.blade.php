@@ -278,7 +278,7 @@
                              <div class="dropdown-item preview-item-wrapper {{ is_null($task->read_at) ? 'unread' : 'read' }}" onclick="markNotifRead({{ $task->task_id }}, '{{ route('show.tasks') }}')"
                                 style="cursor: pointer;">
                                 <div class="media" style="align-items: flex-start;">
-                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: {{ $color['bg'] }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px;">
+                                    <div class="notif-icon-circle" style="width: 36px; height: 36px; border-radius: 50%; background: {{ $color['bg'] }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                             fill="none" stroke="{{ $color['stroke'] }}" stroke-width="2" stroke-linecap="round"
                                             stroke-linejoin="round" class="feather feather-file-text">
@@ -586,7 +586,7 @@
                     return `
                     <div class="dropdown-item preview-item-wrapper ${unreadClass}" onclick="markNotifRead(${n.task_id}, '${n.url}')" style="cursor:pointer;">
                         <div class="media" style="align-items:flex-start;">
-                            <div style="width:36px;height:36px;border-radius:50%;background:${color.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">
+                            <div class="notif-icon-circle" style="width:36px;height:36px;border-radius:50%;background:${color.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color.stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
@@ -774,6 +774,13 @@
             align-self: center;
             box-shadow: 0 0 6px rgba(67, 97, 238, 0.8);
             display: inline-block;
+        }
+
+        /* Ensure notifications icons inside circular wrappers are centered without right margin */
+        .notif-icon-circle svg {
+            margin: 0 !important;
+            width: 16px !important;
+            height: 16px !important;
         }
     </style>
 </header>
