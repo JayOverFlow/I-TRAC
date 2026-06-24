@@ -24,6 +24,7 @@ class AppParent extends Model
         'app_status',
         'app_unique_code',
         'app_total',
+        'utilized_budget',
         'is_active',
     ];
 
@@ -44,6 +45,59 @@ class AppParent extends Model
     public function purchaseRequests()
     {
         return $this->hasMany(PrParent::class, 'app_id_fk', 'app_id');
+    }
+
+    public static function recalculateUtilizedBudget($appId)
+    {
+        $utilizedBudget = \Illuminate\Support\Facades\DB::table('po_items_tbl')
+            ->join('po_tbl', 'po_items_tbl.po_id_fk', '=', 'po_tbl.po_id')
+            ->join('pr_tbl', 'po_tbl.pr_id_fk', '=', 'pr_tbl.pr_id')
+            ->where('pr_tbl.app_id_fk', $appId)
+            ->where(function($query) {
+                $query->whereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('iar_tbl')
+                      ->whereColumn('iar_tbl.iar_po_id_fk', 'po_tbl.po_id');
+                })
+                ->orWhereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('ris_tbl')
+                      ->whereColumn('ris_tbl.po_id_fk', 'po_tbl.po_id');
+                })
+                ->orWhereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('ics_tbl')
+                      ->whereColumn('ics_tbl.po_id_fk', 'po_tbl.po_id');
+                })
+                ->orWhereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('par_tbl')
+                      ->whereColumn('par_tbl.po_id_fk', 'po_tbl.po_id');
+                })
+                ->orWhereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('rsmi_tbl')
+                      ->whereColumn('rsmi_tbl.po_id_fk', 'po_tbl.po_id');
+                })
+                ->orWhereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('rspi_tbl')
+                      ->whereColumn('rspi_tbl.po_id_fk', 'po_tbl.po_id');
+                })
+                ->orWhereExists(function($q) {
+                    $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('ndr_tbl')
+                      ->whereColumn('ndr_tbl.po_id_fk', 'po_tbl.po_id');
+                });
+            })
+            ->whereNotExists(function($q) {
+                $q->select(\Illuminate\Support\Facades\DB::raw(1))
+                  ->from('ndr_items_tbl')
+                  ->whereColumn('ndr_items_tbl.ndr_po_items_id_fk', 'po_items_tbl.po_items_id');
+            })
+            ->sum('po_items_tbl.po_items_total');
+
+        self::where('app_id', $appId)->update(['utilized_budget' => $utilizedBudget]);
     }
 }
 

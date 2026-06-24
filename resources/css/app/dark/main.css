@@ -37,6 +37,10 @@ body.dark .collapse-toggle {
   color: #F3F4F6 !important;
 }
 
+body.dark .collapse-toggle .bg-transparent .text-black{
+  color: #F3F4F6 !important;
+}
+
 body.dark .custom-specification-header:hover {
   background-color: #2A2F38 !important;
 }

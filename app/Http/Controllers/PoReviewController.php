@@ -531,6 +531,12 @@ class PoReviewController extends Controller
                 }
             }
 
+            // Recalculate utilized budget for the APP
+            $pr = $po->purchaseRequest;
+            if ($pr && $pr->app_id_fk) {
+                \App\Models\AppParent::recalculateUtilizedBudget($pr->app_id_fk);
+            }
+
             DB::commit();
 
             return response()->json([

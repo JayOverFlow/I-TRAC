@@ -19,6 +19,7 @@ class DashboardController extends Controller
         // Get necessary data to render
         $depName = 'N/A';
         $departmentBudget = 0;
+        $utilizedBudget = 0;
         $fiscalYear = '—';
         $subordinates = collect();
 
@@ -49,6 +50,7 @@ class DashboardController extends Controller
                         $fiscalYear = $activeApp->created_at ? \Carbon\Carbon::parse($activeApp->created_at)->format('Y') : '2026';
                     }
                     $departmentBudget = $activeApp->app_total ?? $activeApp->appItems->sum('app_items_esti_budget');
+                    $utilizedBudget = $activeApp->utilized_budget ?? 0;
                 }
 
                 if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
@@ -72,9 +74,9 @@ class DashboardController extends Controller
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
-            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
-            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates')),
+            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
+            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
+            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
             default       => view('errors.403'),
         };
     }

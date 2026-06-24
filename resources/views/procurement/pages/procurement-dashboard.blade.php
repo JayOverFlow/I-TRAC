@@ -58,7 +58,7 @@
                         </div>
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold">Utilized Budget</h5>
-                            <h5 class="mb-0 fw-bold">₱<span>—</span></h5>
+                            <h5 class="mb-0 fw-bold">₱<span>{{ number_format($utilizedBudget, 2) }}</span></h5>
                         </div>
                     </div>
                 </div>
