@@ -58,6 +58,8 @@
         $deliveryDate = null;
         $isReceivedByEndUser = false;
         $receivedDate = null;
+        $daSubsteps = [];
+        $isAnyScanned = false;
 
         // PO Coverage: 'none' | 'partial' | 'full'
         $poCoverage = 'none';
