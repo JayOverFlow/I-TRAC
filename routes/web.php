@@ -182,6 +182,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/notifications/unread-count', 'getUnreadCount')->name('notifications.unread.count');
         Route::post('/notifications/mark-read', 'markNotificationsRead')->name('notifications.mark.read');
         Route::post('/notifications/mark-single-read', 'markSingleNotificationRead')->name('notifications.mark.single.read');
+        Route::post('/messages/mark-single-read', 'markSingleMessageRead')->name('messages.mark.single.read');
     });
 });
 

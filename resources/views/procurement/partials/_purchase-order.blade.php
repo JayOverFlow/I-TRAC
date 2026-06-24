@@ -24,7 +24,7 @@
                         <td class="text-center">
                             {{ $po->created_at ? $po->created_at->format('Y-m-d') : 'N/A' }}</td>
                         <td class="text-center">
-                            <span class="badge {{ $po->po_status == 'Draft' ? 'bg-warning' : 'bg-info' }}">
+                            <span class="badge {{ $po->po_status == 'Draft' ? 'badge-light-dark' : 'badge-light-info' }}">
                                 {{ $po->po_status }}
                             </span>
                         </td>

@@ -195,11 +195,11 @@ class ChatController extends Controller
             ->whereNull('read_at')
             ->count();
 
-        // Top 3 newest messages (whether read or unread)
+        // Top 50 newest messages (whether read or unread)
         $recentMessages = Message::where('receiver_id', $userId)
             ->with('sender')
             ->latest('message_id')
-            ->take(3)
+            ->take(50)
             ->get()
             ->map(function ($msg) {
                 return [
@@ -214,12 +214,12 @@ class ChatController extends Controller
                 ];
             });
 
-        // Top 3 newest notifications (whether read or unread)
+        // Top 50 newest notifications (whether read or unread)
         // Covers: PR Assignment, PR Submitted, PO Submitted notification types
         $recentNotifications = \App\Models\Task::where('assigned_to', $userId)
             ->with('assignedBy')
             ->latest('task_id')
-            ->take(3)
+            ->take(50)
             ->get()
             ->map(function ($task) {
                 $type = $task->task_type;
@@ -275,6 +275,21 @@ class ChatController extends Controller
 
         \App\Models\Task::where('task_id', $taskId)
             ->where('assigned_to', Auth::id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark a single message as read by message_id.
+     */
+    public function markSingleMessageRead(Request $request)
+    {
+        $messageId = $request->input('message_id');
+
+        Message::where('message_id', $messageId)
+            ->where('receiver_id', Auth::id())
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 

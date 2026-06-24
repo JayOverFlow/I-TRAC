@@ -249,7 +249,7 @@
                                     <td>{{ $po->created_at ? $po->created_at->format('M d, Y') : 'N/A' }}</td>
                                     <td>
                                         <span
-                                            class="badge {{ $po->po_status == 'Draft' ? 'bg-warning' : 'bg-info' }} p-2 px-3">
+                                            class="badge {{ $po->po_status == 'Draft' ? 'badge-light-dark' : 'badge-light-info' }}">
                                             {{ $po->po_status }}
                                         </span>
                                     </td>
@@ -271,35 +271,35 @@
             </div>
         </div>
     </div>
-@endsection
 
-{{-- Create PO Modal --}}
-<div class="modal fade" id="createPoModal" tabindex="-1" aria-labelledby="createPoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow bg-white">
-            <div class="modal-header bg-dark-red text-white mb-3">
-                <h5 class="modal-title fw-bold red-text-2" id="createPoModalLabel">Create Purchase Order</h5>
-            </div>
-            <form action="{{ route('create.po', $pr->pr_id) }}" method="POST">
-                @csrf
-                <div class="modal-body py-0">
-                    <div class="mb-3">
-                        <label for="po_title" class="form-label fw-bold black-text">Purchase Order Title</label>
-                        <input type="text" class="form-control form-control-md" id="po_title" name="po_title"
-                            placeholder="Enter a descriptive title" required>
-                        <div class="form-text black-text mt-2">Example: PO_Armchairs_Ariado</div>
+    {{-- Create PO Modal --}}
+    <div class="modal fade" id="createPoModal" tabindex="-1" aria-labelledby="createPoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow bg-white">
+                <div class="modal-header bg-dark-red text-white mb-3">
+                    <h5 class="modal-title fw-bold red-text-2" id="createPoModalLabel">Create Purchase Order</h5>
+                </div>
+                <form action="{{ route('create.po', $pr->pr_id) }}" method="POST">
+                    @csrf
+                    <div class="modal-body py-0">
+                        <div class="mb-3">
+                            <label for="po_title" class="form-label fw-bold black-text">Purchase Order Title</label>
+                            <input type="text" class="form-control form-control-md" id="po_title" name="po_title"
+                                placeholder="Enter a descriptive title" required>
+                            <div class="form-text black-text mt-2">Example: PO_Armchairs_Ariado</div>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer border-0 py-0">
-                    <button type="button" class="btn btn-light fw-bold black-text px-4"
-                        data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" id="confirmCreatePoBtn" class="btn btn-dark-red px-4" disabled>Create
-                        PO</button>
-                </div>
-            </form>
+                    <div class="modal-footer border-0 py-0">
+                        <button type="button" class="btn btn-light fw-bold black-text px-4"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="confirmCreatePoBtn" class="btn btn-dark-red px-4" disabled>Create
+                            PO</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+@endsection
 
 @push('js')
     <!-- Page SPECIFIC js -->

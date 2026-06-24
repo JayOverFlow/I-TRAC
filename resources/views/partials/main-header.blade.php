@@ -71,10 +71,10 @@
         ->whereNull('read_at')
         ->count();
 
-    $recentMessages = \App\Models\Message::where('receiver_id', auth()->id())
+    $allRecentMessages = \App\Models\Message::where('receiver_id', auth()->id())
         ->with('sender')
         ->latest('message_id')
-        ->take(3)
+        ->take(50)
         ->get();
 
     // Notifications = tasks assigned to the user that have NOT been read yet
@@ -82,11 +82,64 @@
         ->whereNull('read_at')
         ->count();
 
-    $recentNotifications = \App\Models\Task::where('assigned_to', auth()->id())
+    $allRecentNotifications = \App\Models\Task::where('assigned_to', auth()->id())
         ->with('assignedBy')
         ->latest('task_id')
-        ->take(3)
+        ->take(50)
         ->get();
+
+    // Filter logic for initial SSR load:
+    // 1. Get all unread. If >= 3 unread, display top 3 unread.
+    // 2. If < 3 unread, display all unread, and fill the remaining slots with the most recent read items to make it exactly 3.
+    $getQueueItems = function ($items) {
+        $unread = $items->filter(fn($item) => is_null($item->read_at));
+        $read = $items->filter(fn($item) => !is_null($item->read_at));
+        
+        if ($unread->count() >= 3) {
+            return $unread->take(3);
+        }
+        
+        return $unread->concat($read->take(3 - $unread->count()))->take(3);
+    };
+
+    $recentMessages = $getQueueItems($allRecentMessages);
+    $recentNotifications = $getQueueItems($allRecentNotifications);
+
+    $serializedMessages = $allRecentMessages->map(function ($msg) {
+        return [
+            'id'           => $msg->message_id,
+            'sender_name'  => $msg->sender->user_fullname_no_middle ?? 'User',
+            'sender_avatar'=> $msg->sender->user_profile_photo
+                                ? asset($msg->sender->user_profile_photo)
+                                : asset('img/profiles/blank.avif'),
+            'message'      => $msg->message,
+            'time'         => $msg->created_at ? $msg->created_at->diffForHumans() : '',
+            'is_read'      => !is_null($msg->read_at),
+        ];
+    })->toArray();
+
+    $serializedNotifications = $allRecentNotifications->map(function ($task) {
+        $type = $task->task_type;
+        $typeLabel = match($type) {
+            'PR Submitted'  => 'PR Submitted',
+            'PO Submitted'  => 'PO Submitted',
+            'PR Assignment' => 'PR Assigned',
+            'Purchase Request' => 'PR Assigned',
+            default         => 'Notification',
+        };
+        return [
+            'task_id'          => $task->task_id,
+            'task_description' => $task->task_description,
+            'task_type'        => $type,
+            'type_label'       => $typeLabel,
+            'time'             => $task->created_at
+                                    ? \Carbon\Carbon::parse($task->created_at)->diffForHumans()
+                                    : '',
+            'assigned_by_name' => $task->assignedBy->user_fullname_no_middle ?? 'System',
+            'url'              => route('show.tasks'),
+            'is_read'          => !is_null($task->read_at),
+        ];
+    })->toArray();
 @endphp
 <header class="header navbar navbar-expand-sm expand-header">
 
@@ -160,19 +213,24 @@
                     {{-- Messages section --}}
                     <div id="header-messages-list">
                         @forelse ($recentMessages as $msg)
-                            <div class="dropdown-item"
-                                onclick="window.location.href='{{ route('account.settings') }}#animated-underline-inbox';"
-                                style="cursor: pointer; {{ is_null($msg->read_at) ? 'background-color: rgba(67, 97, 238, 0.05);' : '' }}">
+                            <div class="dropdown-item preview-item-wrapper {{ is_null($msg->read_at) ? 'unread' : 'read' }}"
+                                onclick="markMsgRead({{ $msg->message_id }}, '{{ route('account.settings') }}#animated-underline-inbox')"
+                                style="cursor: pointer;">
                                 <div class="media">
                                     <img src="{{ $msg->sender->user_profile_photo ? asset($msg->sender->user_profile_photo) : asset('img/profiles/blank.avif') }}"
                                         class="img-fluid me-2 rounded-circle" alt="avatar"
                                         style="width: 38px; height: 38px; object-fit: cover; flex-shrink: 0;">
                                     <div class="media-body" style="overflow: hidden;">
-                                        <div class="data-info">
-                                            <h6 style="font-weight: 700; margin-bottom: 2px;">{{ $msg->sender->user_fullname_no_middle }}</h6>
-                                            <p style="font-size: 0.72rem; color: #888; margin-bottom: 2px;">{{ $msg->created_at->diffForHumans() }}</p>
+                                        <div class="data-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                            <div>
+                                                <h6 class="preview-title">{{ $msg->sender->user_fullname_no_middle }}</h6>
+                                                <p style="font-size: 0.72rem; color: #888; margin-bottom: 2px;">{{ $msg->created_at->diffForHumans() }}</p>
+                                            </div>
+                                            @if(is_null($msg->read_at))
+                                                <span class="unread-blue-dot"></span>
+                                            @endif
                                         </div>
-                                        <p class="text-muted text-truncate mb-0" style="font-size: 0.78rem;">{{ $msg->message }}</p>
+                                        <p class="text-truncate mb-0 preview-text">{{ $msg->message }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -217,8 +275,8 @@
                                     default         => 'Notification',
                                 };
                             @endphp
-                            <div class="dropdown-item" onclick="markNotifRead({{ $task->task_id }}, '{{ route('show.tasks') }}')"
-                                style="cursor: pointer; {{ is_null($task->read_at) ? 'background-color: rgba(67, 97, 238, 0.05);' : '' }}">
+                             <div class="dropdown-item preview-item-wrapper {{ is_null($task->read_at) ? 'unread' : 'read' }}" onclick="markNotifRead({{ $task->task_id }}, '{{ route('show.tasks') }}')"
+                                style="cursor: pointer;">
                                 <div class="media" style="align-items: flex-start;">
                                     <div style="width: 36px; height: 36px; border-radius: 50%; background: {{ $color['bg'] }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -231,9 +289,14 @@
                                         </svg>
                                     </div>
                                     <div class="media-body" style="overflow: hidden; display: flex; flex-direction: column; gap: 4px;">
-                                        <h6 style="white-space: normal; font-weight: 700; line-height: 1.3; margin-bottom: 2px; font-size: 0.82rem;">
-                                            {{ $task->task_description ?? 'New Task Assigned' }}
-                                        </h6>
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                                            <h6 class="preview-title" style="white-space: normal; line-height: 1.3; margin-bottom: 2px; font-size: 0.82rem; flex: 1;">
+                                                {{ $task->task_description ?? 'New Task Assigned' }}
+                                            </h6>
+                                            @if(is_null($task->read_at))
+                                                <span class="unread-blue-dot"></span>
+                                            @endif
+                                        </div>
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span style="font-size: 0.65rem; padding: 1px 6px; border-radius: 20px; color: #fff; {{ $badgeStyle }}">{{ $typeLabel }}</span>
                                             <p style="font-size: 0.72rem; color: #888; margin-bottom: 0;">
@@ -442,33 +505,60 @@
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             let fadeTimeout = null;
 
-            function renderMessages(list) {
+            // Local state arrays containing the top 50 items
+            let rawMessages = @json($serializedMessages);
+            let rawNotifications = @json($serializedNotifications);
+
+            // Server-reported counts (could be larger than 50)
+            let serverUnreadMsgCount = {{ $unreadMessagesCount }};
+            let serverUnreadNotifCount = {{ $unreadNotificationsCount }};
+
+            // Dynamic queuing algorithm:
+            // 1. Filter out read items from the queue first.
+            // 2. If we have at least 3 unread items, take the 3 most recent unread.
+            // 3. Otherwise, fill the remaining slots with the most recently read items.
+            function getFilteredQueue(items) {
+                const unread = items.filter(i => !i.is_read);
+                const read = items.filter(i => i.is_read);
+                if (unread.length >= 3) {
+                    return unread.slice(0, 3);
+                }
+                return [...unread, ...read.slice(0, 3 - unread.length)];
+            }
+
+            function renderMessages() {
                 if (!msgList) return;
-                if (!list || list.length === 0) {
+                const list = getFilteredQueue(rawMessages);
+                if (list.length === 0) {
                     msgList.innerHTML = '<div class="dropdown-item text-center py-3"><p class="text-muted mb-0" style="font-size:0.8rem;">No unread messages</p></div>';
                     return;
                 }
                 msgList.innerHTML = list.map(m => {
-                    const unreadStyle = !m.is_read ? 'background-color: rgba(67, 97, 238, 0.05);' : '';
+                    const unreadClass = !m.is_read ? 'unread' : 'read';
+                    const blueDot = !m.is_read ? '<span class="unread-blue-dot"></span>' : '';
                     return `
-                    <div class="dropdown-item" onclick="window.location.href='{{ route('account.settings') }}#animated-underline-inbox';" style="cursor:pointer; ${unreadStyle}">
+                    <div class="dropdown-item preview-item-wrapper ${unreadClass}" onclick="markMsgRead(${m.id}, '{{ route('account.settings') }}#animated-underline-inbox')" style="cursor:pointer;">
                         <div class="media">
                             <img src="${m.sender_avatar}" class="img-fluid me-2 rounded-circle" style="width:38px;height:38px;object-fit:cover;flex-shrink:0;" alt="avatar">
                             <div class="media-body" style="overflow:hidden;">
-                                <div class="data-info">
-                                    <h6 style="font-weight:700;margin-bottom:2px;">${m.sender_name}</h6>
-                                    <p style="font-size:0.72rem;color:#888;margin-bottom:2px;">${m.time}</p>
+                                <div class="data-info" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                    <div>
+                                        <h6 class="preview-title">${m.sender_name}</h6>
+                                        <p style="font-size:0.72rem;color:#888;margin-bottom:2px;">${m.time}</p>
+                                    </div>
+                                    ${blueDot}
                                 </div>
-                                <p class="text-muted text-truncate mb-0" style="font-size:0.78rem;">${m.message}</p>
+                                <p class="text-truncate mb-0 preview-text">${m.message}</p>
                             </div>
                         </div>
                     </div>`;
                 }).join('');
             }
 
-            function renderNotifications(list) {
+            function renderNotifications() {
                 if (!notifList) return;
-                if (!list || list.length === 0) {
+                const list = getFilteredQueue(rawNotifications);
+                if (list.length === 0) {
                     notifList.innerHTML = '<div class="dropdown-item text-center py-3"><p class="text-muted mb-0" style="font-size:0.8rem;">No new notifications</p></div>';
                     return;
                 }
@@ -489,11 +579,12 @@
                     };
                     const badgeStyle = badgeColors[n.task_type] || 'background:#888;';
                     const label = n.type_label || 'Notification';
-                    const unreadStyle = !n.is_read ? 'background-color: rgba(67, 97, 238, 0.05);' : '';
+                    const unreadClass = !n.is_read ? 'unread' : 'read';
+                    const blueDot = !n.is_read ? '<span class="unread-blue-dot"></span>' : '';
                     const description = n.task_description || 'New Task Assigned';
 
                     return `
-                    <div class="dropdown-item" onclick="markNotifRead(${n.task_id}, '${n.url}')" style="cursor:pointer; ${unreadStyle}">
+                    <div class="dropdown-item preview-item-wrapper ${unreadClass}" onclick="markNotifRead(${n.task_id}, '${n.url}')" style="cursor:pointer;">
                         <div class="media" style="align-items:flex-start;">
                             <div style="width:36px;height:36px;border-radius:50%;background:${color.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color.stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -504,7 +595,10 @@
                                 </svg>
                             </div>
                             <div class="media-body" style="overflow:hidden; display:flex; flex-direction:column; gap:4px;">
-                                <h6 style="white-space: normal; font-weight: 700; line-height: 1.3; margin-bottom: 2px; font-size: 0.82rem;">${description}</h6>
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+                                    <h6 class="preview-title" style="white-space: normal; line-height: 1.3; margin-bottom: 2px; font-size: 0.82rem; flex:1;">${description}</h6>
+                                    ${blueDot}
+                                </div>
                                 <div style="display:flex;align-items:center;gap:6px;">
                                     <span style="font-size:0.65rem;padding:1px 6px;border-radius:20px;color:#fff;${badgeStyle}">${label}</span>
                                     <p style="font-size:0.7rem;color:#888;margin-bottom:0;">${n.time}</p>
@@ -515,46 +609,97 @@
                 }).join('');
             }
 
-            // Mark a single notification as read, then navigate
-            window.markNotifRead = function(taskId, url) {
-                fetch('{{ route('notifications.mark.single.read') }}', {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ task_id: taskId })
-                }).finally(() => {
+            // Mark a single message as read, update local UI state immediately, then redirect
+            window.markMsgRead = function(messageId, url) {
+                const msg = rawMessages.find(m => m.id === messageId);
+                if (msg && !msg.is_read) {
+                    msg.is_read = true;
+
+                    // Decrement unread message count
+                    serverUnreadMsgCount = Math.max(0, serverUnreadMsgCount - 1);
+                    if (msgCount) msgCount.textContent = serverUnreadMsgCount + ' Unread';
+
+                    // Rerender list immediately
+                    renderMessages();
+                    updateBadgeDot();
+
+                    fetch('{{ route('messages.mark.single.read') }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message_id: messageId })
+                    }).finally(() => {
+                        window.location.href = url;
+                    });
+                } else {
                     window.location.href = url;
-                });
+                }
             };
 
+            // Mark a single notification as read, update local UI state immediately, then redirect
+            window.markNotifRead = function(taskId, url) {
+                const notif = rawNotifications.find(n => n.task_id === taskId);
+                if (notif && !notif.is_read) {
+                    notif.is_read = true;
+
+                    // Decrement unread notification count
+                    serverUnreadNotifCount = Math.max(0, serverUnreadNotifCount - 1);
+                    if (notifCount) notifCount.textContent = serverUnreadNotifCount + ' New';
+
+                    // Rerender list immediately
+                    renderNotifications();
+                    updateBadgeDot();
+
+                    fetch('{{ route('notifications.mark.single.read') }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ task_id: taskId })
+                    }).finally(() => {
+                        window.location.href = url;
+                    });
+                } else {
+                    window.location.href = url;
+                }
+            };
+
+            function updateBadgeDot() {
+                const totalUnread = serverUnreadMsgCount + serverUnreadNotifCount;
+                if (dot) {
+                    if (totalUnread > 0) {
+                        if (fadeTimeout) { clearTimeout(fadeTimeout); fadeTimeout = null; }
+                        dot.style.display = 'block';
+                        setTimeout(() => { dot.style.opacity = '1'; }, 20);
+                    } else {
+                        if (dot.style.opacity !== '0' && !fadeTimeout) {
+                            fadeTimeout = setTimeout(() => {
+                                dot.style.opacity = '0';
+                                setTimeout(() => { if (dot.style.opacity === '0') dot.style.display = 'none'; }, 500);
+                                fadeTimeout = null;
+                            }, 3000);
+                        }
+                    }
+                }
+            }
 
             function checkUnreadCounts() {
                 fetch('{{ route('notifications.unread.count') }}')
                     .then(response => response.json())
                     .then(data => {
-                        // Update counts
-                        if (msgCount) msgCount.textContent = data.unread_messages + ' Unread';
-                        if (notifCount) notifCount.textContent = data.unread_notifications + ' New';
+                        // Re-assign local arrays from the server response
+                        rawMessages = data.messages_list;
+                        rawNotifications = data.notifications_list;
+                        serverUnreadMsgCount = data.unread_messages;
+                        serverUnreadNotifCount = data.unread_notifications;
 
-                        // Re-render lists from live data
-                        renderMessages(data.messages_list);
-                        renderNotifications(data.notifications_list);
+                        // Update counts text
+                        if (msgCount) msgCount.textContent = serverUnreadMsgCount + ' Unread';
+                        if (notifCount) notifCount.textContent = serverUnreadNotifCount + ' New';
 
-                        // Handle badge dot with 3s delay fade-out
-                        if (dot) {
-                            if (data.total_unread > 0) {
-                                if (fadeTimeout) { clearTimeout(fadeTimeout); fadeTimeout = null; }
-                                dot.style.display = 'block';
-                                setTimeout(() => { dot.style.opacity = '1'; }, 20);
-                            } else {
-                                if (dot.style.opacity !== '0' && !fadeTimeout) {
-                                    fadeTimeout = setTimeout(() => {
-                                        dot.style.opacity = '0';
-                                        setTimeout(() => { if (dot.style.opacity === '0') dot.style.display = 'none'; }, 500);
-                                        fadeTimeout = null;
-                                    }, 3000);
-                                }
-                            }
-                        }
+                        // Re-render lists
+                        renderMessages();
+                        renderNotifications();
+
+                        // Update the badge dot
+                        updateBadgeDot();
                     })
                     .catch(error => console.error('Error fetching unread counts:', error));
             }
@@ -563,4 +708,72 @@
             setInterval(checkUnreadCounts, 5000);
         });
     </script>
+
+    <style>
+        /* Custom styling for read/unread preview items in the dropdown */
+        .preview-item-wrapper {
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .preview-item-wrapper.unread {
+            background-color: rgba(67, 97, 238, 0.05) !important;
+        }
+
+        .preview-item-wrapper.read {
+            background-color: transparent !important;
+        }
+
+        .preview-title {
+            margin-bottom: 2px;
+            font-size: 0.82rem;
+            transition: color 0.3s ease, font-weight 0.3s ease;
+        }
+
+        .unread .preview-title {
+            font-weight: 700 !important;
+            color: #0f172a !important; /* High contrast dark text for light theme */
+        }
+
+        body.dark .unread .preview-title {
+            color: #f1f5f9 !important; /* High contrast light text for dark theme */
+        }
+
+        .read .preview-title {
+            font-weight: 400 !important;
+            color: #888888 !important; /* regular/light gray text for read items */
+        }
+
+        .preview-text {
+            font-size: 0.78rem;
+            transition: color 0.3s ease, font-weight 0.3s ease;
+        }
+
+        .unread .preview-text {
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+
+        body.dark .unread .preview-text {
+            color: #cbd5e1 !important;
+        }
+
+        .read .preview-text {
+            font-weight: 400 !important;
+            color: #aaaaaa !important;
+        }
+
+        /* Blue dot indicator for unread items */
+        .unread-blue-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4361ee;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-left: 8px;
+            align-self: center;
+            box-shadow: 0 0 6px rgba(67, 97, 238, 0.8);
+            display: inline-block;
+        }
+    </style>
 </header>
