@@ -739,8 +739,17 @@ body.dark .btn-remove-queue-item svg {
 }
 
 #btnOpenPrintQueue:hover {
+    background-color: var(--red-text-2) !important;
+    color: var(--white-text) !important;
+    border-color: transparent !important;
     transform: translateY(-2px) !important;
     box-shadow: none !important;
+}
+
+body.dark #btnOpenPrintQueue:hover {
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+    color: #ffffff !important;
 }
 
 #btnOpenPrintQueue:active {
