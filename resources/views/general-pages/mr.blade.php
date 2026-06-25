@@ -29,10 +29,10 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/ALL.svg') }}" alt="ALL">
+                            <img src="{{ asset('img/All.svg') }}" alt="ALL" width="70" height="70">
                         </div>
                         <div class="col-8 text-end">
-                            <h6 class="card-title fw-bold">ALL</h6>
+                            <h6 class="card-title fw-bold">All</h6>
                             <h5 class="mb-0 fw-bold"><span>{{ $data->count() }}</span></h5>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                            <img src="{{ asset('img/EQUIPMENT.svg') }}" alt="Equipment">
+                            <img src="{{ asset('img/Equipment.svg') }}" alt="Equipment">
                         </div>
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">Equipment</h6>
