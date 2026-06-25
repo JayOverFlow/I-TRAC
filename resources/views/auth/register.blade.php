@@ -102,79 +102,79 @@
                             <div id="validationStep-one" class="content" role="tabpanel">
                                 <div id="test-form-1" class="needs-validation">
                                     <div class="form-group mb-2">
-                                        {{-- First Name --}}
-                                        <div class="d-flex align-items-center mb-2">
-                                            <label for="first-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                First Name
-                                            </label>
-
-                                            <div class="invalid-feedback ms-2 mt-0">
-                                                Please enter your first name
-                                            </div>
-                                        </div>
-                                        <input type="text" class="form-control mb-2" id="first-name" name="first_name">
-
-                                        {{-- Middle Name --}}
-                                        <div class="d-flex align-items-center mb-2">
-                                            <label for="middle-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                Middle Name
-                                            </label>
-
-                                            <div class="invalid-feedback ms-2 mt-0">
-                                                Please enter your middle name
-                                            </div>
-                                        </div>
-                                        <input type="text" class="form-control mb-2" id="middle-name"
-                                            name="middle_name">
-
-
-                                        {{-- Last Name --}}
-                                        <div class="d-flex align-items-center mb-2">
-                                            <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                Last Name
-                                            </label>
-
-                                            <div class="invalid-feedback ms-2 mt-0">
-                                                Please enter your last name
-                                            </div>
-                                        </div>
-                                        <input type="text" class="form-control mb-2" id="last-name" name="last_name">
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                {{-- Suffix --}}
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <label for="suffix"
-                                                        class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                        Suffix
-                                                    </label>
-
-                                                    <div class="invalid-feedback ms-2 mt-0">
-                                                        Please enter your suffix
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control" id="suffix" name="suffix"
-                                                    placeholder="Optional">
-                                            </div>
-
-                                            <div class="col-6">
-                                                {{-- TUP-ID --}}
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <label for="tup-id"
-                                                        class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                        TUPT-ID
-                                                    </label>
-
-                                                    <div class="invalid-feedback ms-2 mt-0">
-                                                        Please enter your TUPT-ID
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control" id="tup-id" name="tup_id"
-                                                    placeholder="XXXXX-00-0000">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                         {{-- First Name --}}
+                                         <div class="d-flex align-items-center mb-2">
+                                             <label for="first-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                 First Name *
+                                             </label>
+ 
+                                             <div class="invalid-feedback ms-2 mt-0">
+                                                 Please enter your first name
+                                             </div>
+                                         </div>
+                                         <input type="text" class="form-control mb-2" id="first-name" name="first_name">
+ 
+                                         {{-- Middle Name --}}
+                                         <div class="d-flex align-items-center mb-2">
+                                             <label for="middle-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                 Middle Name
+                                             </label>
+ 
+                                             <div class="invalid-feedback ms-2 mt-0">
+                                                 Please enter your middle name
+                                             </div>
+                                         </div>
+                                         <input type="text" class="form-control mb-2" id="middle-name"
+                                             name="middle_name" placeholder="Optional">
+ 
+ 
+                                         {{-- Last Name --}}
+                                         <div class="d-flex align-items-center mb-2">
+                                             <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                 Last Name *
+                                             </label>
+ 
+                                             <div class="invalid-feedback ms-2 mt-0">
+                                                 Please enter your last name
+                                             </div>
+                                         </div>
+                                         <input type="text" class="form-control mb-2" id="last-name" name="last_name">
+ 
+                                         <div class="row">
+                                             <div class="col-6">
+                                                 {{-- Suffix --}}
+                                                 <div class="d-flex align-items-center mb-2">
+                                                     <label for="suffix"
+                                                         class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                         Suffix
+                                                     </label>
+ 
+                                                     <div class="invalid-feedback ms-2 mt-0">
+                                                         Please enter your suffix
+                                                     </div>
+                                                 </div>
+                                                 <input type="text" class="form-control" id="suffix" name="suffix"
+                                                     placeholder="Optional">
+                                             </div>
+ 
+                                             <div class="col-6">
+                                                 {{-- TUP-ID --}}
+                                                 <div class="d-flex align-items-center mb-2">
+                                                     <label for="tup-id"
+                                                         class="form-label mb-0 flex-shrink-0 text-nowrap">
+                                                         TUPT-ID *
+                                                     </label>
+ 
+                                                     <div class="invalid-feedback ms-2 mt-0">
+                                                         Please enter your TUPT-ID
+                                                     </div>
+                                                 </div>
+                                                 <input type="text" class="form-control" id="tup-id" name="tup_id"
+                                                     placeholder="XXXXX-00-0000">
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
 
                                 <div class="button-action mt-5 d-flex justify-content-center">
                                     <button class="btn btn-red btn-back me-3" disabled>Back</button>
@@ -192,38 +192,51 @@
                                         {{-- TUP Email --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="email"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Email</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Email *</label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the email field</div>
                                         </div>
                                         <input type="email" class="form-control mb-2" id="email" name="email"
                                             placeholder="example@tup.edu.ph">
 
+                                        {{-- Contact Number --}}
+                                        <div class="d-flex align-items-center mb-2">
+                                            <label for="contact-no"
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Contact Number *</label>
+                                            <div class="invalid-feedback ms-2 mt-0">Please enter a valid 11-digit contact number starting with 09</div>
+                                        </div>
+                                        <input type="text" class="form-control mb-2" id="contact-no" name="contact_no"
+                                            placeholder="09XXXXXXXXX" maxlength="11">
+
                                         {{-- Password --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="password"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Password</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Password *</label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the password field</div>
                                         </div>
-                                        <input type="password" class="form-control mb-2" id="password" id="password"
-                                            placeholder="At least 8 characters with one letter and one number.">
+                                        <div class="password-field mb-2">
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                placeholder="At least 8 characters with one letter and one number.">
+                                            <i class="fas fa-eye-slash password-toggle-icon"></i>
+                                        </div>
 
                                         {{-- Confirm Password --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="confirm-password"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm
-                                                Password</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm Password *</label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the confirm password
                                                 field</div>
                                         </div>
-                                        <input type="password" class="form-control mb-2" id="confirm-password"
-                                            name="confirm_password">
+                                        <div class="password-field mb-2">
+                                            <input type="password" class="form-control" id="confirm-password"
+                                                name="confirm_password">
+                                            <i class="fas fa-eye-slash password-toggle-icon"></i>
+                                        </div>
 
                                         <div class="row">
                                             <div class="col-6">
                                                 {{-- User Type --}}
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <label class="form-label mb-0 flex-shrink-0 text-nowrap">User
-                                                        Type</label>
+                                                    <label class="form-label mb-0 flex-shrink-0 text-nowrap">User Type *</label>
                                                     <div class="invalid-feedback ms-2 mt-0">Please choose your user type
                                                     </div>
                                                 </div>
@@ -246,11 +259,11 @@
                                             </div>
 
                                             <div class="col-6">
-                                                {{-- Department/Office --}}
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <label for="department"
-                                                        class="form-label mb-0 flex-shrink-0 text-nowrap">Department/Office</label>
-                                                    <div class="invalid-feedback ms-2 mt-0">Select Department/Office
+                                                 {{-- Department/Office --}}
+                                                 <div class="d-flex align-items-center mb-2">
+                                                     <label for="department"
+                                                         class="form-label mb-0 flex-shrink-0 text-nowrap">Department/Office *</label>
+                                                     <div class="invalid-feedback ms-2 mt-0">Select Department/Office
                                                     </div>
                                                 </div>
                                                 <select class="form-select" aria-label="Default select example"
@@ -297,6 +310,11 @@
                                         <div class="mb-3">
                                             <h6 class="mb-0">TUP Email</h6>
                                             <h5 class="black-text" id="review-email"></h5>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h6 class="mb-0">Contact Number</h6>
+                                            <h5 class="black-text" id="review-contact-no"></h5>
                                         </div>
 
                                         <div>

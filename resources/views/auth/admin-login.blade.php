@@ -79,8 +79,11 @@
                             <div class="d-flex align-items-center mb-2">
                                 <label for="password" class="form-label mb-0 flex-shrink-0 text-nowrap">Password</label>
                             </div>
-                            <input type="password" class="form-control mb-2 @error('password') is-invalid @enderror"
-                                id="password" name="password" required>
+                            <div class="password-field mb-2">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    id="password" name="password" required>
+                                <i class="fas fa-eye-slash password-toggle-icon"></i>
+                            </div>
                             @error('password')
                                 <div class="invalid-feedback d-block">
                                     {{ $message }}

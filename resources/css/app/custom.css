@@ -2067,3 +2067,38 @@ body.dark .footer-wrapper .footer-section {
 .layout-px-spacing {
     min-height: 100vh !important;
 }
+
+/* Password Field Container with Show/Hide toggle icon placement */
+.password-field {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.password-field .form-control {
+    padding-right: 35px;
+}
+
+.password-field .password-toggle-icon {
+    position: absolute;
+    right: 12px;
+    color: #888ea8;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.2s ease, right 0.2s ease;
+}
+
+.password-field .password-toggle-icon:hover {
+    color: #3b3f5c;
+}
+
+body.dark .password-field .password-toggle-icon:hover {
+    color: #f3f4f6;
+}
+
+/* If the input is invalid or valid, shift the eye icon to the left to avoid overlapping validation feedback icons */
+.password-field .form-control.is-invalid ~ .password-toggle-icon,
+.password-field .form-control.is-valid ~ .password-toggle-icon {
+    right: 35px;
+}

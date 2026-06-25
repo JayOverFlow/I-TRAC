@@ -104,6 +104,7 @@ class AuthController extends Controller
             'user_middlename'        => 'nullable|string|max:50',
             'user_lastname'          => 'required|string|max:50',
             'user_suffix'            => 'nullable|string|max:10',
+            'user_contactno'         => 'required|string|size:11|regex:/^09\d{9}$/',
             'user_tupid'             => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid',
             'user_email'             => 'required|email|regex:/^.+@tup\.edu\.ph$/i|unique:users,user_email',
             'user_password'          => 'required|string|min:8',
@@ -112,6 +113,9 @@ class AuthController extends Controller
         ], [
             'user_tupid.unique' => 'TUPT-ID already exists.',
             'user_tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
+            'user_contactno.required' => 'Contact number is required.',
+            'user_contactno.size' => 'Contact number must be exactly 11 digits.',
+            'user_contactno.regex' => 'Contact number must start with 09.',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -127,7 +131,7 @@ class AuthController extends Controller
             'data' => $request->only([
                 'user_firstname', 'user_middlename', 'user_lastname',
                 'user_suffix', 'user_tupid', 'user_email', 'user_password',
-                'user_type', 'selected_department_id',
+                'user_type', 'selected_department_id', 'user_contactno',
             ]),
             'otp' => $otp,
         ], now()->addMinutes(15));
@@ -187,24 +191,36 @@ class AuthController extends Controller
         // OTP is correct — create the user
         try {
             $data = $cached['data'];
-            User::create([
+            \Illuminate\Support\Facades\DB::beginTransaction();
+
+            $user = User::create([
                 'user_firstname'         => $data['user_firstname'],
                 'user_middlename'        => $data['user_middlename'] ?? null,
                 'user_lastname'          => $data['user_lastname'],
                 'user_suffix'            => $data['user_suffix'] ?? null,
                 'user_tupid'             => $data['user_tupid'],
                 'user_email'             => $data['user_email'],
+                'user_contactno'         => $data['user_contactno'] ?? null,
                 'user_password'          => bcrypt($data['user_password']),
                 'user_type'              => $data['user_type'],
-                'selected_department_id' => $data['selected_department_id'],
                 'email_verified_at'      => now(),
             ]);
+
+            // Record the department/office association
+            \App\Models\UserDepartment::create([
+                'user_id_fk' => $user->user_id,
+                'department_id_fk' => $data['selected_department_id'],
+            ]);
+
+            \Illuminate\Support\Facades\DB::commit();
+
             Cache::forget('reg_' . $request->user_email);
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Registration successful! You can now log in.',
             ]);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Registration failed: ' . $e->getMessage(),

@@ -76,8 +76,11 @@
                             <div class="d-flex align-items-center mb-2">
                                 <label for="master-key" class="form-label mb-0 flex-shrink-0 text-nowrap">Master Key</label>
                             </div>
-                            <input type="password" class="form-control mb-2 @error('master_key') is-invalid @enderror" 
-                                   id="master-key" name="master_key" value="{{ old('master_key') }}" required>
+                            <div class="password-field mb-2">
+                                <input type="password" class="form-control @error('master_key') is-invalid @enderror" 
+                                       id="master-key" name="master_key" value="{{ old('master_key') }}" required>
+                                <i class="fas fa-eye-slash password-toggle-icon"></i>
+                            </div>
                             @error('master_key')
                                 <div class="invalid-feedback d-block">
                                     {{ $message }}
@@ -88,8 +91,11 @@
                             <div class="d-flex align-items-center mb-2">
                                 <label for="password" class="form-label mb-0 flex-shrink-0 text-nowrap">Password</label>
                             </div>
-                            <input type="password" class="form-control mb-2 @error('password') is-invalid @enderror" 
-                                   id="password" name="password" required>
+                            <div class="password-field mb-2">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                       id="password" name="password" required>
+                                <i class="fas fa-eye-slash password-toggle-icon"></i>
+                            </div>
                             @error('password')
                                 <div class="invalid-feedback d-block">
                                     {{ $message }}
@@ -100,8 +106,11 @@
                             <div class="d-flex align-items-center mb-2">
                                 <label for="password_confirmation" class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm Password</label>
                             </div>
-                            <input type="password" class="form-control mb-2 @error('password_confirmation') is-invalid @enderror" 
-                                   id="password_confirmation" name="password_confirmation" required>
+                            <div class="password-field mb-2">
+                                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
+                                       id="password_confirmation" name="password_confirmation" required>
+                                <i class="fas fa-eye-slash password-toggle-icon"></i>
+                            </div>
                             @error('password_confirmation')
                                 <div class="invalid-feedback d-block">
                                     {{ $message }}

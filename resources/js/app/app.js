@@ -737,4 +737,31 @@ MaterialRippleEffect: function() {
 
 window.addEventListener('load', function() {
     App.init('layout');
-})
+});
+
+// Global event delegation for show/hide password toggles on Login/Register and other password fields.
+// Avoids clashing with page-specific profiles that might use different structures (e.g., SVG-based).
+document.addEventListener('click', function (e) {
+    const toggle = e.target.closest('.password-toggle-icon');
+    if (!toggle) return;
+
+    // We only toggle if the target/icon is or contains an <i> element (FontAwesome)
+    const icon = toggle.querySelector('i') || (toggle.tagName === 'I' ? toggle : null);
+    if (!icon) return;
+
+    e.preventDefault();
+    const container = toggle.closest('.password-field');
+    if (!container) return;
+    const input = container.querySelector('input');
+    if (!input) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    }
+});

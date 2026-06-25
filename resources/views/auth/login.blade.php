@@ -81,9 +81,12 @@
                                     Password
                                 </label>
                             </div>
-                            <input type="password"
-                                class="form-control mb-2 @error('email') is-invalid @enderror @error('password') is-invalid @enderror @error('auth_failed') is-invalid @enderror"
-                                id="password" name="password" required>
+                            <div class="password-field mb-2">
+                                <input type="password"
+                                    class="form-control @error('email') is-invalid @enderror @error('password') is-invalid @enderror @error('auth_failed') is-invalid @enderror"
+                                    id="password" name="password" required>
+                                <i class="fas fa-eye-slash password-toggle-icon"></i>
+                            </div>
                         </div>
 
                         <div class="mt-4">
