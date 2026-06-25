@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PrPdfExportService
@@ -149,6 +150,20 @@ class PrPdfExportService
 
         // Unique Code (G54)
         $sheet->setCellValue('G54', $pr->pr_unique_code);
+
+        // Inject TUP Logo
+        $logoPath = public_path('img/tup-logo.png');
+        if (file_exists($logoPath)) {
+            $drawing = new Drawing();
+            $drawing->setName('TUP Logo');
+            $drawing->setDescription('TUP Logo');
+            $drawing->setPath($logoPath);
+            $drawing->setCoordinates('A1');
+            $drawing->setHeight(70);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(5);
+            $drawing->setWorksheet($sheet);
+        }
 
         // Clear calculations and save to PDF using native mPDF writer
         Calculation::getInstance($spreadsheet)->clearCalculationCache();
