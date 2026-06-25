@@ -130,7 +130,7 @@ class AuthController extends Controller
             if ($step == 1) { // Step 1 validation
                 $validator = Validator::make($request->all(), [
                     'first_name' => 'required|string|min:3|max:50',
-                    'middle_name' => 'required|string|min:3|max:50',
+                    'middle_name' => 'nullable|string|min:3|max:50',
                     'last_name' => 'required|string|min:3|max:50',
                     'suffix' => 'nullable|string|max:10',
                     'tup_id' => 'required|string|max:13|unique:users,user_tupid|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/',
@@ -141,12 +141,16 @@ class AuthController extends Controller
             } elseif ($step == 2) { // Step 2 validation
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|string|regex:/^.+@tup\.edu\.ph$/i|unique:users,user_email',
+                    'contact_no' => 'required|string|size:11|regex:/^09\d{9}$/',
                     'password' => 'required|string|min:8|max:128|regex:/^(?=.*[A-Za-z])(?=.*\d).{8,128}$/',
                     'confirm_password' => 'required|same:password',
                     'user_type' => 'required|in:Faculty,Staff',
                     'department' => 'required|integer|exists:departments_tbl,dep_id|min:1',
                 ], [
                     'email.unique' => 'Email already exists. Please use a different email.',
+                    'contact_no.required' => 'Contact number is required.',
+                    'contact_no.size' => 'Contact number must be exactly 11 digits.',
+                    'contact_no.regex' => 'Contact number must start with 09.',
                     'password.regex' => 'Password must contain at least one letter and one number.',
                     'confirm_password.same' => 'Passwords do not match.',
                     'user_type.required' => 'Please select a user type.',
@@ -178,6 +182,7 @@ class AuthController extends Controller
                 'suffix',
                 'tup_id',
                 'email',
+                'contact_no',
                 'password',
                 'user_type',
                 'department'
@@ -215,6 +220,7 @@ class AuthController extends Controller
                     'user_suffix' => $registrationData['suffix'],
                     'user_tupid' => $registrationData['tup_id'],
                     'user_email' => $registrationData['email'],
+                    'user_contactno' => $registrationData['contact_no'],
                     'user_password' => bcrypt($registrationData['password']),
                     'user_type' => $registrationData['user_type'],
                     'email_verified_at' => now(),
