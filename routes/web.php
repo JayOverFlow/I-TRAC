@@ -171,6 +171,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/account-settings/delete-avatar', 'deleteAvatar')->name('account.settings.delete.avatar');
         Route::get('/account-settings/archive/app-data/{app_id}', 'getArchiveAppData')->name('account.settings.archive.app-data');
         Route::post('/account-settings/set-active-app', 'setActiveApp')->name('account.settings.set-active-app');
+        Route::get('/account-settings/manual-maintenance', 'manualMaintenance')->name('account.settings.manual-maintenance');
     });
 
     // Chat System
