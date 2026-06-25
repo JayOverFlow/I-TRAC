@@ -80,7 +80,7 @@
                 <!-- MANUAL BOOKLET CARD -->
                 <div class="settings-card manual-booklet-card">
                     <h3>Manual Booklet</h3>
-                    <p class="manual-booklet-text">Click <a href="#" class="manual-booklet-link"><i><u>I-TRAC Manual Booklet</u></i></a> to download.</p>
+                    <p class="manual-booklet-text">Click <a href="{{ route('account.settings.manual-maintenance') }}" class="manual-booklet-link"><i><u>I-TRAC Manual Booklet</u></i></a> to download.</p>
                 </div>
 
             </div>
@@ -815,7 +815,7 @@
                         <!-- MANUAL BOOKLET CARD -->
                         <div class="settings-card manual-booklet-card">
                             <h3>Manual Booklet</h3>
-                            <p class="manual-booklet-text">Click <a href="#" class="manual-booklet-link"><i><u>I-TRAC Manual Booklet</u></i></a> to download.</p>
+                            <p class="manual-booklet-text">Click <a href="{{ route('account.settings.manual-maintenance') }}" class="manual-booklet-link"><i><u>I-TRAC Manual Booklet</u></i></a> to download.</p>
                         </div>
 
                         <!-- RED PROMOTION BANNER -->

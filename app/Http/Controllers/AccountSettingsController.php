@@ -345,4 +345,12 @@ class AccountSettingsController extends Controller
             'app_title' => $app->app_title,
         ]);
     }
+
+    /**
+     * Show the manual maintenance page.
+     */
+    public function manualMaintenance()
+    {
+        return view('general-pages.maintenance');
+    }
 }
