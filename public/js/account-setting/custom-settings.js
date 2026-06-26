@@ -742,6 +742,27 @@
         if (viewPrLevel5BackBtn2) { viewPrLevel5BackBtn2.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-apps'); }); }
         if (viewPrLevel5BackBtn3) { viewPrLevel5BackBtn3.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-projects'); }); }
         if (viewPrLevel5BackBtn4) { viewPrLevel5BackBtn4.addEventListener('click', function(e) { e.preventDefault(); navigateToSettingsView('settings-view-archive-prs'); }); }
+
+        // About Us Navigation
+        var viewAboutUsBtns = document.querySelectorAll('.btn-view-about-us');
+        var viewAboutUsBackBtn = document.getElementById('btn-about-us-back');
+
+        if (viewAboutUsBtns.length) {
+            viewAboutUsBtns.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navigateToSettingsView('settings-view-about-us');
+                });
+            });
+        }
+
+        if (viewAboutUsBackBtn) {
+            viewAboutUsBackBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var mainViewId = document.getElementById('settings-view-main') ? 'settings-view-main' : 'settings-view-main-non-premium';
+                navigateToSettingsView(mainViewId);
+            });
+        }
     }
 
     function navigateToSettingsView(targetViewId) {

@@ -61,19 +61,14 @@
                     </div>
                 </div>
 
-                <!-- NOTIFICATION CARD -->
-                <div class="settings-card notification-card">
+                <!-- ABOUT US CARD -->
+                <div class="settings-card about-us-card">
                     <div class="card-content-inline">
                         <div class="card-text-group">
-                            <h3>Notification</h3>
-                            <p class="settings-description">Enable all notifications</p>
+                            <h3>About Us</h3>
+                            <p class="settings-description">Learn more about I-TRAC and its makers</p>
                         </div>
-                        <div class="toggle-switch-wrapper">
-                            <input type="checkbox" id="notification-toggle" class="switch-input" checked>
-                            <label class="switch-label" for="notification-toggle">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+                        <a href="{{ route('account.settings.about-us') }}" class="view-link">View <span class="arrow-icon">&gt;</span></a>
                     </div>
                 </div>
 
@@ -751,6 +746,7 @@
                 </div>
             </div> <!-- End settings-view-archive-pr-details -->
 
+
         </div> <!-- End settings-view-container -->
     @else
         <div class="settings-view-container">
@@ -791,19 +787,14 @@
                             </div>
                         </div>
 
-                        <!-- NOTIFICATION CARD -->
-                        <div class="settings-card notification-card">
+                        <!-- ABOUT US CARD -->
+                        <div class="settings-card about-us-card">
                             <div class="card-content-inline">
                                 <div class="card-text-group">
-                                    <h3>Notification</h3>
-                                    <p class="settings-description">Enable all notifications</p>
+                                    <h3>About Us</h3>
+                                    <p class="settings-description">Learn more about I-TRAC and its makers</p>
                                 </div>
-                                <div class="toggle-switch-wrapper">
-                                    <input type="checkbox" id="notification-toggle" class="switch-input" checked>
-                                    <label class="switch-label" for="notification-toggle">
-                                        <span class="slider"></span>
-                                    </label>
-                                </div>
+                                <a href="{{ route('account.settings.about-us') }}" class="view-link">View <span class="arrow-icon">&gt;</span></a>
                             </div>
                         </div>
 
