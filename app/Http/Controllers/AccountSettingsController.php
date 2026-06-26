@@ -353,4 +353,12 @@ class AccountSettingsController extends Controller
     {
         return view('general-pages.maintenance');
     }
+
+    /**
+     * Show the about us page.
+     */
+    public function aboutUs()
+    {
+        return view('general-pages.about-us');
+    }
 }

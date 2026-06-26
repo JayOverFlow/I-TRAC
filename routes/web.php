@@ -172,6 +172,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/account-settings/archive/app-data/{app_id}', 'getArchiveAppData')->name('account.settings.archive.app-data');
         Route::post('/account-settings/set-active-app', 'setActiveApp')->name('account.settings.set-active-app');
         Route::get('/account-settings/manual-maintenance', 'manualMaintenance')->name('account.settings.manual-maintenance');
+        Route::get('/account-settings/about-us', 'aboutUs')->name('account.settings.about-us');
     });
 
     // Chat System
