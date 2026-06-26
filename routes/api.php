@@ -23,6 +23,5 @@ Route::group(['prefix' => 'user'], function () {
     Route::post('mr/items/update-image', [MrApiController::class, 'updateItemImage'])->middleware('auth:sanctum');
     Route::post('mr/items/delete-image', [MrApiController::class, 'deleteItemImage'])->middleware('auth:sanctum');
     Route::post('mr/items/update-location', [MrApiController::class, 'updateItemLocation'])->middleware('auth:sanctum');
+    Route::get('departments', [DepartmentController::class, 'index'])->middleware('throttle:10,1');
 });
-
-Route::get('departments', [DepartmentController::class, 'index']);
