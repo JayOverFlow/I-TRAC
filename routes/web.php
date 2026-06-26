@@ -191,9 +191,9 @@ Route::middleware('auth')->group(function () {
 Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', 'showLogin')->name('login'); // Name changed to login for auth redirection
-        Route::post('/login', 'login')->name('login.post');
+        Route::post('/login', 'login')->name('login.post')->middleware('throttle:5,1');
         Route::get('/register', 'showRegister')->name('show.register');
-        Route::post('/register', 'register')->name('register');
+        Route::post('/register', 'register')->name('register')->middleware('throttle:5,1');
     });
     
     Route::post('/logout', 'logout')->name('logout')->middleware('auth');
@@ -207,9 +207,9 @@ Route::controller(EmailVerificationController::class)->group(function () {
 // Master Admin
 Route::controller(AdminAuthController::class)->group(function () {
     Route::get('/admin-register', 'adminShowRegister')->name('admin.show.register');
-    Route::post('/admin-register', 'adminRegister')->name('admin.register');
+    Route::post('/admin-register', 'adminRegister')->name('admin.register')->middleware('throttle:5,1');
     Route::get('/admin-login', 'adminShowLogin')->name('admin.show.login');
-    Route::post('/admin-login', 'adminLogin')->name('admin.login');
+    Route::post('/admin-login', 'adminLogin')->name('admin.login')->middleware('throttle:5,1');
     Route::post('/admin-logout', 'adminLogout')->name('admin.logout')->middleware('admin.auth');
 });
 

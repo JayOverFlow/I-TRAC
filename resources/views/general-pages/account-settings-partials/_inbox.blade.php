@@ -61,6 +61,7 @@
                             <div class="chat-footer">
                                 <div class="chat-input">
                                     <form class="chat-form d-flex align-items-center gap-3" action="javascript:void(0);" id="chat-form" style="display: none;">
+                                        @csrf
                                         <input type="text" class="mail-write-box form-control flex-grow-1" id="chat-input-message" placeholder="Type or add your message..."/>
                                         
 

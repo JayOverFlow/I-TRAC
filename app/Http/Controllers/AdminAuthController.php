@@ -86,8 +86,7 @@ class AdminAuthController extends Controller
         $request->validate([
             'username' => [
                 'required',
-                'string',
-                'exists:admins_tbl,admin_username'
+                'string'
             ],
             'password' => [
                 'required',
@@ -95,7 +94,6 @@ class AdminAuthController extends Controller
             ],
         ], [
             'username.required' => 'Username is required.',
-            'username.exists' => 'Invalid username or password.',
             'password.required' => 'Password is required.',
         ]);
 
@@ -105,9 +103,12 @@ class AdminAuthController extends Controller
         // Check if admin exists and password matches
         if (!$admin || !Hash::check($request->password, $admin->admin_password)) {
             return back()->withErrors([
-                'login' => 'Invalid username or password.'
+                'username' => 'Invalid username or password.'
             ])->withInput();
         }
+
+        // Regenerate session to prevent session fixation
+        $request->session()->regenerate();
 
         // Store admin session
         session([
