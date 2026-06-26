@@ -127,7 +127,9 @@
                     <!-- Content overlay -->
                     <div class="promo-content">
                         <div class="promo-left">
-                            <button class="btn btn-download-now">Download Now</button>
+                            <a href="https://drive.google.com/drive/folders/1PWWiAIyAfztVisPukamDuhOcgYHvY_ey?fbclid=IwY2xjawSrGJlleHRuA2FlbQIxMABicmlkETFqU3dVYmRjcUxUaVJqRGxOc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHsDOdGVN_eVSUi2Kn8uZoY7IYwb1YsZoM56mxAihHKW2vwRVknAYN2RNM5mf_aem_aYZENyFILg76mdtfPAyVlg" target="_blank" rel="noopener noreferrer">
+                                <button class="btn btn-download-now">Download Now</button>
+                            </a>
                         </div>
                         <div class="promo-right"></div>
                     </div>
@@ -826,7 +828,9 @@
                             <!-- Content overlay -->
                             <div class="promo-content">
                                 <div class="promo-left">
-                                    <!-- Download Now button is omitted for non-premium/unassigned roles -->
+                                    <a href="https://drive.google.com/drive/folders/1PWWiAIyAfztVisPukamDuhOcgYHvY_ey?fbclid=IwY2xjawSrGJlleHRuA2FlbQIxMABicmlkETFqU3dVYmRjcUxUaVJqRGxOc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHsDOdGVN_eVSUi2Kn8uZoY7IYwb1YsZoM56mxAihHKW2vwRVknAYN2RNM5mf_aem_aYZENyFILg76mdtfPAyVlg" target="_blank" rel="noopener noreferrer">
+                                        <button class="btn btn-download-now">Download Now</button>
+                                    </a>
                                 </div>
                                 <div class="promo-right"></div>
                             </div>
