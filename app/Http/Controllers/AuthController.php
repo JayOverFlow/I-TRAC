@@ -189,9 +189,6 @@ class AuthController extends Controller
                 'user_type',
                 'department'
             ]);
-            if (isset($newData['password'])) {
-                $newData['password'] = Hash::make($newData['password']);
-            }
             if (isset($newData['tup_id'])) {
                 $newData['tup_id'] = strtoupper($newData['tup_id']);
             }
