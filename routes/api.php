@@ -7,8 +7,8 @@ use App\Http\Controllers\AccountSettingsController;
 use App\Http\Controllers\Api\MrApiController;
 
 Route::group(['prefix' => 'user'], function () {
-    Route::post('login',        [AuthController::class, 'login']);
-    Route::post('register',     [AuthController::class, 'register']);
+    Route::post('login',        [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('register',     [AuthController::class, 'register'])->middleware('throttle:5,1');
     Route::post('verify',       [AuthController::class, 'verify']);
     Route::post('check-tupid',  [AuthController::class, 'checkTupId']);
     Route::post('check-email',  [AuthController::class, 'checkEmail']);
