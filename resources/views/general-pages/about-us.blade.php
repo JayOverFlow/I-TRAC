@@ -66,7 +66,7 @@
                     <!-- Developer 1 (John Brix Coronejo) -->
                     <div class="developer-tile active" data-index="4">
                         <div class="avatar-container">
-                            <img src="{{ asset('img/brix.svg') }}" alt="John Brix Coronejo" class="avatar-img">
+                            <img src="{{ asset('img/developers/brix.svg') }}" alt="John Brix Coronejo" class="avatar-img">
                         </div>
                         <div class="developer-info-box">
                             <div class="developer-tile-name">John Brix Coronejo</div>
@@ -77,7 +77,7 @@
                     <!-- Developer 2 (John Rex Duran) -->
                     <div class="developer-tile" data-index="3">
                         <div class="avatar-container">
-                            <img src="{{ asset('img/rex.svg') }}" alt="John Rex Duran" class="avatar-img">
+                            <img src="{{ asset('img/developers/rex.svg') }}" alt="John Rex Duran" class="avatar-img">
                         </div>
                         <div class="developer-info-box">
                             <div class="developer-tile-name">John Rex Duran</div>
@@ -88,7 +88,7 @@
                     <!-- Developer 3 (Merielle Grace Esplana) -->
                     <div class="developer-tile" data-index="5">
                         <div class="avatar-container">
-                            <img src="{{ asset('img/grace.svg') }}" alt="Merielle Grace Esplana" class="avatar-img">
+                            <img src="{{ asset('img/developers/grace.svg') }}" alt="Merielle Grace Esplana" class="avatar-img">
                         </div>  
                         <div class="developer-info-box">
                             <div class="developer-tile-name">Merielle Grace Esplana</div>
@@ -99,7 +99,7 @@
                      <!-- Developer 4 (Emmanuel Ferrer) -->
                     <div class="developer-tile" data-index="2">
                         <div class="avatar-container">
-                            <img src="{{ asset('img/emman.svg') }}" alt="Emmanuel Ferrer" class="avatar-img">
+                            <img src="{{ asset('img/developers/emman.svg') }}" alt="Emmanuel Ferrer" class="avatar-img">
                         </div>
                         <div class="developer-info-box">
                             <div class="developer-tile-name">Emmanuel Ferrer</div>
@@ -110,7 +110,7 @@
                     <!-- Developer 5 (Kimberlie Porteria) -->
                     <div class="developer-tile" data-index="0">
                         <div class="avatar-container">
-                            <img src="{{ asset('img/kim.svg') }}" alt="Kimberlie Porteria" class="avatar-img">
+                            <img src="{{ asset('img/developers/kim.svg') }}" alt="Kimberlie Porteria" class="avatar-img">
                         </div>
                         <div class="developer-info-box">
                             <div class="developer-tile-name">Kimberlie Porteria</div>
@@ -121,7 +121,7 @@
                     <!-- Developer 6 (Aliah Wales) -->
                     <div class="developer-tile" data-index="1">
                         <div class="avatar-container">
-                            <img src="{{ asset('img/aliah.svg') }}" alt="Aliah T. Wales" class="avatar-img">
+                            <img src="{{ asset('img/developers/aliah.svg') }}" alt="Aliah T. Wales" class="avatar-img">
                         </div>
                         <div class="developer-info-box">
                             <div class="developer-tile-name">Aliah Wales</div>
@@ -135,7 +135,7 @@
                 <div class="info-card" id="detail-card-pane">
                     <div class="info-card-left">
                         <div class="info-card-photo-container">
-                            <img src="{{ asset('img/brix.svg') }}" alt="John Brix G. Coronejo" class="info-card-photo" id="card-photo-pane">
+                            <img src="{{ asset('img/developers/brix.svg') }}" alt="John Brix G. Coronejo" class="info-card-photo" id="card-photo-pane">
                         </div>
                     </div>
                     <div class="info-card-right">
@@ -617,42 +617,42 @@
                 name: "Kimberlie Crissel F. Porteria",
                 role: "UI/UX Designer",
                 email: "porteriakimberlie@gmail.com",
-                photo: "{{ asset('img/kim.svg') }}",
+                photo: "{{ asset('img/developers/kim.svg') }}",
                 bio: "Aspiring UI/UX Designer committed to learning, innovating, and creating meaningful human-computer interactions. I love collaborating on cross-functional teams to bring creative ideas to life through empathy-driven design."
             },
             {
                 name: "Aliah T. Wales",
                 role: "UI/UX Designer",
                 email: "whalesaliaht@gmail.com",
-                photo: "{{ asset('img/aliah.svg') }}",
+                photo: "{{ asset('img/developers/aliah.svg') }}",
                 bio: "Aspiring UI/UX Designer driven by curiosity, design empathy, and a love for modern interface aesthetics. Eager to collaborate on cross-functional teams to translate user insights into engaging, accessible, and high-impact web and mobile designs."
             },
             {
                 name: "Emmanuel Ferrer",
                 role: "Database Administrator & Mobile App Developer",
                 email: "emmanferrer753@gmail.com",
-                photo: "{{ asset('img/emman.svg') }}",
+                photo: "{{ asset('img/developers/emman.svg') }}",
                 bio: "Aspiring developer with a dual focus on mobile application development and database management systems. Eager to leverage my technical skills in structuring data and building cross-platform mobile apps to deliver powerful, user-centric digital solutions."
             },
             {
                 name: "John Rex B. Duran",
                 role: "Full Stack Developer",
                 email: "jayoverflow29@gmail.com",
-                photo: "{{ asset('img/rex.svg') }}",
+                photo: "{{ asset('img/developers/rex.svg') }}",
                 bio: "Aspiring Full Stack Developer dedicated to writing clean, maintainable code and learning the latest web technologies. Enthusiastic about collaborating on impactful projects and building reliable web applications from the ground up."
             },
             {
                 name: "John Brix G. Coronejo",
                 role: "Frontend Developer & Quality Assurance Tester",
                 email: "coronejojohnbrix16@gmail.com",
-                photo: "{{ asset('img/brix.svg') }}",
+                photo: "{{ asset('img/developers/brix.svg') }}",
                 bio: "Aspiring tech professional with a dual focus on frontend development and QA testing. Enthusiastic about creating highly interactive user interfaces and maintaining top-tier software quality through thorough manual and automated testing workflows."
             },
             {
                 name: "Merielle Grace Esplana",
                 role: "Project Manager",
                 email: "graceyesplana01@gmail.com",
-                photo: "{{ asset('img/grace.svg') }}",
+                photo: "{{ asset('img/developers/grace.svg') }}",
                 bio: "Aspiring Project Manager with a strong foundation in team leadership, risk management, and Agile methodologies. Enthusiastic about fostering collaboration, optimizing team workflows, and steering tech initiatives from initial concept to successful launch."
             }
         ];
