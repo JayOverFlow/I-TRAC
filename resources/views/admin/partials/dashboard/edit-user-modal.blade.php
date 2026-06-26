@@ -11,6 +11,7 @@
             </div>
             
             <form id="editUserForm" autocomplete="off">
+                @csrf
                 <div class="modal-body p-0">
                     <div class="row g-0">
                         <!-- Left Panel: Profile Context & Destructive Action -->
