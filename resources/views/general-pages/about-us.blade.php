@@ -64,13 +64,13 @@
                 <div class="developers-grid">
 
                     <!-- Developer 1 (John Brix Coronejo) -->
-                    <div class="developer-tile" data-index="4">
+                    <div class="developer-tile active" data-index="4">
                         <div class="avatar-container">
                             <img src="{{ asset('img/brix.svg') }}" alt="John Brix Coronejo" class="avatar-img">
                         </div>
                         <div class="developer-info-box">
                             <div class="developer-tile-name">John Brix Coronejo</div>
-                            <div class="developer-tile-role">Frontend Developer & QA Tester</div>
+                            <div class="developer-tile-role">Frontend Developer & Quality Assurance Tester</div>
                         </div>
                     </div>
 
@@ -108,7 +108,7 @@
                     </div>
 
                     <!-- Developer 5 (Kimberlie Porteria) -->
-                    <div class="developer-tile" data-index="1">
+                    <div class="developer-tile" data-index="0">
                         <div class="avatar-container">
                             <img src="{{ asset('img/kim.svg') }}" alt="Kimberlie Porteria" class="avatar-img">
                         </div>
@@ -119,7 +119,7 @@
                     </div>
 
                     <!-- Developer 6 (Aliah Wales) -->
-                    <div class="developer-tile active" data-index="0">
+                    <div class="developer-tile" data-index="1">
                         <div class="avatar-container">
                             <img src="{{ asset('img/aliah.svg') }}" alt="Aliah T. Wales" class="avatar-img">
                         </div>
@@ -135,19 +135,19 @@
                 <div class="info-card" id="detail-card-pane">
                     <div class="info-card-left">
                         <div class="info-card-photo-container">
-                            <img src="{{ asset('img/profiles/user_74_1781960203.jpg') }}" alt="Aliah T. Wales" class="info-card-photo" id="card-photo-pane">
+                            <img src="{{ asset('img/brix.svg') }}" alt="John Brix G. Coronejo" class="info-card-photo" id="card-photo-pane">
                         </div>
                     </div>
                     <div class="info-card-right">
-                        <h3 class="info-card-greeting" id="card-greeting-pane">Hi! I am Aliah T. Wales</h3>
+                        <h3 class="info-card-greeting" id="card-greeting-pane">Hi! I am John Brix G. Coronejo</h3>
                         <div class="info-card-role-email">
-                            <span class="info-card-role" id="card-role-pane">UI/UX Designer</span>
-                            <a href="mailto:walesaliaht@gmail.com" class="info-card-email" id="card-email-pane">
-                                <i class="far fa-envelope"></i> <span id="card-email-text-pane">walesaliaht@gmail.com</span>
+                            <span class="info-card-role" id="card-role-pane">Frontend Developer &amp; Quality Assurance Tester</span>
+                            <a href="mailto:coronejojohnbrix16@gmail.com" class="info-card-email" id="card-email-pane">
+                                <i class="far fa-envelope"></i> <span id="card-email-text-pane">coronejojohnbrix16@gmail.com</span>
                             </a>
                         </div>
                         <p class="info-card-bio" id="card-bio-pane">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                            Aspiring tech professional with a dual focus on frontend development and QA testing. Enthusiastic about creating highly interactive user interfaces and maintaining top-tier software quality through thorough manual and automated testing workflows.
                         </p>
                     </div>
                 </div>
@@ -532,7 +532,7 @@
         /* Footer */
         .footer-section {
             width: 100%;
-            text-align: right;
+            text-align: center;
             padding-top: 15px;
         }
 
@@ -614,18 +614,18 @@
         // Developer Data
         const paneDevelopers = [
             {
-                name: "Aliah T. Wales",
-                role: "UI/UX Designer",
-                email: "whalesaliaht@gmail.com",
-                photo: "{{ asset('img/aliah.svg') }}",
-                bio: "Aspiring UI/UX Designer driven by curiosity, design empathy, and a love for modern interface aesthetics. Eager to collaborate on cross-functional teams to translate user insights into engaging, accessible, and high-impact web and mobile designs."
-            },
-            {
                 name: "Kimberlie Crissel F. Porteria",
                 role: "UI/UX Designer",
                 email: "porteriakimberlie@gmail.com",
                 photo: "{{ asset('img/kim.svg') }}",
                 bio: "Aspiring UI/UX Designer committed to learning, innovating, and creating meaningful human-computer interactions. I love collaborating on cross-functional teams to bring creative ideas to life through empathy-driven design."
+            },
+            {
+                name: "Aliah T. Wales",
+                role: "UI/UX Designer",
+                email: "whalesaliaht@gmail.com",
+                photo: "{{ asset('img/aliah.svg') }}",
+                bio: "Aspiring UI/UX Designer driven by curiosity, design empathy, and a love for modern interface aesthetics. Eager to collaborate on cross-functional teams to translate user insights into engaging, accessible, and high-impact web and mobile designs."
             },
             {
                 name: "Emmanuel Ferrer",
@@ -643,7 +643,7 @@
             },
             {
                 name: "John Brix G. Coronejo",
-                role: "Frontend Developer & QA Tester",
+                role: "Frontend Developer & Quality Assurance Tester",
                 email: "coronejojohnbrix16@gmail.com",
                 photo: "{{ asset('img/brix.svg') }}",
                 bio: "Aspiring tech professional with a dual focus on frontend development and QA testing. Enthusiastic about creating highly interactive user interfaces and maintaining top-tier software quality through thorough manual and automated testing workflows."
