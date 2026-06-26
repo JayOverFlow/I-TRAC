@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 
 use App\Models\Department;
 use App\Models\UserDepartment;
@@ -19,7 +21,7 @@ class AuthController extends Controller
     public function login(Request $request) {
         // Valdations
         $validator = Validator::make($request->all(), [
-            'email' => ['required', 'string', 'regex:/^.+@tup\.edu\.ph$/i', 'exists:users,user_email'],
+            'email' => ['required', 'string', 'regex:/^.+@tup\.edu\.ph$/i'],
             'password' => 'required|string'
         ]);
 
@@ -187,6 +189,9 @@ class AuthController extends Controller
                 'user_type',
                 'department'
             ]);
+            if (isset($newData['password'])) {
+                $newData['password'] = Hash::make($newData['password']);
+            }
             if (isset($newData['tup_id'])) {
                 $newData['tup_id'] = strtoupper($newData['tup_id']);
             }
@@ -221,7 +226,7 @@ class AuthController extends Controller
                     'user_tupid' => $registrationData['tup_id'],
                     'user_email' => $registrationData['email'],
                     'user_contactno' => $registrationData['contact_no'],
-                    'user_password' => bcrypt($registrationData['password']),
+                    'user_password' => $registrationData['password'],
                     'user_type' => $registrationData['user_type'],
                     'email_verified_at' => now(),
                 ]);

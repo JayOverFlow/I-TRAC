@@ -54,7 +54,7 @@
                         @if ($errors->any())
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
+                                    @foreach (array_unique($errors->all()) as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
@@ -69,11 +69,6 @@
                             </div>
                             <input type="text" class="form-control mb-2 @error('username') is-invalid @enderror"
                                 id="username" name="username" value="{{ old('username') }}" required>
-                            @error('username')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                            @enderror
 
                             {{-- Password --}}
                             <div class="d-flex align-items-center mb-2">
@@ -84,11 +79,6 @@
                                     id="password" name="password" required>
                                 <i class="fas fa-eye-slash password-toggle-icon"></i>
                             </div>
-                            @error('password')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                            @enderror
                         </div>
 
                         <div class="mt-4">
