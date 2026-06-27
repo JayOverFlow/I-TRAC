@@ -312,21 +312,18 @@
                                                             <div class="size-card p-2 text-center rounded border selected"
                                                                 data-size="Small">
                                                                 <div class="size-title small">Small</div>
-                                                                <div class="size-dim text-muted">(Sample Items)</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Medium">
                                                                 <div class="size-title small">Medium</div>
-                                                                <div class="size-dim text-muted">(Sample Items)</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
                                                             <div class="size-card p-2 text-center rounded border"
                                                                 data-size="Large">
                                                                 <div class="size-title small">Large</div>
-                                                                <div class="size-dim text-muted">(Sample Items)</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -373,7 +370,7 @@
                                                             type="button">&minus;</button>
                                                         <input type="text"
                                                             class="form-control text-center stepper-quantity stepper-input"
-                                                            name="sticker_quantity" value="15">
+                                                            name="sticker_quantity">
                                                         <button class="btn btn-stepper-plus px-3 stepper-btn"
                                                             type="button">&plus;</button>
                                                     </div>

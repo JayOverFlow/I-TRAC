@@ -386,7 +386,7 @@ $(document).ready(function () {
         // Hide Layout 2 since Small is selected by default
         $('#layout-2-col').hide();
 
-        $('.stepper-quantity').val('15');
+        $('.stepper-quantity').val('1');
 
         // Reset toggle to Individual Export mode
         $('.toggle-export-mode').removeClass('active');
@@ -494,6 +494,9 @@ $(document).ready(function () {
             myModal.hide();
         }
 
+        // Show general form loader overlay
+        $('#form-loader-overlay').css('display', 'flex');
+
         // Send a fetch GET request to the backend label generator endpoint.
         // The backend returns JSON: { pdf_urls: ["/img/qr_stickers/file1.pdf", ...] }
         fetch(actionUrl + '?' + queryParams, {
@@ -509,6 +512,7 @@ $(document).ready(function () {
             // Loop through each returned PDF URL and trigger a browser download
             // by creating a temporary hidden <a> element with the download attribute.
             if (data.pdf_urls && data.pdf_urls.length > 0) {
+                showToast('Item label PDF(s) generated successfully!', 'success');
                 data.pdf_urls.forEach(function (url, index) {
                     // Stagger downloads slightly to prevent browser throttling
                     setTimeout(function () {
@@ -520,11 +524,19 @@ $(document).ready(function () {
                         document.body.removeChild(a);
                     }, index * 500);
                 });
+                // Hide loader after all downloads have initiated (with a buffer)
+                setTimeout(function () {
+                    $('#form-loader-overlay').hide();
+                }, (data.pdf_urls.length * 500) + 2000);
+            } else {
+                showToast('No labels generated.', 'danger');
+                $('#form-loader-overlay').hide();
             }
         })
         .catch(function (err) {
             console.error('Label generation failed:', err);
-            alert('Failed to generate labels. Please try again.');
+            showToast('Failed to generate labels. Please try again.', 'danger');
+            $('#form-loader-overlay').hide();
         });
     });
 
@@ -857,6 +869,9 @@ $(document).ready(function () {
             paperSizeModal.hide();
         }
 
+        // Show general form loader overlay
+        $('#form-loader-overlay').css('display', 'flex');
+
         fetch(queueExportUrl + '?paper_size=' + selectedPaperSize, { headers: { 'Accept': 'application/json' } })
             .then(function (response) {
                 if (!response.ok) { throw new Error('Server returned ' + response.status); }
@@ -883,6 +898,7 @@ $(document).ready(function () {
             .finally(function () {
                 $btn.prop('disabled', false);
                 $spinner.addClass('d-none');
+                $('#form-loader-overlay').hide();
             });
     });
 
