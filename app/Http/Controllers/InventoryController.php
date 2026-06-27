@@ -336,9 +336,6 @@ class InventoryController extends Controller
         // Track which sticker number we're on across all pages
         $stickerIndex = 0;
 
-        // Collect the public-accessible URLs for all generated PDFs
-        $pdfUrls = [];
-
         // Page dimensions in mm (A6: 105×148mm | A4: 210×297mm).
         $pageWidth  = ($paperSize === 'A4') ? 210 : 105;
         $pageHeight = ($paperSize === 'A4') ? 297 : 148;
@@ -356,19 +353,23 @@ class InventoryController extends Controller
         $imgWidth  = $cellWidth * $scaleFactor * 0.98;
         $imgHeight = $cellHeight * 0.98;
 
+        // Create a single mPDF instance with the selected paper size, portrait, zero margins
+        $mpdf = new MpdfLib([
+            'format'        => $paperSize,
+            'orientation'   => 'P',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0,
+            'margin_header' => 0,
+            'margin_footer' => 0,
+            'tempDir'       => storage_path('app/mpdf_tmp'),
+        ]);
+
         for ($page = 0; $page < $totalPages; $page++) {
-            // Create a new mPDF instance with the selected paper size, portrait, zero margins
-            $mpdf = new MpdfLib([
-                'format'        => $paperSize,
-                'orientation'   => 'P',
-                'margin_left'   => 0,
-                'margin_right'  => 0,
-                'margin_top'    => 0,
-                'margin_bottom' => 0,
-                'margin_header' => 0,
-                'margin_footer' => 0,
-                'tempDir'       => storage_path('app/mpdf_tmp'),
-            ]);
+            if ($page > 0) {
+                $mpdf->AddPage();
+            }
 
             // Determine how many stickers to place on this specific page
             $stickersOnThisPage = min($stickersPerPage, $totalStickersCount - $stickerIndex);
@@ -431,16 +432,8 @@ class InventoryController extends Controller
 
             $html .= '</table>';
 
-            // Write the HTML table into the mPDF document and save as PDF
+            // Write the HTML table into the mPDF document
             $mpdf->WriteHTML($html);
-
-            // Save using a descriptive file name containing size and layout descriptors
-            $pdfName = 'labels_' . $desc . '_page' . ($page + 1) . '_' . uniqid() . '.pdf';
-            $pdfPath = $qrStickersDir . '/' . $pdfName;
-            $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
-
-            // Build the public URL for the generated PDF
-            $pdfUrls[] = asset('img/qr_stickers/' . $pdfName);
         }
 
         // Clean up all temporary files (raw QR codes and merged stickers)
@@ -451,10 +444,14 @@ class InventoryController extends Controller
         }
 
         // -------------------------------------------------------------
-        // 5. JSON Response with Download URLs
+        // 5. Stream direct PDF Download
         // -------------------------------------------------------------
-        return response()->json([
-            'pdf_urls' => $pdfUrls,
+        $pdfName = 'labels_' . $desc . '_' . uniqid() . '.pdf';
+
+        return response()->streamDownload(function () use ($mpdf) {
+            echo $mpdf->Output('', 'S');
+        }, $pdfName, [
+            'Content-Type' => 'application/pdf',
         ]);
     }
 
@@ -910,10 +907,6 @@ class InventoryController extends Controller
 
         $mpdf->WriteHTML($allHtml);
 
-        $pdfName = 'export_queue_' . uniqid() . '.pdf';
-        $pdfPath = $qrStickersDir . '/' . $pdfName;
-        $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
-
         // Cleanup temp files
         foreach ($tempFiles as $file) {
             if (file_exists($file)) {
@@ -924,8 +917,12 @@ class InventoryController extends Controller
         // Clear queue after successful export
         session(['qr_export_queue' => []]);
 
-        return response()->json([
-            'pdf_url' => asset('img/qr_stickers/' . $pdfName),
+        $pdfName = 'export_queue_' . uniqid() . '.pdf';
+
+        return response()->streamDownload(function () use ($mpdf) {
+            echo $mpdf->Output('', 'S');
+        }, $pdfName, [
+            'Content-Type' => 'application/pdf',
         ]);
     }
 }

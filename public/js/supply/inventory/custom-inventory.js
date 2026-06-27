@@ -498,40 +498,24 @@ $(document).ready(function () {
         $('#form-loader-overlay').css('display', 'flex');
 
         // Send a fetch GET request to the backend label generator endpoint.
-        // The backend returns JSON: { pdf_urls: ["/img/qr_stickers/file1.pdf", ...] }
-        fetch(actionUrl + '?' + queryParams, {
-            headers: { 'Accept': 'application/json' }
-        })
+        fetch(actionUrl + '?' + queryParams)
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Server returned ' + response.status);
             }
-            return response.json();
+            return response.blob();
         })
-        .then(function (data) {
-            // Loop through each returned PDF URL and trigger a browser download
-            // by creating a temporary hidden <a> element with the download attribute.
-            if (data.pdf_urls && data.pdf_urls.length > 0) {
-                showToast('Item label PDF(s) generated successfully!', 'success');
-                data.pdf_urls.forEach(function (url, index) {
-                    // Stagger downloads slightly to prevent browser throttling
-                    setTimeout(function () {
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = '';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    }, index * 500);
-                });
-                // Hide loader after all downloads have initiated (with a buffer)
-                setTimeout(function () {
-                    $('#form-loader-overlay').hide();
-                }, (data.pdf_urls.length * 500) + 2000);
-            } else {
-                showToast('No labels generated.', 'danger');
-                $('#form-loader-overlay').hide();
-            }
+        .then(function (blob) {
+            showToast('Item label PDF generated successfully!', 'success');
+            var blobUrl = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = 'item_labels.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+            $('#form-loader-overlay').hide();
         })
         .catch(function (err) {
             console.error('Label generation failed:', err);
@@ -872,24 +856,22 @@ $(document).ready(function () {
         // Show general form loader overlay
         $('#form-loader-overlay').css('display', 'flex');
 
-        fetch(queueExportUrl + '?paper_size=' + selectedPaperSize, { headers: { 'Accept': 'application/json' } })
+        fetch(queueExportUrl + '?paper_size=' + selectedPaperSize)
             .then(function (response) {
                 if (!response.ok) { throw new Error('Server returned ' + response.status); }
-                return response.json();
+                return response.blob();
             })
-            .then(function (data) {
-                if (data.pdf_url) {
-                    var a = document.createElement('a');
-                    a.href = data.pdf_url;
-                    a.download = '';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    showToast('Export Queue PDF downloaded!', 'success');
-                    refreshQueueBadge(); // queue is cleared server-side after export
-                } else if (data.error) {
-                    showToast(data.error, 'danger');
-                }
+            .then(function (blob) {
+                var blobUrl = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'export_queue.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+                showToast('Export Queue PDF downloaded!', 'success');
+                refreshQueueBadge(); // queue is cleared server-side after export
             })
             .catch(function (err) {
                 console.error('Export queue failed:', err);
