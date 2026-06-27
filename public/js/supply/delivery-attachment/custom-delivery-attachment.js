@@ -102,7 +102,11 @@ $(document).ready(function() {
         var downloadUrl = downloadTrigger.data('url');
         if (downloadUrl) {
             var triggerDownload = function() {
+                $('#form-loader-overlay').css('display', 'flex');
                 window.location.href = downloadUrl;
+                setTimeout(function() {
+                    $('#form-loader-overlay').hide();
+                }, 5000);
             };
 
             if (document.readyState === 'complete') {

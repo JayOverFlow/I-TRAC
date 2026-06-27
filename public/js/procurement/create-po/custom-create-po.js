@@ -401,7 +401,11 @@ $(document).ready(function() {
                 confirmButtonText: 'Yes, Export',
                 cancelButtonText: 'Cancel',
                 onConfirm: function() {
+                    $('#form-loader-overlay').css('display', 'flex');
                     window.location.href = url;
+                    setTimeout(function() {
+                        $('#form-loader-overlay').hide();
+                    }, 5000);
                 }
             });
         }
