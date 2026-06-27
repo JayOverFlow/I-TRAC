@@ -312,6 +312,7 @@ $(document).ready(function () {
 
         // Disable buttons to prevent double-submission
         $('#submit-pr-btn, #export-pr-btn, #pr-form button[type="submit"]').prop('disabled', true);
+        $('#form-loader-overlay').css('display', 'flex');
 
         fetch(actionUrl, {
             method: 'POST',
@@ -346,12 +347,14 @@ $(document).ready(function () {
                         } else {
                             setTimeout(function () {
                                 $iframe.remove();
+                                $('#form-loader-overlay').hide();
                             }, 10000);
                         }
                     } else if (result.data.redirect) {
                         window.location.href = result.data.redirect;
                     } else {
                         showToast(result.data.message || 'Saved!', 'success');
+                        $('#form-loader-overlay').hide();
                     }
                     return;
                 }
@@ -365,14 +368,17 @@ $(document).ready(function () {
                     } else {
                         showToast('Please fix the errors below.', 'error');
                     }
+                    $('#form-loader-overlay').hide();
                     return;
                 }
 
                 // Other server errors (409, 500, etc.)
                 showToast(result.data.message || 'Something went wrong.', 'error');
+                $('#form-loader-overlay').hide();
             })
             .catch(function () {
                 showToast('Network error. Check your connection.', 'error');
+                $('#form-loader-overlay').hide();
             })
             .finally(function () {
                 $('#submit-pr-btn, #export-pr-btn, #pr-form button[type="submit"]').prop('disabled', false);
@@ -462,7 +468,11 @@ $(document).ready(function () {
                 confirmButtonText: 'Yes, Export',
                 cancelButtonText: 'Cancel',
                 onConfirm: function () {
+                    $('#form-loader-overlay').css('display', 'flex');
                     window.location.href = url;
+                    setTimeout(function() {
+                        $('#form-loader-overlay').hide();
+                    }, 5000);
                 }
             });
         }

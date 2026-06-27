@@ -93,6 +93,7 @@
     @include('partials.toast-feedback')
 
     @include('partials.action-confirmation-alert')
+    @include('partials._loader')
 
     <!-- Inject SPECIFIC and CUSTOM js-->
     @stack('js')

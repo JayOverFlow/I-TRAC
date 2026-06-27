@@ -275,6 +275,7 @@ $(document).ready(function() {
         var formData = new FormData(form[0]);
         var submitBtn = form.find('button[type="submit"]');
         var exportBtn = form.find('a.btn-dark-red');
+        var isDownloading = false;
 
         // Disable submission triggers
         submitBtn.prop('disabled', true);
@@ -305,8 +306,12 @@ $(document).ready(function() {
                 // Success: Toast feedback and trigger pdf download if requested
                 showToast(result.data.message, 'success');
                 if (result.data.download_pdf) {
+                    isDownloading = true;
                     setTimeout(function() {
                         window.location.href = result.data.download_pdf;
+                        setTimeout(function() {
+                            $('#form-loader-overlay').hide();
+                        }, 5000);
                     }, 1000);
                 }
                 return;
@@ -329,7 +334,9 @@ $(document).ready(function() {
             // Re-enable triggers and hide overlay loader
             submitBtn.prop('disabled', false);
             exportBtn.removeClass('disabled');
-            $('#form-loader-overlay').hide();
+            if (!isDownloading) {
+                $('#form-loader-overlay').hide();
+            }
         });
     });
 });
