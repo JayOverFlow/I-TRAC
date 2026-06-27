@@ -169,7 +169,7 @@
                         </div>
 
                         <div class="info-item password-edit-item">
-                            <span class="info-label">Password</span>
+                            <span class="info-label">New Password</span>
                             <div class="password-field">
                                 <input type="password" id="input-new-password" name="new_password"
                                     class="form-control password-edit-input" placeholder="••••••••••••••••"
@@ -186,7 +186,7 @@
                         </div>
 
                         <div class="info-item password-edit-item password-edit-item-last">
-                            <span class="info-label">Confirm Password</span>
+                            <span class="info-label">Confirm New Password</span>
                             <div class="password-field">
                                 <input type="password" id="input-confirm-password" name="confirm_password"
                                     class="form-control password-edit-input" placeholder="••••••••••••••••"
