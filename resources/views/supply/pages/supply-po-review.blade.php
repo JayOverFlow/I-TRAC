@@ -565,7 +565,7 @@
                                 class="fw-semibold text-dark"></span></p>
                         <p class="mb-0 black-text d-flex align-items-center gap-1 small">
                             <img src="{{ asset('img/Info.svg') }}" alt="info" width="16" height="16">
-                            Distribute the quantity to one or more departments
+                            Distribute the quantity to one or more offices
                         </p>
                     </div>
 
@@ -573,7 +573,7 @@
                     <table class="table table-sm table-borderless align-middle mb-2" id="assign-dept-table">
                         <thead>
                             <tr class="assign-dept-header">
-                                <th class="black-text fw-bold rounded-start px-1">Department</th>
+                                <th class="black-text fw-bold rounded-start px-1">Office</th>
                                 <th class="black-text fw-bold text-center px-1" style="width: 20%;">Quantity</th>
                                 <th class="rounded-end px-1" style="width: 2%;"></th>
                             </tr>
@@ -582,7 +582,7 @@
                             <tr class="dept-row align-middle">
                                 <td class="px-2">
                                     <select class="form-select form-select-sm dept-name">
-                                        <option value="" selected disabled>Select Department</option>
+                                        <option value="" selected disabled>Select Office</option>
                                         @foreach($departments as $dept)
                                             <option value="{{ $dept->dep_id }}">{{ $dept->dep_name }}</option>
                                         @endforeach
@@ -600,10 +600,10 @@
                         </tbody>
                     </table>
 
-                    {{-- Add Department button --}}
+                    {{-- Add Office button --}}
                     <div class="text-center mt-3">
                         <button type="button" class="btn border btn-white btn-sm px-4 fw-bold" id="add-dept-row-btn">
-                            + Add Department
+                            + Add Office
                         </button>
                     </div>
 
@@ -641,7 +641,7 @@
                                 class="fw-semibold text-dark"></span></p>
                         <p class="mb-0 black-text d-flex align-items-center gap-1 small">
                             <img src="{{ asset('img/Info.svg') }}" alt="info" width="16" height="16">
-                            Distribute the quantity to one or more departments
+                            Distribute the quantity to one or more offices
                         </p>
                     </div>
 
