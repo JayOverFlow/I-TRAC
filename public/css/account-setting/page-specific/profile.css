@@ -223,6 +223,8 @@
 .password-toggle-icon {
     position: absolute;
     right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--text-muted);
     cursor: pointer;
     z-index: 10;
