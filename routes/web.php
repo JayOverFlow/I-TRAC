@@ -36,6 +36,7 @@ Route::get('/sample', function () {
 Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'showDashboard')->name('show.dashboard');
+        Route::get('/dashboard/export-ubr', 'exportUbr')->name('dashboard.export.ubr');
     });
 
 
