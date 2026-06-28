@@ -1,0 +1,395 @@
+{
+  "$description": "Explicit field/data mapping context for the UBR (Utilized Budget Report) Excel template. Generated for use as AI agent context when injecting data into the 'UBR' sheet, using 'UBR with Mapping' as the placeholder reference. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "UBR_Template.xlsx",
+    "form_title": "UTILIZED BUDGET REPORT",
+    "form_code": null,
+    "form_revision": null,
+    "form_revision_date": null,
+    "issuing_organization": "Technological University of the Philippines, Taguig",
+    "sheets": {
+      "UBR": {
+        "role": "output_template",
+        "description": "Blank/empty version of the form. Contains the final layout, static labels, merged-cell structure, and number formats. This is the sheet the AI agent should write data INTO (or a copy of it).",
+        "used_range": "A1:E52",
+        "form_visual_area": "A1:E52"
+      },
+      "UBR with Mapping": {
+        "role": "placeholder_reference",
+        "description": "Same layout as 'UBR', but data-entry cells contain placeholders instead of blank cells. Uses THREE distinct placeholder notation styles in different sections: plain snake_case tokens (e.g. 'iar_unit'), double-angle-bracket tokens (e.g. '<<month_name>>'), and pipe-separated computation expressions (e.g. 'iar_quantity * po_items_cost'). All field names in this form carry CROSS-FORM prefixes ('iar_' and 'po_') \u2014 neither matches the form's own 'ubr_' prefix \u2014 implying all data must be sourced from related IAR (Inspection Acceptance Report) and PO (Purchase Order) records rather than UBR-native input (see issues).",
+        "used_range": "A1:E52",
+        "form_visual_area": "A1:E52"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across only 5 columns A-E, the narrowest of all forms in this series.",
+      "Unlike RSMI, ICS, RSPI, PAR, and PR \u2014 all of which carry a form code (FM-SUP-xxx or FM-PR-xxx), revision number, and revision date \u2014 UBR contains NO form control footer anywhere. This may indicate the form is draft, internal-only, or pre-formalization.",
+      "A1 (merged A1:A4) uses Excel's 'Picture in Cell' rich-value feature to embed the university logo (xl/media/image1.png) directly in the cell, identical to the PO template. Tools without rich-value support (e.g. openpyxl) read this cell as the literal error string '#VALUE!' \u2014 see issues.",
+      "No drawing-object (floating) images exist in either sheet \u2014 all images are rich-value only.",
+      "The grand total field (D5:E5) uses a Philippine Peso currency format ('\u20b1'#,##0.00), which is unique across all forms mapped in this series.",
+      "The item table (A9:E52) spans 44 pre-formatted rows in the template, but is described as having no row limit \u2014 the agent should be able to add further rows beyond row 52 while preserving the column number formats (D and E: #,##0.00).",
+      "The 'As of' date field (E7) uses double-angle-bracket notation ('<<month_name>> <<year>>') and is formatted as General (text) \u2014 the date is decomposed into a month name and a year rather than supplied as a single date value."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "A1:A4",
+      "merged": true,
+      "value": "#VALUE! (rich-value image placeholder \u2014 see meta.layout_notes and ISS-01)",
+      "purpose": "Letterhead logo, embedded via Excel's 'Picture in Cell' rich-value feature."
+    },
+    {
+      "range": "B1:C2",
+      "merged": true,
+      "value": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES TAGUIG",
+      "purpose": "Letterhead \u2014 institution name (bold, 11pt). Note: unlike every other form in this series, the city ('TAGUIG') is appended directly to the institution name in the same cell rather than on a separate line, and no address or phone number appears in the header."
+    },
+    {
+      "range": "D1:E4",
+      "merged": true,
+      "value": "UTILIZED BUDGET REPORT",
+      "purpose": "Form title (bold, 18pt) \u2014 spans all four header rows in the right block, the largest font size across all forms in this series."
+    },
+    {
+      "range": "B3:C5",
+      "merged": true,
+      "value": "The Technological University of the Philippines shall be a premiere state university with recognized excellence in engineering and technology education at par with the leading universities in the ASEAN region.",
+      "purpose": "University vision statement (8pt). Occupies rows 3-5 in the left block, below the institution name (rows 1-2). Notably small font size (8pt) compared to equivalent cells in other forms."
+    },
+    {
+      "range": "A6",
+      "merged": false,
+      "value": null,
+      "purpose": "Empty spacer row between the header block and the office/date row."
+    },
+    {
+      "range": "A7",
+      "merged": false,
+      "value": "Office:",
+      "purpose": "Label for header field 'iar_office'"
+    },
+    {
+      "range": "D7",
+      "merged": false,
+      "value": "As of:",
+      "purpose": "Label for header field '<<month_name>> <<year>>'"
+    },
+    {
+      "range": "A8",
+      "merged": false,
+      "value": "Unit",
+      "purpose": "Column header for item table column A"
+    },
+    {
+      "range": "B8",
+      "merged": false,
+      "value": "Item Name",
+      "purpose": "Column header for item table column B"
+    },
+    {
+      "range": "C8",
+      "merged": false,
+      "value": "Quantity",
+      "purpose": "Column header for item table column C"
+    },
+    {
+      "range": "D8",
+      "merged": false,
+      "value": "Unit Cost",
+      "purpose": "Column header for item table column D (cell itself carries #,##0.00 format)"
+    },
+    {
+      "range": "E8",
+      "merged": false,
+      "value": "Total Cost",
+      "purpose": "Column header for item table column E (cell itself carries #,##0.00 format)"
+    }
+  ],
+  "field_mapping": {
+    "header_info": {
+      "description": "Single-occurrence key/value fields that appear once per document. All header fields draw from cross-form sources ('iar_' prefix = IAR, '<<...>>' date tokens). No 'ubr_'-prefixed field names appear in the header.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "office",
+          "placeholder": "iar_office",
+          "cell": "B7",
+          "merged_range": null,
+          "label_cell": "A7",
+          "label_text": "Office:",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "source_form": "IAR (Inspection Acceptance Report)",
+          "notes": "The office/department that requested and received the items being reported on. Sourced from the linked IAR record, not entered directly on the UBR."
+        },
+        {
+          "field": "as_of_month",
+          "placeholder": "<<month_name>>",
+          "cell": "E7",
+          "merged_range": null,
+          "label_cell": "D7",
+          "label_text": "As of:",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Part 1 of the composite 'As of' date field. The full placeholder in E7 is '<<month_name>> <<year>>' \u2014 both tokens appear in the same cell, meaning the entire composite date string is injected into E7 as a single value (e.g. 'June 2026'). See ISS-02."
+        },
+        {
+          "field": "as_of_year",
+          "placeholder": "<<year>>",
+          "cell": "E7",
+          "merged_range": null,
+          "label_cell": "D7",
+          "label_text": "As of:",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "notes": "Part 2 of the composite 'As of' date field. Both tokens ('<<month_name>>' and '<<year>>') are in the same cell E7 and should be resolved together into a single string such as 'June 2026'. The double-angle-bracket notation differs from all other placeholder styles in this workbook (see ISS-02)."
+        }
+      ]
+    },
+    "item_table": {
+      "description": "Repeating line-item table. The header occupies a single static row (row 8). Each data row (9 onward) represents one inventory/supply item drawn from a linked IAR and PO record. The template pre-formats 44 data rows (9-52) but the table is described as having NO hard row limit \u2014 additional rows may be appended beyond row 52 while preserving the D/E column number formats. The first data row (row 9) in 'UBR with Mapping' contains all five column placeholders; rows 10-52 carry only number formats. No columns in this table are merged per row.",
+      "section_type": "table",
+      "repeatable": true,
+      "unlimited_rows": true,
+      "header_row": 8,
+      "data_range_in_template": "A9:E52",
+      "template_max_data_rows": 44,
+      "row_limit": "none (agent may add rows beyond row 52)",
+      "row_pattern": "Each data row N (N >= 9) is one item record. No cells are merged within data rows.",
+      "columns": [
+        {
+          "column": "A",
+          "field": "unit",
+          "placeholder": "iar_unit",
+          "header_label": "Unit",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "source_form": "IAR",
+          "notes": "Unit of measure for the item (e.g. 'pc', 'ream', 'box'). Sourced from the linked IAR record."
+        },
+        {
+          "column": "B",
+          "field": "item_description",
+          "placeholder": "iar_items_descrip",
+          "header_label": "Item Name",
+          "data_type": "string",
+          "cell_number_format": "General",
+          "source_form": "IAR",
+          "notes": "Item name/description as recorded on the IAR. Unlike the ICS, RSPI, PAR, and PO forms, there is NO composite two-placeholder pattern here (no separate 'spec_description' token) \u2014 only a single description field."
+        },
+        {
+          "column": "C",
+          "field": "quantity",
+          "placeholder": "iar_quantity",
+          "header_label": "Quantity",
+          "data_type": "number",
+          "cell_number_format": "General",
+          "source_form": "IAR",
+          "notes": "Quantity as recorded on the IAR. Also used as a factor in the computed Total Cost (column E)."
+        },
+        {
+          "column": "D",
+          "field": "unit_cost",
+          "placeholder": "po_items_cost",
+          "header_label": "Unit Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00",
+          "source_form": "PO (Purchase Order)",
+          "notes": "Unit cost sourced from the linked PO record, not from the IAR. The field name uses the 'po_' prefix confirming its PO origin. This is the only column in the UBR item table that draws from PO rather than IAR."
+        },
+        {
+          "column": "E",
+          "field": "total_cost",
+          "placeholder": "iar_quantity * po_items_cost",
+          "header_label": "Total Cost",
+          "data_type": "number",
+          "cell_number_format": "#,##0.00",
+          "source_form": "IAR \u00d7 PO (computed)",
+          "notes": "The placeholder text is a computation expression \u2014 'iar_quantity * po_items_cost' \u2014 explicitly documenting that this column is the product of columns C and D respectively. No SUM formula or pre-populated formula exists in either sheet; the agent must compute and write the value. Similar explicit computation expressions appear in the PO template's Amount column."
+        }
+      ]
+    },
+    "grand_total": {
+      "description": "A single aggregate total field positioned in the header area (row 5), above the item table. It summarizes the sum of all item Total Cost values and is formatted with the Philippine Peso symbol.",
+      "section_type": "key_value",
+      "occurs": "once_per_document",
+      "fields": [
+        {
+          "field": "utilized_budget",
+          "placeholder": "utilized_budget || grand_total",
+          "cell": "D5",
+          "merged_range": "D5:E5",
+          "label_cell": null,
+          "label_text": null,
+          "data_type": "number",
+          "cell_number_format": "\"\u20b1\"#,##0.00",
+          "notes": "Positioned at D5:E5 (merged), ABOVE the column header row (8) and the item table (9+) \u2014 an unusual placement for a grand total, which in all other forms appears at the bottom of the form (RSMI, RSPI) or not at all. The placeholder uses a pipe-separator notation ('utilized_budget || grand_total'), similar to PO's style, indicating the field name is 'utilized_budget' and the value represents the 'grand_total' (sum of all E-column item amounts). The Peso format ('\u20b1'#,##0.00) is unique to this field in this template \u2014 the item table's D and E columns use plain '#,##0.00' without the currency symbol. No static 'TOTAL' label cell accompanies this field anywhere in the layout."
+        }
+      ]
+    }
+  },
+  "merged_cells": {
+    "description": "All merged-cell ranges present in both 'UBR' and 'UBR with Mapping' (identical in both sheets).",
+    "ranges": [
+      {
+        "range": "A1:A4",
+        "section": "letterhead (logo, rich-value image)"
+      },
+      {
+        "range": "B1:C2",
+        "section": "letterhead (institution name)"
+      },
+      {
+        "range": "D1:E4",
+        "section": "form_title"
+      },
+      {
+        "range": "B3:C5",
+        "section": "vision_statement"
+      },
+      {
+        "range": "D5:E5",
+        "section": "grand_total (utilized_budget)"
+      }
+    ],
+    "note": "This is the smallest merged-cell set of all forms in this series \u2014 only 5 merged ranges total. No merges exist anywhere in the item table area (rows 8-52); every header and data cell is a standalone, single cell. The 'As of' value (E7) and the 'Office' value (B7) are also standalone, unmerged cells."
+  },
+  "data_types": {
+    "string": [
+      "iar_office",
+      "<<month_name>> (part of E7 composite date string)",
+      "<<year>> (part of E7 composite date string)",
+      "item_table.unit (iar_unit)",
+      "item_table.item_description (iar_items_descrip)"
+    ],
+    "number": [
+      "item_table.quantity (iar_quantity)",
+      "item_table.unit_cost (po_items_cost)",
+      "item_table.total_cost (iar_quantity * po_items_cost)",
+      "grand_total (utilized_budget)"
+    ],
+    "currency_formatted_number (\"\u20b1\"#,##0.00)": [
+      "grand_total (D5:E5 only)"
+    ],
+    "plain_formatted_number (#,##0.00)": [
+      "item_table.unit_cost (column D)",
+      "item_table.total_cost (column E)"
+    ]
+  },
+  "issues": [
+    {
+      "id": "ISS-01",
+      "area": "letterhead logo (A1:A4)",
+      "description": "A1 uses Excel's 'Picture in Cell' rich-value feature (identical mechanism to the PO template). Tools without rich-value support read this cell as the literal error string '#VALUE!' rather than the image. An AI agent must NOT treat '#VALUE!' in A1 as real text or a broken formula \u2014 it is an artifact of the image storage format and should be preserved as-is."
+    },
+    {
+      "id": "ISS-02",
+      "area": "header_info.as_of_date (E7) \u2014 composite double-angle-bracket notation",
+      "description": "E7 contains the single string '<<month_name>> <<year>>', combining two distinct tokens in one cell using a notation style (double angle brackets) not seen elsewhere in this workbook or in any other form in this series. The agent should resolve both tokens and write a single combined string (e.g. 'June 2026') into E7. The cell format is 'General' (text), so any string value will display correctly."
+    },
+    {
+      "id": "ISS-03",
+      "area": "mixed placeholder notations",
+      "description": "This workbook uses three distinct placeholder styles: (a) snake_case 'iar_' or 'po_' tokens (e.g. 'iar_unit', 'po_items_cost'), (b) double-angle-bracket tokens (e.g. '<<month_name>> <<year>>'), and (c) pipe-separated computation expressions (e.g. 'iar_quantity * po_items_cost', 'utilized_budget || grand_total'). An AI agent parsing this mapping sheet programmatically must recognise all three notations. The same three-notation pattern also appears in the PO template, where the pipe-separator was first observed."
+    },
+    {
+      "id": "ISS-04",
+      "area": "all field names use cross-form prefixes \u2014 no 'ubr_' fields",
+      "description": "Every injectable placeholder in this form uses either an 'iar_' prefix (sourced from an Inspection Acceptance Report) or a 'po_' prefix (sourced from a Purchase Order). No 'ubr_'-prefixed field names exist at all. This means the UBR is purely a reporting/aggregation form \u2014 it does not collect any novel data but instead consolidates existing IAR and PO data. The agent must resolve all field values from those upstream records before populating this form."
+    },
+    {
+      "id": "ISS-05",
+      "area": "no form code / revision date",
+      "description": "Unlike all other forms in this series (RSMI FM-SUP-006, ICS FM-SUP-001, RSPI FM-SUP-[incomplete], PAR FM-SUP-005, PR FM-PR-007, PO FM-PR-006), the UBR carries no form-control footer (no FM-xxx code, no REV number, no revision date) in either sheet. This may indicate the form is draft, internal-only, or not yet formally issued."
+    },
+    {
+      "id": "ISS-06",
+      "area": "grand total positioned ABOVE the item table (D5:E5)",
+      "description": "The 'utilized_budget' grand total sits at D5:E5, in the header block above the column headers and the entire item table. This is structurally unusual \u2014 in all other forms with a grand total (RSMI at row 41, RSPI at row 39, PO at row 39), the total appears at or near the bottom of the table. An agent generating the form must populate D5:E5 first (or as a post-processing step) with the computed sum of all item Total Cost values (column E, rows 9 onward)."
+    },
+    {
+      "id": "ISS-07",
+      "area": "grand total currency format vs. item table format",
+      "description": "D5:E5 (grand total) uses the format '\"\u20b1\"#,##0.00' (with a Philippine Peso symbol), while the item table's Unit Cost (column D) and Total Cost (column E) data rows use plain '#,##0.00' (no currency symbol). The column D and E header cells (D8, E8) also carry '#,##0.00'. The agent must be careful not to apply the Peso format to item table rows when adding rows beyond row 52, and must target only D5 for the Peso-formatted total."
+    },
+    {
+      "id": "ISS-08",
+      "area": "no static 'TOTAL' label for the grand total",
+      "description": "D5:E5 (the grand total) has no adjacent label cell (no 'TOTAL' or 'Grand Total' text anywhere nearby). In the 'UBR' sheet, D5 is completely blank; its purpose as a total cell is only apparent from the mapping sheet's placeholder text. Contrast with RSMI (a 'TOTAL' label at F41:H41), RSPI (a 'TOTAL' label implied by cell F41, though unlabeled), and PO (a 'TOTAL' label merged at A48:E48)."
+    },
+    {
+      "id": "ISS-09",
+      "area": "unlimited row table \u2014 format preservation beyond row 52",
+      "description": "The template pre-formats 44 data rows (9-52) with '#,##0.00' on columns D and E. The brief states the table has no row limit, so the agent may need to add rows beyond row 52. Rows added beyond 52 will NOT automatically inherit the column D/E number format from the template; the agent must explicitly apply '#,##0.00' to any new rows it inserts in those columns."
+    },
+    {
+      "id": "ISS-10",
+      "area": "item table \u2014 no total_cost formula, no SUM formula",
+      "description": "No live formula exists in either sheet for the Total Cost column (E, each row) or for the grand total (D5). Both must be computed by the agent: column E rows = iar_quantity * po_items_cost (per row), D5 = sum of all column E rows. This is consistent with the PO template's similar absence of pre-built formulas, and consistent with the explicit computation expressions written as placeholder text."
+    }
+  ],
+  "examples": {
+    "description": "Illustrative example of a data payload an AI agent might receive from upstream IAR and PO records, and how it maps onto the UBR sheet. Field names follow the as-written placeholder values. This is illustrative only \u2014 no validation rules are implied.",
+    "example_payload": {
+      "iar_office": "College of Engineering",
+      "as_of_date_string": "June 2026",
+      "item_table": [
+        {
+          "iar_unit": "ream",
+          "iar_items_descrip": "Bond paper, A4, 80gsm",
+          "iar_quantity": 50,
+          "po_items_cost": 250.0,
+          "total_cost_computed": 12500.0
+        },
+        {
+          "iar_unit": "box",
+          "iar_items_descrip": "Ballpoint pen, black, 0.5mm",
+          "iar_quantity": 20,
+          "po_items_cost": 120.0,
+          "total_cost_computed": 2400.0
+        },
+        {
+          "iar_unit": "pc",
+          "iar_items_descrip": "Stapler, heavy-duty, 70-sheet capacity",
+          "iar_quantity": 5,
+          "po_items_cost": 450.0,
+          "total_cost_computed": 2250.0
+        }
+      ],
+      "utilized_budget_grand_total": 17150.0
+    },
+    "example_cell_resolution": {
+      "description": "How the example payload above resolves to specific cells in the 'UBR' sheet. Note that the grand total (D5) should be written after all item rows are populated. Item rows begin at row 9.",
+      "grand_total_first_or_last": {
+        "D5": "\u20b117,150.00 (formatted as per '\"\u20b1\"#,##0.00'; write as numeric 17150.00)"
+      },
+      "header_info": {
+        "B7": "College of Engineering",
+        "E7": "June 2026"
+      },
+      "item_table_row_1 (sheet row 9)": {
+        "A9": "ream",
+        "B9": "Bond paper, A4, 80gsm",
+        "C9": 50,
+        "D9": 250.0,
+        "E9": 12500.0
+      },
+      "item_table_row_2 (sheet row 10)": {
+        "A10": "box",
+        "B10": "Ballpoint pen, black, 0.5mm",
+        "C10": 20,
+        "D10": 120.0,
+        "E10": 2400.0
+      },
+      "item_table_row_3 (sheet row 11)": {
+        "A11": "pc",
+        "B11": "Stapler, heavy-duty, 70-sheet capacity",
+        "C11": 5,
+        "D11": 450.0,
+        "E11": 2250.0
+      }
+    },
+    "row_extension_note": "If the payload contains more than 44 items (exceeding the pre-formatted row 52 boundary), the agent must explicitly apply the '#,##0.00' number format to columns D and E of any newly added rows before writing values into them."
+  }
+}

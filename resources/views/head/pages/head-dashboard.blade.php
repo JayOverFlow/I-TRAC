@@ -52,7 +52,7 @@
             </div>
 
             <div class="col-4">
-                <div class="card h-100">
+                <div class="card h-100 clickable-card" id="utilized-budget-card">
                     <div class="card-body row p-4">
                         <div class="col-4">
                             <img src="{{ asset('img/UtilBud.svg') }}" alt="Utilized Budget">
@@ -111,6 +111,7 @@
             </tbody>
         </table>
     </div>
+    @include('partials.action-confirmation-alert')
 @endsection
 
 @push('js')
@@ -143,4 +144,5 @@
     </script>
 
     <!-- CUSTOM js -->
+    <script src="{{ asset('js/head/dashboard/custom-dashboard.js') }}"></script>
 @endpush

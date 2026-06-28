@@ -65,3 +65,15 @@ body.dark .badge-not-assigned {
     background-color: rgba(255, 90, 90, 0.15);
     color: #FF5A5A;
 }
+
+/* ── Clickable Dashboard Card Styles ── */
+.clickable-card {
+    cursor: pointer;
+    transition: transform 0.22s ease-in-out, box-shadow 0.22s ease-in-out;
+}
+
+.clickable-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(163, 0, 0, 0.15);
+    border-color: #a30000 !important;
+}

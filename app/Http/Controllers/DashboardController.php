@@ -80,4 +80,58 @@ class DashboardController extends Controller
             default       => view('errors.403'),
         };
     }
+
+    /**
+     * Generate the Utilized Budget Report as a PDF.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportUbr(Request $request)
+    {
+        $user = Auth::user();
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $userRole = $activeRole?->gen_role;
+
+        if (!in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $depName = $activeRole && $activeRole->department ? $activeRole->department->dep_name : ($user->departments()->first()?->dep_name ?? 'N/A');
+        $depId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments()->first()?->dep_id);
+
+        if (!$depId) {
+            abort(400, 'Department context not found.');
+        }
+
+        $activeAppId = session('active_app_id_' . $depId);
+        if (!$activeAppId) {
+            $dbActiveApp = \App\Models\AppParent::where('app_dep_id_fk', $depId)
+                ->where('is_active', true)
+                ->first();
+            if ($dbActiveApp) {
+                $activeAppId = $dbActiveApp->app_id;
+            }
+        }
+
+        // Query IAR items linked to PO items for the department/APP inside a DB transaction
+        $iarItems = \Illuminate\Support\Facades\DB::transaction(function () use ($depId, $activeAppId) {
+            return \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($depId, $activeAppId) {
+                if ($activeAppId) {
+                    $query->where('app_id_fk', $activeAppId);
+                } else {
+                    $query->where('pr_department', $depId);
+                }
+            })
+            ->whereNotNull('iar_po_items_id_fk')
+            ->with(['iar', 'poItem'])
+            ->get();
+        });
+
+        $asOfDate = now()->format('F Y');
+
+        $pdfService = app(\App\Services\UbrPdfExportService::class);
+        return $pdfService->export($depName, $asOfDate, $iarItems);
+    }
 }
