@@ -11,7 +11,6 @@
     "require": {
         "php": "^8.2",
         "chillerlan/php-qrcode": "^6.0",
-        "endroid/qr-code": "^6.1",
         "intervention/image": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.3",
@@ -89,6 +88,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.3.0"
         }
     },
     "minimum-stability": "stable",
