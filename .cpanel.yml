@@ -2,18 +2,18 @@
 deployment:
   tasks:
     # 1. Copy the public assets to the public folder
-    - /bin/cp -rf public/* /home2/tuptedup/itrac.tupt.edu.ph/public/
+    - /bin/cp -rf public/* /home2/tuptedup/itrac.tupt.edu.ph
 
     # 2. Copy the application logic to the root (excluding public to avoid a loop)
     # We use 'rsync' if available, otherwise just copy specific folders
-    - /bin/cp -rf app /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf bootstrap /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf config /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf database /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf routes /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf resources /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf storage /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -rf vendor /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -f .env /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -f artisan /home2/tuptedup/itrac.tupt.edu.ph/
-    - /bin/cp -f composer.json /home2/tuptedup/itrac.tupt.edu.ph/
+    - /bin/cp -rf app /home2/tuptedup/itrac-core/
+    - /bin/cp -rf bootstrap /home2/tuptedup/itrac-core/
+    - /bin/cp -rf config /home2/tuptedup/itrac-core/
+    - /bin/cp -rf database /home2/tuptedup/itrac-core/
+    - /bin/cp -rf routes /home2/tuptedup/itrac-core/
+    - /bin/cp -rf resources /home2/tuptedup/itrac-core/
+    - /bin/cp -rf storage /home2/tuptedup/itrac-core/
+    - /bin/cp -rf vendor /home2/tuptedup/itrac-core/
+    - /bin/cp -f .env /home2/tuptedup/itrac-core/
+    - /bin/cp -f artisan /home2/tuptedup/itrac-core/
+    - /bin/cp -f composer.json /home2/tuptedup/itrac-core/
