@@ -2,7 +2,7 @@
 deployment:
   tasks:
     # 1. Copy the public assets to the public folder
-    - /bin/cp -rf public/* /home2/tuptedup/itrac.tupt.edu.ph
+    - /bin/cp -rf public/* /home2/tuptedup/itrac-public
 
     # 2. Copy the application logic to the root (excluding public to avoid a loop)
     # We use 'rsync' if available, otherwise just copy specific folders
