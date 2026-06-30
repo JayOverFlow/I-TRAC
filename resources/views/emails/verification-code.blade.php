@@ -59,8 +59,8 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ asset('img/itrac-header-logo.png') }}" alt="I-TRAC">
-        <h1>I-TRAC Email Verification</h1>
+        <img src="{{ $message->embed(public_path('img/itrac-header-logo.png')) }}" alt="I-TRAC">
+        <h1>Email Verification</h1>
     </div>
     
     <div class="content">

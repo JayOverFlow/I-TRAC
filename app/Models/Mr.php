@@ -13,6 +13,8 @@ class Mr extends Model
     protected $fillable = [
         'assigned_to',
         'po_item_id_fk',
+        'ris_item_id_fk',
+        'par_item_id_fk',
         'mr_qr_code',
         'item_name',
         'specification',
@@ -29,6 +31,16 @@ class Mr extends Model
     public function poItem()
     {
         return $this->belongsTo(PoItem::class, 'po_item_id_fk', 'po_items_id');
+    }
+
+    public function risItem()
+    {
+        return $this->belongsTo(RisItem::class, 'ris_item_id_fk', 'ris_items_id');
+    }
+
+    public function parItem()
+    {
+        return $this->belongsTo(ParItem::class, 'par_item_id_fk', 'par_items_id');
     }
 
     public function assignedUser()

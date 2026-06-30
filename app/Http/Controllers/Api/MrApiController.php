@@ -45,7 +45,23 @@ class MrApiController extends Controller
                     'message' => 'You are not the designated receiver for this RIS.'
                 ], 403);
             }
+            $risItemIds = \App\Models\RisItem::where('ris_id_fk', $id)->pluck('ris_items_id');
             $poItemIds = \App\Models\RisItem::where('ris_id_fk', $id)->pluck('ris_po_items_id_fk');
+
+            if ($risItemIds->isEmpty()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No items found for this RIS form.'
+                ], 404);
+            }
+
+            $itemsToAssign = Mr::where(function ($query) use ($risItemIds, $poItemIds) {
+                $query->whereIn('ris_item_id_fk', $risItemIds)
+                    ->orWhere(function ($q) use ($poItemIds) {
+                        $q->whereIn('po_item_id_fk', $poItemIds)
+                            ->whereNull('ris_item_id_fk');
+                    });
+            })->get();
         } else {
             $form = \App\Models\Par::find($id);
             if (!$form) {
@@ -60,17 +76,24 @@ class MrApiController extends Controller
                     'message' => 'You are not the designated receiver for this PAR.'
                 ], 403);
             }
+            $parItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_items_id');
             $poItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_po_items_id_fk');
-        }
 
-        if ($poItemIds->isEmpty()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "No items found for this {$type} form."
-            ], 404);
-        }
+            if ($parItemIds->isEmpty()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No items found for this PAR form.'
+                ], 404);
+            }
 
-        $itemsToAssign = Mr::whereIn('po_item_id_fk', $poItemIds)->get();
+            $itemsToAssign = Mr::where(function ($query) use ($parItemIds, $poItemIds) {
+                $query->whereIn('par_item_id_fk', $parItemIds)
+                    ->orWhere(function ($q) use ($poItemIds) {
+                        $q->whereIn('po_item_id_fk', $poItemIds)
+                            ->whereNull('par_item_id_fk');
+                    });
+            })->get();
+        }
 
         if ($itemsToAssign->isEmpty()) {
             return response()->json([
@@ -131,10 +154,17 @@ class MrApiController extends Controller
             foreach ($pr->purchaseOrders as $p) {
                 // Check RIS forms
                 foreach ($p->risSlips as $ris) {
+                    $risItemIds = $ris->risItems->pluck('ris_items_id')->filter();
                     $risPoItemIds = $ris->risItems->pluck('ris_po_items_id_fk')->filter();
-                    if ($risPoItemIds->isNotEmpty()) {
+                    if ($risItemIds->isNotEmpty()) {
                         $hasAnyDa = true;
-                        $hasPending = Mr::whereIn('po_item_id_fk', $risPoItemIds)->where('is_assigned', 0)->exists();
+                        $hasPending = Mr::where(function ($query) use ($risItemIds, $risPoItemIds) {
+                            $query->whereIn('ris_item_id_fk', $risItemIds)
+                                ->orWhere(function ($q) use ($risPoItemIds) {
+                                    $q->whereIn('po_item_id_fk', $risPoItemIds)
+                                        ->whereNull('ris_item_id_fk');
+                                });
+                        })->where('is_assigned', 0)->exists();
                         if ($hasPending) {
                             $allDAsScanned = false;
                         }
@@ -143,10 +173,17 @@ class MrApiController extends Controller
 
                 // Check PAR forms
                 foreach ($p->parReceipts as $par) {
+                    $parItemIds = $par->parItems->pluck('par_items_id')->filter();
                     $parPoItemIds = $par->parItems->pluck('par_po_items_id_fk')->filter();
-                    if ($parPoItemIds->isNotEmpty()) {
+                    if ($parItemIds->isNotEmpty()) {
                         $hasAnyDa = true;
-                        $hasPending = Mr::whereIn('po_item_id_fk', $parPoItemIds)->where('is_assigned', 0)->exists();
+                        $hasPending = Mr::where(function ($query) use ($parItemIds, $parPoItemIds) {
+                            $query->whereIn('par_item_id_fk', $parItemIds)
+                                ->orWhere(function ($q) use ($parPoItemIds) {
+                                    $q->whereIn('po_item_id_fk', $parPoItemIds)
+                                        ->whereNull('par_item_id_fk');
+                                });
+                        })->where('is_assigned', 0)->exists();
                         if ($hasPending) {
                             $allDAsScanned = false;
                         }
