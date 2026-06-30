@@ -103,19 +103,19 @@ class DeliveryAttachmentController extends Controller
         $firstItem = $ris->risItems->first();
         $isSemiExpendable = $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
 
-        if ($isSemiExpendable) {
-            DB::transaction(function () use ($ris) {
+        DB::transaction(function () use ($ris, $isSemiExpendable) {
+            if ($isSemiExpendable) {
                 foreach ($ris->risItems as $item) {
                     if ($item->poItem && $item->poItem->po_items_category === 'Semi-Expendable') {
                         if ($item->ris_po_items_id_fk) {
-                            // Avoid duplicates using Eloquent relationship
-                            if (!$item->poItem->mrs()->exists()) {
-                                // Generate unique numeric code in the format MR-XXXX-XXXX
+                            if (!Mr::where('ris_item_id_fk', $item->ris_items_id)->exists()) {
                                 do {
                                     $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
                                 } while (Mr::where('mr_qr_code', $qrCode)->exists());
 
-                                $item->poItem->mrs()->create([
+                                Mr::create([
+                                    'ris_item_id_fk'=> $item->ris_items_id,
+                                    'po_item_id_fk' => $item->ris_po_items_id_fk,
                                     'mr_qr_code'    => $qrCode,
                                     'item_name'     => $item->ris_items_descrip,
                                     'specification' => $item->risSpecs->pluck('ris_spec_description')->filter()->implode("\n"),
@@ -130,17 +130,15 @@ class DeliveryAttachmentController extends Controller
                         }
                     }
                 }
-            });
+                $ris->load('risItems.risSpecs', 'risItems.poItem');
+            }
 
-            // Reload ris details to ensure latest values
-            $ris->load('risItems.risSpecs', 'risItems.poItem');
-        }
-
-        $ris->is_exported = 1;
-        $ris->save();
-        if ($ris->purchaseOrder) {
-            $ris->purchaseOrder->checkAndSetDaExportStatus();
-        }
+            $ris->is_exported = 1;
+            $ris->save();
+            if ($ris->purchaseOrder) {
+                $ris->purchaseOrder->checkAndSetDaExportStatus();
+            }
+        });
 
         $pdfService = app(RisPdfExportService::class);
         return $pdfService->export($ris);
@@ -215,14 +213,14 @@ class DeliveryAttachmentController extends Controller
             foreach ($par->parItems as $item) {
                 if ($item->par_po_items_id_fk) {
                     if ($item->poItem) {
-                        // Avoid duplicates using Eloquent relationship
-                        if (!$item->poItem->mrs()->exists()) {
-                            // Generate unique numeric code in the format MR-XXXX-XXXX
+                        if (!Mr::where('par_item_id_fk', $item->par_items_id)->exists()) {
                             do {
                                 $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
                             } while (Mr::where('mr_qr_code', $qrCode)->exists());
 
-                            $item->poItem->mrs()->create([
+                            Mr::create([
+                                'par_item_id_fk'=> $item->par_items_id,
+                                'po_item_id_fk' => $item->par_po_items_id_fk,
                                 'mr_qr_code'    => $qrCode,
                                 'item_name'     => $item->par_items_descrip,
                                 'specification' => $item->parSpecs->pluck('par_spec_description')->filter()->implode("\n"),
@@ -237,16 +235,14 @@ class DeliveryAttachmentController extends Controller
                     }
                 }
             }
+
+            $par->load('parItems.parSpecs', 'parItems.poItem');
+            $par->is_exported = 1;
+            $par->save();
+            if ($par->purchaseOrder) {
+                $par->purchaseOrder->checkAndSetDaExportStatus();
+            }
         });
-
-        // Reload par details to ensure latest values
-        $par->load('parItems.parSpecs', 'parItems.poItem');
-
-        $par->is_exported = 1;
-        $par->save();
-        if ($par->purchaseOrder) {
-            $par->purchaseOrder->checkAndSetDaExportStatus();
-        }
 
         $pdfService = app(ParPdfExportService::class);
         return $pdfService->export($par);
