@@ -119,7 +119,7 @@ class DeliveryAttachmentController extends Controller
                                     'mr_qr_code'    => $qrCode,
                                     'item_name'     => $item->ris_items_descrip,
                                     'specification' => $item->risSpecs->pluck('ris_spec_description')->filter()->implode("\n"),
-                                    'quantity'      => $item->ris_quantity,
+                                    'quantity'      => $item->ris_issued_quantity,
                                     'unit'          => $item->ris_unit,
                                     'stock'         => $item->ris_stock_no,
                                     'is_assigned'   => 0,
