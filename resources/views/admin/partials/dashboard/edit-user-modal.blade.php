@@ -99,7 +99,7 @@
                                             
                                             <div class="col-md-6">
                                                 <label for="edit-tupid" class="form-label font-weight-bold text-dark" style="font-size: 0.8rem;">TUP-T ID</label>
-                                                <input type="text" class="form-control" id="edit-tupid" name="tupid" placeholder="XXXXX-00-0000" required style="border-radius: 6px; font-size: 0.875rem;" />
+                                                <input type="text" class="form-control" id="edit-tupid" name="tupid" placeholder="Include dashes" maxlength="20" required style="border-radius: 6px; font-size: 0.875rem;" />
                                             </div>
                                             
                                             <div class="col-md-6">
