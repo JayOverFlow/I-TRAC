@@ -169,8 +169,7 @@
                                                          Please enter your TUPT-ID
                                                      </div>
                                                  </div>
-                                                 <input type="text" class="form-control" id="tup-id" name="tup_id"
-                                                     placeholder="XXXXX-00-0000">
+                                                 <input type="text" class="form-control" id="tup-id" name="tup_id" maxlength="20" placeholder="Include dashes">
                                              </div>
                                          </div>
                                      </div>
