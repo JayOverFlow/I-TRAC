@@ -71,79 +71,9 @@
     <script>
         var $activeEditBtn = null;
 
-        $(document).on('focus', '#edit-tupid', function() {
-            let input = this;
-            if (!input.value || input.value === '') {
-                input.value = '_____-__-____';
-            }
-            updateEditMask(input);
-        });
-
-        $(document).on('click', '#edit-tupid', function() {
-            updateEditMask(this);
-        });
-
-        $(document).on('keydown', '#edit-tupid', function(e) {
-            let input = this;
-            const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'];
-            if (allowedKeys.includes(e.key)) {
-                return;
-            }
-
-            let raw = input.value.replace(/[-_]/g, '');
-            if (raw.length >= 11 && !e.ctrlKey && !e.metaKey) {
-                e.preventDefault();
-                return;
-            }
-
-            let index = raw.length;
-            if (index < 5) {
-                if (!/[a-zA-Z0-9]/.test(e.key)) {
-                    e.preventDefault();
-                }
-            } else {
-                if (!/[0-9]/.test(e.key)) {
-                    e.preventDefault();
-                }
-            }
-        });
-
         $(document).on('input', '#edit-tupid', function() {
-            updateEditMask(this);
+            this.value = this.value.toUpperCase().slice(0, 20);
         });
-
-        $(document).on('blur', '#edit-tupid', function() {
-            if (this.value === '_____-__-____') {
-                this.value = '';
-            }
-        });
-
-        function updateEditMask(input) {
-            let val = input.value;
-            let raw = val.replace(/[-_]/g, '').toUpperCase();
-            
-            let letters = raw.substring(0, 5).replace(/[^A-Z0-9]/g, '');
-            let mid = raw.substring(5, 7).replace(/[^0-9]/g, '');
-            let end = raw.substring(7, 11).replace(/[^0-9]/g, '');
-            
-            let formatted = '';
-            if (letters.length < 5) {
-                formatted = letters + '_'.repeat(5 - letters.length) + '-__-____';
-            } else if (mid.length < 2) {
-                formatted = letters + '-' + mid + '_'.repeat(2 - mid.length) + '-____';
-            } else {
-                formatted = letters + '-' + mid + '-' + end + '_'.repeat(4 - end.length);
-            }
-            
-            input.value = formatted;
-            
-            let firstUnderscore = formatted.indexOf('_');
-            let cursorPosition = firstUnderscore !== -1 ? firstUnderscore : 13;
-            
-            setTimeout(() => {
-                input.setSelectionRange(cursorPosition, cursorPosition);
-            }, 0);
-        }
 
         $(document).on('click', '.btn-edit', function(e) {
             e.preventDefault();

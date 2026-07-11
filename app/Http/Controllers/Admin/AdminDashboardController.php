@@ -34,11 +34,10 @@ class AdminDashboardController extends Controller
             'middlename' => 'nullable|string|min:3|max:50',
             'lastname' => 'required|string|min:3|max:50',
             'suffix' => 'nullable|string|max:10',
-            'tupid' => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid,' . $request->user_id . ',user_id',
+            'tupid' => 'required|string|max:20|unique:users,user_tupid,' . $request->user_id . ',user_id',
             'contactno' => 'nullable|string|max:20',
         ], [
             'tupid.unique' => 'This TUPT-ID is already taken by another user.',
-            'tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
             'firstname.min' => 'First name must be at least 3 characters.',
             'lastname.min' => 'Last name must be at least 3 characters.',
         ]);
