@@ -26,6 +26,7 @@ class Mr extends Model
         'is_assigned',
         'date_scanned',
         'category',
+        'status',
     ];
 
     public function poItem()
