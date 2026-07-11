@@ -22,3 +22,5 @@ Thumbs.db
 /storage/*.log
 /storage/framework/cache/*
 /storage/framework/sessions/*
+node_modules/
+vendor/
