@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     public function showDashboard() {
+        if (request()->has('error_no_active_app')) {
+            return redirect()->route('show.dashboard')->with('error', 'There is no active Annual Procurement Plan for your office.');
+        }
+
         // Get the authenticated user
         $user = Auth::user();
 
@@ -22,6 +26,7 @@ class DashboardController extends Controller
         $utilizedBudget = 0;
         $fiscalYear = '—';
         $subordinates = collect();
+        $activeAppId = null;
 
         if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
             $depName = $activeRole && $activeRole->department ? $activeRole->department->dep_name : ($user->departments()->first()?->dep_name ?? 'N/A');
@@ -41,7 +46,23 @@ class DashboardController extends Controller
                     }
                 }
 
-                $activeApp = $activeAppId ? \App\Models\AppParent::with('appItems')->find($activeAppId) : null;
+                // Wrap multiple queries to calculate budget in database transaction
+                $budgetData = \Illuminate\Support\Facades\DB::transaction(function () use ($activeAppId) {
+                    $activeApp = $activeAppId ? \App\Models\AppParent::with('appItems')->find($activeAppId) : null;
+                    $utilizedBudget = 0.0;
+                    if ($activeApp) {
+                        $utilizedBudget = (float) \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($activeAppId) {
+                                $query->where('app_id_fk', $activeAppId);
+                            })
+                            ->whereNotNull('iar_po_items_id_fk')
+                            ->join('po_items_tbl', 'iar_items_tbl.iar_po_items_id_fk', '=', 'po_items_tbl.po_items_id')
+                            ->sum(\Illuminate\Support\Facades\DB::raw('iar_items_tbl.iar_quantity * po_items_tbl.po_items_cost'));
+                    }
+                    return compact('activeApp', 'utilizedBudget');
+                });
+
+                $activeApp = $budgetData['activeApp'];
+                $utilizedBudget = $budgetData['utilizedBudget'];
 
                 if ($activeApp) {
                     if (preg_match('/Fiscal Year (\d{4})/i', $activeApp->app_title, $matches)) {
@@ -50,7 +71,6 @@ class DashboardController extends Controller
                         $fiscalYear = $activeApp->created_at ? \Carbon\Carbon::parse($activeApp->created_at)->format('Y') : '2026';
                     }
                     $departmentBudget = $activeApp->app_total ?? $activeApp->appItems->sum('app_items_esti_budget');
-                    $utilizedBudget = $activeApp->utilized_budget ?? 0;
                 }
 
                 if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
@@ -74,9 +94,9 @@ class DashboardController extends Controller
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
-            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
-            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
+            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
+            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
+            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
             default       => view('errors.403'),
         };
     }
@@ -115,14 +135,14 @@ class DashboardController extends Controller
             }
         }
 
-        // Query IAR items linked to PO items for the department/APP inside a DB transaction
-        $iarItems = \Illuminate\Support\Facades\DB::transaction(function () use ($depId, $activeAppId) {
-            return \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($depId, $activeAppId) {
-                if ($activeAppId) {
-                    $query->where('app_id_fk', $activeAppId);
-                } else {
-                    $query->where('pr_department', $depId);
-                }
+        if (!$activeAppId) {
+            return redirect()->back()->with('error', 'No active Annual Procurement Plan found for this office.');
+        }
+
+        // Query IAR items linked to PO items for the set active APP inside a DB transaction
+        $iarItems = \Illuminate\Support\Facades\DB::transaction(function () use ($activeAppId) {
+            return \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($activeAppId) {
+                $query->where('app_id_fk', $activeAppId);
             })
             ->whereNotNull('iar_po_items_id_fk')
             ->with(['iar', 'poItem'])

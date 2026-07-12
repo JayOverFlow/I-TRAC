@@ -13,7 +13,7 @@ class CreateAppController extends Controller
     public function showCreateApp($app_id = null)
     {
         if (!$app_id) {
-            return redirect()->route('account.settings')->with('warning', 'Please create a new procurement plan from the Annual Procurement Plan tab.');
+            return redirect()->route('account.settings')->with('error', 'Please create a new procurement plan from the Annual Procurement Plan tab.');
         }
 
         $app_data = AppParent::with('appItems')->findOrFail($app_id);
