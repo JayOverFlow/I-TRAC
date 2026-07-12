@@ -40,20 +40,22 @@
                         <div class="col-8 text-end">
                             <h5 class="card-title fw-bold mb-0">Office Budget</h5>
                             <h5 class="mb-0 fw-bold">₱<span>{{ number_format($departmentBudget, 2) }}</span></h5>
+                            <a href="javascript:void(0)" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold" id="view-procurement-plan-link" data-app-id="{{ $activeAppId }}">View Procurement Plan</a>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-3">
-                <div class="card h-100 clickable-card" id="utilized-budget-card">
+                <div class="card h-100" id="utilized-budget-card">
                     <div class="card-body row p-4">
                         <div class="col-4">
                             <img src="{{ asset('img/UtilBud.svg') }}" alt="Utilized Budget">
                         </div>
                         <div class="col-8 text-end">
-                            <h5 class="card-title fw-bold">Utilized Budget</h5>
+                            <h5 class="card-title fw-bold mb-0">Utilized Budget</h5>
                             <h5 class="mb-0 fw-bold">₱<span>{{ number_format($utilizedBudget, 2) }}</span></h5>
+                            <a href="javascript:void(0)" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold" id="generate-report-link">Generate Report</a>
                         </div>
                     </div>
                 </div>

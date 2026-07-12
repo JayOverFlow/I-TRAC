@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     public function showDashboard() {
+        if (request()->has('error_no_active_app')) {
+            return redirect()->route('show.dashboard')->with('error', 'There is no active Annual Procurement Plan for your office.');
+        }
+
         // Get the authenticated user
         $user = Auth::user();
 
@@ -22,6 +26,7 @@ class DashboardController extends Controller
         $utilizedBudget = 0;
         $fiscalYear = '—';
         $subordinates = collect();
+        $activeAppId = null;
 
         if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
             $depName = $activeRole && $activeRole->department ? $activeRole->department->dep_name : ($user->departments()->first()?->dep_name ?? 'N/A');
@@ -89,9 +94,9 @@ class DashboardController extends Controller
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
-            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
-            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget')),
+            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
+            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
+            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
             default       => view('errors.403'),
         };
     }
