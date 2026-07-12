@@ -49,6 +49,7 @@ Route::middleware(['auth', 'role:Head,Procurement,Supply'])->group(function () {
     Route::controller(CreateAppController::class)->group(function () {
         Route::get('/create-app/{app_id?}', 'showCreateApp')->name('show.create-app');
         Route::post('/create-app', 'createApp')->name('create.app');
+        Route::post('/create-app/init', 'initApp')->name('create.app.init');
     });
 });
 
