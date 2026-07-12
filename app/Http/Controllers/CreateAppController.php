@@ -12,23 +12,23 @@ class CreateAppController extends Controller
 {
     public function showCreateApp($app_id = null)
     {
-        $app_data = null;
-        $isReadOnly = false;
-        if ($app_id) {
-            $app_data = AppParent::with('appItems')->findOrFail($app_id);
-
-            // Scope the APP strictly to the active department context to prevent cross-department tampering.
-            $user = auth()->user();
-            $activeRoleId = session('active_role_id');
-            $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
-            $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
-
-            if ($app_data->app_dep_id_fk !== $dep_id) {
-                abort(403, 'Unauthorized access to this APP record.');
-            }
-
-            $isReadOnly = ($app_data->app_status === 'Done');
+        if (!$app_id) {
+            return redirect()->route('account.settings')->with('warning', 'Please create a new procurement plan from the Annual Procurement Plan tab.');
         }
+
+        $app_data = AppParent::with('appItems')->findOrFail($app_id);
+
+        // Scope the APP strictly to the active department context to prevent cross-department tampering.
+        $user = auth()->user();
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
+
+        if ($app_data->app_dep_id_fk !== $dep_id) {
+            abort(403, 'Unauthorized access to this APP record.');
+        }
+
+        $isReadOnly = ($app_data->app_status === 'Done');
 
         $breadcrumbs = [
             ['title' => 'Account Settings', 'url' => route('account.settings')],
@@ -37,6 +37,54 @@ class CreateAppController extends Controller
 
         return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs', 'isReadOnly'));
     }
+
+    public function initApp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'app_title' => 'required|string|min:5|max:150',
+            'year'      => 'required|integer|min:2020|max:2099',
+        ], [
+            'app_title.required' => 'Procurement Plan Title is required.',
+            'app_title.min'      => 'Title must be at least 5 characters.',
+            'app_title.max'      => 'Title must not exceed 150 characters.',
+            'year.required'      => 'Year is required.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        $user = Auth::user();
+        $activeRoleId = session('active_role_id');
+        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+        $depId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments()->first()?->dep_id);
+
+        $year = $request->input('year');
+        $appCount = AppParent::where('app_dep_id_fk', $depId)
+            ->where('app_unique_code', 'like', 'APP-' . $year . '-%')
+            ->count() + 1;
+        $appUniqueCode = 'APP-' . $year . '-' . str_pad($appCount, 2, '0', STR_PAD_LEFT);
+
+        $app = AppParent::create([
+            'app_title'           => $request->input('app_title') . " " . $year,
+            'saved_by_user_id_fk' => $user->user_id,
+            'app_dep_id_fk'       => $depId,
+            'app_unique_code'     => $appUniqueCode,
+            'app_status'          => 'Draft',
+            'app_total'           => 0,
+        ]);
+
+        session()->flash('success', 'Annual Procurement Plan initialized successfully.');
+
+        return response()->json([
+            'success'  => true,
+            'redirect' => route('show.create-app', ['app_id' => $app->app_id])
+        ]);
+    }
+
 
     public function createApp(Request $request)
     {

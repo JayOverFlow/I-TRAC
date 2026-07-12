@@ -1,0 +1,43 @@
+/* Annual Procurement Plan Modal Styling */
+.text-dark-red {
+    color: var(--red-text-2) !important;
+}
+
+#createAppModal .modal-content {
+    border-radius: 12px;
+}
+
+#createAppModal .form-control,
+#createAppModal .form-select {
+    border-radius: 8px;
+    height: 50px;
+}
+
+#createAppModal .btn {
+    border-radius: 8px;
+}
+
+#createAppModal .btn-light {
+    background-color: var(--white-2) !important;
+    color: var(--black-text) !important;
+    border: 1px solid var(--border-color, #e0e0e0) !important;
+}
+
+#createAppModal .btn-light:hover {
+    background-color: #f1f1f1 !important;
+}
+
+/* Base page styles from annual procurement plan tab */
+#pane-animated-underline-annual-procurement-plan {
+    min-height: 85vh;
+}
+
+.badge-light-warning {
+    background-color: #ffd59a !important;
+    color: #8c5201 !important;
+}
+
+body.dark .badge-light-warning {
+    background-color: rgba(226, 160, 63, 0.28) !important;
+    color: #e2a03f !important;
+}

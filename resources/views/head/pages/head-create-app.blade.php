@@ -26,7 +26,7 @@
 
         <div class="card allocated-budget-card mb-3">
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold red-text-2">ANNUAL PROCUREMENT PROJECT</h5>
+                <h5 class="card-title mb-0 fw-bold red-text-2">{{ isset($app_data) && $app_data->app_title ? strtoupper($app_data->app_title) : 'ANNUAL PROCUREMENT PLAN' }}</h5>
                 <div>
                     <h5 class="card-title mb-3 black-text">ALLOCATED BUDGET: PHP {{ number_format($app_data?->app_total ?? 0, 2) }}</h5>
 
