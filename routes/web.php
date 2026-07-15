@@ -105,9 +105,7 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::delete('/inventory/queue/{index}', 'removeFromQueue')->name('inventory.queue.remove');
         Route::post('/inventory/queue/clear',     'clearQueue')    ->name('inventory.queue.clear');
         Route::get('/inventory/queue/export',     'exportQueuePdf')->name('inventory.queue.export');
-        // Route::post('/inventory/upload-image', 'uploadImage')->name('inventory.upload-image');
-        // Route::post('/inventory/delete-image', 'deleteImage')->name('inventory.delete-image');
-        // Route::post('/po-review/{po_id}/generate-attachments', 'generateAttachments')->name('generate.attachments');
+        Route::post('/inventory/{mr_id}/status', 'updateStatus')->name('inventory.update-status');
     });
 });
 

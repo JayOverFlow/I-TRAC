@@ -922,11 +922,40 @@ body.dark .export-paper-card.selected .paper-title {
     color: #EF4444 !important;
 }
 
-/* Export Queue Button hover color override */
 #btnOpenPrintQueue:hover {
     background-color: var(--red-text-2) !important;
     color: var(--white-text) !important;
     border-color: var(--red-text-2) !important;
     opacity: 1 !important;
     filter: none !important;
+}
+
+/* Custom status select colors */
+#detailItemStatus.status-serviceable {
+    border-color: #00ab55 !important;
+    color: #00ab55 !important;
+}
+#detailItemStatus.status-unserviceable {
+    border-color: #e7515a !important;
+    color: #e7515a !important;
+}
+#detailItemStatus.status-missing {
+    border-color: #888ea8 !important;
+    color: #888ea8 !important;
+}
+#detailItemStatus:focus {
+    box-shadow: none;
+}
+body.dark #detailItemStatus {
+    background-color: #0e1726;
+    color: #888ea8;
+}
+body.dark #detailItemStatus.status-serviceable {
+    color: #00ab55 !important;
+}
+body.dark #detailItemStatus.status-unserviceable {
+    color: #e7515a !important;
+}
+body.dark #detailItemStatus.status-missing {
+    color: #888ea8 !important;
 }
