@@ -91,6 +91,7 @@
                     <th class="fw-bold text-nowrap text-center col-w-15">Office</th>
                     <th class="fw-bold text-nowrap text-center col-w-10">Date Received</th>
                     <th class="fw-bold text-nowrap text-center col-w-10">Category</th>
+                    <th class="fw-bold text-nowrap text-center col-w-5"></th>
                 </tr>
             </thead>
             <tbody>
@@ -137,6 +138,25 @@
                                 @else
                                     <span>—</span>
                                 @endif
+                            </td>
+                            <td class="text-center action-dropdown-menu">
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-secondary p-0 border-0 dropdown-toggle no-caret shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                        <li>
+                                            <button class="dropdown-item btn-transfer-action" type="button" data-mr-id="{{ $item->mr_id }}" data-item-name="{{ $item->item_name }}">
+                                                Transfer
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item btn-condemn-action text-danger" type="button" data-mr-id="{{ $item->mr_id }}" data-item-name="{{ $item->item_name }}">
+                                                Condemn
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     @endif
