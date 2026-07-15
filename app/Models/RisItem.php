@@ -36,4 +36,9 @@ class RisItem extends Model
     {
         return $this->hasMany(RisItemSpec::class, 'ris_items_id_fk', 'ris_items_id');
     }
+
+    public function mrs()
+    {
+        return $this->hasMany(Mr::class, 'ris_item_id_fk', 'ris_items_id');
+    }
 }

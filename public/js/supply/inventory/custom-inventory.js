@@ -46,6 +46,38 @@ $(document).ready(function () {
         }
     }
 
+    function updateStatusClass(status) {
+        var $select = $('#detailItemStatus');
+        $select.removeClass('status-serviceable status-unserviceable status-missing');
+        if (status === 'Serviceable') {
+            $select.addClass('status-serviceable');
+        } else if (status === 'Unserviceable') {
+            $select.addClass('status-unserviceable');
+        } else if (status === 'Missing') {
+            $select.addClass('status-missing');
+        }
+        adjustSelectWidth();
+    }
+
+    function adjustSelectWidth() {
+        var $select = $('#detailItemStatus');
+        if (!$select.length) return;
+        var text = $select.find('option:selected').text() || '● Serviceable';
+        var $tempSpan = $('<span>')
+            .text(text)
+            .css({
+                'font-size': $select.css('font-size') || '0.8rem',
+                'font-weight': $select.css('font-weight') || 'bold',
+                'visibility': 'hidden',
+                'white-space': 'nowrap',
+                'position': 'absolute'
+            });
+        $('body').append($tempSpan);
+        var width = $tempSpan.width();
+        $tempSpan.remove();
+        $select.css('width', (width + 48) + 'px');
+    }
+
     // Render image gallery and thumbnails in the modal
     function renderItemImages() {
         var primaryImg = document.getElementById('modalPrimaryImage');
@@ -360,6 +392,11 @@ $(document).ready(function () {
         // Set the extracted QR code string and MR ID to the hidden form inputs
         $('#mr_qr_code').val(mrQrCode);
         $('#mr_id').val(activeMrId);
+
+        // Set current status for dropdown
+        var status = $row.attr('data-status') || 'Serviceable';
+        $('#detailItemStatus').val(status);
+        updateStatusClass(status);
 
         // Reset Tab State to first tab (Details)
         var detailsTabEl = document.querySelector('#details-tab');
@@ -922,5 +959,63 @@ $(document).ready(function () {
         } else {
             shouldRestoreQueueModal = false;
         }
+    });
+
+    // Handle changing the item status
+    $(document).on('change', '#detailItemStatus', function () {
+        var newStatus = $(this).val();
+        var previousStatus = $activeRow.attr('data-status') || 'Serviceable';
+
+        if (newStatus === previousStatus) return;
+
+        window.confirmAction({
+            title: 'Change Item Status?',
+            text: `Are you sure you want to change the status of this item to "${newStatus}"?`,
+            icon: 'warning',
+            confirmButtonText: 'Change',
+            onConfirm: function () {
+                $.ajax({
+                    url: `/inventory/${activeMrId}/status`,
+                    type: 'POST',
+                    data: {
+                        status: newStatus
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            showToast(response.message, 'success');
+                            $activeRow.attr('data-status', newStatus);
+                            updateStatusClass(newStatus);
+
+                            // Update visual indicator dot in inventory table row
+                            var colors = {
+                                'Serviceable': '#00ab55',
+                                'Unserviceable': '#e7515a',
+                                'Missing': '#888ea8'
+                            };
+                            var $dot = $activeRow.find('td:nth-child(2) span.rounded-circle');
+                            if ($dot.length) {
+                                $dot.css('background-color', colors[newStatus]).attr('title', newStatus);
+                            } else {
+                                $activeRow.find('td:nth-child(2)').prepend(`<span class="d-inline-block rounded-circle me-2" style="width: 8px; height: 8px; vertical-align: middle; background-color: ${colors[newStatus]};" title="${newStatus}"></span>`);
+                            }
+                        } else {
+                            showToast(response.message || 'Failed to update status.', 'error');
+                            $('#detailItemStatus').val(previousStatus);
+                            updateStatusClass(previousStatus);
+                        }
+                    },
+                    error: function (xhr) {
+                        var msg = xhr.responseJSON?.message || 'Something went wrong. Please try again.';
+                        showToast(msg, 'error');
+                        $('#detailItemStatus').val(previousStatus);
+                        updateStatusClass(previousStatus);
+                    }
+                });
+            },
+            onCancel: function () {
+                $('#detailItemStatus').val(previousStatus);
+                updateStatusClass(previousStatus);
+            }
+        });
     });
 });

@@ -114,7 +114,8 @@
                             data-quantity="{{ $item->quantity ?? '—' }}" data-building="{{ $item->building ?? '—' }}"
                             data-room-no="{{ $item->room_no ?? '—' }}"
                             data-item-images="{{ json_encode($images) }}"
-                            data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}">
+                            data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}"
+                            data-status="{{ $item->status }}">
                             <td class="text-center">{{ $item->mr_qr_code }}</td>
                             <td>
                                 @if (in_array($item->status, ['Serviceable', 'Unserviceable', 'Missing']))
@@ -228,10 +229,19 @@
                                             aria-labelledby="details-tab" tabindex="0">
                                             <!-- Property Details Section -->
                                             <div class="mb-3">
-                                                <h6 class="fw-bold d-flex align-items-center red-text-2">
-                                                    <img src="{{ asset('img/property-details-icon.svg') }}">
-                                                    <span class="ms-2">Property Details</span>
-                                                </h6>
+                                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                                    <h6 class="fw-bold d-flex align-items-center red-text-2 mb-0">
+                                                        <img src="{{ asset('img/property-details-icon.svg') }}">
+                                                        <span class="ms-2">Property Details</span>
+                                                    </h6>
+                                                    <div>
+                                                        <select class="form-select form-select-sm fw-bold border-1 ps-2" id="detailItemStatus" style="font-size: 0.8rem; border-radius: 6px; border-color: #dee2e6;">
+                                                            <option class="text-success" value="Serviceable">● Serviceable</option>
+                                                            <option class="text-danger" value="Unserviceable">● Unserviceable</option>
+                                                            <option class="text-dark" value="Missing">● Missing</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="detail-rows">
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Item Name:</div>

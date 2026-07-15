@@ -35,4 +35,9 @@ class ParItem extends Model
     {
         return $this->hasMany(ParItemSpec::class, 'par_items_id_fk', 'par_items_id');
     }
+
+    public function mrs()
+    {
+        return $this->hasMany(Mr::class, 'par_item_id_fk', 'par_items_id');
+    }
 }
