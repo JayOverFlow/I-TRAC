@@ -32,10 +32,10 @@
             <div class="card">
                 <div class="card-body row p-4">
                     <div class="col-4">
-                        <img src="{{ asset('img/faculty.svg') }}" alt="Faculty Members">
+                        <img src="{{ asset('img/faculty.svg') }}" alt="Faculties">
                     </div>
                     <div class="col-8 text-end">
-                        <h5 class="card-title fw-bold">Faculty Members</h5>
+                        <h5 class="card-title fw-bold">Faculties</h5>
                         <h5 class="mb-0 fw-bold">{{ $facultyCount }}</h5>
                     </div>
                 </div>
