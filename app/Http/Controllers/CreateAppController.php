@@ -7,25 +7,40 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\AppParent;
 use App\Models\AppItem;
+use App\Models\PrParent;
 
 class CreateAppController extends Controller
 {
     public function showCreateApp($app_id = null)
     {
-        if (!$app_id) {
-            return redirect()->route('account.settings')->with('error', 'Please create a new procurement plan from the Annual Procurement Plan tab.');
-        }
+        $app_data = null;
+        $isReadOnly = false;
+        $prs = collect();
 
-        $app_data = AppParent::with('appItems')->findOrFail($app_id);
+        if ($app_id) {
+            $app_data = AppParent::with('appItems')->findOrFail($app_id);
 
-        // Scope the APP strictly to the active department context to prevent cross-department tampering.
-        $user = auth()->user();
-        $activeRoleId = session('active_role_id');
-        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
-        $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
+            // Scope the APP strictly to the active department context to prevent cross-department tampering.
+            $user = auth()->user();
+            $activeRoleId = session('active_role_id');
+            $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+            $dep_id = $activeRole ? $activeRole->role_dep_id_fk : null;
 
-        if ($app_data->app_dep_id_fk !== $dep_id) {
-            abort(403, 'Unauthorized access to this APP record.');
+            if ($app_data->app_dep_id_fk !== $dep_id) {
+                abort(403, 'Unauthorized access to this APP record.');
+            }
+
+            $isReadOnly = ($app_data->app_status === 'Done');
+
+            if ($isReadOnly) {
+                $prs = PrParent::with(['tasks', 'prItems.appItem'])
+                    ->where('app_id_fk', $app_id)
+                    ->orWhereHas('prItems.appItem', function($q) use ($app_id) {
+                        $q->where('app_id_fk', $app_id);
+                    })
+                    ->get()
+                    ->unique('pr_id');
+            }
         }
 
         $isReadOnly = ($app_data->app_status === 'Done');
@@ -35,7 +50,7 @@ class CreateAppController extends Controller
             ['title' => $isReadOnly ? 'View APP' : 'Create APP', 'url' => '']
         ];
 
-        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs', 'isReadOnly'));
+        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs', 'isReadOnly', 'prs'));
     }
 
     public function initApp(Request $request)
