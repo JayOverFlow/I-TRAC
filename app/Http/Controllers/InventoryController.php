@@ -925,4 +925,29 @@ class InventoryController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
+
+    public function updateStatus(Request $request, $mrId)
+    {
+        $request->validate(['status' => 'required|in:Serviceable,Unserviceable,Missing']);
+        $status = $request->input('status');
+
+        try {
+            $mr = \Illuminate\Support\Facades\DB::transaction(function () use ($mrId, $status) {
+                $item = Mr::with('assignedUser')->findOrFail($mrId);
+                $item->update(['status' => $status]);
+                return $item;
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully.',
+                'status' => $mr->status,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
