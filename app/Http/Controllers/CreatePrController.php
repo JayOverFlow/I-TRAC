@@ -84,10 +84,18 @@ class CreatePrController extends Controller
             }
         }
 
-        $breadcrumbs = [
-            ['title' => 'Purchase Request', 'url' => route('show.tasks')],
-            ['title' => 'Create PR', 'url' => '']
-        ];
+        if (request('from') === 'app' && request('app_id')) {
+            $breadcrumbs = [
+                ['title' => 'Account Settings', 'url' => route('account.settings')],
+                ['title' => 'View APP', 'url' => route('show.create-app', ['app_id' => request('app_id'), 'mode' => 'pr'])],
+                ['title' => 'Create PR', 'url' => '']
+            ];
+        } else {
+            $breadcrumbs = [
+                ['title' => 'Purchase Request', 'url' => route('show.tasks')],
+                ['title' => 'Create PR', 'url' => '']
+            ];
+        }
 
         // Flag: direct creation means the user created the task themselves from the APP checklist
         $isDirectCreation = ($task->task_type === 'PR Assignment' && $task->assigned_by === $task->assigned_to);

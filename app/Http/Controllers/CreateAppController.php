@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\AppParent;
 use App\Models\AppItem;
+use App\Models\PrParent;
 
 class CreateAppController extends Controller
 {
@@ -14,6 +15,8 @@ class CreateAppController extends Controller
     {
         $app_data = null;
         $isReadOnly = false;
+        $prs = collect();
+
         if ($app_id) {
             $app_data = AppParent::with('appItems')->findOrFail($app_id);
 
@@ -28,6 +31,16 @@ class CreateAppController extends Controller
             }
 
             $isReadOnly = ($app_data->app_status === 'Done');
+
+            if ($isReadOnly) {
+                $prs = PrParent::with(['tasks', 'prItems.appItem'])
+                    ->where('app_id_fk', $app_id)
+                    ->orWhereHas('prItems.appItem', function($q) use ($app_id) {
+                        $q->where('app_id_fk', $app_id);
+                    })
+                    ->get()
+                    ->unique('pr_id');
+            }
         }
 
         $breadcrumbs = [
@@ -35,7 +48,7 @@ class CreateAppController extends Controller
             ['title' => $isReadOnly ? 'View APP' : 'Create APP', 'url' => '']
         ];
 
-        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs', 'isReadOnly'));
+        return view('head/pages/head-create-app', compact('app_data', 'breadcrumbs', 'isReadOnly', 'prs'));
     }
 
     public function createApp(Request $request)

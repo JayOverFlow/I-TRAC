@@ -11,6 +11,14 @@
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/head/create-app/head-create-app.css') }}">
+
+    @if($isReadOnly)
+        {{-- DataTables CSS --}}
+        <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/datatables.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dt-global_style.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/datatables.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/head/dashboard/page-specific/dark/dt-global_style.css') }}">
+    @endif
 @endpush
 
 @section('content')
@@ -32,6 +40,15 @@
 
                     <div class="text-end d-flex align-items-center gap-2 justify-content-end">
                         @if($isReadOnly)
+                            <!-- Toggle switch -->
+                            <div class="switch form-switch-custom switch-inline form-switch-primary inner-label-toggle mb-0 me-3 {{ request('mode') === 'pr' ? 'show' : '' }}">
+                                <div class="input-checkbox">
+                                    <span class="switch-chk-label label-left fw-bold">View APP</span>
+                                    <input class="switch-input" type="checkbox" role="switch" id="form-custom-switch-inner-label" {{ request('mode') === 'pr' ? 'checked' : '' }}>
+                                    <span class="switch-chk-label label-right">View PR</span>
+                                </div>
+                            </div>
+
                             <div class="badge bg-success p-2 px-3" id="completed-badge">
                                 <h6 class="mb-0 text-white">
                                     <i class="fas fa-check-circle me-1"></i> Completed
@@ -59,6 +76,7 @@
             </div>
         </div>
 
+        <div id="view-app-mode-container" {!! request('mode') === 'pr' ? 'style="display: none;"' : '' !!}>
         <div id="project-items-container">
             @if(isset($app_data) && $app_data->appItems->count() > 0)
                 @foreach($app_data->appItems as $index => $item)
@@ -337,15 +355,107 @@
             </button>
         </div>
 
-        <div class="d-flex justify-content-end">
-            <h4><span class="fw-bold">Total Amount: </span><span id="total-amount-display">0.00</span></h4>
+            <div class="d-flex justify-content-end">
+                <h4><span class="fw-bold">Total Amount: </span><span id="total-amount-display">0.00</span></h4>
+            </div>
         </div>
+
+        @if($isReadOnly)
+            <div id="view-pr-mode-container" {!! request('mode') === 'pr' ? 'style="display: block;"' : 'style="display: none;"' !!}>
+                <div class="card shadow-sm border-0 mb-3">
+                    <!-- Header with Title and Search Input inside Card Header -->
+                    <div class="card-header border-0 bg-transparent pt-4 pb-2 px-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="fw-bold red-text-2 mb-0">Purchase Request</h4>
+                            <div class="search-input-container" style="position: relative; width: 240px;">
+                                <input type="text" id="pr-search-input" class="form-control" placeholder="Search..." style="border-radius: 6px; padding-right: 35px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888ea8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body px-0 pt-0 pb-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="pr-list-table">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-4">PR-ID</th>
+                                        <th>Title</th>
+                                        <th>Date Created</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($prs as $pr)
+                                        @php
+                                            $firstTask = $pr->tasks->first();
+                                            $isSelfCreated = $firstTask ? ($firstTask->assigned_by === $firstTask->assigned_to) : false;
+                                            
+                                            $status = 'Pending';
+                                            if ($pr->scanned_at !== null) {
+                                                $status = 'Received';
+                                            } elseif ($pr->pr_status === 'Exported' || ($isSelfCreated && $pr->pr_status === 'Complete')) {
+                                                $status = 'Created';
+                                            }
+                                            
+                                            $badgeClass = match ($status) {
+                                                'Received' => 'badge-status-completed',
+                                                'Created' => 'badge-status-created',
+                                                default => 'badge-status-pending',
+                                            };
+                                            
+                                            $displayStatus = ($status === 'Received') ? 'Recieved' : $status;
+                                            
+                                            $displayPrId = $pr->pr_unique_code ?? ('PR-' . date('Y') . '-01-' . str_pad($firstTask?->task_id ?? $pr->pr_id, 3, '0', STR_PAD_LEFT));
+                                            $displayPurpose = $pr->pr_purpose ?: ($firstTask?->task_description ?: 'Pending Creation');
+                                            
+                                            $navTaskId = $firstTask?->task_id ?? $pr->pr_id;
+                                        @endphp
+                                        <tr onclick="window.location='{{ route('show.create.pr', $navTaskId) }}?from=app&app_id={{ $app_data->app_id }}'"
+                                            style="cursor: pointer;">
+                                            <td class="ps-4">
+                                                <span class="fw-bold">{{ $displayPrId }}</span>
+                                            </td>
+                                            <td>{{ $displayPurpose }}</td>
+                                            <td>{{ $pr->created_at ? \Carbon\Carbon::parse($pr->created_at)->format('M d, Y') : 'N/A' }}</td>
+                                            <td>
+                                                <span class="{{ $badgeClass }}">
+                                                    {{ $displayStatus }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center py-5 text-muted">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <img src="{{ asset('img/no-data.svg') }}" width="60"
+                                                        class="mb-2 opacity-50" onerror="this.style.display='none'">
+                                                    <span>No Purchase Requests created from this APP yet.</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </form>
 @endsection
 
 @push('js')
     {{-- Page SPECIFIC js --}}
     <script src="{{ asset('plugins/src/flatpickr/flatpickr.js') }}"></script>
+
+    @if($isReadOnly)
+        {{-- DataTables JS --}}
+        <script src="{{ asset('js/head/dashboard/page-specific/datatables.js') }}"></script>
+    @endif
 
     <!-- CUSTOM js -->
     <script src="{{ asset('js/head/create-app/head-create-app.js') }}"></script>

@@ -101,10 +101,15 @@ class AssignPrController extends Controller
             // Mark each selected item as assigned to this user
             AppItem::whereIn('app_item_id', $itemIds)->update(['app_items_assigned_to' => $assignedTo]);
 
+            // Get the APP ID from the first selected item to maintain foreign key relationship
+            $firstItem = AppItem::find($itemIds[0]);
+            $appId = $firstItem ? $firstItem->app_id_fk : null;
+
             // Create initial row in pr_tbl - saved_by_user_id_fk and pr_name_of_requestor populated
             $pr = PrParent::create([
                 'saved_by_user_id_fk'  => $headUserId,
                 'pr_name_of_requestor' => $assignedTo,
+                'app_id_fk'            => $appId,
             ]);
 
             // Link the PR to the Task!

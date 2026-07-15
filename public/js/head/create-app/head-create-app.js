@@ -475,4 +475,67 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // ─── Mode Toggle & DataTable (Read-Only Mode) ─────────────────────────────
+    const switchLabelInput = document.getElementById("form-custom-switch-inner-label");
+    const viewAppContainer = document.getElementById("view-app-mode-container");
+    const viewPrContainer = document.getElementById("view-pr-mode-container");
+
+    if (switchLabelInput && viewAppContainer && viewPrContainer) {
+        switchLabelInput.addEventListener("change", function () {
+            const toggleWrapper = this.closest('.inner-label-toggle');
+            if (this.checked) {
+                if (toggleWrapper) toggleWrapper.classList.add('show');
+                
+                // Transition containers
+                viewAppContainer.style.display = "none";
+                $(viewPrContainer).fadeIn(300);
+
+                // Adjust DataTable columns if it exists
+                if ($.fn.DataTable.isDataTable('#pr-list-table')) {
+                    $('#pr-list-table').DataTable().columns.adjust();
+                }
+            } else {
+                if (toggleWrapper) toggleWrapper.classList.remove('show');
+                
+                // Transition containers
+                viewPrContainer.style.display = "none";
+                $(viewAppContainer).fadeIn(300);
+            }
+        });
+
+        // Initialize DataTable on the PR list table
+        if ($.fn.DataTable) {
+            const prTable = $('#pr-list-table').DataTable({
+                "dom": "<'table-responsive border-top-0'tr>" +
+                       "<'dt--bottom-section d-sm-flex justify-content-sm-between align-items-center text-center mt-3'<'dt--pages-count'i><'dt--pagination'p>>",
+                "oLanguage": {
+                    "oPaginate": {
+                        "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                        "sNext":     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+                    },
+                    "sInfo": "Showing page _PAGE_ of _PAGES_",
+                    "sLengthMenu": "Results :  _MENU_",
+                },
+                "stripeClasses": [],
+                "pageLength": 10,
+                "lengthChange": false,
+                "ordering": true,
+                "order": []
+            });
+
+            // If the toggle starts as checked, adjust columns
+            if (switchLabelInput.checked) {
+                prTable.columns.adjust();
+            }
+
+            // Wire custom search input to the DataTable
+            const searchInput = document.getElementById("pr-search-input");
+            if (searchInput) {
+                searchInput.addEventListener("keyup", function () {
+                    prTable.search(this.value).draw();
+                });
+            }
+        }
+    }
 });
