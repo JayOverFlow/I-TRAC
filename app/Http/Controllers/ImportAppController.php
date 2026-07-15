@@ -70,6 +70,7 @@ class ImportAppController extends Controller
                 'app_dep_id_fk'             => $depId,
                 'app_title'                 => $appTitle,
                 'app_unique_code'           => $appUniqueCode,
+                'app_year'                  => $year,
             ]);
 
             $insertedCount = 0;

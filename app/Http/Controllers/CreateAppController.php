@@ -90,6 +90,7 @@ class CreateAppController extends Controller
             'app_unique_code'     => $appUniqueCode,
             'app_status'          => 'Draft',
             'app_total'           => 0,
+            'app_year'            => $year,
         ]);
 
         session()->flash('success', 'Annual Procurement Plan initialized successfully.');
@@ -210,6 +211,18 @@ class CreateAppController extends Controller
                 'app_status' => $intent === 'done' ? 'Done' : 'Draft',
             ];
 
+            if (!$app->app_year) {
+                if ($app->app_title && preg_match('/Fiscal Year (\d{4})/i', $app->app_title, $matches)) {
+                    $appData['app_year'] = (int)$matches[1];
+                } else if ($app->app_title && preg_match('/(\d{4})/', $app->app_title, $matches)) {
+                    $appData['app_year'] = (int)$matches[1];
+                } else if ($app->app_unique_code && preg_match('/APP-(\d{4})-/i', $app->app_unique_code, $matches)) {
+                    $appData['app_year'] = (int)$matches[1];
+                } else {
+                    $appData['app_year'] = $app->created_at ? $app->created_at->format('Y') : date('Y');
+                }
+            }
+
             // Set app_title if not already present
             if (!$app->app_title) {
                 $appVersion = AppParent::where('app_dep_id_fk', $app->app_dep_id_fk)
@@ -247,6 +260,7 @@ class CreateAppController extends Controller
                 'app_dep_id_fk'       => $depId,
                 'app_unique_code'     => $appUniqueCode,
                 'app_status'          => $intent === 'done' ? 'Done' : 'Draft',
+                'app_year'            => $year,
             ]);
         }
 

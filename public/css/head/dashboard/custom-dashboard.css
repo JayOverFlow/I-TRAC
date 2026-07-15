@@ -78,12 +78,156 @@ body.dark .badge-not-assigned {
     border-color: #a30000 !important;
 }
 
-#generate-report-link {
+#generate-report-link:not(.btn) {
     text-decoration: underline !important;
     text-decoration-color: currentColor !important;
 }
 
-#view-procurement-plan-link {
+#view-procurement-plan-link:not(.btn) {
     text-decoration: underline !important;
     text-decoration-color: currentColor !important;
+}
+
+/* Redesigned Dashboard custom elements */
+.donut-chart-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+}
+
+.donut-center-label {
+    position: absolute;
+    text-align: center;
+    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+}
+
+.procured-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.procured-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+body.dark .procured-item {
+    border-bottom: 1px solid #192739;
+}
+
+.procured-item:last-child {
+    border-bottom: none;
+}
+
+.procured-item-icon-box {
+    width: 40px;
+    height: 40px;
+    background-color: #a30000;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.procured-item-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 12px;
+    min-width: 0;
+}
+
+.procured-item-text {
+    min-width: 0;
+    padding-right: 8px;
+}
+
+.procured-item-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #3b3f5c;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.dark .procured-item-name {
+    color: #e0e6ed;
+}
+
+.procured-item-po {
+    font-size: 11px;
+    color: #888ea8;
+    margin: 0;
+}
+
+.procured-item-amount {
+    font-weight: 700;
+    font-size: 13px;
+    color: #4CAF50 !important;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.donut-center-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #3b3f5c;
+}
+body.dark .donut-center-value {
+    color: #e0e6ed;
+}
+
+.card-divider-full {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border: 0;
+    border-top: 1px solid #e0e6ed;
+    opacity: 1;
+}
+body.dark .card-divider-full {
+    border-top: 1px solid #192739;
+}
+
+.fiscal-year-text {
+    font-weight: 700;
+    color: #3b3f5c;
+}
+body.dark .fiscal-year-text {
+    color: #e0e6ed;
+}
+body.dark #recently-procured-title {
+    color: #dc3545 !important;
+}
+
+/* ApexCharts Tooltip styling for white text on dark background */
+.apexcharts-tooltip {
+    background: #1b2e4b !important;
+    border: 1px solid #3b3f5c !important;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25) !important;
+}
+
+.apexcharts-tooltip .apexcharts-tooltip-title,
+.apexcharts-tooltip .apexcharts-tooltip-text,
+.apexcharts-tooltip .apexcharts-tooltip-text-label,
+.apexcharts-tooltip .apexcharts-tooltip-text-value,
+.apexcharts-tooltip .apexcharts-tooltip-text-z,
+.apexcharts-tooltip .apexcharts-tooltip-series-group,
+.apexcharts-tooltip span {
+    color: #ffffff !important;
 }

@@ -20,29 +20,54 @@ class DashboardController extends Controller
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $userRole = $activeRole?->gen_role;
 
-        // Get necessary data to render
+                // Get necessary data to render
         $depName = 'N/A';
+        $activeApp = null;
         $departmentBudget = 0;
         $utilizedBudget = 0;
         $fiscalYear = '—';
         $subordinates = collect();
         $activeAppId = null;
+        $recentProcuredItems = collect();
+        $availableYears = collect();
+        $selectedYear = request('year');
 
         if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
             $depName = $activeRole && $activeRole->department ? $activeRole->department->dep_name : ($user->departments()->first()?->dep_name ?? 'N/A');
             $depId = $activeRole ? $activeRole->role_dep_id_fk : ($user->departments()->first()?->dep_id);
 
             if ($depId) {
-                $activeAppId = session('active_app_id_' . $depId);
-                
-                // Fetch active APP of this department from database if none set in session
-                if (!$activeAppId) {
-                    $dbActiveApp = \App\Models\AppParent::where('app_dep_id_fk', $depId)
-                        ->where('is_active', true)
+                // Query all available APP fiscal years for this department
+                $availableYears = \App\Models\AppParent::where('app_dep_id_fk', $depId)
+                    ->whereNotNull('app_year')
+                    ->pluck('app_year')
+                    ->unique()
+                    ->sort()
+                    ->values();
+
+                if ($availableYears->isEmpty()) {
+                    $availableYears = collect([date('Y')]);
+                }
+
+                // If year request parameter is set, find APP of that year. Otherwise, look for session/active APP.
+                if ($selectedYear) {
+                    $targetApp = \App\Models\AppParent::where('app_dep_id_fk', $depId)
+                        ->where('app_year', $selectedYear)
+                        ->orderBy('is_active', 'desc')
                         ->first();
-                    if ($dbActiveApp) {
-                        $activeAppId = $dbActiveApp->app_id;
-                        session(['active_app_id_' . $depId => $activeAppId]);
+                    $activeAppId = $targetApp?->app_id;
+                } else {
+                    $activeAppId = session('active_app_id_' . $depId);
+                    
+                    // Fetch active APP of this department from database if none set in session
+                    if (!$activeAppId) {
+                        $dbActiveApp = \App\Models\AppParent::where('app_dep_id_fk', $depId)
+                            ->where('is_active', true)
+                            ->first();
+                        if ($dbActiveApp) {
+                            $activeAppId = $dbActiveApp->app_id;
+                            session(['active_app_id_' . $depId => $activeAppId]);
+                        }
                     }
                 }
 
@@ -51,12 +76,7 @@ class DashboardController extends Controller
                     $activeApp = $activeAppId ? \App\Models\AppParent::with('appItems')->find($activeAppId) : null;
                     $utilizedBudget = 0.0;
                     if ($activeApp) {
-                        $utilizedBudget = (float) \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($activeAppId) {
-                                $query->where('app_id_fk', $activeAppId);
-                            })
-                            ->whereNotNull('iar_po_items_id_fk')
-                            ->join('po_items_tbl', 'iar_items_tbl.iar_po_items_id_fk', '=', 'po_items_tbl.po_items_id')
-                            ->sum(\Illuminate\Support\Facades\DB::raw('iar_items_tbl.iar_quantity * po_items_tbl.po_items_cost'));
+                        $utilizedBudget = (float) ($activeApp->utilized_budget ?? 0.0);
                     }
                     return compact('activeApp', 'utilizedBudget');
                 });
@@ -65,12 +85,12 @@ class DashboardController extends Controller
                 $utilizedBudget = $budgetData['utilizedBudget'];
 
                 if ($activeApp) {
-                    if (preg_match('/Fiscal Year (\d{4})/i', $activeApp->app_title, $matches)) {
-                        $fiscalYear = $matches[1];
-                    } else {
-                        $fiscalYear = $activeApp->created_at ? \Carbon\Carbon::parse($activeApp->created_at)->format('Y') : '2026';
-                    }
+                    $fiscalYear = $activeApp->app_year ?? '2026';
                     $departmentBudget = $activeApp->app_total ?? $activeApp->appItems->sum('app_items_esti_budget');
+                }
+
+                if (!$selectedYear) {
+                    $selectedYear = $fiscalYear !== '—' ? $fiscalYear : date('Y');
                 }
 
                 if (in_array($userRole, ['Head', 'Procurement', 'Supply'])) {
@@ -89,14 +109,71 @@ class DashboardController extends Controller
                         )
                         ->get();
                 }
+
+                // Query top 5 most recently procured items for the office
+                $recentProcuredItems = \App\Models\Mr::with(['poItem.purchaseOrder'])
+                    ->whereHas('poItem.purchaseOrder.purchaseRequest', function ($query) use ($depId, $activeAppId) {
+                        $query->where('pr_department', $depId);
+                        if ($activeAppId) {
+                            $query->where('app_id_fk', $activeAppId);
+                        }
+                    })
+                    ->orderBy('mr_id', 'desc')
+                    ->take(5)
+                    ->get();
+
+                /* DUMMY DATA FOR TESTING - TO USE REAL DATA, JUST COMMENT OUT THIS BLOCK */
+                // $recentProcuredItems = collect([
+                //     (object)[
+                //         'item_name' => 'Premium Ergonomic Mesh Chair',
+                //         'quantity' => 2,
+                //         'poItem' => (object)[
+                //             'po_items_cost' => 6499.00,
+                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0038']
+                //         ]
+                //     ],
+                //     (object)[
+                //         'item_name' => 'LED Multimedia Projector 4K',
+                //         'quantity' => 1,
+                //         'poItem' => (object)[
+                //             'po_items_cost' => 24500.00,
+                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0042']
+                //         ]
+                //     ],
+                //     (object)[
+                //         'item_name' => 'High-Speed Wireless Router',
+                //         'quantity' => 3,
+                //         'poItem' => (object)[
+                //             'po_items_cost' => 4200.00,
+                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0035']
+                //         ]
+                //     ],
+                //     (object)[
+                //         'item_name' => 'Office Whiteboard (4x3 ft)',
+                //         'quantity' => 1,
+                //         'poItem' => (object)[
+                //             'po_items_cost' => 3200.00,
+                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0029']
+                //         ]
+                //     ],
+                //     (object)[
+                //         'item_name' => 'Heavy-Duty Paper Shredder',
+                //         'quantity' => 1,
+                //         'poItem' => (object)[
+                //             'po_items_cost' => 8950.00,
+                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0021']
+                //         ]
+                //     ]
+                // ]);
+                /* END OF DUMMY DATA */
             }
         }
 
         // Redirect user based on role
         return match ($userRole) {
-            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
-            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
-            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId')),
+            'Head'        => view('head/pages/head-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId', 'recentProcuredItems', 'availableYears', 'selectedYear', 'activeApp')),
+            'Procurement' => view('procurement/pages/procurement-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId', 'recentProcuredItems', 'availableYears', 'selectedYear', 'activeApp')),
+            'Supply'      => view('supply/pages/supply-dashboard', compact('depName', 'departmentBudget', 'fiscalYear', 'subordinates', 'utilizedBudget', 'activeAppId', 'recentProcuredItems', 'availableYears', 'selectedYear', 'activeApp')),
             default       => view('errors.403'),
         };
     }
