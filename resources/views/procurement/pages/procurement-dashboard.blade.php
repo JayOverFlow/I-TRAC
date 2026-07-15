@@ -4,4 +4,4 @@
 {{-- Define contents to show in the layout --}}
 @section('title', 'Dashboard | I-TRAC')
 
-@include('general-pages.dashboard')
+@include('general-pages.dashboard', ['isHead' => true])

@@ -26,6 +26,7 @@ class AppParent extends Model
         'app_total',
         'utilized_budget',
         'is_active',
+        'app_year',
     ];
 
     protected $casts = [
