@@ -116,7 +116,11 @@
                             data-item-images="{{ json_encode($images) }}"
                             data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}">
                             <td class="text-center">{{ $item->mr_qr_code }}</td>
-                            <td>{{ $item->item_name }}</td>
+                            <td>
+                                @if (in_array($item->status, ['Serviceable', 'Unserviceable', 'Missing']))
+                                    <span class="d-inline-block rounded-circle me-2" style="width: 8px; height: 8px; vertical-align: middle; background-color: {{ ['Serviceable' => '#00ab55', 'Unserviceable' => '#e7515a', 'Missing' => '#888ea8'][$item->status] }};" title="{{ $item->status }}"></span>
+                                @endif{{ $item->item_name }}
+                            </td>
                             <td>{{ $item->assignedUser?->user_fullname ?? '—' }}</td>
                             <td class="text-center">{{ $item->assignedUser?->departments->first()?->dep_name ?? '—' }}</td>
                             <td class="text-center">
