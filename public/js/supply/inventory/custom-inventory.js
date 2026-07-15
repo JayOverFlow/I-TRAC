@@ -355,6 +355,9 @@ $(document).ready(function () {
         // Prevent click events if selecting text
         if (window.getSelection().toString()) return;
 
+        // Skip details modal if clicking the action menu / dropdown
+        if ($(e.target).closest('.action-dropdown-menu').length) return;
+
         var $row = $(this);
 
         // Extract data attributes
@@ -1015,6 +1018,44 @@ $(document).ready(function () {
             onCancel: function () {
                 $('#detailItemStatus').val(previousStatus);
                 updateStatusClass(previousStatus);
+            }
+        });
+    });
+
+    // Handle Transfer action from the row menu
+    $(document).on('click', '.btn-transfer-action', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var mrId = $(this).data('mr-id');
+        var itemName = $(this).data('item-name');
+        
+        window.confirmAction({
+            title: 'Transfer Item?',
+            text: 'Are you sure you want to transfer "' + itemName + '"?',
+            icon: 'question',
+            confirmButtonText: 'Transfer',
+            cancelButtonText: 'Cancel',
+            onConfirm: function () {
+                // Do not make any function that will trigger when confirmed for now
+            }
+        });
+    });
+
+    // Handle Condemn action from the row menu
+    $(document).on('click', '.btn-condemn-action', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var mrId = $(this).data('mr-id');
+        var itemName = $(this).data('item-name');
+
+        window.confirmAction({
+            title: 'Condemn Item?',
+            text: 'Are you sure you want to condemn "' + itemName + '"? This action cannot be undone.',
+            icon: 'warning',
+            confirmButtonText: 'Condemn',
+            cancelButtonText: 'Cancel',
+            onConfirm: function () {
+                // Do not make any function that will trigger when confirmed for now
             }
         });
     });

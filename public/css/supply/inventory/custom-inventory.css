@@ -959,3 +959,82 @@ body.dark #detailItemStatus.status-unserviceable {
 body.dark #detailItemStatus.status-missing {
     color: #888ea8 !important;
 }
+
+.col-w-5 {
+    width: 5% !important;
+}
+
+.no-caret::after {
+    display: none !important;
+}
+
+/* Custom action dropdown positioning and aesthetics */
+.action-dropdown-menu .dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    min-width: 120px;
+    padding: 4px 0;
+}
+
+body.dark .action-dropdown-menu .dropdown-menu {
+    background-color: #1b2e4b;
+    border-color: #3b3f5c;
+}
+
+.action-dropdown-menu .dropdown-item {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3b3f5c;
+}
+
+body.dark .action-dropdown-menu .dropdown-item {
+    color: #e0e6ed;
+}
+
+.action-dropdown-menu .dropdown-item:hover {
+    background-color: #f1f2f3;
+}
+
+body.dark .action-dropdown-menu .dropdown-item:hover {
+    background-color: #0e1726;
+}
+
+.action-dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: rgba(231, 81, 90, 0.1) !important;
+}
+
+/* Styled action dropdown toggle button */
+.action-dropdown-menu .dropdown-toggle {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.dark .action-dropdown-menu .dropdown-toggle {
+    color: #ffffff !important;
+}
+
+.action-dropdown-menu .dropdown-toggle:hover,
+.action-dropdown-menu .dropdown-toggle:focus,
+.action-dropdown-menu .dropdown-toggle:active,
+.action-dropdown-menu .dropdown-toggle.show {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+}
+
+body.dark .action-dropdown-menu .dropdown-toggle:hover,
+body.dark .action-dropdown-menu .dropdown-toggle:focus,
+body.dark .action-dropdown-menu .dropdown-toggle:active,
+body.dark .action-dropdown-menu .dropdown-toggle.show {
+    color: #ffffff !important;
+}
