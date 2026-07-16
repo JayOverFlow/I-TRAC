@@ -17,6 +17,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PrPreviewController;
 use App\Http\Controllers\PoReviewController;
 use App\Http\Controllers\DeliveryAttachmentController;
+use App\Http\Controllers\TransferItemController;
 use App\Http\Controllers\Admin\AdminRolesOfficesController;
 use App\Http\Controllers\Admin\AdminRolesAssignmentController;
 use App\Http\Controllers\Admin\AdminActivityLogController;
@@ -92,6 +93,12 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::get('/delivery-attachment/rspi/{rspi_id}/export', 'exportRspi')->name('export.rspi.pdf');
         Route::post('/delivery-attachment/par/{par_id}/save', 'savePar')->name('save.par');
         Route::get('/delivery-attachment/par/{par_id}/export', 'exportPar')->name('export.par.pdf');
+    });
+
+    Route::controller(TransferItemController::class)->group(function () {
+        Route::post('/inventory/transfer/{mr_id}', 'transferItem')->name('inventory.transfer');
+        Route::post('/delivery-attachment/ics/{ics_id}/transfer', 'transferIcsSubmit')->name('transfer.ics.submit');
+        Route::post('/delivery-attachment/par/{par_id}/transfer', 'transferParSubmit')->name('transfer.par.submit');
     });
 
     Route::controller(InventoryController::class)->group(function () {

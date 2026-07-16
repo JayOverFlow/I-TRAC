@@ -41,11 +41,13 @@ class DeliveryAttachmentController extends Controller
             'icsSlips.icsItems.icsSpecs',
             'icsSlips.receiver.departments',
             'icsSlips.giver',
+            'icsSlips.mr.assignedUser',
             'rspiReports.rspiItems.rspiSpecs',
             'rspiReports.user',
             'parReceipts.parItems.parSpecs',
             'parReceipts.receiver.departments',
             'parReceipts.issuer',
+            'parReceipts.mr.assignedUser',
             'ndrReports.ndrItems.ndrSpecs',
             'ndrReports.reporter'
         ])->findOrFail($po_id);
@@ -210,27 +212,29 @@ class DeliveryAttachmentController extends Controller
         ])->findOrFail($par_id);
 
         DB::transaction(function () use ($par) {
-            foreach ($par->parItems as $item) {
-                if ($item->par_po_items_id_fk) {
-                    if ($item->poItem) {
-                        if (!Mr::where('par_item_id_fk', $item->par_items_id)->exists()) {
-                            do {
-                                $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
-                            } while (Mr::where('mr_qr_code', $qrCode)->exists());
+            if (!$par->is_transfer) {
+                foreach ($par->parItems as $item) {
+                    if ($item->par_po_items_id_fk) {
+                        if ($item->poItem) {
+                            if (!Mr::where('par_item_id_fk', $item->par_items_id)->exists()) {
+                                do {
+                                    $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+                                } while (Mr::where('mr_qr_code', $qrCode)->exists());
 
-                            Mr::create([
-                                'par_item_id_fk'=> $item->par_items_id,
-                                'po_item_id_fk' => $item->par_po_items_id_fk,
-                                'mr_qr_code'    => $qrCode,
-                                'item_name'     => $item->par_items_descrip,
-                                'specification' => $item->parSpecs->pluck('par_spec_description')->filter()->implode("\n"),
-                                'quantity'      => $item->par_quantity,
-                                'unit'          => $item->par_unit,
-                                'stock'         => $item->par_property_no,
-                                'is_assigned'   => 0,
-                                'assigned_to'   => null,
-                                'category'      => 'Equipment',
-                            ]);
+                                Mr::create([
+                                    'par_item_id_fk'=> $item->par_items_id,
+                                    'po_item_id_fk' => $item->par_po_items_id_fk,
+                                    'mr_qr_code'    => $qrCode,
+                                    'item_name'     => $item->par_items_descrip,
+                                    'specification' => $item->parSpecs->pluck('par_spec_description')->filter()->implode("\n"),
+                                    'quantity'      => $item->par_quantity,
+                                    'unit'          => $item->par_unit,
+                                    'stock'         => $item->par_property_no,
+                                    'is_assigned'   => 0,
+                                    'assigned_to'   => null,
+                                    'category'      => 'Equipment',
+                                ]);
+                            }
                         }
                     }
                 }
