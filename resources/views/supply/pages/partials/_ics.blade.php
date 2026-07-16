@@ -36,7 +36,7 @@
                         <fieldset @if($ics->is_transfer) disabled @endif>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">Fund Cluster:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">Fund Cluster: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($ics->is_transfer)
@@ -63,7 +63,7 @@
                         <fieldset @if($ics->is_transfer) disabled @endif>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">ICS No.:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">ICS No.: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($ics->is_transfer)
@@ -76,7 +76,7 @@
                             </div>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">Code No:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">Code No: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($ics->is_transfer)
@@ -112,7 +112,7 @@
                             </div>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">Date:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($ics->is_transfer)
@@ -162,7 +162,7 @@
                         </div>
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Date:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 @if($ics->is_transfer && !is_null($ics->ics_received_by))
@@ -181,12 +181,12 @@
                     <table class="table table-sm table-borderless align-middle">
                         <thead class="bg-transparent">
                             <tr>
-                                <th class="text-center black-text fw-bold" style="width: 5%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Total Cost</th>
-                                <th class="black-text fw-bold">Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 15%">Inventory Item No.</th>
+                                <th class="text-center black-text fw-bold" style="width: 5%">Qty.<span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 10%">Unit <span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 10%">Unit Cost <span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 10%">Total Cost <span class="text-danger">*</span></th>
+                                <th class="black-text fw-bold">Description <span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 15%">Inventory Item No. <span class="text-danger">*</span></th>
                                 <th class="text-center black-text fw-bold" style="width: 15%">Estimated Useful Time</th>
                                 <th class="" style="width: 2%"></th>
                             </tr>
@@ -284,7 +284,7 @@
                                         <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
                                             style="cursor: pointer;">
                                             <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
-                                                Specification</div>
+                                                Specification <span class="text-danger">*</span></div>
                                             <div class="d-flex align-items-center pe-3">
                                                 @if(!$ics->is_transfer)
                                                 <button type="button" class="btn-close btn-sm remove-specification-btn me-2"

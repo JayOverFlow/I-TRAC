@@ -117,7 +117,7 @@
 
                             <div class="row mb-3">
                                 <div class="form-group col-4">
-                                    <label>Project Title</label>
+                                    <label>Project Title <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="items[{{ $index }}][proj_title]"
                                         data-field="proj_title" value="{{ $item->app_item_proj_title }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
@@ -155,7 +155,7 @@
                                 </div>
 
                                 <div class="form-group col-4">
-                                    <label>To be covered by an Early Procurement Activity</label>
+                                    <label>To be covered by an Early Procurement Activity <span class="text-danger">*</span></label>
                                     <span class="field-error d-none"></span>
                                     <div class="mt-4 d-flex justify-content-center" data-field="covered">
                                         <input class="form-check-input" type="radio" name="items[{{ $index }}][covered]"
@@ -176,14 +176,14 @@
 
                             <div class="row mb-3">
                                 <div class="form-group col-3">
-                                    <label>Start of Procurement Activity</label>
+                                    <label>Start of Procurement Activity <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control flatpickr-date" name="items[{{ $index }}][start]"
                                         data-field="start" placeholder="Select Date" value="{{ $item->app_items_start ? \Carbon\Carbon::parse($item->app_items_start)->format('Y-m-d') : '' }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>
                                 </div>
 
                                 <div class="form-group col-3">
-                                    <label>End of Procurement Activity</label>
+                                    <label>End of Procurement Activity <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control flatpickr-date" name="items[{{ $index }}][end]"
                                         data-field="end" placeholder="Select Date" value="{{ $item->app_items_end }}" {{ $isItemLocked ? 'disabled' : '' }}>
                                     <span class="field-error d-none"></span>

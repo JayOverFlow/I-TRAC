@@ -105,7 +105,7 @@
                                          {{-- First Name --}}
                                          <div class="d-flex align-items-center mb-2">
                                              <label for="first-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                 First Name *
+                                                 First Name <span class="text-danger">*</span>
                                              </label>
  
                                              <div class="invalid-feedback ms-2 mt-0">
@@ -131,7 +131,7 @@
                                          {{-- Last Name --}}
                                          <div class="d-flex align-items-center mb-2">
                                              <label for="last-name" class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                 Last Name *
+                                                 Last Name <span class="text-danger">*</span>
                                              </label>
  
                                              <div class="invalid-feedback ms-2 mt-0">
@@ -162,7 +162,7 @@
                                                  <div class="d-flex align-items-center mb-2">
                                                      <label for="tup-id"
                                                          class="form-label mb-0 flex-shrink-0 text-nowrap">
-                                                         TUPT-ID *
+                                                         TUPT-ID <span class="text-danger">*</span>
                                                      </label>
  
                                                      <div class="invalid-feedback ms-2 mt-0">
@@ -191,7 +191,7 @@
                                         {{-- TUP Email --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="email"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Email *</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Email <span class="text-danger">*</span></label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the email field</div>
                                         </div>
                                         <input type="email" class="form-control mb-2" id="email" name="email"
@@ -200,7 +200,7 @@
                                         {{-- Contact Number --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="contact-no"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Contact Number *</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Contact Number <span class="text-danger">*</span></label>
                                             <div class="invalid-feedback ms-2 mt-0">Please enter a valid 11-digit contact number starting with 09</div>
                                         </div>
                                         <input type="text" class="form-control mb-2" id="contact-no" name="contact_no"
@@ -209,7 +209,7 @@
                                         {{-- Password --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="password"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Password *</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Password <span class="text-danger">*</span></label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the password field</div>
                                         </div>
                                         <div class="password-field mb-2">
@@ -221,7 +221,7 @@
                                         {{-- Confirm Password --}}
                                         <div class="d-flex align-items-center mb-2">
                                             <label for="confirm-password"
-                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm Password *</label>
+                                                class="form-label mb-0 flex-shrink-0 text-nowrap">Confirm Password <span class="text-danger">*</span></label>
                                             <div class="invalid-feedback ms-2 mt-0">Please fill the confirm password
                                                 field</div>
                                         </div>
@@ -235,7 +235,7 @@
                                             <div class="col-6">
                                                 {{-- User Type --}}
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <label class="form-label mb-0 flex-shrink-0 text-nowrap">User Type *</label>
+                                                    <label class="form-label mb-0 flex-shrink-0 text-nowrap">User Type <span class="text-danger">*</span></label>
                                                     <div class="invalid-feedback ms-2 mt-0">Please choose your user type
                                                     </div>
                                                 </div>
@@ -261,7 +261,7 @@
                                                  {{-- Department/Office --}}
                                                  <div class="d-flex align-items-center mb-2">
                                                      <label for="department"
-                                                         class="form-label mb-0 flex-shrink-0 text-nowrap">Department/Office *</label>
+                                                         class="form-label mb-0 flex-shrink-0 text-nowrap">Department/Office <span class="text-danger">*</span></label>
                                                      <div class="invalid-feedback ms-2 mt-0">Select Department/Office
                                                     </div>
                                                 </div>

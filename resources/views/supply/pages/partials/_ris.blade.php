@@ -54,12 +54,12 @@
                 <div class="row g-4 ms-3 mt-0 mb-1">
                     <div class="col-md-6">
                         <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
+                            <h6 class="mb-2 black-text fw-bold">Fund Cluster: <span class="text-danger">*</span></h6>
                             <input type="text" name="ris_fund_cluster" value="{{ $ris->ris_fund_cluster }}" class="form-control form-control-sm ms-2 w-75">
                             <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_fund_cluster"></span>
                         </div>
                         <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">RIS Number:</h6>
+                            <h6 class="mb-2 black-text fw-bold">RIS Number: <span class="text-danger">*</span></h6>
                             <input type="text" name="ris_no" value="{{ $ris->ris_no }}" class="form-control form-control-sm ms-2 w-75">
                             <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_no"></span>
                         </div>
@@ -67,7 +67,7 @@
 
                     <div class="col-md-6">
                         <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
+                            <h6 class="mb-2 black-text fw-bold">Responsibility Center Code: <span class="text-danger">*</span></h6>
                             <input type="text" name="ris_center_code" value="{{ $ris->ris_center_code }}"
                                 class="form-control form-control-sm ms-2 mb-2 w-75">
                             <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_center_code"></span>
@@ -88,7 +88,7 @@
                                 <input type="hidden" name="ris_received_by" value="{{ $ris->receiver ? $ris->receiver->user_id : '' }}">
                                 <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_received_by"></span>
                             @else
-                                <h6 class="mb-2 black-text fw-bold">Received by:</h6>
+                                <h6 class="mb-2 black-text fw-bold">Received by: <span class="text-danger">*</span></h6>
                                 <select class="form-select form-select-sm ms-2 w-75" name="ris_received_by">
                                     <option value="">Select User</option>
                                     @if($ris->department)
@@ -108,7 +108,7 @@
 
                     <div class="col-md-6">
                         <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Date:</h6>
+                            <h6 class="mb-2 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                             <input type="text" name="ris_received_date" value="{{ $ris->ris_received_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
                             <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ris_received_date"></span>
                         </div>
@@ -125,12 +125,12 @@
                         <thead class="bg-transparent">
                             <tr>
                                 <th class="text-center black-text fw-bold" style="width: 12%">Stock No.</th>
-                                <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                <th class="black-text fw-bold" style="width: 38%">Description</th>
+                                <th class="text-center black-text fw-bold" style="width: 12%">Unit <span class="text-danger">*</span></th>
+                                <th class="black-text fw-bold" style="width: 38%">Description <span class="text-danger">*</span></th>
                                 <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
                                 <th class="text-center black-text fw-bold" style="width: 2%">Yes</th>
                                 <th class="text-center black-text fw-bold" style="width: 2%">No</th>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
+                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.<span class="text-danger">*</span></th>
                                 <th class="text-center black-text fw-bold" style="width: 18%">Remarks</th>
                                 <th class="" style="width: 2%"></th>
                             </tr>
@@ -212,7 +212,7 @@
                                         <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
                                             style="cursor: pointer;">
                                             <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
-                                                Specification</div>
+                                                Specification <span class="text-danger">*</span></div>
                                             <div class="d-flex align-items-center pe-3">
                                                 <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
                                                     aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
