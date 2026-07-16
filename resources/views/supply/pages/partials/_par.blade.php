@@ -36,7 +36,7 @@
                         <fieldset @if($par->is_transfer) disabled @endif>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">Fund Cluster:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">Fund Cluster: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($par->is_transfer)
@@ -63,7 +63,7 @@
                         <fieldset @if($par->is_transfer) disabled @endif>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">PAR No.:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">PAR No.: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($par->is_transfer)
@@ -76,7 +76,7 @@
                             </div>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">Code:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">Code: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($par->is_transfer)
@@ -127,7 +127,7 @@
                         </div>
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Date:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 @if($par->is_transfer && !is_null($par->par_received_by))
@@ -160,7 +160,7 @@
                             </div>
                             <div class="row align-items-center mb-3">
                                 <div class="col-4">
-                                    <h6 class="mb-0 black-text fw-bold">Date:</h6>
+                                    <h6 class="mb-0 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                                 </div>
                                 <div class="col-8">
                                     @if($par->is_transfer)
@@ -179,11 +179,11 @@
                     <table class="table table-sm table-borderless align-middle">
                         <thead class="bg-transparent">
                             <tr>
-                                <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                <th class="text-center black-text fw-bold" style="width: 10%">Unit</th>
-                                <th class="black-text fw-bold">Description</th>
-                                <th class="text-center black-text fw-bold" style="width: 15%">Property No.</th>
-                                <th class="text-center black-text fw-bold" style="width: 15%">Date Required</th>
+                                <th class="text-center black-text fw-bold" style="width: 8%">Qty. <span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 10%">Unit <span class="text-danger">*</span></th>
+                                <th class="black-text fw-bold">Description <span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 15%">Property No. <span class="text-danger">*</span></th>
+                                <th class="text-center black-text fw-bold" style="width: 15%">Date Acquired<span class="text-danger">*</span></th>
                                 <th class="text-center black-text fw-bold" style="width: 12%">Amount</th>
                                 <th class="" style="width: 2%"></th>
                             </tr>
@@ -278,7 +278,7 @@
                                         <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
                                             style="cursor: pointer;">
                                             <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
-                                                Specification</div>
+                                                Specification <span class="text-danger">*</span></div>
                                             <div class="d-flex align-items-center pe-3">
                                                 <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
                                                     aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
