@@ -45,9 +45,11 @@ $(document).ready(function () {
         var tbody = $(this).closest('.card').find('tbody');
         var firstRow = tbody.find('tr.pr-item-row').first();
         var firstDescRow = tbody.find('tr.pr-specification-row').first();
+        var firstRemarksRow = tbody.find('tr.pr-remarks-row').first();
 
         var newRow = firstRow.clone();
         var newDescRow = firstDescRow.clone();
+        var newRemarksRow = firstRemarksRow.clone();
 
         // Generate a unique index for new rows to prevent overwriting in POST
         var newIndex = 'new_' + Date.now() + Math.floor(Math.random() * 1000);
@@ -65,8 +67,15 @@ $(document).ready(function () {
             $(this).attr('name', newName);
         });
 
+        newRemarksRow.find('[name*="items["]').each(function () {
+            var name = $(this).attr('name');
+            var newName = name.replace(/items\[\s*\d+\s*\]/, 'items[' + newIndex + ']');
+            $(this).attr('name', newName);
+        });
+
         // Clear inputs in basic row
         newRow.find('input').not('[name*="app_item_id"]').val('');
+        newRow.find('input').attr('data-org-value', '');
         newRow.find('select').prop('selectedIndex', 0);
         newRow.find('.amount-display').text('₱ 0.00').attr('data-amount', 0);
 
@@ -75,9 +84,13 @@ $(document).ready(function () {
 
         // Reset specification state
         newDescRow.addClass('d-none');
-        newDescRow.find('textarea').val('');
+        newDescRow.find('textarea').val('').attr('data-org-value', '');
         newDescRow.find('.specification-body').show();
         newDescRow.find('.specification-arrow').css('transform', 'rotate(180deg)');
+
+        // Reset remarks state
+        newRemarksRow.addClass('d-none');
+        newRemarksRow.find('textarea').val('').attr('data-org-value', '');
 
         // Clear error states on cloned rows
         newRow.find('.is-invalid').removeClass('is-invalid');
@@ -87,6 +100,7 @@ $(document).ready(function () {
 
         tbody.append(newRow);
         tbody.append(newDescRow);
+        tbody.append(newRemarksRow);
         updateTotals();
     });
 
@@ -94,24 +108,30 @@ $(document).ready(function () {
     $(document).on('click', '.remove-row-btn', function () {
         var row = $(this).closest('tr.pr-item-row');
         var specificationRow = row.next('.pr-specification-row');
+        var remarksRow = specificationRow.next('.pr-remarks-row');
         var tbody = row.closest('tbody');
         var remainingRows = tbody.find('tr.pr-item-row');
 
         if (remainingRows.length <= 1) {
             // Clear fields of the remaining one row
             row.find('input').not('[name*="app_item_id"]').val('');
+            row.find('input').attr('data-org-value', '');
             row.find('.amount-display').text('₱ 0.00').attr('data-amount', 0);
             row.find('.is-invalid').removeClass('is-invalid');
             row.find('.field-error').text('').addClass('d-none');
 
-            specificationRow.find('textarea').val('');
+            specificationRow.find('textarea').val('').attr('data-org-value', '');
             specificationRow.addClass('d-none');
             specificationRow.find('.is-invalid').removeClass('is-invalid');
             specificationRow.find('.field-error').text('').addClass('d-none');
+
+            remarksRow.find('textarea').val('').attr('data-org-value', '');
+            remarksRow.addClass('d-none');
         } else {
             // Remove the row
             row.remove();
             specificationRow.remove();
+            remarksRow.remove();
         }
         updateTotals();
     });
@@ -303,6 +323,35 @@ $(document).ready(function () {
         if (totalAmount > allocatedBudget) {
             showToast('The total amount of the Purchase Request (PHP ' + totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ') exceeds the allocated budget of PHP ' + allocatedBudget.toLocaleString('en-US', { minimumFractionDigits: 2 }), 'error');
             return;
+        }
+
+        // Validate remarks if this is the Head's edit view and the intent is submit/export
+        var canHeadEdit = $('#pr-form').attr('data-can-head-edit') === 'true';
+        if (canHeadEdit && intent === 'submit') {
+            var remarksMissing = false;
+            $('.pr-remarks-row').each(function () {
+                // If this remarks row is visible, it means the item has modifications
+                if (!$(this).hasClass('d-none')) {
+                    var textarea = $(this).find('.remarks-input');
+                    if (!textarea.val().trim()) {
+                        remarksMissing = true;
+                        textarea.addClass('is-invalid');
+                        $(this).find('.field-error').text('Remarks are required for modified items.').removeClass('d-none');
+                    }
+                }
+            });
+
+            if (remarksMissing) {
+                showToast('Remarks are required for all modified items.', 'error');
+                // Scroll to the first error field
+                var firstInvalid = $('#pr-form .is-invalid').first();
+                if (firstInvalid.length) {
+                    $('html, body').animate({
+                        scrollTop: firstInvalid.offset().top - 150
+                    }, 500);
+                }
+                return;
+            }
         }
 
         var form = document.getElementById('pr-form');
@@ -688,4 +737,137 @@ $(document).ready(function () {
         });
     })();
     // ─── End stepper polling ──────────────────────────────────────────────
+
+    // ─── PR Remarks on Head Edit Change Detection ─────────────────────────
+    var canHeadEdit = $('#pr-form').attr('data-can-head-edit') === 'true';
+    if (canHeadEdit) {
+        function checkRowModification(itemRow) {
+            var specRow = itemRow.next('.pr-specification-row');
+            var remarksRow = specRow.next('.pr-remarks-row');
+            
+            if (!remarksRow.length) return;
+
+            var isModified = false;
+
+            // Check unit
+            var unitInput = itemRow.find('[data-field="unit"]');
+            if (unitInput.length && (unitInput.val() || '') !== (unitInput.attr('data-org-value') || '')) {
+                isModified = true;
+            }
+
+            // Check description
+            var descInput = itemRow.find('[data-field="description"]');
+            if (descInput.length && (descInput.val() || '') !== (descInput.attr('data-org-value') || '')) {
+                isModified = true;
+            }
+
+            // Check quantity
+            var qtyInput = itemRow.find('[data-field="quantity"]');
+            var currentQty = qtyInput.val() || '';
+            var orgQty = qtyInput.attr('data-org-value') || '';
+            if (qtyInput.length) {
+                if (currentQty !== orgQty && (parseFloat(currentQty) !== parseFloat(orgQty))) {
+                    if (currentQty !== '' || orgQty !== '') {
+                        isModified = true;
+                    }
+                }
+            }
+
+            // Check cost
+            var costInput = itemRow.find('[data-field="cost"]');
+            var currentCost = costInput.val() || '';
+            var orgCost = costInput.attr('data-org-value') || '';
+            if (costInput.length) {
+                if (currentCost !== orgCost && (parseFloat(currentCost) !== parseFloat(orgCost))) {
+                    if (currentCost !== '' || orgCost !== '') {
+                        isModified = true;
+                    }
+                }
+            }
+
+            // Check specification
+            var specTextarea = specRow.find('[data-field="specification"]');
+            if (specTextarea.length && (specTextarea.val() || '') !== (specTextarea.attr('data-org-value') || '')) {
+                isModified = true;
+            }
+
+            if (isModified) {
+                remarksRow.removeClass('d-none');
+            } else {
+                remarksRow.addClass('d-none');
+                remarksRow.find('.remarks-input').val('');
+            }
+        }
+
+        // Listen to changes on inputs in the item row and specification row
+        $(document).on('input change', 'tr.pr-item-row input, tr.pr-specification-row textarea', function () {
+            var input = $(this);
+            var itemRow;
+            if (input.closest('tr').hasClass('pr-item-row')) {
+                itemRow = input.closest('tr');
+            } else {
+                itemRow = input.closest('tr').prev('tr.pr-item-row');
+            }
+            checkRowModification(itemRow);
+        });
+
+        // Handle when a specification is removed via the close button
+        $(document).on('click', '.remove-specification-btn', function () {
+            var specRow = $(this).closest('tr.pr-specification-row');
+            var itemRow = specRow.prev('tr.pr-item-row');
+            setTimeout(function () {
+                checkRowModification(itemRow);
+            }, 50);
+        });
+
+        // Handle the undo/revert action for modified items
+        $(document).on('click', '.revert-item-btn', function (e) {
+            e.preventDefault();
+            var remarksRow = $(this).closest('.pr-remarks-row');
+            var specRow = remarksRow.prev('.pr-specification-row');
+            var itemRow = specRow.prev('tr.pr-item-row');
+
+            // Revert all inputs in the item row to their original values and trigger input/change
+            itemRow.find('input[data-org-value]').each(function () {
+                var orgVal = $(this).attr('data-org-value') || '';
+                $(this).val(orgVal).removeClass('is-invalid');
+            });
+            itemRow.find('.field-error').addClass('d-none').text('');
+
+            // Revert the specification textarea to its original value
+            var specTextarea = specRow.find('textarea[data-org-value]');
+            if (specTextarea.length) {
+                var specOrgVal = specTextarea.attr('data-org-value') || '';
+                specTextarea.val(specOrgVal).removeClass('is-invalid');
+                // If the original specification was empty, hide the specification body and collapse/reset the card arrow
+                if (!specOrgVal) {
+                    specRow.find('.specification-body').hide();
+                    specRow.find('.specification-arrow').removeClass('open');
+                } else {
+                    specRow.find('.specification-body').show();
+                    specRow.find('.specification-arrow').addClass('open');
+                }
+            }
+            specRow.find('.field-error').addClass('d-none').text('');
+
+            // Clear the remarks textarea, hide error state, and hide the remarks row
+            var remarksTextarea = remarksRow.find('.remarks-input');
+            remarksTextarea.val('').removeClass('is-invalid');
+            remarksRow.find('.field-error').text('').addClass('d-none');
+            remarksRow.addClass('d-none');
+
+            // Recalculate amount and totals
+            var qtyInput = itemRow.find('.qty-input');
+            var costInput = itemRow.find('.cost-input');
+            var amountInput = itemRow.find('.amount-input');
+            
+            var qty = parseFloat(qtyInput.val()) || 0;
+            var cost = parseFloat(costInput.val()) || 0;
+            var amount = qty * cost;
+            amountInput.val(amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            
+            updateTotals();
+        });
+    }
 });
+

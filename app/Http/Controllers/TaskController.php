@@ -43,12 +43,14 @@ class TaskController extends Controller
             // For Head, Procurement, and Supply roles, view all tasks in their department
             $tasksQuery = \App\Models\Task::with(['assignedBy', 'assignedTo', 'purchaseRequest', 'appItems'])
                 ->where('is_deleted', 0)
-                ->where('task_dep_id_fk', $depId);
+                ->where('task_dep_id_fk', $depId)
+                ->whereIn('task_type', ['PR Assignment', 'Purchase Request']);
         } else {
             // For standard/unassigned users, only show tasks assigned to them, scoped to their active department
             $tasksQuery = \App\Models\Task::with(['assignedBy', 'assignedTo', 'purchaseRequest', 'appItems'])
                 ->where('is_deleted', 0)
-                ->where('assigned_to', $user->user_id);
+                ->where('assigned_to', $user->user_id)
+                ->whereIn('task_type', ['PR Assignment', 'Purchase Request']);
 
             if ($depId) {
                 $tasksQuery->where('task_dep_id_fk', $depId);
