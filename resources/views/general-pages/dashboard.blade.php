@@ -31,7 +31,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($subordinates as $sub)
+                            @foreach($subordinates as $sub)
                                 <tr>
                                     <td class="align-middle">{{ $sub->user_tupid }}</td>
                                     <td class="align-middle">{{ $sub->user_firstname }}</td>
@@ -52,11 +52,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center">No subordinates found.</td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -281,7 +277,7 @@
         });
 
         @if(isset($isHead) && $isHead)
-        document.addEventListener("DOMContentLoaded", function() {
+        (function() {
             var options = {
                 chart: {
                     type: 'donut',
@@ -289,7 +285,11 @@
                     height: '100%',
                     parentHeightOffset: 0
                 },
-                @if($utilizedBudget > 0)
+                @if($departmentBudget == 0)
+                    series: [1],
+                    labels: ['No Budget yet'],
+                    colors: [document.body.classList.contains('dark') ? '#192739' : '#e0e6ed'],
+                @elseif($utilizedBudget > 0)
                     series: [{{ (float)($departmentBudget - $utilizedBudget) }}, {{ (float)$utilizedBudget }}],
                     labels: ['Remaining Budget', 'Utilized Budget'],
                     colors: ['#e2a03f', '#a30000'],
@@ -324,6 +324,10 @@
                     theme: document.body.classList.contains('dark') ? 'dark' : 'light',
                     y: {
                         formatter: function (val) {
+                            var isZeroBudget = {{ $departmentBudget == 0 ? 'true' : 'false' }};
+                            if (isZeroBudget) {
+                                return '₱0.00';
+                            }
                             return '₱' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         }
                     }
@@ -335,7 +339,7 @@
                 var chart = new ApexCharts(chartEl, options);
                 chart.render();
             }
-        });
+        })();
         @endif
     </script>
 
