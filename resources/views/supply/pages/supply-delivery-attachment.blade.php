@@ -486,7 +486,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>ICS - Transfer ({{ $ics->receiver->user_fullname ?? 'User' }})</p>
+                                                <p>ICS {{ $ics->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
                                         @foreach($transferParReceipts as $par)
@@ -498,7 +498,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>PAR - Transfer ({{ $par->receiver->user_fullname ?? 'User' }})</p>
+                                                <p>PAR - {{ $par->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
                                     </ul>

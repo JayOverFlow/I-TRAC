@@ -5,7 +5,7 @@
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body px-0 pb-0">
                 <div class="d-flex justify-content-between align-items-center mb-3 px-3">
-                    <h5 class="fw-bold red-text-2 ms-1 mb-0">{{ $ics->is_transfer ? 'ICS - Transfer Form' : 'Inventory Custodian Slip' }}</h5>
+                    <h5 class="fw-bold red-text-2 ms-1 mb-0">Inventory Custodian Slip</h5>
                     <div class="">
                         @if($ics->is_transfer)
                             @if(is_null($ics->ics_received_by))
@@ -119,7 +119,7 @@
                                         <p class="mb-0">{{ $ics->ics_received_from_date }}</p>
                                     @else
                                         <input type="text" class="form-control form-control-sm w-75 flatpickr" name="ics_received_from_date" value="{{ $ics->ics_received_from_date }}"
-                                            placeholder="Select Date..">
+                                            placeholder="Select Date">
                                         <span class="invalid-feedback field-error d-none" data-valmsg-for="ics_received_from_date"></span>
                                     @endif
                                 </div>
@@ -144,7 +144,7 @@
                                 @if($ics->is_transfer)
                                     @if(is_null($ics->ics_received_by))
                                         <select name="ics_received_by" class="form-select form-select-sm ms-2 w-75">
-                                            <option value="">Select User...</option>
+                                            <option value="">Select User</option>
                                             @foreach($users as $user)
                                                 <option value="{{ $user->user_id }}" {{ $ics->ics_received_by == $user->user_id ? 'selected' : '' }}>
                                                     {{ $user->user_fullname }}
@@ -169,7 +169,7 @@
                                     <p class="mb-0">{{ $ics->ics_received_by_date }}</p>
                                 @else
                                     <input type="text" class="form-control form-control-sm w-75 flatpickr" name="ics_received_by_date" value="{{ $ics->ics_received_by_date }}"
-                                        placeholder="Select Date..">
+                                        placeholder="Select Date">
                                     <span class="invalid-feedback field-error d-none" data-valmsg-for="ics_received_by_date"></span>
                                 @endif
                             </div>

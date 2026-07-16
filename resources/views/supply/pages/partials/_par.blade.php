@@ -5,7 +5,7 @@
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body px-0 pb-0">
                 <div class="d-flex justify-content-between align-items-center mb-3 px-3">
-                    <h5 class="fw-bold red-text-2 ms-1 mb-0">{{ $par->is_transfer ? 'PAR - Transfer Form' : 'Property Acknowledgement Receipt' }}</h5>
+                    <h5 class="fw-bold red-text-2 ms-1 mb-0">Property Acknowledgement Receipt</h5>
                     <div class="">
                         @if($par->is_transfer)
                             @if(is_null($par->par_received_by))
@@ -101,7 +101,7 @@
                                 @if($par->is_transfer)
                                     @if(is_null($par->par_received_by))
                                         <select name="par_received_by" class="form-select form-select-sm ms-2 w-75">
-                                            <option value="">Select User...</option>
+                                            <option value="">Select User</option>
                                             @foreach($users as $user)
                                                 <option value="{{ $user->user_id }}" {{ $par->par_received_by == $user->user_id ? 'selected' : '' }}>
                                                     {{ $user->user_fullname }}
@@ -133,7 +133,7 @@
                                 @if($par->is_transfer && !is_null($par->par_received_by))
                                     <p class="mb-0">{{ $par->par_received_by_date }}</p>
                                 @else
-                                    <input type="text" class="form-control form-control-sm w-75 flatpickr" name="par_received_by_date" value="{{ $par->par_received_by_date }}" placeholder="Select Date..">
+                                    <input type="text" class="form-control form-control-sm w-75 flatpickr" name="par_received_by_date" value="{{ $par->par_received_by_date }}" placeholder="Select Date">
                                     <span class="invalid-feedback field-error d-none" data-valmsg-for="par_received_by_date"></span>
                                 @endif
                             </div>
