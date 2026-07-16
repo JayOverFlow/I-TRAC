@@ -45,7 +45,7 @@
     <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content border-0 shadow bg-white p-0">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark-red" id="createAppModalLabel">Create Procurement Plan</h5>
+                <h5 class="modal-title fw-bold text-dark-red" id="createAppModalLabel">Create Annual Procurement Plan</h5>
             </div>
             <hr class="my-3">
             <form id="createAppModalForm" action="{{ route('create.app.init') }}" method="POST">
@@ -53,12 +53,12 @@
                 <div class="modal-body py-0">
                     <div class="row">
                         <div class="col-md-8 mb-3">
-                            <label for="app_title" class="form-label fw-bold black-text">Procurement Plan Title <span class="text-danger">*</span></label>
+                            <label for="app_title" class="form-label fw-bold black-text">Annual Procurement Plan Title <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-sm" id="app_title"
                                 name="app_title" placeholder="Enter a descriptive title">
                                 <span class="text-danger d-none" id="app_title_error" style="font-size: 0.85rem;"></span>
                             <div class="form-text mt-2 black-text" style="font-size: 0.85rem;">Example:
-                                ProcurementPlan_CES</div>
+                                APP_CES</div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="year" class="form-label fw-bold black-tex">Fiscal Year <span class="text-danger">*</span></label>
