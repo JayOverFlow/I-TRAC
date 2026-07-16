@@ -237,7 +237,7 @@
                                     aria-labelledby="folderSupplyHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($supplyIars as $iar)
-                                            <li class="tv-item tv-file document-node" data-target="doc-iar-{{ $iar->iar_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-iar-{{ $iar->iar_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -245,12 +245,12 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>IAR</p>
+                                                <p class="text-truncate mb-0 ms-2" title="IAR">IAR</p>
                                             </li>
                                         @endforeach
 
                                          @foreach($supplyRiss as $ris)
-                                            <li class="tv-item tv-file document-node" data-target="doc-ris-{{ $ris->ris_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-ris-{{ $ris->ris_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -258,12 +258,12 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>RIS - {{ $ris->ris_office }}</p>
+                                                <p class="text-truncate mb-0 ms-2" title="RIS - {{ $ris->ris_office }}">RIS - {{ $ris->ris_office }}</p>
                                             </li>
                                         @endforeach
 
                                         @foreach($po->rsmiReports as $rsmi)
-                                            <li class="tv-item tv-file document-node" data-target="doc-rsmi-{{ $rsmi->rsmi_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-rsmi-{{ $rsmi->rsmi_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -271,7 +271,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>RSMI</p>
+                                                <p class="text-truncate mb-0 ms-2" title="RSMI">RSMI</p>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -305,7 +305,7 @@
                                     data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($semiExpendableIars as $iar)
-                                            <li class="tv-item tv-file document-node" data-target="doc-iar-{{ $iar->iar_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-iar-{{ $iar->iar_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -313,12 +313,12 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>IAR</p>
+                                                <p class="text-truncate mb-0 ms-2" title="IAR">IAR</p>
                                             </li>
                                         @endforeach
 
                                          @foreach($semiExpendableRiss as $ris)
-                                            <li class="tv-item tv-file document-node" data-target="doc-ris-{{ $ris->ris_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-ris-{{ $ris->ris_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -326,12 +326,12 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>RIS - {{ $ris->receiver->user_fullname ?? 'User' }}</p>
+                                                <p class="text-truncate mb-0 ms-2" title="RIS - {{ $ris->receiver->user_fullname ?? 'User' }}">RIS - {{ $ris->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
 
                                         @foreach($po->icsSlips->where('is_transfer', 0) as $ics)
-                                            <li class="tv-item tv-file document-node" data-target="doc-ics-{{ $ics->ics_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-ics-{{ $ics->ics_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -339,12 +339,12 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>ICS - {{ $ics->receiver->user_fullname ?? 'User' }}</p>
+                                                <p class="text-truncate mb-0 ms-2" title="ICS - {{ $ics->receiver->user_fullname ?? 'User' }}">ICS - {{ $ics->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
 
                                          @foreach($po->rspiReports as $rspi)
-                                            <li class="tv-item tv-file document-node" data-target="doc-rspi-{{ $rspi->rspi_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-rspi-{{ $rspi->rspi_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -352,7 +352,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>RSPI</p>
+                                                <p class="text-truncate mb-0 ms-2" title="RSPI">RSPI</p>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -385,7 +385,7 @@
                                     aria-labelledby="folderEquipmentHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($equipmentIars as $iar)
-                                            <li class="tv-item tv-file document-node" data-target="doc-iar-{{ $iar->iar_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-iar-{{ $iar->iar_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -393,12 +393,12 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>IAR</p>
+                                                <p class="text-truncate mb-0 ms-2" title="IAR">IAR</p>
                                             </li>
                                         @endforeach
 
                                         @foreach($po->parReceipts->where('is_transfer', 0) as $par)
-                                            <li class="tv-item tv-file document-node" data-target="doc-par-{{ $par->par_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-par-{{ $par->par_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -406,7 +406,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>PAR - {{ $par->receiver->user_fullname ?? 'User' }}</p>
+                                                <p class="text-truncate mb-0 ms-2" title="PAR - {{ $par->receiver->user_fullname ?? 'User' }}">PAR - {{ $par->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -439,7 +439,7 @@
                                     aria-labelledby="folderNotDeliveredHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($po->ndrReports as $ndr)
-                                            <li class="tv-item tv-file document-node" data-target="doc-ndr-{{ $ndr->ndr_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-ndr-{{ $ndr->ndr_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -447,7 +447,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>NDR</p>
+                                                <p class="text-truncate mb-0 ms-2" title="NDR">NDR</p>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -478,7 +478,7 @@
                                     aria-labelledby="folderTransferHeading" data-bs-parent="#treeviewFolderStructureEx">
                                     <ul class="treeview">
                                         @foreach($transferIcsSlips as $ics)
-                                            <li class="tv-item tv-file document-node" data-target="doc-ics-{{ $ics->ics_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-ics-{{ $ics->ics_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -486,11 +486,11 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>ICS {{ $ics->receiver->user_fullname ?? 'User' }}</p>
+                                                <p class="text-truncate mb-0 ms-2" title="ICS {{ $ics->receiver->user_fullname ?? 'User' }}">ICS {{ $ics->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
                                         @foreach($transferParReceipts as $par)
-                                            <li class="tv-item tv-file document-node" data-target="doc-par-{{ $par->par_id }}">
+                                            <li class="tv-item tv-file document-node d-flex align-items-center py-1" data-target="doc-par-{{ $par->par_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -498,7 +498,7 @@
                                                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                                                     </svg>
                                                 </span>
-                                                <p>PAR - {{ $par->receiver->user_fullname ?? 'User' }}</p>
+                                                <p class="text-truncate mb-0 ms-2" title="PAR - {{ $par->receiver->user_fullname ?? 'User' }}">PAR - {{ $par->receiver->user_fullname ?? 'User' }}</p>
                                             </li>
                                         @endforeach
                                     </ul>
