@@ -103,9 +103,33 @@ $(document).ready(function() {
 
     // Confirmation Alert for Export as PDF
     $(document).on('click', '.iar-container a.btn-dark-red, .ics-container a.btn-dark-red, .par-container a.btn-dark-red, .ris-container a.btn-dark-red, .rsmi-container a.btn-dark-red, .rspi-container a.btn-dark-red', function(e) {
+        var $btn = $(this);
+        if ($btn.data('direct-export') === true) {
+            e.preventDefault();
+            var downloadUrl = $btn.attr('href');
+            var container = $btn.closest('.document-view-container');
+            var docName = getDocumentTypeName(container);
+
+            window.confirmAction({
+                title: 'Export as PDF?',
+                text: 'Are you sure you want to export this ' + docName + ' as a PDF?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    $('#form-loader-overlay').css('display', 'flex');
+                    window.location.href = downloadUrl;
+                    setTimeout(function() {
+                        $('#form-loader-overlay').hide();
+                    }, 5000);
+                }
+            });
+            return;
+        }
+
         e.preventDefault();
-        var form = $(this).closest('form');
-        var container = $(this).closest('.document-view-container');
+        var form = $btn.closest('form');
+        var container = $btn.closest('.document-view-container');
         var docName = getDocumentTypeName(container);
 
         window.confirmAction({

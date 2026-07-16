@@ -13,7 +13,7 @@
                                     <span class="fw-bold">Transfer</span>
                                 </button>
                             @else
-                                <a href="javascript:void(0)" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3 disabled" title="Export as PDF is non-functional for now">
+                                <a href="{{ route('export.par.pdf', $par->par_id) }}" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3" data-direct-export="true">
                                     <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
                                     <span>Export as PDF</span>
                                 </a>
