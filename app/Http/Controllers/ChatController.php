@@ -229,8 +229,19 @@ class ChatController extends Controller
                     'PO Submitted'  => 'PO Submitted',
                     'PR Assignment' => 'PR Assigned',
                     'Purchase Request' => 'PR Assigned',
+                    'PR Revised'    => 'PR Revised',
                     default         => 'Notification',
                 };
+                $url = route('show.tasks');
+                if ($type === 'PR Revised' && $task->pr_id_fk) {
+                    $origTask = \App\Models\Task::where('pr_id_fk', $task->pr_id_fk)
+                        ->where('task_type', '!=', 'PR Revised')
+                        ->first();
+                    if ($origTask) {
+                        $url = route('show.create.pr', $origTask->task_id);
+                    }
+                }
+
                 return [
                     'task_id'          => $task->task_id,
                     'task_description' => $task->task_description,
@@ -240,7 +251,7 @@ class ChatController extends Controller
                                             ? \Carbon\Carbon::parse($task->created_at)->diffForHumans()
                                             : '',
                     'assigned_by_name' => $task->assignedBy->user_fullname_no_middle ?? 'System',
-                    'url'              => route('show.tasks'),
+                    'url'              => $url,
                     'is_read'          => !is_null($task->read_at),
                 ];
             });

@@ -123,48 +123,48 @@ class DashboardController extends Controller
                     ->get();
 
                 /* DUMMY DATA FOR TESTING - TO USE REAL DATA, JUST COMMENT OUT THIS BLOCK */
-                // $recentProcuredItems = collect([
-                //     (object)[
-                //         'item_name' => 'Premium Ergonomic Mesh Chair',
-                //         'quantity' => 2,
-                //         'poItem' => (object)[
-                //             'po_items_cost' => 6499.00,
-                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0038']
-                //         ]
-                //     ],
-                //     (object)[
-                //         'item_name' => 'LED Multimedia Projector 4K',
-                //         'quantity' => 1,
-                //         'poItem' => (object)[
-                //             'po_items_cost' => 24500.00,
-                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0042']
-                //         ]
-                //     ],
-                //     (object)[
-                //         'item_name' => 'High-Speed Wireless Router',
-                //         'quantity' => 3,
-                //         'poItem' => (object)[
-                //             'po_items_cost' => 4200.00,
-                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0035']
-                //         ]
-                //     ],
-                //     (object)[
-                //         'item_name' => 'Office Whiteboard (4x3 ft)',
-                //         'quantity' => 1,
-                //         'poItem' => (object)[
-                //             'po_items_cost' => 3200.00,
-                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0029']
-                //         ]
-                //     ],
-                //     (object)[
-                //         'item_name' => 'Heavy-Duty Paper Shredder',
-                //         'quantity' => 1,
-                //         'poItem' => (object)[
-                //             'po_items_cost' => 8950.00,
-                //             'purchaseOrder' => (object)['po_no' => 'PO-2026-0021']
-                //         ]
-                //     ]
-                // ]);
+                $recentProcuredItems = collect([
+                    (object)[
+                        'item_name' => 'Premium Ergonomic Mesh Chair',
+                        'quantity' => 2,
+                        'poItem' => (object)[
+                            'po_items_cost' => 6499.00,
+                            'purchaseOrder' => (object)['po_no' => 'PO-2026-0038']
+                        ]
+                    ],
+                    (object)[
+                        'item_name' => 'LED Multimedia Projector 4K',
+                        'quantity' => 1,
+                        'poItem' => (object)[
+                            'po_items_cost' => 24500.00,
+                            'purchaseOrder' => (object)['po_no' => 'PO-2026-0042']
+                        ]
+                    ],
+                    (object)[
+                        'item_name' => 'High-Speed Wireless Router',
+                        'quantity' => 3,
+                        'poItem' => (object)[
+                            'po_items_cost' => 4200.00,
+                            'purchaseOrder' => (object)['po_no' => 'PO-2026-0035']
+                        ]
+                    ],
+                    (object)[
+                        'item_name' => 'Office Whiteboard (4x3 ft)',
+                        'quantity' => 1,
+                        'poItem' => (object)[
+                            'po_items_cost' => 3200.00,
+                            'purchaseOrder' => (object)['po_no' => 'PO-2026-0029']
+                        ]
+                    ],
+                    (object)[
+                        'item_name' => 'Heavy-Duty Paper Shredder',
+                        'quantity' => 1,
+                        'poItem' => (object)[
+                            'po_items_cost' => 8950.00,
+                            'purchaseOrder' => (object)['po_no' => 'PO-2026-0021']
+                        ]
+                    ]
+                ]);
                 /* END OF DUMMY DATA */
             }
         }

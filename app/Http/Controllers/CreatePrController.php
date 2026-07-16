@@ -347,10 +347,23 @@ class CreatePrController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages);
 
         // Add custom budget limits validation hook
-        $validator->after(function ($validator) use ($request, $task) {
+        $validator->after(function ($validator) use ($request, $task, $intent) {
             $budgetLimit = $task->appItems->sum('app_items_esti_budget');
             $totalAmount = 0;
             $items = $request->input('items', []);
+
+            $user = Auth::user();
+            $isAssigned = ($task->assigned_by !== $task->assigned_to);
+            $isViewer_Assigner = ($task->assigned_by === $user->user_id);
+            $canHeadEdit = $isViewer_Assigner && $isAssigned && ($task->task_status === 'Complete') && (!$task->pr_id_fk || ($task->purchaseRequest && $task->purchaseRequest->pr_status === 'Complete'));
+
+            $originalItems = collect();
+            if ($canHeadEdit && $task->pr_id_fk) {
+                $originalItems = \App\Models\PrItem::where('pr_id_fk', $task->pr_id_fk)
+                    ->with('prSpecs')
+                    ->get()
+                    ->keyBy('pr_app_item_id_fk');
+            }
 
             foreach ($items as $index => $row) {
                 if (empty($row['description']) && empty($row['quantity'])) {
@@ -362,6 +375,44 @@ class CreatePrController extends Controller
 
                 if ($cost > $budgetLimit) {
                     $validator->errors()->add("items.{$index}.cost", "The unit cost exceeds the allocated budget of PHP " . number_format($budgetLimit, 2));
+                }
+
+                // Validate remarks for the Head's edit view when exporting (submit)
+                if ($intent === 'submit' && $canHeadEdit) {
+                    $appItemId = $row['app_item_id'] ?? null;
+                    $originalItem = $appItemId ? $originalItems->get($appItemId) : null;
+
+                    $isModified = false;
+                    if ($originalItem) {
+                        // Compare description
+                        if (($row['description'] ?? '') !== ($originalItem->pr_items_descrip ?? '')) {
+                            $isModified = true;
+                        }
+                        // Compare unit
+                        if (($row['unit'] ?? '') !== ($originalItem->pr_items_unit ?? '')) {
+                            $isModified = true;
+                        }
+                        // Compare quantity
+                        if (isset($row['quantity']) && (int)$row['quantity'] !== (int)($originalItem->pr_items_quantity ?? 0)) {
+                            $isModified = true;
+                        }
+                        // Compare cost
+                        if (isset($row['cost']) && abs((float)$row['cost'] - (float)($originalItem->pr_items_cost ?? 0.0)) > 0.001) {
+                            $isModified = true;
+                        }
+                        // Compare specification
+                        $origSpecText = $originalItem->prSpecs->first()?->pr_spec_spec ?? '';
+                        if (($row['specification'] ?? '') !== $origSpecText) {
+                            $isModified = true;
+                        }
+                    } else {
+                        // Newly added item is considered a modification
+                        $isModified = true;
+                    }
+
+                    if ($isModified && empty($row['remarks'])) {
+                        $validator->errors()->add("items.{$index}.remarks", "Remarks are required when modifying or adding this item.");
+                    }
                 }
             }
 
@@ -608,6 +659,7 @@ class CreatePrController extends Controller
                 'pr_items_unit'       => $row['unit']         ?? null,
                 'pr_items_quantity'   => $qty,
                 'pr_items_cost'       => $cost,
+                'remarks'             => $row['remarks']      ?? null,
             ]);
 
             if (!empty($row['specification'])) {
@@ -709,6 +761,32 @@ class CreatePrController extends Controller
             DB::transaction(function () use ($request, $user, $task, $finalPrStatus, $finalTaskStatus) {
                 // Save/update the PR data with the resolved status
                 $pr = $this->saveOrUpdatePr($request, $user, $task, $finalPrStatus);
+
+                // Check if any item contains remarks (indicating head revision)
+                $hasRemarks = false;
+                foreach ($request->input('items', []) as $row) {
+                    if (!empty($row['remarks'])) {
+                        $hasRemarks = true;
+                        break;
+                    }
+                }
+
+                // If this is an assigned task and changes were made, dispatch notification to subordinate
+                $isSelfCreated = ($task->assigned_by === $task->assigned_to);
+                if (!$isSelfCreated && $hasRemarks) {
+                    $headName = $user->user_fullname_no_middle ?? 'The Department Head';
+                    \App\Models\Task::create([
+                        'assigned_by'      => $user->user_id,
+                        'assigned_to'      => $task->assigned_to,
+                        'task_description' => "{$headName} has revised your Purchase Request.",
+                        'created_at'       => now(),
+                        'pr_id_fk'         => $pr->pr_id ?? $task->pr_id_fk,
+                        'task_type'        => 'PR Revised',
+                        'is_deleted'       => 0,
+                        'task_status'      => 'Pending',
+                        'task_dep_id_fk'   => $task->task_dep_id_fk,
+                    ]);
+                }
 
                 // Get Head's designation for the approval field
                 $activeRoleId = session('active_role_id');

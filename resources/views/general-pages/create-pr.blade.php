@@ -1,3 +1,37 @@
+@php
+    $user = auth()->user();
+    $activeRoleId = session('active_role_id');
+    $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
+    $userRole = $activeRole?->gen_role;
+    $roleName = $activeRole?->role_name ?? '';
+
+    // Check if the viewer is a Head in ANY of their roles (not just the active one)
+    $isHead = $user->roles->contains('gen_role', 'Head');
+
+    $rowIndex = 0;
+    $taskStatus = $task->task_status;
+
+    // Is this an assigned task (assigner ≠ assignee)?
+    $isAssigned = ($task->assigned_by !== $task->assigned_to);
+
+    // Is the current viewer the one who assigned this task?
+    $isViewer_Assigner = ($task->assigned_by === $user->user_id);
+
+    // Head can edit if: viewer is the assigner, task is assigned (not self-created), and status is Complete
+    $canHeadEdit = $isViewer_Assigner && $isAssigned && ($taskStatus === 'Complete') && (!$pr || $pr->pr_status === 'Complete');
+
+    // Self-created: the Head assigned the task to themselves
+    $isSelfCreatedHead = $isViewer_Assigner && !$isAssigned;
+
+    // For self-created tasks, the Head can export directly from Pending
+    $isReadOnly = ($taskStatus !== 'Pending') && !$canHeadEdit && !($isSelfCreatedHead && $taskStatus === 'Pending');
+
+    // If the PR status is Draft, it is not read-only
+    if ($pr && $pr->pr_status === 'Draft') {
+        $isReadOnly = false;
+    }
+@endphp
+
 @push('css')
     <!-- Page SPECIFIC css -->
     <link rel="stylesheet" href="{{ asset('css/general-pages/tasks/page-specific/datatables.css') }}">
@@ -11,42 +45,10 @@
     <link rel="stylesheet" href="{{ asset('css/general-pages/create-pr/custom-create-pr.css') }}">
 @endpush
 
-<form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form">
+<form method="POST" action="{{ route('draft.pr', $task->task_id) }}" id="pr-form" data-can-head-edit="{{ $canHeadEdit ? 'true' : 'false' }}">
     @csrf
     <input type="hidden" name="_intent" id="pr-intent" value="draft">
     @php
-        $user = auth()->user();
-        $activeRoleId = session('active_role_id');
-        $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
-        $userRole = $activeRole?->gen_role;
-        $roleName = $activeRole?->role_name ?? '';
-
-        // Check if the viewer is a Head in ANY of their roles (not just the active one)
-        $isHead = $user->roles->contains('gen_role', 'Head');
-
-        $rowIndex = 0;
-        $taskStatus = $task->task_status;
-
-        // Is this an assigned task (assigner ≠ assignee)?
-        $isAssigned = ($task->assigned_by !== $task->assigned_to);
-
-        // Is the current viewer the one who assigned this task?
-        $isViewer_Assigner = ($task->assigned_by === $user->user_id);
-
-        // Head can edit if: viewer is the assigner, task is assigned (not self-created), and status is Complete
-        $canHeadEdit = $isViewer_Assigner && $isAssigned && ($taskStatus === 'Complete') && (!$pr || $pr->pr_status === 'Complete');
-
-        // Self-created: the Head assigned the task to themselves
-        $isSelfCreatedHead = $isViewer_Assigner && !$isAssigned;
-
-        // For self-created tasks, the Head can export directly from Pending
-        $isReadOnly = ($taskStatus !== 'Pending') && !$canHeadEdit && !($isSelfCreatedHead && $taskStatus === 'Pending');
-
-        // If the PR status is Draft, it is not read-only
-        if ($pr && $pr->pr_status === 'Draft') {
-            $isReadOnly = false;
-        }
-
         // Only Head, Program Chair, Dean, Supply, and Procurement see the stepper
         $isAuthorized = in_array($userRole, ['Head', 'Supply', 'Procurement']);
 
@@ -581,6 +583,7 @@
                                                 <input type="text" class="form-control form-control-sm text-center"
                                                     name="items[{{ $rowIndex }}][unit]" data-field="unit"
                                                     value="{{ $saved?->pr_items_unit ?? '' }}"
+                                                    data-org-value="{{ $saved?->pr_items_unit ?? '' }}"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
                                                 <span class="field-error d-none text-center"></span>
                                             </td>
@@ -590,6 +593,7 @@
                                                     <input type="text" class="form-control"
                                                         name="items[{{ $rowIndex }}][description]" data-field="description"
                                                         value="{{ $saved?->pr_items_descrip ?? '' }}"
+                                                        data-org-value="{{ $saved?->pr_items_descrip ?? '' }}"
                                                         {{ $isReadOnly ? 'disabled' : '' }}>
                                                     @if (!$isReadOnly)
                                                         <span
@@ -607,6 +611,7 @@
                                                     class="form-control form-control-sm text-center qty-input"
                                                     name="items[{{ $rowIndex }}][quantity]" data-field="quantity"
                                                     value="{{ $saved?->pr_items_quantity ?? '' }}"
+                                                    data-org-value="{{ $saved?->pr_items_quantity ?? '' }}"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
                                                 <span class="field-error d-none text-center"></span>
@@ -616,6 +621,7 @@
                                                     class="form-control form-control-sm text-center cost-input"
                                                     name="items[{{ $rowIndex }}][cost]" data-field="cost"
                                                     value="{{ $saved?->pr_items_cost ? number_format($saved?->pr_items_cost, 2, '.', '') : '' }}"
+                                                    data-org-value="{{ $saved?->pr_items_cost ? number_format($saved?->pr_items_cost, 2, '.', '') : '' }}"
                                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
                                                     {{ $isReadOnly ? 'disabled' : '' }}>
                                                 <span class="field-error d-none text-center"></span>
@@ -674,12 +680,42 @@
                                                         style="{{ !$specText ? 'display: none;' : '' }}">
                                                         <textarea class="form-control form-control-sm border-0 shadow-none px-2"
                                                             name="items[{{ $rowIndex }}][specification]" data-field="specification" rows="2" placeholder="e.g., 16 GB RAM, AMD Ryzen 5, NVIDEA RTX 2050"
+                                                            data-org-value="{{ $specText }}"
                                                             {{ $isReadOnly ? 'disabled' : '' }}>{{ $specText }}</textarea>
                                                         <span class="field-error d-none"></span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td colspan="4"></td>
+                                        </tr>
+                                        {{-- Remarks --}}
+                                        @php
+                                            $remarksText = $saved?->remarks ?? '';
+                                        @endphp
+                                        <tr class="pr-remarks-row {{ !$remarksText ? 'd-none' : '' }}">
+                                            <td class="px-1" colspan="5">
+                                                <div class="remarks-container border rounded p-2 position-relative" style="border-color: {{ $isReadOnly ? '#e0e6ed' : '#0d6efd' }} !important; background-color: {{ $isReadOnly ? '#f8f9fa' : '#ffffff' }};">
+                                                    <div class="d-flex align-items-center mb-1 text-primary fw-bold" style="font-size: 0.8rem; color: {{ $isReadOnly ? '#6c757d' : '#0d6efd' }} !important;">
+                                                        <i class="fas fa-comment-dots me-1"></i> Remarks
+                                                    </div>
+                                                    @if (!$isReadOnly)
+                                                        <button type="button" class="btn-close revert-item-btn" 
+                                                            style="position: absolute; top: 8px; right: 12px; font-size: 0.5rem; cursor: pointer;" 
+                                                            aria-label="Undo"
+                                                            title="Undo changes & hide remarks"></button>
+                                                    @endif
+                                                    <textarea class="form-control form-control-sm remarks-input"
+                                                        name="items[{{ $rowIndex }}][remarks]"
+                                                        rows="2"
+                                                        placeholder="Enter remarks for the subordinate regarding this revision..."
+                                                        {{ $isReadOnly ? 'disabled' : '' }}
+                                                        style="{{ $isReadOnly ? 'background-color: #f8f9fa; color: #6c757d;' : '' }}">{{ $remarksText }}</textarea>
+                                                    @if (!$isReadOnly)
+                                                        <span class="field-error text-danger d-none" style="font-size: 0.75rem; margin-top: 4px; display: block;"></span>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td colspan="1"></td>
                                         </tr>
                                         @php $rowIndex++; @endphp
                                     @endforeach

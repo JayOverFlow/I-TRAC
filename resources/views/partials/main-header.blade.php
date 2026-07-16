@@ -125,6 +125,7 @@
             'PO Submitted'  => 'PO Submitted',
             'PR Assignment' => 'PR Assigned',
             'Purchase Request' => 'PR Assigned',
+            'PR Revised'    => 'PR Revised',
             default         => 'Notification',
         };
         return [
@@ -258,6 +259,7 @@
                                     'PR Assignment'    => ['bg' => '#eceffe', 'stroke' => '#4361ee'],
                                     'PR Submitted'     => ['bg' => '#e8f8f0', 'stroke' => '#00ab55'],
                                     'PO Submitted'     => ['bg' => '#fff4e6', 'stroke' => '#e6830a'],
+                                    'PR Revised'       => ['bg' => '#eef2ff', 'stroke' => '#4f46e5'],
                                 ];
                                 $color = $typeColors[$type] ?? ['bg' => '#f0f0f0', 'stroke' => '#888'];
                                 $badgeColors = [
@@ -265,6 +267,7 @@
                                     'PR Assignment'    => 'background:#4361ee;',
                                     'PR Submitted'     => 'background:#00ab55;',
                                     'PO Submitted'     => 'background:#e6830a;',
+                                    'PR Revised'       => 'background:#4f46e5;',
                                 ];
                                 $badgeStyle = $badgeColors[$type] ?? 'background:#888;';
                                 $typeLabel = match($type) {
@@ -272,10 +275,11 @@
                                     'PO Submitted'  => 'PO Submitted',
                                     'PR Assignment' => 'PR Assigned',
                                     'Purchase Request' => 'PR Assigned',
+                                    'PR Revised'    => 'PR Revised',
                                     default         => 'Notification',
                                 };
                             @endphp
-                             <div class="dropdown-item preview-item-wrapper {{ is_null($task->read_at) ? 'unread' : 'read' }}" onclick="markNotifRead({{ $task->task_id }}, '{{ route('show.tasks') }}')"
+                             <div class="dropdown-item preview-item-wrapper {{ is_null($task->read_at) ? 'unread' : 'read' }}" onclick="markNotifRead({{ $task->task_id }}, '{{ ($task->task_type === 'PR Revised' && $task->pr_id_fk && ($origTask = \App\Models\Task::where('pr_id_fk', $task->pr_id_fk)->where('task_type', '!=', 'PR Revised')->first())) ? route('show.create.pr', $origTask->task_id) : route('show.tasks') }}')"
                                 style="cursor: pointer;">
                                 <div class="media" style="align-items: flex-start;">
                                     <div class="notif-icon-circle" style="width: 36px; height: 36px; border-radius: 50%; background: {{ $color['bg'] }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 10px;">
@@ -569,6 +573,7 @@
                         'PR Assignment':    { bg: '#eceffe', stroke: '#4361ee' },
                         'PR Submitted':     { bg: '#e8f8f0', stroke: '#00ab55' },
                         'PO Submitted':     { bg: '#fff4e6', stroke: '#e6830a' },
+                        'PR Revised':       { bg: '#eef2ff', stroke: '#4f46e5' },
                     };
                     const color = typeColors[n.task_type] || { bg: '#f0f0f0', stroke: '#888' };
                     const badgeColors = {
@@ -576,6 +581,7 @@
                         'PR Assignment':    'background:#4361ee;',
                         'PR Submitted':     'background:#00ab55;',
                         'PO Submitted':     'background:#e6830a;',
+                        'PR Revised':       'background:#4f46e5;',
                     };
                     const badgeStyle = badgeColors[n.task_type] || 'background:#888;';
                     const label = n.type_label || 'Notification';

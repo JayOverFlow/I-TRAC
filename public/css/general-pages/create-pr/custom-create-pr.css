@@ -169,6 +169,10 @@ thead.bg-transparent th {
     border-color: #dc3545 !important;
 }
 
+.remarks-input {
+    border: 0px !important;
+}
+
 /* DARK MODE OVERRIDES */
 body.dark .custom-specification-header {
     background-color: #2a2f38 !important;
