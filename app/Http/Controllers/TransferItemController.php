@@ -28,7 +28,7 @@ class TransferItemController extends Controller
             }
 
             if ($mr->category === 'Semi-Expendable') {
-                $orig = Ics::with(['icsItems.icsSpecs'])->where('po_id_fk', $poId)->where('is_transfer', 0)->first();
+                $orig = Ics::with(['icsItems.icsSpecs.poSpec'])->where('po_id_fk', $poId)->where('is_transfer', 0)->first();
                 if (!$orig) {
                     return response()->json(['success' => false, 'message' => 'Original ICS not found for this PO.'], 404);
                 }
@@ -51,6 +51,25 @@ class TransferItemController extends Controller
                     ]);
 
                     foreach ($orig->icsItems as $item) {
+                        $isTarget = false;
+                        if ($item->icsSpecs->isNotEmpty()) {
+                            foreach ($item->icsSpecs as $spec) {
+                                if ($spec->poSpec && $spec->poSpec->po_items_id_fk === $mr->po_item_id_fk) {
+                                    $isTarget = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!$isTarget) {
+                            if ($item->ics_items_descrip === $mr->item_name && $item->ics_inventory_item_no === $mr->stock) {
+                                $isTarget = true;
+                            }
+                        }
+
+                        if (!$isTarget) {
+                            continue;
+                        }
+
                         $newItem = IcsItem::create([
                             'ics_id_fk' => $doc->ics_id,
                             'ics_quantity' => $item->ics_quantity,
@@ -102,6 +121,10 @@ class TransferItemController extends Controller
                     ]);
 
                     foreach ($orig->parItems as $item) {
+                        if ($item->par_po_items_id_fk !== $mr->po_item_id_fk) {
+                            continue;
+                        }
+
                         $newItem = ParItem::create([
                             'par_id_fk' => $doc->par_id,
                             'par_po_items_id_fk' => $item->par_po_items_id_fk,
