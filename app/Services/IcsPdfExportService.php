@@ -48,6 +48,16 @@ class IcsPdfExportService
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
+        // Increase columns width by 15% if it's a transfer form
+        if ($ics->is_transfer) {
+            foreach (range('A', 'H') as $col) {
+                $currentWidth = $sheet->getColumnDimension($col)->getWidth();
+                if ($currentWidth > 0) {
+                    $sheet->getColumnDimension($col)->setWidth($currentWidth * 1.15);
+                }
+            }
+        }
+
         // Horizontally and Vertically center on page
         $sheet->getPageSetup()->setHorizontalCentered(true);
         $sheet->getPageSetup()->setVerticalCentered(true);
