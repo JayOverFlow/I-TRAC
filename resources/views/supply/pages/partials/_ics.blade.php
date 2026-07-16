@@ -1,79 +1,98 @@
 <div class="col-md-9 ics-container document-view-container" id="doc-ics-{{ $ics->ics_id }}" style="display: none;">
-    <form action="{{ route('save.ics', $ics->ics_id) }}" method="POST">
+    <form action="{{ $ics->is_transfer ? route('transfer.ics.submit', $ics->ics_id) : route('save.ics', $ics->ics_id) }}" method="POST">
         @csrf
         <input type="hidden" name="export_pdf" class="export-pdf-flag" value="0">
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body px-0 pb-0">
                 <div class="d-flex justify-content-between align-items-center mb-3 px-3">
-                    <h5 class="fw-bold red-text-2 ms-1 mb-0">Inventory Custodian Slip</h5>
+                    <h5 class="fw-bold red-text-2 ms-1 mb-0">{{ $ics->is_transfer ? 'ICS - Transfer Form' : 'Inventory Custodian Slip' }}</h5>
                     <div class="">
-                        <a href="{{ route('export.ics.pdf', $ics->ics_id) }}" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
-                            <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
-                            <span>Export as PDF</span>
-                        </a>
-                        <button type="submit" class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
-                            <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
-                            <span class="fw-bold">Save as Draft</span>
-                        </button>
+                        @if($ics->is_transfer)
+                            @if(is_null($ics->ics_received_by))
+                                <button type="submit" class="btn btn-dark-red btn-transfer-submit px-3" data-current-owner="{{ $ics->mr && $ics->mr->assignedUser ? $ics->mr->assignedUser->user_fullname : 'Supply Officer' }}">
+                                    <span class="fw-bold">Transfer</span>
+                                </button>
+                            @else
+                                <a href="javascript:void(0)" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3 disabled" title="Export as PDF is non-functional for now">
+                                    <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                                    <span>Export as PDF</span>
+                                </a>
+                            @endif
+                        @else
+                            <a href="{{ route('export.ics.pdf', $ics->ics_id) }}" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3">
+                                <img src="{{ asset('img/Export.svg') }}" width="18" height="18">
+                                <span>Export as PDF</span>
+                            </a>
+                            <button type="submit" class="btn border border-light-subtle btn-white d-inline-flex align-items-center gap-1 px-2">
+                                <img src="{{ asset('img/Save.svg') }}" width="18" height="18">
+                                <span class="fw-bold">Save as Draft</span>
+                            </button>
+                        @endif
                     </div>
                 </div>
                 <hr class="m-0 p-0">
                 <div class="row g-4 ms-3 mt-1 mb-1">
                     <div class="col-md-6">
-                        <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
-                            <input type="text" name="ics_fund_cluster" value="{{ $ics->ics_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
-                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_fund_cluster"></span>
-                        </div>
+                        <fieldset @if($ics->is_transfer) disabled @endif>
+                            <div class="row align-items-center mb-3">
+                                <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
+                                <input type="text" name="ics_fund_cluster" value="{{ $ics->ics_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                                <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_fund_cluster"></span>
+                            </div>
 
-                        <div class="row align-items-center mb-5">
-                            <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
+                            <div class="row align-items-center mb-5">
+                                <div class="col-4">
+                                    <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
+                                </div>
+                                <div class="col-8">
+                                    <h6 class="mb-0">{{ $ics->ics_po_no }}</h6>
+                                </div>
                             </div>
-                            <div class="col-8">
-                                <h6 class="mb-0">{{ $ics->ics_po_no }}</h6>
-                            </div>
-                        </div>
+                        </fieldset>
                     </div>
 
                     <div class="col-md-6 border-start-md">
-                        <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">ICS No.:</h6>
-                            <input type="text" name="ics_no" value="{{ $ics->ics_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
-                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_no"></span>
-                        </div>
-                        <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Code No:</h6>
-                            <input type="text" name="ics_code_no" value="{{ $ics->ics_code_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
-                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_code_no"></span>
-                        </div>
+                        <fieldset @if($ics->is_transfer) disabled @endif>
+                            <div class="row align-items-center mb-3">
+                                <h6 class="mb-2 black-text fw-bold">ICS No.:</h6>
+                                <input type="text" name="ics_no" value="{{ $ics->ics_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                                <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_no"></span>
+                            </div>
+                            <div class="row align-items-center mb-3">
+                                <h6 class="mb-2 black-text fw-bold">Code No:</h6>
+                                <input type="text" name="ics_code_no" value="{{ $ics->ics_code_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
+                                <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_code_no"></span>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
                 <hr class="m-0 p-0">
                 <div class="row g-4 ms-3 mt-1 mb-1">
                     <div class="col-md-6">
-                        <div class="row align-items-center mb-3">
-                            <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
+                        <fieldset @if($ics->is_transfer) disabled @endif>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-4">
+                                    <h6 class="mb-0 black-text fw-bold">Position/Office:</h6>
+                                </div>
+                                <div class="col-8">
+                                    <h6 class="mb-0">Supply Officer</h6>
+                                </div>
                             </div>
-                            <div class="col-8">
-                                <h6 class="mb-0">Supply Officer</h6>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-4">
+                                    <h6 class="mb-0 black-text fw-bold">Received from:</h6>
+                                </div>
+                                <div class="col-8">
+                                    <h6 class="mb-0">{{ $ics->giver ? $ics->giver->user_fullname : 'Supply Officer' }}</h6>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row align-items-center mb-3">
-                            <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Received from:</h6>
+                            <div class="row align-items-center mb-3">
+                                <h6 class="mb-2 black-text fw-bold">Date:</h6>
+                                <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="ics_received_from_date" value="{{ $ics->ics_received_from_date }}"
+                                    placeholder="Select Date..">
+                                <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_received_from_date"></span>
                             </div>
-                            <div class="col-8">
-                                <h6 class="mb-0">{{ $ics->giver ? $ics->giver->user_fullname : 'Supply Officer' }}</h6>
-                            </div>
-                        </div>
-                        <div class="row align-items-center mb-3">
-                            <h6 class="mb-2 black-text fw-bold">Date:</h6>
-                            <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="ics_received_from_date" value="{{ $ics->ics_received_from_date }}"
-                                placeholder="Select Date..">
-                            <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_received_from_date"></span>
-                        </div>
+                        </fieldset>
                     </div>
 
                     <div class="col-md-6">
@@ -90,13 +109,29 @@
                                 <h6 class="mb-0 black-text fw-bold">Received by:</h6>
                             </div>
                             <div class="col-8">
-                                <h6 class="mb-0">{{ $ics->receiver ? $ics->receiver->user_fullname : '' }}</h6>
+                                @if($ics->is_transfer)
+                                    @if(is_null($ics->ics_received_by))
+                                        <select name="ics_received_by" class="form-select form-select-sm ms-2 w-75">
+                                            <option value="">Select User...</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->user_id }}" {{ $ics->ics_received_by == $user->user_id ? 'selected' : '' }}>
+                                                    {{ $user->user_fullname }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <h6 class="mb-0">{{ $ics->receiver ? $ics->receiver->user_fullname : '—' }}</h6>
+                                        <input type="hidden" name="ics_received_by" value="{{ $ics->ics_received_by }}">
+                                    @endif
+                                @else
+                                    <h6 class="mb-0">{{ $ics->receiver ? $ics->receiver->user_fullname : '' }}</h6>
+                                @endif
                             </div>
                         </div>
                         <div class="row align-items-center mb-3">
                             <h6 class="mb-2 black-text fw-bold">Date:</h6>
                             <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="ics_received_by_date" value="{{ $ics->ics_received_by_date }}"
-                                placeholder="Select Date..">
+                                placeholder="Select Date.." @if($ics->is_transfer && !is_null($ics->ics_received_by)) disabled @endif>
                             <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="ics_received_by_date"></span>
                         </div>
                     </div>
@@ -126,18 +161,18 @@
                                 <td class="px-1">
                                     <input type="hidden" name="items[{{ $index }}][ics_items_id]" value="{{ $item->ics_items_id }}">
                                     <input type="text" class="form-control form-control-sm text-center qty-input"
-                                        name="items[{{ $index }}][ics_quantity]" value="{{ $item->ics_quantity }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                        name="items[{{ $index }}][ics_quantity]" value="{{ $item->ics_quantity }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" @if($ics->is_transfer) readonly @endif>
                                     <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_quantity]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
-                                        name="items[{{ $index }}][ics_unit]" value="{{ $item->ics_unit }}">
+                                        name="items[{{ $index }}][ics_unit]" value="{{ $item->ics_unit }}" @if($ics->is_transfer) readonly @endif>
                                     <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_unit]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center unit-cost-input"
                                         name="items[{{ $index }}][ics_unit_cost]" value="{{ $item->ics_unit_cost }}" data-field="unit_cost"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')" @if($ics->is_transfer) readonly @endif>
                                     <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_unit_cost]"></span>
                                 </td>
                                 <td class="px-1 text-center">
@@ -146,31 +181,35 @@
                                 <td class="px-1">
                                     <div class="input-group input-group-sm">
                                         <input type="text" class="form-control form-control-sm"
-                                            name="items[{{ $index }}][ics_items_descrip]" value="{{ $item->ics_items_descrip }}">
+                                            name="items[{{ $index }}][ics_items_descrip]" value="{{ $item->ics_items_descrip }}" @if($ics->is_transfer) readonly @endif>
+                                        @if(!$ics->is_transfer)
                                         <span class="input-group-text bg-white border-start-0 add-specification-btn"
                                             title="Add Specifications" style="cursor: pointer;">
                                             <img src="{{ asset('img/add-description-btn.png') }}" alt="Add"
                                                 style="width: 14px; height: 14px;">
                                         </span>
+                                        @endif
                                     </div>
                                     <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][ics_items_descrip]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
-                                        name="items[{{ $index }}][ics_inventory_item_no]" value="{{ $item->ics_inventory_item_no }}">
+                                        name="items[{{ $index }}][ics_inventory_item_no]" value="{{ $item->ics_inventory_item_no }}" @if($ics->is_transfer) readonly @endif>
                                     <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_inventory_item_no]"></span>
                                 </td>
                                 <td class="px-1">
                                     <input type="text" class="form-control form-control-sm text-center"
-                                        name="items[{{ $index }}][ics_estimated_useful_life]" value="{{ $item->ics_estimated_useful_life }}">
+                                        name="items[{{ $index }}][ics_estimated_useful_life]" value="{{ $item->ics_estimated_useful_life }}" @if($ics->is_transfer) readonly @endif>
                                     <span class="invalid-feedback field-error d-none text-center" data-valmsg-for="items[{{ $index }}][ics_estimated_useful_life]"></span>
                                 </td>
+                                @if(!$ics->is_transfer)
                                 <td class="p-0">
                                     <button type="button"
                                         class="btn border-0 bg-transparent text-black fw-bold remove-row-btn p-0 ms-2">
                                         <img src="{{ asset('img/remove.svg') }}" alt="Remove">
                                     </button>
                                 </td>
+                                @endif
                             </tr>
                             <tr class="specification-row {{ $hasSpec ? '' : 'd-none' }}">
                                 <td colspan="4"></td>
@@ -181,8 +220,10 @@
                                             <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
                                                 Specification</div>
                                             <div class="d-flex align-items-center pe-3">
+                                                @if(!$ics->is_transfer)
                                                 <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
                                                     aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>
+                                                @endif
                                                 <svg class="specification-arrow" width="12" height="12"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -195,7 +236,7 @@
                                             style="{{ $hasSpec ? '' : 'display: none;' }}">
                                             <textarea class="form-control form-control-sm border-0 shadow-none px-2 specification-textarea" 
                                                 name="items[{{ $index }}][specification]" data-field="specification"
-                                                rows="2" placeholder="Enter specification details.">{{ $specDescription }}</textarea>
+                                                rows="2" placeholder="Enter specification details." @if($ics->is_transfer) readonly @endif>{{ $specDescription }}</textarea>
                                             <span class="invalid-feedback field-error d-none" data-valmsg-for="items[{{ $index }}][specification]"></span>
                                         </div>
                                     </div>
@@ -207,9 +248,11 @@
                     </table>
                 </div>
                 <hr class="m-0 p-0">
+                @if(!$ics->is_transfer)
                 <div class="text-center my-2">
                     <button type="button" class="btn border-0 bg-transparent text-black fw-bold" id="icsAddItemBtn">+ Add Item</button>
                 </div>
+                @endif
             </div>
         </div>
     </form>

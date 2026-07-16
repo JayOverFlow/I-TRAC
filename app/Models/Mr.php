@@ -53,4 +53,14 @@ class Mr extends Model
     {
         return $this->hasMany(MrItemImage::class, 'mr_id', 'mr_id');
     }
+
+    public function transferIcs()
+    {
+        return $this->hasOne(Ics::class, 'mr_id_fk', 'mr_id');
+    }
+
+    public function transferPar()
+    {
+        return $this->hasOne(Par::class, 'mr_id_fk', 'mr_id');
+    }
 }

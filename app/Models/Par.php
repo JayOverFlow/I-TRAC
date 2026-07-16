@@ -22,7 +22,14 @@ class Par extends Model
         'par_issued_by',
         'par_issued_by_pos',
         'par_issued_by_date',
+        'is_transfer',
+        'mr_id_fk',
     ];
+
+    public function mr()
+    {
+        return $this->belongsTo(Mr::class, 'mr_id_fk', 'mr_id');
+    }
 
     public function purchaseOrder()
     {

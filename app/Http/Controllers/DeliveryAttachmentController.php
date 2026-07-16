@@ -41,11 +41,13 @@ class DeliveryAttachmentController extends Controller
             'icsSlips.icsItems.icsSpecs',
             'icsSlips.receiver.departments',
             'icsSlips.giver',
+            'icsSlips.mr.assignedUser',
             'rspiReports.rspiItems.rspiSpecs',
             'rspiReports.user',
             'parReceipts.parItems.parSpecs',
             'parReceipts.receiver.departments',
             'parReceipts.issuer',
+            'parReceipts.mr.assignedUser',
             'ndrReports.ndrItems.ndrSpecs',
             'ndrReports.reporter'
         ])->findOrFail($po_id);

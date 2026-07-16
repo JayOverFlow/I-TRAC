@@ -49,10 +49,14 @@
         return $firstItem && $firstItem->poItem && $firstItem->poItem->po_items_category === 'Semi-Expendable';
     });
 
+    $transferIcsSlips = $po->icsSlips->where('is_transfer', 1);
+    $transferParReceipts = $po->parReceipts->where('is_transfer', 1);
+    $hasTransfers = $transferIcsSlips->isNotEmpty() || $transferParReceipts->isNotEmpty();
+
     // Check if each folder has contents
     $hasSupply = $supplyIars->isNotEmpty() || $supplyRiss->isNotEmpty() || $po->rsmiReports->isNotEmpty();
-    $hasSemiExpendable = $semiExpendableIars->isNotEmpty() || $semiExpendableRiss->isNotEmpty() || $po->icsSlips->isNotEmpty() || $po->rspiReports->isNotEmpty();
-    $hasEquipment = $equipmentIars->isNotEmpty() || $po->parReceipts->isNotEmpty();
+    $hasSemiExpendable = $semiExpendableIars->isNotEmpty() || $semiExpendableRiss->isNotEmpty() || $po->icsSlips->where('is_transfer', 0)->isNotEmpty() || $po->rspiReports->isNotEmpty();
+    $hasEquipment = $equipmentIars->isNotEmpty() || $po->parReceipts->where('is_transfer', 0)->isNotEmpty();
     $hasNotDelivered = $po->ndrReports->isNotEmpty();
 
     // Determine the first non-empty folder to expand by default
@@ -65,6 +69,8 @@
         $firstOpenFolder = 'equipment';
     } elseif ($hasNotDelivered) {
         $firstOpenFolder = 'not-delivered';
+    } elseif ($hasTransfers) {
+        $firstOpenFolder = 'transfers';
     }
 @endphp
 
@@ -324,7 +330,7 @@
                                             </li>
                                         @endforeach
 
-                                        @foreach($po->icsSlips as $ics)
+                                        @foreach($po->icsSlips->where('is_transfer', 0) as $ics)
                                             <li class="tv-item tv-file document-node" data-target="doc-ics-{{ $ics->ics_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -391,7 +397,7 @@
                                             </li>
                                         @endforeach
 
-                                        @foreach($po->parReceipts as $par)
+                                        @foreach($po->parReceipts->where('is_transfer', 0) as $par)
                                             <li class="tv-item tv-file document-node" data-target="doc-par-{{ $par->par_id }}">
                                                 <span class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -442,6 +448,57 @@
                                                     </svg>
                                                 </span>
                                                 <p>NDR</p>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </li>
+                            @endif
+
+                            {{-- Transfer Item Form Folder --}}
+                            @if($hasTransfers)
+                            <li class="tv-item tv-folder">
+                                <div class="tv-header" id="folderTransferHeading">
+                                    <div class="tv-collapsible {{ $firstOpenFolder === 'transfers' ? '' : 'collapsed' }}" data-bs-toggle="collapse"
+                                        data-bs-target="#folderTransfer" aria-expanded="{{ $firstOpenFolder === 'transfers' ? 'true' : 'false' }}"
+                                        aria-controls="folderTransfer">
+                                        <div class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-folder" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path>
+                                            </svg>
+                                        </div>
+                                        <p class="title">Transfer Item Form</p>
+                                    </div>
+                                </div>
+                                <div id="folderTransfer" class="treeview-collapse collapse {{ $firstOpenFolder === 'transfers' ? 'show' : '' }}"
+                                    aria-labelledby="folderTransferHeading" data-bs-parent="#treeviewFolderStructureEx">
+                                    <ul class="treeview">
+                                        @foreach($transferIcsSlips as $ics)
+                                            <li class="tv-item tv-file document-node" data-target="doc-ics-{{ $ics->ics_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>ICS - Transfer ({{ $ics->receiver->user_fullname ?? 'User' }})</p>
+                                            </li>
+                                        @endforeach
+                                        @foreach($transferParReceipts as $par)
+                                            <li class="tv-item tv-file document-node" data-target="doc-par-{{ $par->par_id }}">
+                                                <span class="icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                    </svg>
+                                                </span>
+                                                <p>PAR - Transfer ({{ $par->receiver->user_fullname ?? 'User' }})</p>
                                             </li>
                                         @endforeach
                                     </ul>

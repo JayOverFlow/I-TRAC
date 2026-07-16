@@ -250,9 +250,13 @@ $(document).ready(function() {
         })
         .then(function(result) {
             if (result.ok && result.data.success) {
-                // Success: Toast feedback and trigger pdf download if requested
+                // Success: Toast feedback and trigger pdf download/redirect if requested
                 showToast(result.data.message, 'success');
-                if (result.data.download_pdf) {
+                if (result.data.redirect_url) {
+                    setTimeout(function() {
+                        window.location.href = result.data.redirect_url;
+                    }, 1000);
+                } else if (result.data.download_pdf) {
                     isDownloading = true;
                     setTimeout(function() {
                         window.location.href = result.data.download_pdf;
