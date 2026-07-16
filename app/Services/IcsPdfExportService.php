@@ -42,7 +42,9 @@ class IcsPdfExportService
         $sheet->getPageSetup()->setFitToPage(true);
         $sheet->getPageSetup()->setFitToWidth(1);
         $sheet->getPageSetup()->setFitToHeight(1);
-        $sheet->getPageSetup()->setPrintArea('A1:H55');
+        $hasQrCode = (bool)($ics->is_transfer && $ics->ics_id);
+        $printArea = $hasQrCode ? 'A1:H58' : 'A1:H55';
+        $sheet->getPageSetup()->setPrintArea($printArea);
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
         $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
@@ -158,6 +160,40 @@ class IcsPdfExportService
             $drawing->setWorksheet($sheet);
         }
 
+        // 5. Generate and Embed QR Code if Transfer
+        $tempImage = null;
+        if ($hasQrCode) {
+            $options = new \chillerlan\QRCode\QROptions([
+                'outputInterface' => \chillerlan\QRCode\Output\QRGdImagePNG::class,
+                'scale'           => 10,
+                'imageTransparent' => false,
+            ]);
+            $qrcode = new \chillerlan\QRCode\QRCode($options);
+            $tempImage = tempnam(sys_get_temp_dir(), 'qr_') . '.png';
+
+            $payload = 'ICS-' . $ics->ics_id;
+            $qrcode->render($payload, $tempImage);
+
+            // Merge cells A56 and B56 for the QR Code
+            $sheet->mergeCells('A56:B56');
+
+            // Add text "Scan to receive item/s" in cell C56
+            $sheet->setCellValue('C56', 'Scan to receive item/s');
+            $sheet->getStyle('C56')->getFont()->setName('Calibri')->setBold(true)->setSize(11);
+            $sheet->getStyle('C56')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+            // Add Drawing to Sheet
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setName('ICS QR Code');
+            $drawing->setDescription('QR Code for ICS');
+            $drawing->setPath($tempImage);
+            $drawing->setCoordinates('A56');
+            $drawing->setHeight(110);
+            $drawing->setOffsetX(15);
+            $drawing->setOffsetY(10);
+            $drawing->setWorksheet($sheet);
+        }
+
         // Clear calculations and save to PDF using native mPDF writer
         Calculation::getInstance($spreadsheet)->clearCalculationCache();
 
@@ -166,8 +202,11 @@ class IcsPdfExportService
 
         $filename = 'ICS_' . str_replace('-', '_', $ics->ics_no ?: $ics->ics_id) . '.pdf';
 
-        return response()->streamDownload(function () use ($pdfWriter) {
+        return response()->streamDownload(function () use ($pdfWriter, $tempImage) {
             $pdfWriter->save('php://output');
+            if ($tempImage && file_exists($tempImage)) {
+                @unlink($tempImage);
+            }
         }, $filename, [
             'Content-Type' => 'application/pdf',
         ]);
