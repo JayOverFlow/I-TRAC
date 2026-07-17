@@ -1036,7 +1036,21 @@ $(document).ready(function () {
             confirmButtonText: 'Transfer',
             cancelButtonText: 'Cancel',
             onConfirm: function () {
-                // Do not make any function that will trigger when confirmed for now
+                $.ajax({
+                    url: '/inventory/transfer/' + mrId,
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = response.redirect_url;
+                        } else {
+                            showToast(response.message || 'Failed to initialize transfer.', 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        var msg = xhr.responseJSON?.message || 'Server error. Please try again.';
+                        showToast(msg, 'error');
+                    }
+                });
             }
         });
     });

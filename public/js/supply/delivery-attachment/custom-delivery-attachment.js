@@ -54,9 +54,39 @@ $(document).ready(function() {
     // Confirmation Alert for Save as Draft
     $(document).on('click', '.iar-container button[type="submit"], .ics-container button[type="submit"], .par-container button[type="submit"], .ris-container button[type="submit"], .rsmi-container button[type="submit"], .rspi-container button[type="submit"]', function(e) {
         e.preventDefault();
-        var form = $(this).closest('form');
-        var container = $(this).closest('.document-view-container');
+        var $btn = $(this);
+        var form = $btn.closest('form');
+        var container = $btn.closest('.document-view-container');
         var docName = getDocumentTypeName(container);
+
+        if ($btn.hasClass('btn-transfer-submit')) {
+            var selectEl = form.find('select[name="ics_received_by"], select[name="par_received_by"]');
+            var selectedUser = selectEl.find('option:selected').text();
+            var currentOwner = $btn.data('current-owner') || 'Supply Officer';
+
+            if (!selectEl.val()) {
+                window.confirmAction({
+                    title: 'Transfer Recipient Required',
+                    text: 'Please select the user to whom you want to transfer this item.',
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            window.confirmAction({
+                title: 'Confirm Transfer Item',
+                text: 'Are you sure you want to transfer this item from ' + currentOwner + ' to ' + selectedUser + '?',
+                icon: 'question',
+                confirmButtonText: 'Transfer',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    form.submit();
+                }
+            });
+            return;
+        }
 
         window.confirmAction({
             title: 'Save as Draft?',
@@ -73,9 +103,33 @@ $(document).ready(function() {
 
     // Confirmation Alert for Export as PDF
     $(document).on('click', '.iar-container a.btn-dark-red, .ics-container a.btn-dark-red, .par-container a.btn-dark-red, .ris-container a.btn-dark-red, .rsmi-container a.btn-dark-red, .rspi-container a.btn-dark-red', function(e) {
+        var $btn = $(this);
+        if ($btn.data('direct-export') === true) {
+            e.preventDefault();
+            var downloadUrl = $btn.attr('href');
+            var container = $btn.closest('.document-view-container');
+            var docName = getDocumentTypeName(container);
+
+            window.confirmAction({
+                title: 'Export as PDF?',
+                text: 'Are you sure you want to export this ' + docName + ' as a PDF?',
+                icon: 'question',
+                confirmButtonText: 'Yes, Export',
+                cancelButtonText: 'Cancel',
+                onConfirm: function() {
+                    $('#form-loader-overlay').css('display', 'flex');
+                    window.location.href = downloadUrl;
+                    setTimeout(function() {
+                        $('#form-loader-overlay').hide();
+                    }, 5000);
+                }
+            });
+            return;
+        }
+
         e.preventDefault();
-        var form = $(this).closest('form');
-        var container = $(this).closest('.document-view-container');
+        var form = $btn.closest('form');
+        var container = $btn.closest('.document-view-container');
         var docName = getDocumentTypeName(container);
 
         window.confirmAction({

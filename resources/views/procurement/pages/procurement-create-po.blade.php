@@ -25,7 +25,7 @@
         <div class="card allocated-budget-card mb-3">
             <div class="card-body d-flex justify-content-center justify-content-between align-items-center">
                 <div class="d-flex flex-column">
-                    <h5 class="fw-bold red-text-2">PURCHASE ORDER</h5>
+                    <h5 class="fw-bold red-text-2">Purchase Order</h5>
                     @if ($isDone)
                         <h5 class="badge bg-success p-2 px-3 text-uppercase" style="font-size: 0.85rem;">Done</h5>
                     @endif
@@ -64,7 +64,7 @@
                     <div class="col-md-6">
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Supplier:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Supplier: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_supplier" data-field="po_supplier"
@@ -76,7 +76,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Address:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Address: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_address" data-field="po_address"
@@ -88,7 +88,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Tel No.:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Tel No.: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_tele" data-field="po_tele"
@@ -100,7 +100,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">TIN:</h6>
+                                <h6 class="mb-0 black-text fw-bold">TIN: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_tin" data-field="po_tin"
@@ -113,7 +113,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Place of Delivery:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Place of Delivery: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_place_delivery" data-field="po_place_delivery"
@@ -125,7 +125,7 @@
 
                         <div class="row align-items-center">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Date of Delivery:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Date of Delivery: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_date_delivery" data-field="po_date_delivery"
@@ -139,7 +139,7 @@
                     <div class="col-md-6 border-start-md">
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">P.O. No.:</h6>
+                                <h6 class="mb-0 black-text fw-bold">P.O. No.: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_no" data-field="po_no"
@@ -151,7 +151,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Date:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_date" data-field="po_date"
@@ -163,7 +163,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Mode of Procurement:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Mode of Procurement: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_mode" data-field="po_mode"
@@ -175,7 +175,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">TUP-Taguig TIN:</h6>
+                                <h6 class="mb-0 black-text fw-bold">TUP-Taguig TIN: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_tuptin" data-field="po_tuptin"
@@ -188,7 +188,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Delivery Term:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Delivery Term: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_delivery_term" data-field="po_delivery_term"
@@ -200,7 +200,7 @@
 
                         <div class="row align-items-center">
                             <div class="col-4">
-                                <h6 class="mb-0 black-text fw-bold">Payment Term:</h6>
+                                <h6 class="mb-0 black-text fw-bold">Payment Term: <span class="text-danger">*</span></h6>
                             </div>
                             <div class="col-8">
                                 <input type="text" name="po_payment_term" data-field="po_payment_term"
@@ -242,10 +242,10 @@
                             <thead class="bg-transparent">
                                 <tr>
                                     <th class="text-center black-text fw-bold" style="width: 8%">Stock</th>
-                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                    <th class="black-text fw-bold">Item Description</th>
-                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                    <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit <span class="text-danger">*</span></th>
+                                    <th class="black-text fw-bold">Item Description <span class="text-danger">*</span></th>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty. <span class="text-danger">*</span></th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost <span class="text-danger">*</span></th>
                                     <th class="text-center black-text fw-bold" style="width: 14%">Amount</th>
                                     <th class="text-start px-0" style="width: 30px"></th>
                                 </tr>

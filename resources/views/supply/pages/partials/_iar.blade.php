@@ -48,14 +48,14 @@
                     </div>
 
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Responsibility Center Code:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Responsibility Center Code: <span class="text-danger">*</span></h6>
                         <input type="text" name="iar_center_code" value="{{ $iar->iar_center_code }}"
                             class="form-control form-control-sm ms-2 mb-2 w-75">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_center_code"></span>
                     </div>
 
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Fund Cluster:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Fund Cluster: <span class="text-danger">*</span></h6>
                         <input type="text" name="iar_fund_cluster" value="{{ $iar->iar_fund_cluster }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_fund_cluster"></span>
                     </div>
@@ -63,22 +63,22 @@
 
                 <div class="col-md-6 border-start-md">
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">IAR No.:</h6>
+                        <h6 class="mb-2 black-text fw-bold">IAR No.: <span class="text-danger">*</span></h6>
                         <input type="text" name="iar_no" value="{{ $iar->iar_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_no"></span>
                     </div>
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Date:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                         <input type="text" name="iar_date" value="{{ $iar->iar_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_date"></span>
                     </div>
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Invoice No.:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Invoice No.: <span class="text-danger">*</span></h6>
                         <input type="text" name="iar_invoice_no" value="{{ $iar->iar_invoice_no }}" class="form-control form-control-sm ms-2 mb-2 w-75">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_invoice_no"></span>
                     </div>
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Date:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Date: <span class="text-danger">*</span></h6>
                         <input type="text" name="iar_invoice_date" value="{{ $iar->iar_invoice_date }}" class="form-control form-control-sm ms-2 mb-2 w-75 flatpickr" placeholder="Select Date..">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_invoice_date"></span>
                     </div>
@@ -89,7 +89,7 @@
                 <div class="col-md-6">
                     <p class="black-text fw-bold text-center">Inspection</p>
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Inspection Officer:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Inspection Officer: <span class="text-danger">*</span></h6>
                         <input type="text" class="form-control form-control-sm ms-2 w-75" name="iar_inspected_by" value="{{ $iar->iar_inspected_by }}"
                             placeholder="Officer Name">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_inspected_by"></span>
@@ -99,7 +99,7 @@
                 <div class="col-md-6">
                     <p class="black-text fw-bold text-center">Acceptance</p>
                     <div class="row align-items-center mb-3">
-                        <h6 class="mb-2 black-text fw-bold">Date Received:</h6>
+                        <h6 class="mb-2 black-text fw-bold">Date Received: <span class="text-danger">*</span></h6>
                         <input type="text" class="form-control form-control-sm ms-2 w-75 flatpickr" name="iar_date_accepted" value="{{ $iar->iar_date_accepted }}"
                             placeholder="Select Date..">
                         <span class="invalid-feedback field-error d-none ms-2" data-valmsg-for="iar_date_accepted"></span>
@@ -121,9 +121,9 @@
                     <thead class="bg-transparent">
                         <tr>
                             <th class="text-center black-text fw-bold" style="width: 20%">Stock/Property No.</th>
-                            <th class="black-text fw-bold">Description</th>
-                            <th class="text-center black-text fw-bold" style="width: 15%">Unit</th>
-                            <th class="text-center black-text fw-bold" style="width: 10%">Quantity</th>
+                            <th class="black-text fw-bold">Description <span class="text-danger">*</span></th>
+                            <th class="text-center black-text fw-bold" style="width: 15%">Unit <span class="text-danger">*</span></th>
+                            <th class="text-center black-text fw-bold" style="width: 12%">Quantity <span class="text-danger">*</span></th>
                             <th class="" style="width: 2%"></th>
                         </tr>
                     </thead>
@@ -180,7 +180,7 @@
                                     <div class="d-flex justify-content-between align-items-center rounded-top custom-specification-header toggle-specification-action"
                                         style="cursor: pointer;">
                                         <div class="p-1 px-2 black-text flex-grow-1" style="font-size: 0.8rem;">
-                                            Specification</div>
+                                            Specification <span class="text-danger">*</span></div>
                                         <div class="d-flex align-items-center pe-3">
                                             <button type="button" class="btn-close btn-sm remove-specification-btn me-2"
                                                 aria-label="Close" style="width: 0.5em; height: 0.5em;"></button>

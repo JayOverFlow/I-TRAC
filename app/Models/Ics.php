@@ -22,7 +22,14 @@ class Ics extends Model
         'ics_received_by',
         'ics_received_by_pos',
         'ics_received_by_date',
+        'is_transfer',
+        'mr_id_fk',
     ];
+
+    public function mr()
+    {
+        return $this->belongsTo(Mr::class, 'mr_id_fk', 'mr_id');
+    }
 
     public function purchaseOrder()
     {

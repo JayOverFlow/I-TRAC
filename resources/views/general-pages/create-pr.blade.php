@@ -475,7 +475,7 @@
 
                     <div class="row align-items-center mb-3">
                         <div class="col-4">
-                            <h6 class="mb-0 black-text fw-bold">Section:</h6>
+                            <h6 class="mb-0 black-text fw-bold">Section: <span class="text-danger">*</span></h6>
                         </div>
                         <div class="col-8">
                             <input type="text" name="pr_section" data-field="pr_section"
@@ -488,7 +488,7 @@
 
                     <div class="row align-items-center">
                         <div class="col-4">
-                            <h6 class="mb-0 black-text fw-bold">Purpose:</h6>
+                            <h6 class="mb-0 black-text fw-bold">Purpose: <span class="text-danger">*</span></h6>
                         </div>
                         <div class="col-8">
                             <input type="text" name="pr_purpose" data-field="pr_purpose"
@@ -554,11 +554,11 @@
                         <table class="table table-sm table-borderless align-middle pr-table">
                             <thead class="bg-transparent">
                                 <tr>
-                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit</th>
-                                    <th class="black-text fw-bold">Item Description</th>
+                                    <th class="text-center black-text fw-bold" style="width: 12%">Unit <span class="text-danger">*</span></th>
+                                    <th class="black-text fw-bold">Item Description <span class="text-danger">*</span></th>
                                     <!-- Auto width takes remaining space -->
-                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty.</th>
-                                    <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost</th>
+                                    <th class="text-center black-text fw-bold" style="width: 8%">Qty. <span class="text-danger">*</span></th>
+                                    <th class="text-center black-text fw-bold" style="width: 14%">Unit Cost <span class="text-danger">*</span></th>
                                     <th class="text-center black-text fw-bold" style="width: 14%">Amount</th>
                                     <th class="text-start px-0" style="width: 30px"></th>
                                     <!-- Fixed strict pixel width -->
