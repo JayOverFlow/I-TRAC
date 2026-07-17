@@ -12,6 +12,9 @@ use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Output\QRGdImagePNG;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Models\User;
+use App\Models\Department;
+use App\Services\InventoryReportExportService;
 use Mpdf\Mpdf as MpdfLib;
 
 class InventoryController extends Controller
@@ -35,7 +38,28 @@ class InventoryController extends Controller
             'supplies'        => $mrItems->where('category', 'Supply and Materials')->count(),
         ];
 
-        return view('supply/pages/supply-inventory', compact('mrItems', 'counts'));
+        // Fetch all users with custom full name logic
+        $allUsers = User::orderBy('user_lastname')
+            ->orderBy('user_firstname')
+            ->get();
+
+        // Fetch all offices
+        $allOffices = Department::orderBy('dep_name')->get();
+
+        // Extract distinct years from date_scanned
+        $availableYears = Mr::whereNotNull('date_scanned')
+            ->selectRaw('YEAR(date_scanned) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        // Fallback to current year if none scanned yet
+        if (empty($availableYears)) {
+            $availableYears = [date('Y')];
+        }
+
+        return view('supply/pages/supply-inventory', compact('mrItems', 'counts', 'allUsers', 'allOffices', 'availableYears'));
     }
 
     /**
@@ -949,5 +973,21 @@ class InventoryController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function exportInventoryReport(Request $request, InventoryReportExportService $exportService)
+    {
+        $filters = $request->only([
+            'reporting_period',
+            'filter_year',
+            'filter_month',
+            'filter_quarter',
+            'filter_group_by',
+            'filter_user',
+            'filter_office',
+            'filter_category'
+        ]);
+
+        return $exportService->export($filters);
     }
 }

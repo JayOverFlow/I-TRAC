@@ -250,6 +250,12 @@ $(document).ready(function () {
                 return;
             }
 
+            // For remarks, ensure the remarks row is visible if there's an error
+            if (field === 'remarks') {
+                var remarksRow = input.closest('.pr-remarks-row');
+                remarksRow.removeClass('d-none');
+            }
+
             // For other fields, find the error span within the same <td>
             var errorSpan = input.closest('td').find('.field-error');
             if (errorSpan.length) {

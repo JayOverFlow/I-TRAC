@@ -160,8 +160,8 @@ thead.bg-transparent th {
 }
 
 .form-control.is-invalid {
-    border-color: #dc3545;
-    background-image: none;
+    border-color: #dc3545 !important;
+    background-image: none !important;
 }
 
 .custom-specification-container.is-invalid .custom-specification-header,
@@ -171,6 +171,11 @@ thead.bg-transparent th {
 
 .remarks-input {
     border: 0px !important;
+}
+
+.remarks-input.is-invalid {
+    background-image: none !important;
+    padding-right: 0.75rem !important;
 }
 
 /* DARK MODE OVERRIDES */
@@ -237,7 +242,7 @@ body.dark .specification-body textarea:focus {
     position: absolute;
     left: 14px;
     top: 28px;
-    bottom: -10px;
+    bottom: -90px;
     width: 2px;
     background-color: #e5e7eb;
     z-index: 1;

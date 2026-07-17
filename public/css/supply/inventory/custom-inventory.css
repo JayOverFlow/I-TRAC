@@ -1038,3 +1038,333 @@ body.dark .action-dropdown-menu .dropdown-toggle:active,
 body.dark .action-dropdown-menu .dropdown-toggle.show {
     color: #ffffff !important;
 }
+
+/* ---------------------------------------------------------------
+   Export Report Wizard Modal Styles
+   --------------------------------------------------------------- */
+
+/* "Generate Report" link on the All summary card */
+.export-report-link {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--red-2);
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.export-report-link:hover {
+    color: var(--red-1);
+    text-decoration: underline;
+}
+
+body.dark .export-report-link {
+    color: #EF4444;
+}
+
+body.dark .export-report-link:hover {
+    color: #F87171;
+}
+
+/* Wizard Stepper Bar */
+.wizard-stepper {
+    gap: 0;
+    padding: 0 20px;
+}
+
+.wizard-step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+.wizard-step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.wizard-step-circle.active {
+    background-color: var(--red-2);
+    color: #ffffff;
+    border-color: var(--red-2);
+    box-shadow: 0 4px 12px rgba(140, 4, 4, 0.25);
+}
+
+.wizard-step-circle.completed {
+    background-color: var(--red-2);
+    color: #ffffff;
+    border-color: var(--red-2);
+}
+
+.wizard-step-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.wizard-step-item.active-step .wizard-step-label {
+    color: var(--red-2);
+}
+
+.wizard-step-item.completed-step .wizard-step-label {
+    color: var(--red-2);
+}
+
+.wizard-step-line {
+    flex: 1;
+    height: 2px;
+    background-color: #e2e8f0;
+    margin: 0 8px;
+    margin-bottom: 22px;
+    transition: background-color 0.3s ease;
+}
+
+.wizard-step-line.completed {
+    background-color: var(--red-2);
+}
+
+/* Wizard Step Content */
+.wizard-step-content {
+    min-height: 180px;
+    animation: wizardFadeIn 0.25s ease-in-out;
+}
+
+@keyframes wizardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Wizard Navigation Buttons */
+.btn-wizard-prev {
+    min-width: 110px;
+    border: 1.5px solid #cbd5e1 !important;
+    color: #64748b !important;
+    background-color: transparent !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.btn-wizard-prev:hover:not(:disabled) {
+    border-color: var(--red-2) !important;
+    color: var(--red-2) !important;
+    background-color: #fdf2f2 !important;
+}
+
+.btn-wizard-prev:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-wizard-next {
+    min-width: 110px;
+    background-color: var(--red-2) !important;
+    color: #ffffff !important;
+    border: 1.5px solid var(--red-2) !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.btn-wizard-next:hover:not(:disabled) {
+    background-color: var(--red-1) !important;
+    border-color: var(--red-1) !important;
+    transform: translateY(-1px);
+}
+
+.btn-wizard-next:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ---- Dark Mode for Export Report Wizard ---- */
+body.dark .wizard-step-circle {
+    background-color: #2A2F38;
+    color: #6b7280;
+}
+
+body.dark .wizard-step-circle.active {
+    background-color: #8C0404;
+    color: #ffffff;
+    border-color: #8C0404;
+    box-shadow: 0 4px 12px rgba(140, 4, 4, 0.4);
+}
+
+body.dark .wizard-step-circle.completed {
+    background-color: #8C0404;
+    color: #ffffff;
+    border-color: #8C0404;
+}
+
+body.dark .wizard-step-label {
+    color: #6b7280;
+}
+
+body.dark .wizard-step-item.active-step .wizard-step-label {
+    color: #EF4444;
+}
+
+body.dark .wizard-step-item.completed-step .wizard-step-label {
+    color: #EF4444;
+}
+
+body.dark .wizard-step-line {
+    background-color: #2A2F38;
+}
+
+body.dark .wizard-step-line.completed {
+    background-color: #8C0404;
+}
+
+body.dark .btn-wizard-prev {
+    border-color: #4b5563 !important;
+    color: #9ca3af !important;
+}
+
+body.dark .btn-wizard-prev:hover:not(:disabled) {
+    border-color: #EF4444 !important;
+    color: #EF4444 !important;
+    background-color: #251b1d !important;
+}
+
+body.dark .btn-wizard-next {
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+}
+
+body.dark .btn-wizard-next:hover:not(:disabled) {
+    background-color: #B91C1C !important;
+    border-color: #B91C1C !important;
+}
+
+/* --- Period Options (Step 1) --- */
+.period-option {
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1 !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.period-option:hover {
+    border-color: #94a3b8 !important;
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.period-option.selected {
+    border-color: var(--red-2) !important;
+    background-color: #fff8f8;
+    box-shadow: 0 4px 12px rgba(140, 4, 4, 0.06);
+}
+
+.period-option.selected .period-title {
+    color: var(--red-2) !important;
+}
+
+.period-option.selected .period-checkmark {
+    display: block !important;
+}
+
+.period-checkmark {
+    display: none;
+}
+
+/* --- Step 3 Review Panel --- */
+.review-item {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: #f8fafc;
+}
+
+.review-label {
+    font-weight: 700;
+    color: #64748b;
+    min-width: 120px;
+}
+
+.review-value {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* --- Dark Mode Step Content Customizations --- */
+body.dark .period-option {
+    background-color: #1D2127;
+    border-color: #2A2F38 !important;
+}
+
+body.dark .period-option:hover {
+    background-color: #252A32;
+    border-color: #374151 !important;
+}
+
+body.dark .period-option.selected {
+    background-color: #221618;
+    border-color: #EF4444 !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+body.dark .period-option.selected .period-title {
+    color: #EF4444 !important;
+}
+
+body.dark .period-option.selected .period-checkmark svg {
+    color: #EF4444 !important;
+}
+
+body.dark .period-option .period-title {
+    color: #F3F4F6 !important;
+}
+
+body.dark .period-option .text-muted {
+    color: #9ca3af !important;
+}
+
+body.dark .review-item {
+    background-color: #1D2127;
+}
+
+body.dark .review-label {
+    color: #9ca3af;
+}
+
+body.dark .review-value {
+    color: #F3F4F6;
+}
+
+body.dark .review-item.border-bottom {
+    border-color: #2A2F38 !important;
+}
+
+body.dark .wizard-step-content .card {
+    background-color: #15181D !important;
+    border-color: #2A2F38 !important;
+}
+
+body.dark .wizard-step-content h6.text-dark {
+    color: #F3F4F6 !important;
+    border-color: #2A2F38 !important;
+}

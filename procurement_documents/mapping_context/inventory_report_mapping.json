@@ -1,0 +1,162 @@
+{
+  "$description": "Explicit field/data mapping context for the Inventory Report PDF generated via PhpSpreadsheet and mPDF. Validation rules are intentionally NOT defined.",
+  "meta": {
+    "source_file": "InventoryReportExportService.php",
+    "form_title": "INVENTORY REPORT",
+    "form_code": null,
+    "form_revision": null,
+    "form_revision_date": null,
+    "issuing_organization": "Technological University of the Philippines, Manila",
+    "sheets": {
+      "Inventory Report": {
+        "role": "programmatic_output",
+        "description": "Generated directly in code. Contains the landscape layout, TUP logo letterhead, static labels, data rows, and double-bottom border for the grand totals row.",
+        "used_range": "A1:J[row]",
+        "form_visual_area": "A1:J[row]"
+      }
+    },
+    "layout_notes": [
+      "The form is laid out across 10 columns A-J in LANDSCAPE orientation to accommodate wide details.",
+      "A1 contains the Technological University of the Philippines logo dynamically loaded from public/img/tup-logo.png.",
+      "Unit Cost (Column I) and Total Cost (Column J) use currency formatting ('₱'#,##0.00).",
+      "Quantities, Units, Category, Date Received, and Office are centered. Columns A and B have wrapText enabled."
+    ]
+  },
+  "static_regions": [
+    {
+      "range": "B1",
+      "merged": false,
+      "value": "TUP Logo Drawing Anchor",
+      "purpose": "Letterhead logo placement."
+    },
+    {
+      "range": "C1:J1",
+      "merged": true,
+      "value": "TECHNOLOGICAL UNIVERSITY OF THE PHILIPPINES",
+      "purpose": "Letterhead - institution name (bold, 12pt)."
+    },
+    {
+      "range": "C2:J2",
+      "merged": true,
+      "value": "Manila",
+      "purpose": "Institution sub-heading."
+    },
+    {
+      "range": "C4:J4",
+      "merged": true,
+      "value": "INVENTORY REPORT",
+      "purpose": "Form title (bold, 15pt, color #8C0404)."
+    },
+    {
+      "range": "A6",
+      "merged": false,
+      "value": "Reporting Period:",
+      "purpose": "Label for the selected reporting period (e.g. Annual, Monthly, Quarterly)."
+    },
+    {
+      "range": "F6",
+      "merged": false,
+      "value": "Item Category:",
+      "purpose": "Label for category filter (e.g. Equipment, Semi-Expendable, Supplies and Materials)."
+    },
+    {
+      "range": "A7",
+      "merged": false,
+      "value": "Grouped By:",
+      "purpose": "Label for grouping selection (e.g. Per End-User or Per Office)."
+    },
+    {
+      "range": "F7",
+      "merged": false,
+      "value": "Date Generated:",
+      "purpose": "Timestamp when report was requested."
+    }
+  ],
+  "data_columns": {
+    "A": {
+      "header": "Item Name",
+      "field": "mr_tbl.item_name",
+      "type": "string",
+      "alignment": "left",
+      "wrap": true
+    },
+    "B": {
+      "header": "Specification",
+      "field": "mr_tbl.specification",
+      "type": "string",
+      "alignment": "left",
+      "wrap": true
+    },
+    "C": {
+      "header": "Qty",
+      "field": "mr_tbl.quantity",
+      "type": "integer",
+      "alignment": "center"
+    },
+    "D": {
+      "header": "Unit",
+      "field": "mr_tbl.unit",
+      "type": "string",
+      "alignment": "center"
+    },
+    "E": {
+      "header": "Category",
+      "field": "mr_tbl.category",
+      "type": "string",
+      "alignment": "center"
+    },
+    "F": {
+      "header": "Assigned User",
+      "field": "users_tbl.user_fullname",
+      "type": "string",
+      "alignment": "left"
+    },
+    "G": {
+      "header": "Office",
+      "field": "departments_tbl.dep_acronym",
+      "type": "string",
+      "alignment": "center"
+    },
+    "H": {
+      "header": "Date Received",
+      "field": "mr_tbl.date_scanned",
+      "type": "date (Y-m-d)",
+      "alignment": "center"
+    },
+    "I": {
+      "header": "Unit Cost",
+      "field": "po_items_tbl.po_items_cost",
+      "type": "decimal",
+      "alignment": "right",
+      "format": "\"₱\"#,##0.00"
+    },
+    "J": {
+      "header": "Total Cost",
+      "formula": "Qty * Unit Cost",
+      "type": "decimal",
+      "alignment": "right",
+      "format": "\"₱\"#,##0.00"
+    }
+  },
+  "summary_regions": [
+    {
+      "range": "A[lastRow]:B[lastRow]",
+      "merged": true,
+      "value": "Grand Total",
+      "alignment": "right"
+    },
+    {
+      "range": "C[lastRow]",
+      "merged": false,
+      "formula": "=SUM(C10:C[lastDataRow])",
+      "alignment": "center"
+    },
+    {
+      "range": "J[lastRow]",
+      "merged": false,
+      "formula": "=SUM(J10:J[lastDataRow])",
+      "alignment": "right",
+      "format": "\"₱\"#,##0.00"
+    }
+  ]
+}
