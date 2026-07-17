@@ -362,7 +362,7 @@ class CreatePrController extends Controller
                 $originalItems = \App\Models\PrItem::where('pr_id_fk', $task->pr_id_fk)
                     ->with('prSpecs')
                     ->get()
-                    ->keyBy('pr_app_item_id_fk');
+                    ->keyBy('pr_items_id');
             }
 
             foreach ($items as $index => $row) {
@@ -379,8 +379,8 @@ class CreatePrController extends Controller
 
                 // Validate remarks for the Head's edit view when exporting (submit)
                 if ($intent === 'submit' && $canHeadEdit) {
-                    $appItemId = $row['app_item_id'] ?? null;
-                    $originalItem = $appItemId ? $originalItems->get($appItemId) : null;
+                    $prItemId = $row['pr_item_id'] ?? null;
+                    $originalItem = $prItemId ? $originalItems->get($prItemId) : null;
 
                     $isModified = false;
                     if ($originalItem) {

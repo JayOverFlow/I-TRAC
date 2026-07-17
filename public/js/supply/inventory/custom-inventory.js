@@ -1059,4 +1059,245 @@ $(document).ready(function () {
             }
         });
     });
+    // ---------------------------------------------------------------
+    // EXPORT REPORT WIZARD — 3-step modal stepper navigation & logic
+    // ---------------------------------------------------------------
+    var ReportWizard = {
+        currentStep: 1,
+        totalSteps: 3,
+
+        /**
+         * Navigate the wizard to the specified step number.
+         * Updates stepper circles, connecting lines, step panels, and button states.
+         */
+        goToStep: function (step) {
+            if (step < 1 || step > this.totalSteps) return;
+            this.currentStep = step;
+
+            // Update step circles and labels
+            $('.wizard-step-item').each(function () {
+                var itemStep = parseInt($(this).data('step'));
+                var $circle = $(this).find('.wizard-step-circle');
+
+                $circle.removeClass('active completed');
+                $(this).removeClass('active-step completed-step');
+
+                if (itemStep === step) {
+                    $circle.addClass('active');
+                    $(this).addClass('active-step');
+                } else if (itemStep < step) {
+                    $circle.addClass('completed');
+                    $(this).addClass('completed-step');
+                }
+            });
+
+            // Update connecting lines
+            var $lines = $('.wizard-step-line');
+            $lines.each(function (index) {
+                if (index + 1 < step) {
+                    $(this).addClass('completed');
+                } else {
+                    $(this).removeClass('completed');
+                }
+            });
+
+            // Show/hide step content panels with fade animation
+            for (var i = 1; i <= this.totalSteps; i++) {
+                var $panel = $('#wizardStep' + i);
+                if (i === step) {
+                    $panel.removeClass('d-none');
+                    $panel.css('animation', 'none');
+                    $panel[0].offsetHeight; // eslint-disable-line no-unused-expressions
+                    $panel.css('animation', '');
+                } else {
+                    $panel.addClass('d-none');
+                }
+            }
+
+            // Update Prev/Next button states
+            $('#wizardBtnPrev').prop('disabled', step === 1);
+            $('#wizardBtnNext').prop('disabled', step === this.totalSteps);
+
+            // Generate review summary if on step 3
+            if (step === 3) {
+                this.updateReviewSummary();
+            }
+        },
+
+        /**
+         * Gather user configurations and build summary HTML in Step 3.
+         */
+        updateReviewSummary: function () {
+            var period = $('#reporting_period').val();
+            var year = $('#filter_year').val();
+            var category = $('#filter_category').val();
+            var groupBy = $('#filter_group_by').val();
+
+            var periodDetailsHtml = '';
+            if (period === 'Monthly') {
+                var monthLabel = $('#filter_month option:selected').text();
+                periodDetailsHtml = `
+                    <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                        <span class="review-label">Month</span>
+                        <span class="review-value">${monthLabel}</span>
+                    </div>
+                `;
+            } else if (period === 'Quarterly') {
+                var quarterLabel = $('#filter_quarter option:selected').text();
+                periodDetailsHtml = `
+                    <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                        <span class="review-label">Quarter</span>
+                        <span class="review-value">${quarterLabel}</span>
+                    </div>
+                `;
+            }
+
+            var groupDetailsHtml = '';
+            if (groupBy === 'user') {
+                var userLabel = $('#filter_user option:selected').text();
+                groupDetailsHtml = `
+                    <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                        <span class="review-label">Grouped By</span>
+                        <span class="review-value">End-User (${userLabel})</span>
+                    </div>
+                `;
+            } else {
+                var officeLabel = $('#filter_office option:selected').text();
+                groupDetailsHtml = `
+                    <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                        <span class="review-label">Grouped By</span>
+                        <span class="review-value">Office (${officeLabel})</span>
+                    </div>
+                `;
+            }
+
+            var html = `
+                <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                    <span class="review-label">Period Type</span>
+                    <span class="review-value">${period}</span>
+                </div>
+                <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                    <span class="review-label">Fiscal Year</span>
+                    <span class="review-value">${year}</span>
+                </div>
+                ${periodDetailsHtml}
+                ${groupDetailsHtml}
+                <div class="review-item d-flex justify-content-between align-items-center mb-2">
+                    <span class="review-label">Category</span>
+                    <span class="review-value">${category}</span>
+                </div>
+            `;
+
+            $('#wizardReviewSummary').html(html);
+        },
+
+        /**
+         * Reset wizard steps and dynamic elements.
+         */
+        reset: function () {
+            // Reset wizard to step 1
+            this.goToStep(1);
+
+            // Reset form fields
+            var form = document.getElementById('exportReportForm');
+            if (form) {
+                form.reset();
+            }
+
+            // Restore reporting period default (Annual)
+            $('#reporting_period').val('Annual');
+            $('.period-option').removeClass('selected');
+            $('.period-option[data-period="Annual"]').addClass('selected');
+            $('.period-checkmark').addClass('d-none');
+            $('.period-option[data-period="Annual"] .period-checkmark').removeClass('d-none');
+
+            // Apply visibility toggles matching defaults
+            $('.filter-month-group').addClass('d-none');
+            $('.filter-quarter-group').addClass('d-none');
+            $('.filter-user-group').removeClass('d-none');
+            $('.filter-office-group').addClass('d-none');
+        }
+    };
+
+    // --- Interactive Stepper Click & Navigation Handlers ---
+
+    // Option selection in Step 1 (Reporting Period Cards)
+    $(document).on('click', '.period-option', function () {
+        var selectedPeriod = $(this).data('period');
+        $('#reporting_period').val(selectedPeriod);
+
+        // Visual selection change
+        $('.period-option').removeClass('selected');
+        $('.period-option .period-checkmark').addClass('d-none');
+        $(this).addClass('selected');
+        $(this).find('.period-checkmark').removeClass('d-none');
+
+        // Dynamically toggle month / quarter filters for Step 2
+        if (selectedPeriod === 'Monthly') {
+            $('.filter-month-group').removeClass('d-none');
+            $('.filter-quarter-group').addClass('d-none');
+        } else if (selectedPeriod === 'Quarterly') {
+            $('.filter-quarter-group').removeClass('d-none');
+            $('.filter-month-group').addClass('d-none');
+        } else {
+            $('.filter-month-group').addClass('d-none');
+            $('.filter-quarter-group').addClass('d-none');
+        }
+    });
+
+    // Group By dropdown selection in Step 2 (End-user vs Office)
+    $(document).on('change', '#filter_group_by', function () {
+        var choice = $(this).val();
+        if (choice === 'user') {
+            $('.filter-user-group').removeClass('d-none');
+            $('.filter-office-group').addClass('d-none');
+        } else {
+            $('.filter-office-group').removeClass('d-none');
+            $('.filter-user-group').addClass('d-none');
+        }
+    });
+
+    // Prev button click
+    $(document).on('click', '#wizardBtnPrev', function () {
+        if (ReportWizard.currentStep > 1) {
+            ReportWizard.goToStep(ReportWizard.currentStep - 1);
+        }
+    });
+
+    // Next button click
+    $(document).on('click', '#wizardBtnNext', function () {
+        if (ReportWizard.currentStep < ReportWizard.totalSteps) {
+            ReportWizard.goToStep(ReportWizard.currentStep + 1);
+        }
+    });
+
+    // Reset wizard when modal is closed
+    $('#exportReportModal').on('hidden.bs.modal', function () {
+        ReportWizard.reset();
+    });
+
+    // Export button click handler inside Step 3
+    $(document).on('click', '#wizardBtnExport', function () {
+        var $btn = $(this);
+        var originalHtml = $btn.html();
+
+        // Show loading spinner
+        $btn.prop('disabled', true).html(`
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Generating PDF...
+        `);
+
+        var formData = $('#exportReportForm').serialize();
+        var url = window.exportReportUrl + '?' + formData;
+
+        // Trigger file download
+        window.location.href = url;
+
+        // Reset button and close modal after a short delay
+        setTimeout(function () {
+            $btn.prop('disabled', false).html(originalHtml);
+            $('#exportReportModal').modal('hide');
+            showToast('Your inventory report has been generated successfully.', 'success');
+        }, 2500);
+    });
 });

@@ -32,6 +32,7 @@
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">ALl</h6>
                             <h5 class="mb-0 fw-bold"><span>{{ $counts['all'] }}</span></h5>
+                            <a href="javascript:void(0);" class="export-report-link" data-bs-toggle="modal" data-bs-target="#exportReportModal">Generate Report</a>
                         </div>
                     </div>
                 </div>
@@ -561,6 +562,215 @@
             </div>
         </div>
     </div>
+    <!-- Export Report Wizard Modal -->
+    <div class="modal fade" id="exportReportModal" tabindex="-1" aria-labelledby="exportReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4 d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4 class="modal-title fw-bold red-text-2 mb-1" id="exportReportModalLabel">Export Report</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Specify the details of your report down below.</p>
+                    </div>
+                    <button type="button" class="btn-close shadow-none border-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 pt-3 pb-2">
+                    <!-- Wizard Stepper Bar -->
+                    <div class="wizard-stepper d-flex align-items-center justify-content-center mb-4">
+                        <div class="wizard-step-item" data-step="1">
+                            <div class="wizard-step-circle active">1</div>
+                            <span class="wizard-step-label">Period</span>
+                        </div>
+                        <div class="wizard-step-line"></div>
+                        <div class="wizard-step-item" data-step="2">
+                            <div class="wizard-step-circle">2</div>
+                            <span class="wizard-step-label">Filters</span>
+                        </div>
+                        <div class="wizard-step-line"></div>
+                        <div class="wizard-step-item" data-step="3">
+                            <div class="wizard-step-circle">3</div>
+                            <span class="wizard-step-label">Review</span>
+                        </div>
+                    </div>
+
+                    <!-- Step Content Panels -->
+                    <form id="exportReportForm">
+                        <input type="hidden" name="reporting_period" id="reporting_period" value="Annual">
+
+                        <!-- Step 1 — Reporting Period -->
+                        <div class="wizard-step-content" id="wizardStep1">
+                            <div class="period-options d-flex flex-column gap-3">
+                                <!-- Option Annual -->
+                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center selected" data-period="Annual">
+                                    <div class="d-flex align-items-center gap-3 w-100">
+                                        <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(140, 4, 4, 0.08);">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3 red-text-2" viewBox="0 0 16 16">
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block text-dark period-title">Annual</span>
+                                            <span class="text-muted small">Generate a report covering the entire fiscal year.</span>
+                                        </div>
+                                    </div>
+                                    <span class="period-checkmark position-absolute top-0 end-0 m-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-check-circle-fill text-danger" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <!-- Option Monthly -->
+                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center" data-period="Monthly">
+                                    <div class="d-flex align-items-center gap-3 w-100">
+                                        <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(140, 4, 4, 0.08);">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-month red-text-2" viewBox="0 0 16 16">
+                                                <path d="M8 9.05q-.416 0-.708-.292t-.292-.708q0-.417.292-.709t.708-.291q.417 0 .709.291t.291.709q0 .416-.291.708T8 9.05m0 3q-.417 0-.709-.292t-.291-.708q0-.417.292-.708t.708-.292q.417 0 .709.292t.291.708q0 .416-.291.708t-.709.292m-3-3q-.417 0-.708-.292T4 8q0-.417.292-.709t.708-.291q.417 0 .708.291T6 8q0 .416-.292.708T5 9.05m0 3q-.417 0-.708-.292T4 11q0-.417.292-.708t.708-.292q.417 0 .708.292T6 11q0 .416-.292.708T5 12.05m6-3q-.417 0-.708-.292t-.292-.708q0-.417.292-.709t.708-.291q.417 0 .708.291t.292.709q0 .416-.292.708t-.708.292m0 3q-.417 0-.708-.292t-.292-.708q0-.417.292-.708t.708-.292q.417 0 .708.292t.292.708q0 .416-.292.708t-.708.292"/>
+                                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
+                                                <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block text-dark period-title">Monthly</span>
+                                            <span class="text-muted small">Generate a report covering a specific calendar month.</span>
+                                        </div>
+                                    </div>
+                                    <span class="period-checkmark position-absolute top-0 end-0 m-2 d-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-check-circle-fill text-danger" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <!-- Option Quarterly -->
+                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center" data-period="Quarterly">
+                                    <div class="d-flex align-items-center gap-3 w-100">
+                                        <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(140, 4, 4, 0.08);">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3-range red-text-2" viewBox="0 0 16 16">
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                                <path d="M2 10a1 1 0 0 0 0 2h12a1 1 0 0 0 0-2H2zm0-4a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2H2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block text-dark period-title">Quarterly</span>
+                                            <span class="text-muted small">Generate a report covering a 3-month fiscal quarter.</span>
+                                        </div>
+                                    </div>
+                                    <span class="period-checkmark position-absolute top-0 end-0 m-2 d-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-check-circle-fill text-danger" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 — Filters -->
+                        <div class="wizard-step-content d-none" id="wizardStep2">
+                            <div class="filters-container d-flex flex-column gap-3">
+                                <!-- Year Selection -->
+                                <div class="form-group">
+                                    <label for="filter_year" class="fw-bold mb-1 small text-muted">Select Year</label>
+                                    <select class="form-select" id="filter_year" name="filter_year">
+                                        @foreach($availableYears as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Month Selection (Conditional) -->
+                                <div class="form-group filter-month-group d-none">
+                                    <label for="filter_month" class="fw-bold mb-1 small text-muted">Select Month</label>
+                                    <select class="form-select" id="filter_month" name="filter_month">
+                                        @foreach(range(1, 12) as $m)
+                                            @php $dateObj = DateTime::createFromFormat('!m', $m); @endphp
+                                            <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>{{ $dateObj->format('F') }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Quarter Selection (Conditional) -->
+                                <div class="form-group filter-quarter-group d-none">
+                                    <label for="filter_quarter" class="fw-bold mb-1 small text-muted">Select Quarter</label>
+                                    <select class="form-select" id="filter_quarter" name="filter_quarter">
+                                        <option value="1">Q1 (January - March)</option>
+                                        <option value="2">Q2 (April - June)</option>
+                                        <option value="3">Q3 (July - September)</option>
+                                        <option value="4">Q4 (October - December)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Grouped By Selection -->
+                                <div class="form-group">
+                                    <label for="filter_group_by" class="fw-bold mb-1 small text-muted">Grouped By</label>
+                                    <select class="form-select" id="filter_group_by" name="filter_group_by">
+                                        <option value="user">Per end-user</option>
+                                        <option value="office">Per office</option>
+                                    </select>
+                                </div>
+
+                                <!-- Select User -->
+                                <div class="form-group filter-user-group">
+                                    <label for="filter_user" class="fw-bold mb-1 small text-muted">Select User</label>
+                                    <select class="form-select" id="filter_user" name="filter_user">
+                                        <option value="">All Users</option>
+                                        @foreach($allUsers as $userItem)
+                                            <option value="{{ $userItem->user_id }}">{{ $userItem->user_fullname }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Select Office -->
+                                <div class="form-group filter-office-group d-none">
+                                    <label for="filter_office" class="fw-bold mb-1 small text-muted">Select Office</label>
+                                    <select class="form-select" id="filter_office" name="filter_office">
+                                        <option value="">All Offices</option>
+                                        @foreach($allOffices as $officeItem)
+                                            <option value="{{ $officeItem->dep_id }}">{{ $officeItem->dep_name }} ({{ $officeItem->dep_acronym }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Item Category Selection -->
+                                <div class="form-group">
+                                    <label for="filter_category" class="fw-bold mb-1 small text-muted">Item Category</label>
+                                    <select class="form-select" id="filter_category" name="filter_category">
+                                        <option value="All">All Categories</option>
+                                        <option value="Equipment">Equipment</option>
+                                        <option value="Semi-Expendable">Semi-Expendable</option>
+                                        <option value="Supply and Materials">Supplies and Materials</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 — Review -->
+                        <div class="wizard-step-content d-none" id="wizardStep3">
+                            <div class="card border border-light-subtle rounded-3 mb-3 shadow-none">
+                                <div class="card-body p-3">
+                                    <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Report Configuration Summary</h6>
+
+                                    <div class="d-flex flex-column gap-2" id="wizardReviewSummary">
+                                        <!-- Will be populated dynamically via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-wizard-export w-100 fw-bold py-3 mt-1 btn-dark-red" id="wizardBtnExport">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-pdf-fill me-2" viewBox="0 0 16 16">
+                                    <path d="M5.523 12.424c.195-.15.421-.326.69-.518-.31-.17-.613-.3-.9-.379-.273-.075-.5-.11-.68-.11-.075 0-.133.01-.175.034a.12.12 0 0 0-.063.087.054.054 0 0 0 .02.043c.07.056.24.1.505.101a3.882 3.882 0 0 0 .59-.07zm.864-1.22c.22-.3.402-.62.545-.96a10.27 10.27 0 0 0-.825.267 5.505 5.505 0 0 0-.008.017c-.01.018-.022.036-.033.054-.112.176-.226.353-.339.53a4.78 4.78 0 0 0 .66.112z"/>
+                                    <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.708L9.293 0H4zm5.5 1.5c.18 0 .347.078.47.21l3.3 3.3c.13.13.21.297.21.47V6h-3a1 1 0 0 1-1-1V1.5zM4.122 13.34c-.732 0-1.157-.381-1.157-.96 0-.448.253-.747.761-.921.283-.097.682-.154 1.155-.164.218-.002.439.01.66.035.139-.23.272-.47.394-.712.125-.248.24-.51.344-.784a9.29 9.29 0 0 1-.357-2.04c0-.987.544-1.587 1.486-1.587.485 0 .843.277.962.668.092.3.088.66-.012 1.054-.078.307-.22.684-.42 1.107.362.767.876 1.424 1.492 1.894.195.148.408.28.636.395.426.216.896.351 1.341.351.688 0 1.1-.383 1.1-1.002 0-.532-.382-.87-1.077-.87-.282 0-.58.072-.888.218l-.113.054a1.129 1.129 0 0 1-.195.088 1.412 1.412 0 0 1-.175.029C11.75 11.19 11.5 10.3 11.5 9.75c0-.93.75-1.5 1.5-1.5.618 0 1.023.329 1.173.808.083.269.06.637-.12 1.047-.168.384-.52.812-1.026 1.258.455.158.917.26 1.36.26.83 0 1.428-.432 1.428-1.289 0-.856-.73-1.428-1.714-1.428-.79 0-1.58.408-2.22.955-.54-.424-1.045-.968-1.47-1.614-.29-.441-.53-.941-.716-1.48-.105-.307-.156-.63-.156-.96 0-.748.51-1.3 1.3-1.3.498 0 .852.287.973.748.116.442.022.95-.272 1.442-.218.363-.561.764-1.02 1.183.336.57.773 1.103 1.26 1.572.637.613 1.396 1.123 2.19 1.464l.113.048c.094.04.186.082.278.125.753.354 1.25.787 1.25 1.424 0 .845-.723 1.424-1.79 1.424-.847 0-1.502-.303-2.046-.775a6.113 6.113 0 0 1-.955-.986l-.03-.035c-.093-.11-.18-.22-.265-.333-.51-.663-.948-1.405-1.3-2.2-.416.732-.916 1.341-1.492 1.802-.676.54-1.38.835-2.062.835z"/>
+                                </svg>
+                                Export Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top-0 d-flex justify-content-center gap-3 px-4 pb-4 pt-0">
+                    <button type="button" class="btn btn-wizard-prev fw-bold px-4 py-2" id="wizardBtnPrev" disabled>Prev</button>
+                    <button type="button" class="btn btn-wizard-next fw-bold px-4 py-2" id="wizardBtnNext">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -578,6 +788,7 @@
         window.queueGetUrl    = '{{ route("inventory.queue.get") }}';
         window.queueClearUrl  = '{{ route("inventory.queue.clear") }}';
         window.queueExportUrl = '{{ route("inventory.queue.export") }}';
+        window.exportReportUrl = '{{ route("inventory.export-report") }}';
     </script>
     <script src="{{ asset('js/supply/inventory/custom-inventory.js') }}"></script>
 @endpush

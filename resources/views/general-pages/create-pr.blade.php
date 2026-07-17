@@ -577,6 +577,8 @@
                                             {{-- Identity for the row --}}
                                             <input type="hidden" name="items[{{ $rowIndex }}][app_item_id]"
                                                 value="{{ $rowKey }}">
+                                            <input type="hidden" name="items[{{ $rowIndex }}][pr_item_id]"
+                                                value="{{ $saved?->pr_items_id ?? '' }}">
 
                                             {{-- Unit --}}
                                             <td class="px-1">

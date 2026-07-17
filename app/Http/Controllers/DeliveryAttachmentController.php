@@ -123,7 +123,7 @@ class DeliveryAttachmentController extends Controller
                                     'unit'          => $item->ris_unit,
                                     'stock'         => $item->ris_stock_no,
                                     'is_assigned'   => 0,
-                                    'assigned_to'   => null,
+                                    'assigned_to'   => $ris->ris_received_by,
                                     'category'      => 'Semi-Expendable',
                                 ]);
                             }
@@ -228,7 +228,7 @@ class DeliveryAttachmentController extends Controller
                                 'unit'          => $item->par_unit,
                                 'stock'         => $item->par_property_no,
                                 'is_assigned'   => 0,
-                                'assigned_to'   => null,
+                                'assigned_to'   => $par->par_received_by,
                                 'category'      => 'Equipment',
                             ]);
                         }
