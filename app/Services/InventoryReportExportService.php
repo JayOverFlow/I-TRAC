@@ -20,59 +20,135 @@ class InventoryReportExportService
      * @param array $filters
      * @return StreamedResponse
      */
-    public function export(array $filters): StreamedResponse
+    /**
+     * Get count of filtered items matching the given filters.
+     *
+     * @param array $filters
+     * @return int
+     */
+    public function getFilteredItemsCount(array $filters): int
     {
-        // 1. Build Query
-        $query = Mr::with(['assignedUser.departments', 'poItem', 'risItem.poItem', 'parItem.poItem']);
+        $query = Mr::select('mr_tbl.mr_id');
+        $this->applyFilters($query, $filters);
+        return $query->count();
+    }
+
+    /**
+     * Apply common filters and joins to the query.
+     */
+    protected function applyFilters($query, array $filters)
+    {
+        $query->leftJoin('par_items_tbl as orig_par_item', 'mr_tbl.par_item_id_fk', '=', 'orig_par_item.par_items_id')
+            ->leftJoin('par_tbl as orig_par', 'orig_par_item.par_id_fk', '=', 'orig_par.par_id')
+            ->leftJoin('ris_items_tbl as orig_ris_item', 'mr_tbl.ris_item_id_fk', '=', 'orig_ris_item.ris_items_id')
+            ->leftJoin('ris_tbl as orig_ris', 'orig_ris_item.ris_id_fk', '=', 'orig_ris.ris_id')
+            ->leftJoin('ics_tbl as t_ics', 't_ics.mr_id_fk', '=', 'mr_tbl.mr_id')
+            ->leftJoin('par_tbl as t_par', function($join) {
+                $join->on('t_par.mr_id_fk', '=', 'mr_tbl.mr_id')
+                     ->where('t_par.is_transfer', '=', 1);
+            });
 
         // Period filter
         $year = $filters['filter_year'] ?? date('Y');
         $period = $filters['reporting_period'] ?? 'Annual';
 
+        $coalesceDateStr = 'COALESCE(
+            t_ics.ics_received_by_date,
+            t_ics.created_at,
+            t_par.par_received_by_date,
+            t_par.created_at,
+            orig_par.par_received_by_date,
+            orig_par.created_at,
+            orig_ris.ris_received_date,
+            orig_ris.created_at,
+            mr_tbl.created_at
+        )';
+
         if ($period === 'Monthly' && !empty($filters['filter_month'])) {
             $month = intval($filters['filter_month']);
-            $query->where(function($q) use ($year, $month) {
-                $q->where(function($sub) use ($year, $month) {
-                    $sub->whereRaw('YEAR(date_scanned) = ?', [$year])
-                        ->whereRaw('MONTH(date_scanned) = ?', [$month]);
-                })->orWhereNull('date_scanned');
-            });
-            
-            $monthName = Carbon::create()->month($month)->format('F');
-            $periodText = "Monthly - {$monthName} {$year}";
+            $query->whereRaw("YEAR({$coalesceDateStr}) = ?", [$year])
+                  ->whereRaw("MONTH({$coalesceDateStr}) = ?", [$month]);
         } elseif ($period === 'Quarterly' && !empty($filters['filter_quarter'])) {
             $quarter = intval($filters['filter_quarter']);
             $startMonth = ($quarter - 1) * 3 + 1;
             $endMonth = $quarter * 3;
-            $query->where(function($q) use ($year, $startMonth, $endMonth) {
-                $q->where(function($sub) use ($year, $startMonth, $endMonth) {
-                    $sub->whereRaw('YEAR(date_scanned) = ?', [$year])
-                        ->whereRaw('MONTH(date_scanned) BETWEEN ? AND ?', [$startMonth, $endMonth]);
-                })->orWhereNull('date_scanned');
-            });
-
-            $periodText = "Quarterly - Q{$quarter} {$year}";
+            $query->whereRaw("YEAR({$coalesceDateStr}) = ?", [$year])
+                  ->whereRaw("MONTH({$coalesceDateStr}) BETWEEN ? AND ?", [$startMonth, $endMonth]);
         } else {
-            $query->where(function($q) use ($year) {
-                $q->whereRaw('YEAR(date_scanned) = ?', [$year])
-                  ->orWhereNull('date_scanned');
-            });
-            $periodText = "Annual - {$year}";
+            $query->whereRaw("YEAR({$coalesceDateStr}) = ?", [$year]);
         }
 
         // Category filter
-        $categoryText = "All Categories";
         if (!empty($filters['filter_category']) && $filters['filter_category'] !== 'All') {
-            $query->where('category', $filters['filter_category']);
-            $categoryText = $filters['filter_category'];
+            $query->where('mr_tbl.category', $filters['filter_category']);
         }
 
         // Grouping & specificity filter
+        $groupBy = $filters['filter_group_by'] ?? 'user';
+        if ($groupBy === 'user') {
+            if (!empty($filters['filter_user'])) {
+                $query->where('mr_tbl.assigned_to', $filters['filter_user']);
+            }
+        } elseif ($groupBy === 'office') {
+            if (!empty($filters['filter_office'])) {
+                $officeId = $filters['filter_office'];
+                $query->whereHas('assignedUser.departments', function($q) use ($officeId) {
+                    $q->where('departments_tbl.dep_id', $officeId);
+                });
+            }
+        }
+    }
+
+    /**
+     * Generate the Inventory Report PDF.
+     *
+     * @param array $filters
+     * @return StreamedResponse
+     */
+    public function export(array $filters): StreamedResponse
+    {
+        // 1. Build Query
+        $query = Mr::select('mr_tbl.*')
+            ->selectRaw('COALESCE(
+                t_ics.ics_received_by_date,
+                t_ics.created_at,
+                t_par.par_received_by_date,
+                t_par.created_at,
+                orig_par.par_received_by_date,
+                orig_par.created_at,
+                orig_ris.ris_received_date,
+                orig_ris.created_at,
+                mr_tbl.created_at
+            ) as delivery_date')
+            ->with(['assignedUser.departments', 'poItem', 'risItem.poItem', 'parItem.poItem']);
+
+        $this->applyFilters($query, $filters);
+
+        $items = $query->orderBy('delivery_date', 'desc')->get();
+
+        // Resolve labels for metadata headers
+        $year = $filters['filter_year'] ?? date('Y');
+        $period = $filters['reporting_period'] ?? 'Annual';
+        if ($period === 'Monthly' && !empty($filters['filter_month'])) {
+            $month = intval($filters['filter_month']);
+            $monthName = Carbon::create()->month($month)->format('F');
+            $periodText = "Monthly - {$monthName} {$year}";
+        } elseif ($period === 'Quarterly' && !empty($filters['filter_quarter'])) {
+            $quarter = intval($filters['filter_quarter']);
+            $periodText = "Quarterly - Q{$quarter} {$year}";
+        } else {
+            $periodText = "Annual - {$year}";
+        }
+
+        $categoryText = "All Categories";
+        if (!empty($filters['filter_category']) && $filters['filter_category'] !== 'All') {
+            $categoryText = $filters['filter_category'];
+        }
+
         $groupByText = "All Users & Offices";
         $groupBy = $filters['filter_group_by'] ?? 'user';
         if ($groupBy === 'user') {
             if (!empty($filters['filter_user'])) {
-                $query->where('assigned_to', $filters['filter_user']);
                 $user = User::find($filters['filter_user']);
                 if ($user) {
                     $groupByText = "Per End-User: " . $user->user_fullname;
@@ -83,19 +159,15 @@ class InventoryReportExportService
         } elseif ($groupBy === 'office') {
             if (!empty($filters['filter_office'])) {
                 $officeId = $filters['filter_office'];
-                $query->whereHas('assignedUser.departments', function($q) use ($officeId) {
-                    $q->where('departments_tbl.dep_id', $officeId);
-                });
                 $office = Department::find($officeId);
                 if ($office) {
-                    $groupByText = "Per Office: " . $office->dep_name . " (" . $office->dep_acronym . ")";
+                    $acronymPart = $office->dep_acronym ? " ({$office->dep_acronym})" : "";
+                    $groupByText = "Per Office: " . $office->dep_name . $acronymPart;
                 }
             } else {
                 $groupByText = "Per Office (All)";
             }
         }
-
-        $items = $query->orderBy('date_scanned', 'desc')->get();
 
         // 2. Create Spreadsheet
         $spreadsheet = new Spreadsheet();
@@ -221,7 +293,7 @@ class InventoryReportExportService
             $sheet->setCellValue("E{$row}", $item->category ?? '');
             $sheet->setCellValue("F{$row}", $item->assignedUser ? $item->assignedUser->user_fullname : 'N/A');
             $sheet->setCellValue("G{$row}", $officeAcronym);
-            $sheet->setCellValue("H{$row}", $item->date_scanned ? Carbon::parse($item->date_scanned)->format('Y-m-d') : '—');
+            $sheet->setCellValue("H{$row}", $item->delivery_date ? Carbon::parse($item->delivery_date)->format('Y-m-d') : '—');
             $sheet->setCellValue("I{$row}", $unitCost);
             $sheet->setCellValue("J{$row}", $totalCost);
 
