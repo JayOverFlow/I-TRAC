@@ -1110,6 +1110,23 @@ body.dark .export-report-link:hover {
     border-color: var(--red-2);
 }
 
+.wizard-step-circle img {
+    width: 16px;
+    height: 16px;
+    transition: filter 0.3s ease;
+}
+
+/* Inactive step icon should be colored #94a3b8 */
+.wizard-step-circle:not(.active):not(.completed) img {
+    filter: invert(71%) sepia(18%) saturate(336%) hue-rotate(180deg) brightness(85%) contrast(84%);
+}
+
+/* Active or completed step icon should retain its white color */
+.wizard-step-circle.active img,
+.wizard-step-circle.completed img {
+    filter: none;
+}
+
 .wizard-step-label {
     font-size: 0.7rem;
     font-weight: 600;
