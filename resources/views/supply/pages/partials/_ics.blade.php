@@ -10,7 +10,7 @@
                         @if($ics->is_transfer)
                             @if(is_null($ics->ics_received_by))
                                 <button type="submit" class="btn btn-dark-red btn-transfer-submit px-3" data-current-owner="{{ $ics->mr && $ics->mr->assignedUser ? $ics->mr->assignedUser->user_fullname : 'Supply Officer' }}">
-                                    <span class="fw-bold">Transfer</span>
+                                    <span class="fw-bold">Transfer Item</span>
                                 </button>
                             @else
                                 <a href="{{ route('export.ics.pdf', $ics->ics_id) }}" class="btn border border-light-subtle btn-dark-red d-inline-flex align-items-center gap-1 px-3" data-direct-export="true">
