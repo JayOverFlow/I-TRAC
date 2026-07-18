@@ -14,6 +14,13 @@ $(document).ready(function () {
         }
     });
 
+    // Initialize flatpickr date picker
+    if (typeof flatpickr !== "undefined") {
+        flatpickr('.flatpickr-date', {
+            dateFormat: "Y-m-d"
+        });
+    }
+
     // Dynamic toast message helper
     function showToast(message, type) {
         var toastId = 'dynamicToast_' + Date.now();
@@ -1309,4 +1316,101 @@ $(document).ready(function () {
             showToast('Your inventory report has been generated successfully.', 'success');
         }, 2500);
     });
+
+    // -------------------------------------------------------------
+    // Add Item Modal Interactivity
+    // -------------------------------------------------------------
+
+    // Browse image link click
+    $(document).on('click', '#btnBrowseImage', function (e) {
+        e.stopPropagation();
+        $('#addItemImageFile').click();
+    });
+
+    // Dropzone area click
+    $(document).on('click', '#addItemDropzone', function (e) {
+        if ($(e.target).closest('#btnRemovePreview').length) return;
+        $('#addItemImageFile').click();
+    });
+
+    // Handle file input selection change
+    $(document).on('change', '#addItemImageFile', function () {
+        handleAddItemFileSelection(this.files);
+    });
+
+    // Dropzone drag-and-drop events
+    $(document).on('dragover', '#addItemDropzone', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('dragover');
+    });
+
+    $(document).on('dragleave', '#addItemDropzone', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('dragover');
+    });
+
+    $(document).on('drop', '#addItemDropzone', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('dragover');
+        
+        const dt = e.originalEvent.dataTransfer;
+        const files = dt.files;
+        if (files.length) {
+            $('#addItemImageFile')[0].files = files;
+            handleAddItemFileSelection(files);
+        }
+    });
+
+    // Helper to process and preview chosen file
+    function handleAddItemFileSelection(files) {
+        if (!files || !files[0]) return;
+        const file = files[0];
+        
+        // Basic validation
+        if (!file.type.match('image.*')) {
+            showToast('Please select an image file (.jpeg, .png, .webp)', 'danger');
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) { // 10MB
+            showToast('File size exceeds the 10MB limit', 'danger');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            $('#previewImage').attr('src', e.target.result);
+            $('#dropzonePrompt').addClass('d-none');
+            $('#dropzonePreview').removeClass('d-none');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Remove image preview
+    $(document).on('click', '#btnRemovePreview', function (e) {
+        e.stopPropagation();
+        resetImagePreview();
+    });
+
+    function resetImagePreview() {
+        $('#addItemImageFile').val('');
+        $('#previewImage').attr('src', '');
+        $('#dropzonePreview').addClass('d-none');
+        $('#dropzonePrompt').removeClass('d-none');
+    }
+
+    // Enable / Disable submit button on confirm checkbox change
+    $(document).on('change', '#addConfirmCheckbox', function () {
+        $('#btnSubmitAddItem').prop('disabled', !this.checked);
+    });
+
+    // Reset whole form when modal is closed
+    $('#addItemModal').on('hidden.bs.modal', function () {
+        $('#addItemForm')[0].reset();
+        resetImagePreview();
+        $('#btnSubmitAddItem').prop('disabled', true);
+    });
 });
+
