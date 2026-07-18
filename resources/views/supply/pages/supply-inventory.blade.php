@@ -560,11 +560,10 @@
                                 </div>
                                 <div id="dropzonePreview" class="d-none position-relative w-100 text-center">
                                     <img id="previewImage" src="" alt="Selected Preview"
-                                        class="img-fluid rounded-2" style="max-height: 150px; object-fit: contain;">
+                                        class="img-fluid rounded-2">
                                     <button type="button"
                                         class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 rounded-circle"
-                                        id="btnRemovePreview"
-                                        style="line-height: 1; padding: 0.15rem 0.4rem;">&times;</button>
+                                        id="btnRemovePreview">&times;</button>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 text-muted" style="font-size: 0.75rem;">
@@ -692,7 +691,7 @@
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="button"
-                                    class="btn btn-md btn-outline-dark` px-4 py-2 fw-bold rounded-3"
+                                    class="btn btn-md btn-outline-dark px-4 py-2 fw-bold rounded-3"
                                     data-bs-dismiss="modal">Cancel</button>
                                 <button type="submit" class="btn btn-md btn-dark-red px-4 py-2 fw-bold rounded-3"
                                     id="btnSubmitAddItem" disabled>Add Item</button>

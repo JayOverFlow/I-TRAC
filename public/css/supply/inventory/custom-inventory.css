@@ -1455,10 +1455,16 @@ body.dark .wizard-step-content h6.text-dark {
     border: 1px solid #e2e8f0;
 }
 
+#previewImage {
+    max-height: 150px;
+    object-fit: contain;
+}
+
 #btnRemovePreview {
     width: 24px;
     height: 24px;
-    padding: 0;
+    padding: 0.15rem 0.4rem;
+    line-height: 1;
     font-size: 1rem;
     font-weight: bold;
     display: flex;

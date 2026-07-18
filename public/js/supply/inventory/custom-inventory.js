@@ -1329,7 +1329,7 @@ $(document).ready(function () {
 
     // Dropzone area click
     $(document).on('click', '#addItemDropzone', function (e) {
-        if ($(e.target).closest('#btnRemovePreview').length) return;
+        if ($(e.target).is('#addItemImageFile') || $(e.target).closest('#btnRemovePreview').length) return;
         $('#addItemImageFile').click();
     });
 
@@ -1369,9 +1369,13 @@ $(document).ready(function () {
         if (!files || !files[0]) return;
         const file = files[0];
         
-        // Basic validation
-        if (!file.type.match('image.*')) {
-            showToast('Please select an image file (.jpeg, .png, .webp)', 'danger');
+        // Validation: strictly allow .jpg, .jpeg, .png, .webp
+        const allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        if (!allowedMimes.includes(file.type) && !allowedExts.includes(ext)) {
+            showToast('Invalid file extension. Only .jpg, .jpeg, .png, and .webp are supported.', 'danger');
             return;
         }
         if (file.size > 10 * 1024 * 1024) { // 10MB
