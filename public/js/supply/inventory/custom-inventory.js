@@ -1416,5 +1416,47 @@ $(document).ready(function () {
         resetImagePreview();
         $('#btnSubmitAddItem').prop('disabled', true);
     });
+
+    // Handle Add Item form submission
+    $('#addItemForm').on('submit', function (e) {
+        e.preventDefault();
+        var $btn = $('#btnSubmitAddItem');
+        var origText = $btn.text();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...');
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/inventory/store',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    showToast(response.message || 'Item added successfully.', 'success');
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
+                    if (modal) modal.hide();
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showToast(response.message || 'Could not add item.', 'danger');
+                    $btn.prop('disabled', false).text(origText);
+                }
+            },
+            error: function (xhr) {
+                var msg = 'Error adding item.';
+                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    var errors = xhr.responseJSON.errors;
+                    msg = Object.values(errors).map(function(e) { return e.join(' '); }).join('<br>');
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                showToast(msg, 'danger');
+                $btn.prop('disabled', false).text(origText);
+            }
+        });
+    });
 });
 

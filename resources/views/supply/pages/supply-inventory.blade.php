@@ -567,7 +567,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 text-muted" style="font-size: 0.75rem;">
-                                <span>Supported files: .jpeg, .png, .webp</span>
+                                <span>Supported files: .jpg, .jpeg, .png, .webp</span>
                                 <span>Maximum size: 10MB</span>
                             </div>
                         </div>
@@ -603,9 +603,9 @@
                                         <span class="text-danger">*</span></label>
                                     <select class="form-select form-select-sm" id="addCategory" name="category" >
                                         <option value="" selected disabled>Select</option>
-                                        <option value="Equipment">Equipment</option>
-                                        <option value="Semi-Expendable">Semi-Expendable</option>
                                         <option value="Supply and Materials">Supply and Materials</option>
+                                        <option value="Semi-Expendable">Semi-Expendable</option>
+                                        <option value="Equipment">Equipment</option>
                                     </select>
                                 </div>
                                 <!-- Assignee -->

@@ -975,6 +975,73 @@ class InventoryController extends Controller
         }
     }
 
+    public function storeItem(Request $request)
+    {
+        // Basic datatype validation rules
+        $validated = $request->validate([
+            'item_name'     => 'required|string|min:5|max:255',
+            'specification' => 'required|string|min:5|max:250',
+            'category'      => 'required|string|in:Equipment,Semi-Expendable,Supply and Materials',
+            'assigned_to'   => 'required|integer|exists:users,user_id',
+            'date_received' => 'required|date',
+            'quantity'      => 'required|integer|min:1|max:9999999',
+            'unit'          => 'required|string|min:1|max:20',
+            'stock'         => 'nullable|integer|min:1|max:9999999',
+            'building'      => 'nullable|string|max:255',
+            'room_no'       => 'nullable|string|max:50',
+            'item_image'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $request) {
+                // Generate unique QR code using existing pattern
+                do {
+                    $qrCode = 'MR-' . mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+                } while (Mr::where('mr_qr_code', $qrCode)->exists());
+
+                // Create the Mr model
+                $item = Mr::create([
+                    'assigned_to'   => $validated['assigned_to'],
+                    'mr_qr_code'    => $qrCode,
+                    'item_name'     => $validated['item_name'],
+                    'specification' => $validated['specification'],
+                    'quantity'      => $validated['quantity'],
+                    'unit'          => $validated['unit'],
+                    'stock'         => $validated['stock'] ?? null,
+                    'building'      => $validated['building'] ?? null,
+                    'room_no'       => $validated['room_no'] ?? null,
+                    'is_assigned'   => 1,
+                    'date_scanned'  => $validated['date_received'],
+                    'category'      => $validated['category'],
+                    'status'        => 'Serviceable',
+                ]);
+
+                // Store image using relationship
+                if ($request->hasFile('item_image')) {
+                    $file = $request->file('item_image');
+                    if ($file->isValid()) {
+                        $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                        $file->move(public_path('img/items'), $filename);
+
+                        $item->images()->create([
+                            'image_path' => 'img/items/' . $filename,
+                        ]);
+                    }
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item successfully added.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add item: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function exportInventoryReport(Request $request, InventoryReportExportService $exportService)
     {
         $filters = $request->only([

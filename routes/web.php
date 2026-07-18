@@ -113,6 +113,7 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::post('/inventory/queue/clear',     'clearQueue')    ->name('inventory.queue.clear');
         Route::get('/inventory/queue/export',     'exportQueuePdf')->name('inventory.queue.export');
         Route::post('/inventory/{mr_id}/status', 'updateStatus')->name('inventory.update-status');
+        Route::post('/inventory/store', 'storeItem')->name('inventory.store');
         Route::get('/inventory/export-report', 'exportInventoryReport')->name('inventory.export-report');
     });
 });
