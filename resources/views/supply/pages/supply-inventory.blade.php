@@ -471,6 +471,21 @@
         <img class="lightbox-content" id="lightboxImage" src="" alt="Fullscreen View">
     </div>
 
+    <!-- Add Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4 d-flex justify-content-between align-items-center">
+                    <h4 class="modal-title fw-bold red-text-2" id="addItemModalLabel">Add Item</h4>
+                    <button type="button" class="btn-close shadow-none border-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-4">
+                    <p class="text-muted">Form content will be added here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Print Queue Modal -->
     <div class="modal fade" id="exportQueueModal" tabindex="-1"
          aria-labelledby="exportQueueModalLabel" aria-hidden="true">

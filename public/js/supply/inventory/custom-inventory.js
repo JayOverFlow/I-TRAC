@@ -337,16 +337,11 @@ $(document).ready(function () {
         "lengthMenu": [5, 10, 20, 50],
         "pageLength": 5,
         "initComplete": function () {
-            var printBtn =
-                '<button id="btnOpenPrintQueue"'
-                + ' class="btn btn-dark-red fw-bold me-2 d-flex align-items-center flex-shrink-0"'
-                + ' data-bs-toggle="modal" data-bs-target="#exportQueueModal">'
-                + 'Export Queue'
-                + ' <span id="queueBadgeCount" class="fw-bold ms-2">0</span>'
-                + '</button>';
+            const addBtn = `<button id="btnOpenAddItemModal" class="btn btn-outline-dark-red fw-bold me-2 d-flex align-items-center justify-content-center flex-shrink-0" data-bs-toggle="modal" data-bs-target="#addItemModal" title="Add Item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C0404" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>`;
+            const printBtn = `<button id="btnOpenPrintQueue" class="btn btn-dark-red fw-bold me-2 d-flex align-items-center flex-shrink-0" data-bs-toggle="modal" data-bs-target="#exportQueueModal">Export Queue <span id="queueBadgeCount" class="fw-bold ms-2">0</span></button>`;
             $('.dataTables_filter')
                 .css({ 'display': 'flex', 'align-items': 'center' })
-                .prepend(printBtn);
+                .prepend(addBtn + printBtn);
         }
     });
 

@@ -132,6 +132,36 @@ body.dark .detail-rows .border-bottom {
     transform: translateY(0) !important;
 }
 
+.btn-outline-dark-red {
+    background-color: transparent !important;
+    border: 1.5px solid var(--red-text-2) !important;
+    color: var(--red-text-2) !important;
+    transition: transform 0.18s ease, background-color 0.15s ease, color 0.15s ease !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+}
+
+.btn-outline-dark-red svg {
+    position: static !important;
+    stroke: var(--red-text-2) !important;
+    transition: stroke 0.15s ease !important;
+}
+
+.btn-outline-dark-red:hover {
+    background-color: var(--red-text-2) !important;
+    color: var(--white-text) !important;
+    transform: translateY(-2px) !important;
+}
+
+.btn-outline-dark-red:hover svg {
+    stroke: var(--white-text) !important;
+}
+
+.btn-outline-dark-red:active {
+    transform: translateY(0) !important;
+}
+
 /* Image Grid Layout Styles */
 .image-grid-slots {
     display: flex;
@@ -687,6 +717,26 @@ body.dark #btnAddToQueue:disabled {
     color: #4b5563 !important;
     border-color: #4b5563 !important;
     background-color: transparent !important;
+}
+
+body.dark .btn-outline-dark-red {
+    color: #EF4444 !important;
+    border-color: #EF4444 !important;
+    background-color: transparent !important;
+}
+
+body.dark .btn-outline-dark-red svg {
+    stroke: #EF4444 !important;
+}
+
+body.dark .btn-outline-dark-red:hover {
+    color: #ffffff !important;
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+}
+
+body.dark .btn-outline-dark-red:hover svg {
+    stroke: #ffffff !important;
 }
 
 /* Export Queue Modal Title */
