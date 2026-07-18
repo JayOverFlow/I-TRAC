@@ -17,7 +17,11 @@ class MrController extends Controller
         $userRole = $activeRole?->gen_role;
 
         // Get necessary data to render
-        $data = \App\Models\Mr::with('images')->where('assigned_to', $user->user_id)->get();
+        $data = \App\Models\Mr::with('images')
+            ->where('assigned_to', $user->user_id)
+            ->where('is_assigned', 1)
+            ->orderBy('date_scanned', 'desc')
+            ->get();
 
         // Redirect user based on role
         return match ($userRole) {
