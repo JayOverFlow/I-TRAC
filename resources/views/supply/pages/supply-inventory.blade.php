@@ -30,8 +30,8 @@
                         <img src="{{ asset('img/All.svg') }}" alt="ALL" width="70" height="70">
                         </div>
                         <div class="col-8 text-end">
-                            <h6 class="card-title fw-bold">ALl</h6>
-                            <h5 class="mb-0 fw-bold"><span>{{ $counts['all'] }}</span></h5>
+                            <h6 class="card-title fw-bold">All</h6>
+                            <h4 class="mb-0 fw-bold"><span>{{ $counts['all'] }}</span></h4>
                             <a href="javascript:void(0);" class="export-report-link" data-bs-toggle="modal" data-bs-target="#exportReportModal">Generate Report</a>
                         </div>
                     </div>
@@ -607,30 +607,64 @@
                             <div class="period-options d-flex flex-column gap-3">
                                 <!-- Option Annual -->
                                 <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center selected" data-period="Annual">
-                                    <div class="d-flex align-items-center justify-content-center gap-3 w-100">
-                                        <div>
-                                            <span class="fw-bold d-block text-dark period-title">Annual</span>
+                                    <div class="d-flex align-items-center gap-3 w-100">
+                                        <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(140, 4, 4, 0.08); flex-shrink: 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3 red-text-2" viewBox="0 0 16 16">
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"></path>
+                                                <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="d-flex flex-column text-start">
+                                            <span class="fw-bold period-title mb-0">Annual</span>
+                                            <span class="text-muted small">Generate a report covering the entire fiscal year.</span>
                                         </div>
                                     </div>
-                                    
+                                    <div class="period-checkmark position-absolute top-0 end-0 mt-2 me-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8C0404" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                    </div>
                                 </div>
                                 <!-- Option Monthly -->
                                 <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center" data-period="Monthly">
-                                    <div class="d-flex align-items-center justify-content-center gap-3 w-100">
-                                        <div>
-                                            <span class="fw-bold d-block text-dark period-title">Monthly</span>
+                                    <div class="d-flex align-items-center gap-3 w-100">
+                                        <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(140, 4, 4, 0.08); flex-shrink: 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-month red-text-2" viewBox="0 0 16 16">
+                                                <path d="M8 9.05q-.416 0-.708-.292t-.292-.708q0-.417.292-.709t.708-.291q.417 0 .709.291t.291.709q0 .416-.291.708T8 9.05m0 3q-.417 0-.709-.292t-.291-.708q0-.417.292-.708t.708-.292q.417 0 .709.292t.291.708q0 .416-.291.708t-.709.292m-3-3q-.417 0-.708-.292T4 8q0-.417.292-.709t.708-.291q.417 0 .708.291T6 8q0 .416-.292.708T5 9.05m0 3q-.417 0-.708-.292T4 11q0-.417.292-.708t.708-.292q.417 0 .708.292T6 11q0 .416-.292.708T5 12.05m6-3q-.417 0-.708-.292t-.292-.708q0-.417.292-.709t.708-.291q.417 0 .708.291t.292.709q0 .416-.292.708t-.708.292m0 3q-.417 0-.708-.292t-.292-.708q0-.417.292-.708t.708-.292q.417 0 .708.292t.292.708q0 .416-.292.708t-.708.292"></path>
+                                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"></path>
+                                                <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="d-flex flex-column text-start">
+                                            <span class="fw-bold period-title mb-0">Monthly</span>
+                                            <span class="text-muted small">Generate a report covering a specific calendar month.</span>
                                         </div>
                                     </div>
-                                    
+                                    <div class="period-checkmark position-absolute top-0 end-0 mt-2 me-2 d-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8C0404" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                    </div>
                                 </div>
                                 <!-- Option Quarterly -->
                                 <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center" data-period="Quarterly">
-                                    <div class="d-flex align-items-center justify-content-center gap-3 w-100">
-                                        <div>
-                                            <span class="fw-bold d-block text-dark period-title">Quarterly</span>
+                                    <div class="d-flex align-items-center gap-3 w-100">
+                                        <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(140, 4, 4, 0.08); flex-shrink: 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3-range red-text-2" viewBox="0 0 16 16">
+                                                <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"></path>
+                                                <path d="M2 10a1 1 0 0 0 0 2h12a1 1 0 0 0 0-2H2zm0-4a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2H2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="d-flex flex-column text-start">
+                                            <span class="fw-bold period-title mb-0">Quarterly</span>
+                                            <span class="text-muted small">Generate a report covering a 3-month fiscal quarter.</span>
                                         </div>
                                     </div>
-                                   
+                                    <div class="period-checkmark position-absolute top-0 end-0 mt-2 me-2 d-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8C0404" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -718,7 +752,7 @@
                         <div class="wizard-step-content d-none" id="wizardStep3">
                             <div class="card border border-light-subtle rounded-3 mb-3 shadow-none">
                                 <div class="card-body p-3">
-                                    <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Report Configuration Summary</h6>
+                                    <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Review the details:</h6>
 
                                     <div class="d-flex flex-column gap-2" id="wizardReviewSummary">
                                         <!-- Will be populated dynamically via JS -->

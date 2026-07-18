@@ -1296,8 +1296,20 @@ body.dark .btn-wizard-next:hover:not(:disabled) {
     box-shadow: 0 4px 12px rgba(140, 4, 4, 0.06);
 }
 
+.period-option .period-title {
+    color: #2b3c58;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: color 0.25s ease;
+}
+
 .period-option.selected .period-title {
-    color: var(--red-2) !important;
+    color: #8c0404 !important;
+}
+
+.period-option .text-muted {
+    font-size: 0.8rem !important;
+    color: #8292a6 !important;
 }
 
 .period-option.selected .period-checkmark {
