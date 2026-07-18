@@ -25,10 +25,10 @@ $(document).ready(function () {
     function showToast(message, type) {
         var toastId = 'dynamicToast_' + Date.now();
         var bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
-        var icon = type === 'success' ? 
+        var icon = type === 'success' ?
             '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' :
             '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-        
+
         var html = `
             <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
@@ -40,13 +40,13 @@ $(document).ready(function () {
                 </div>
             </div>
         `;
-        
+
         $('.toast-container').append(html);
         var toastEl = document.getElementById(toastId);
         if (toastEl) {
             var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
             toast.show();
-            
+
             toastEl.addEventListener('hidden.bs.toast', function () {
                 toastEl.remove();
             });
@@ -119,7 +119,7 @@ $(document).ready(function () {
             }
 
             // Show primary image with dynamic aspect ratio scaling
-            primaryImg.onload = function() {
+            primaryImg.onload = function () {
                 var isPortrait = primaryImg.naturalHeight > primaryImg.naturalWidth;
                 var card = document.querySelector('.main-image-viewport-card');
                 var cardBody = document.querySelector('.main-image-viewport-card .card-body');
@@ -372,7 +372,7 @@ $(document).ready(function () {
         var quantity = $row.data('quantity') || '—';
         var building = $row.data('building') || '—';
         var roomNo = $row.data('room-no') || '—';
-        
+
         // Extract the unique item QR code data attribute from the clicked row
         var mrQrCode = $row.data('mr-qr-code') || '';
 
@@ -484,7 +484,7 @@ $(document).ready(function () {
     });
 
     // Paper size selector toggle
-    $(document).on('click', '.paper-size-card', function() {
+    $(document).on('click', '.paper-size-card', function () {
         $('.paper-size-card').removeClass('selected');
         $(this).addClass('selected');
         var ps = $(this).data('paper-size');
@@ -541,29 +541,29 @@ $(document).ready(function () {
 
         // Send a fetch GET request to the backend label generator endpoint.
         fetch(actionUrl + '?' + queryParams)
-        .then(function (response) {
-            if (!response.ok) {
-                throw new Error('Server returned ' + response.status);
-            }
-            return response.blob();
-        })
-        .then(function (blob) {
-            showToast('Item label PDF generated successfully!', 'success');
-            var blobUrl = window.URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = 'item_labels.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(blobUrl);
-            $('#form-loader-overlay').hide();
-        })
-        .catch(function (err) {
-            console.error('Label generation failed:', err);
-            showToast('Failed to generate labels. Please try again.', 'danger');
-            $('#form-loader-overlay').hide();
-        });
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Server returned ' + response.status);
+                }
+                return response.blob();
+            })
+            .then(function (blob) {
+                showToast('Item label PDF generated successfully!', 'success');
+                var blobUrl = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'item_labels.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+                $('#form-loader-overlay').hide();
+            })
+            .catch(function (err) {
+                console.error('Label generation failed:', err);
+                showToast('Failed to generate labels. Please try again.', 'danger');
+                $('#form-loader-overlay').hide();
+            });
     });
 
     // Open fullscreen lightbox when clicking the primary image
@@ -595,11 +595,11 @@ $(document).ready(function () {
     // EXPORT QUEUE
     // ---------------------------------------------------------------
 
-    var queueAddUrl    = window.queueAddUrl;
-    var queueGetUrl    = window.queueGetUrl;
-    var queueClearUrl  = window.queueClearUrl;
+    var queueAddUrl = window.queueAddUrl;
+    var queueGetUrl = window.queueGetUrl;
+    var queueClearUrl = window.queueClearUrl;
     var queueExportUrl = window.queueExportUrl;
-    var csrfToken      = $('meta[name="csrf-token"]').attr('content');
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     /**
      * Fetch the current queue, update the badge count, and re-render the modal table.
@@ -632,18 +632,18 @@ $(document).ready(function () {
                         + ' data-size="' + entry.label_size + '"'
                         + ' data-layout="' + entry.qr_layout + '"'
                         + ' data-qty="' + entry.sticker_quantity + '">'
-                        + '<td>'   + $('<span>').text(entry.mr_qr_code).html()       + '</td>'
+                        + '<td>' + $('<span>').text(entry.mr_qr_code).html() + '</td>'
                         + '<td class="fw-normal">' + $('<span>').text(entry.item_name).html() + '</td>'
-                        + '<td class="text-center">' + entry.label_size                     + '</td>'
-                        + '<td class="text-center">' + entry.sticker_quantity              + '</td>'
-                        + '<td class="text-center">' + layoutLabel                         + '</td>'
+                        + '<td class="text-center">' + entry.label_size + '</td>'
+                        + '<td class="text-center">' + entry.sticker_quantity + '</td>'
+                        + '<td class="text-center">' + layoutLabel + '</td>'
                         + '<td class="text-center">'
-                        +   '<button class="btn btn-sm btn-link p-0 btn-remove-queue-item" data-index="' + i + '" title="Remove">'
-                        +     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-trash" viewBox="0 0 16 16">'
-                        +       '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>'
-                        +       '<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>'
-                        +     '</svg>'
-                        +   '</button>'
+                        + '<button class="btn btn-sm btn-link p-0 btn-remove-queue-item" data-index="' + i + '" title="Remove">'
+                        + '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-trash" viewBox="0 0 16 16">'
+                        + '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>'
+                        + '<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>'
+                        + '</svg>'
+                        + '</button>'
                         + '</td>'
                         + '</tr>';
                     $tbody.append(row);
@@ -661,9 +661,9 @@ $(document).ready(function () {
 
     // Add to Export Queue button
     $(document).on('click', '#btnAddToQueue', function () {
-        var mrId            = $('#mr_id').val();
-        var labelSize       = $('#label_size').val();
-        var qrLayout        = $('#qr_layout').val();
+        var mrId = $('#mr_id').val();
+        var labelSize = $('#label_size').val();
+        var qrLayout = $('#qr_layout').val();
         var stickerQuantity = $('.stepper-quantity').val();
 
         if (!mrId) {
@@ -682,10 +682,10 @@ $(document).ready(function () {
             url: url,
             type: type,
             data: {
-                _token:           csrfToken,
-                mr_id:            mrId,
-                label_size:       labelSize,
-                qr_layout:        qrLayout,
+                _token: csrfToken,
+                mr_id: mrId,
+                label_size: labelSize,
+                qr_layout: qrLayout,
                 sticker_quantity: stickerQuantity,
             },
             success: function (response) {
@@ -1030,7 +1030,7 @@ $(document).ready(function () {
         e.stopPropagation();
         var mrId = $(this).data('mr-id');
         var itemName = $(this).data('item-name');
-        
+
         window.confirmAction({
             title: 'Transfer Item?',
             text: 'Are you sure you want to transfer "' + itemName + '"?',
@@ -1355,7 +1355,7 @@ $(document).ready(function () {
         e.preventDefault();
         e.stopPropagation();
         $(this).removeClass('dragover');
-        
+
         const dt = e.originalEvent.dataTransfer;
         const files = dt.files;
         if (files.length) {
@@ -1368,12 +1368,12 @@ $(document).ready(function () {
     function handleAddItemFileSelection(files) {
         if (!files || !files[0]) return;
         const file = files[0];
-        
+
         // Validation: strictly allow .jpg, .jpeg, .png, .webp
         const allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
         const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
         const ext = file.name.split('.').pop().toLowerCase();
-        
+
         if (!allowedMimes.includes(file.type) && !allowedExts.includes(ext)) {
             showToast('Invalid file extension. Only .jpg, .jpeg, .png, and .webp are supported.', 'danger');
             return;
@@ -1415,13 +1415,36 @@ $(document).ready(function () {
         $('#addItemForm')[0].reset();
         resetImagePreview();
         $('#btnSubmitAddItem').prop('disabled', true);
+
+        // Clear invalid classes and error text
+        var $form = $('#addItemForm');
+        $form.find('.is-invalid').removeClass('is-invalid');
+        $form.find('.invalid-feedback').remove();
+        $('#addItemDropzone').removeClass('is-invalid');
+    });
+
+    // Clear validation styling dynamically on user edit
+    $('#addItemForm').on('input change', 'input, select, textarea', function () {
+        $(this).removeClass('is-invalid');
+        $(this).next('.invalid-feedback').remove();
+        if ($(this).attr('id') === 'addItemImageFile') {
+            $('#addItemDropzone').removeClass('is-invalid');
+            $('#addItemDropzone').next('.invalid-feedback').remove();
+        }
     });
 
     // Handle Add Item form submission
     $('#addItemForm').on('submit', function (e) {
         e.preventDefault();
+        var $form = $(this);
         var $btn = $('#btnSubmitAddItem');
         var origText = $btn.text();
+
+        // Reset old errors
+        $form.find('.is-invalid').removeClass('is-invalid');
+        $form.find('.invalid-feedback').remove();
+        $('#addItemDropzone').removeClass('is-invalid');
+
         $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...');
 
         var formData = new FormData(this);
@@ -1437,7 +1460,7 @@ $(document).ready(function () {
                     showToast(response.message || 'Item added successfully.', 'success');
                     var modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
                     if (modal) modal.hide();
-                    setTimeout(function() {
+                    setTimeout(function () {
                         window.location.reload();
                     }, 1000);
                 } else {
@@ -1446,14 +1469,29 @@ $(document).ready(function () {
                 }
             },
             error: function (xhr) {
-                var msg = 'Error adding item.';
                 if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                     var errors = xhr.responseJSON.errors;
-                    msg = Object.values(errors).map(function(e) { return e.join(' '); }).join('<br>');
-                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                    msg = xhr.responseJSON.message;
+                    $.each(errors, function (key, messages) {
+                        var $input = $form.find('[name="' + key + '"]');
+                        if ($input.length) {
+                            $input.addClass('is-invalid');
+                            var $feedback = $('<div class="invalid-feedback d-block"></div>').text(messages.join(' '));
+
+                            if (key === 'item_image') {
+                                $('#addItemDropzone').addClass('is-invalid');
+                                if (!$('#addItemDropzone').next('.invalid-feedback').length) {
+                                    $('#addItemDropzone').after($feedback);
+                                }
+                            } else {
+                                $input.after($feedback);
+                            }
+                        }
+                    });
+                    showToast('Please correct the validation errors in the form.', 'danger');
+                } else {
+                    var msg = xhr.responseJSON?.message || 'Error adding item.';
+                    showToast(msg, 'danger');
                 }
-                showToast(msg, 'danger');
                 $btn.prop('disabled', false).text(origText);
             }
         });

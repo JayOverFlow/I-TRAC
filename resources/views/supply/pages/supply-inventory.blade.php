@@ -586,8 +586,7 @@
                                     <label for="addItemName" class="form-label fw-bold small text-dark mb-1">Item Name
                                         <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-sm" id="addItemName"
-                                        name="item_name" minlength="5"
-                                        maxlength="255">
+                                        name="item_name">
                                 </div>
                                 <!-- Specifications -->
                                 <div class="mb-2">
@@ -595,7 +594,7 @@
                                         class="form-label fw-bold small text-dark mb-1">Specifications <span
                                             class="text-danger">*</span></label>
                                     <textarea class="form-control form-control-sm" id="addSpecifications" name="specification" rows="2" 
-                                        minlength="5" maxlength="250" style="resize: none;"></textarea>
+                                        style="resize: none;"></textarea>
                                 </div>
                                 <!-- Category -->
                                 <div class="mb-2">
@@ -639,7 +638,7 @@
                                         <label for="addQuantity" class="form-label fw-bold small text-dark mb-1">Quantity
                                             <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control form-control-sm" id="addQuantity"
-                                            name="quantity" min="1" max="9999999" >
+                                            name="quantity" >
                                     </div>
                                 </div>
                                 <div class="row">
@@ -648,14 +647,14 @@
                                         <label for="addUnit" class="form-label fw-bold small text-dark mb-1">Unit <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm" id="addUnit"
-                                            name="unit"  minlength="1" maxlength="20">
+                                            name="unit">
                                     </div>
                                     <!-- Stock -->
                                     <div class="col-6 mb-2">
                                         <label for="addStock"
                                             class="form-label fw-bold small text-dark mb-1">Stock</label>
                                         <input type="number" class="form-control form-control-sm" id="addStock"
-                                            name="stock" min="1" max="9999999">
+                                            name="stock">
                                     </div>
                                 </div>
 

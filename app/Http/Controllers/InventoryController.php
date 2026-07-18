@@ -977,9 +977,8 @@ class InventoryController extends Controller
 
     public function storeItem(Request $request)
     {
-        // Basic datatype validation rules
         $validated = $request->validate([
-            'item_name'     => 'required|string|min:5|max:255',
+            'item_name'     => 'required|string|min:5|max:50',
             'specification' => 'required|string|min:5|max:250',
             'category'      => 'required|string|in:Equipment,Semi-Expendable,Supply and Materials',
             'assigned_to'   => 'required|integer|exists:users,user_id',
@@ -990,6 +989,27 @@ class InventoryController extends Controller
             'building'      => 'nullable|string|max:255',
             'room_no'       => 'nullable|string|max:50',
             'item_image'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+        ], [
+            'item_name.required'     => 'Item name is required.',
+            'item_name.min'          => 'Item name must be at least 5 characters.',
+            'item_name.max'          => 'Item name must not exceed 50 characters.',
+            'specification.required' => 'Specification is required.',
+            'specification.min'      => 'Specification must be at least 5 characters.',
+            'specification.max'      => 'Specification must not exceed 250 characters.',
+            'category.required'      => 'Please select a category.',
+            'category.in'            => 'Invalid category selected.',
+            'assigned_to.required'   => 'Assignee is required.',
+            'assigned_to.exists'     => 'Selected assignee does not exist.',
+            'date_received.required' => 'Date is required.',
+            'date_received.date'     => 'Invalid date format.',
+            'quantity.required'      => 'Quantity is required.',
+            'quantity.min'           => 'Must be at least 1.',
+            'unit.required'          => 'Unit is required.',
+            'unit.max'               => 'Cant exceed 20 characters.',
+            'stock.integer'          => 'Stock must be a number.',
+            'item_image.image'       => 'File must be an image.',
+            'item_image.mimes'       => 'Only JPG, JPEG, PNG, and WEBP images are supported.',
+            'item_image.max'         => 'Image must not exceed 10MB.',
         ]);
 
         try {
