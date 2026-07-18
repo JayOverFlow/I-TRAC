@@ -115,6 +115,7 @@ Route::middleware(['auth', 'role:Supply'])->group(function () {
         Route::post('/inventory/{mr_id}/status', 'updateStatus')->name('inventory.update-status');
         Route::post('/inventory/store', 'storeItem')->name('inventory.store');
         Route::get('/inventory/export-report', 'exportInventoryReport')->name('inventory.export-report');
+        Route::get('/inventory/export-report/validate', 'validateInventoryReport')->name('inventory.export-report.validate');
     });
 });
 

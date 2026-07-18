@@ -19,11 +19,11 @@ class MrApiController extends Controller
         $payload = $request->mr_qr_code;
         $user = Auth::user();
 
-        // 1. Parse the payload (e.g., RIS-11, PAR-5)
-        if (!preg_match('/^(RIS|PAR)-(\d+)$/', $payload, $matches)) {
+        // 1. Parse the payload (e.g., RIS-11, PAR-5, ICS-12)
+        if (!preg_match('/^(RIS|PAR|ICS)-(\d+)$/', $payload, $matches)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid QR code format. Please scan a valid RIS or PAR form.'
+                'message' => 'Invalid QR code format. Please scan a valid RIS, PAR, or ICS form.'
             ], 400);
         }
 
@@ -62,6 +62,55 @@ class MrApiController extends Controller
                             ->whereNull('ris_item_id_fk');
                     });
             })->get();
+        } elseif ($type === 'ICS') {
+            $form = \App\Models\Ics::find($id);
+            if (!$form) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'ICS form not found.'
+                ], 404);
+            }
+            if ($form->ics_received_by != $user->user_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not the designated receiver for this ICS.'
+                ], 403);
+            }
+
+            if ($form->is_transfer == 1 && $form->mr_id_fk) {
+                // If it is a transfer form, resolve directly via the mr_id_fk field
+                $itemsToAssign = Mr::where('mr_id', $form->mr_id_fk)->get();
+            } else {
+                // If it is the original ICS, resolve the items via the matching RIS form
+                $risForm = \App\Models\Ris::where('po_id_fk', $form->po_id_fk)
+                    ->where('ris_received_by', $form->ics_received_by)
+                    ->first();
+
+                if (!$risForm) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Matching RIS form not found for this ICS.'
+                    ], 404);
+                }
+
+                $risItemIds = \App\Models\RisItem::where('ris_id_fk', $risForm->ris_id)->pluck('ris_items_id');
+                $poItemIds = \App\Models\RisItem::where('ris_id_fk', $risForm->ris_id)->pluck('ris_po_items_id_fk');
+
+                if ($risItemIds->isEmpty()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'No items found for this ICS form.'
+                    ], 404);
+                }
+
+                $itemsToAssign = Mr::where(function ($query) use ($risItemIds, $poItemIds) {
+                    $query->whereIn('ris_item_id_fk', $risItemIds)
+                        ->orWhere(function ($q) use ($poItemIds) {
+                            $q->whereIn('po_item_id_fk', $poItemIds)
+                                ->whereNull('ris_item_id_fk');
+                        });
+                })->get();
+            }
         } else {
             $form = \App\Models\Par::find($id);
             if (!$form) {
@@ -76,23 +125,29 @@ class MrApiController extends Controller
                     'message' => 'You are not the designated receiver for this PAR.'
                 ], 403);
             }
-            $parItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_items_id');
-            $poItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_po_items_id_fk');
 
-            if ($parItemIds->isEmpty()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No items found for this PAR form.'
-                ], 404);
+            if ($form->is_transfer == 1 && $form->mr_id_fk) {
+                // If it is a transfer form, resolve directly via the mr_id_fk field
+                $itemsToAssign = Mr::where('mr_id', $form->mr_id_fk)->get();
+            } else {
+                $parItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_items_id');
+                $poItemIds = \App\Models\ParItem::where('par_id_fk', $id)->pluck('par_po_items_id_fk');
+
+                if ($parItemIds->isEmpty()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'No items found for this PAR form.'
+                    ], 404);
+                }
+
+                $itemsToAssign = Mr::where(function ($query) use ($parItemIds, $poItemIds) {
+                    $query->whereIn('par_item_id_fk', $parItemIds)
+                        ->orWhere(function ($q) use ($poItemIds) {
+                            $q->whereIn('po_item_id_fk', $poItemIds)
+                                ->whereNull('par_item_id_fk');
+                        });
+                })->get();
             }
-
-            $itemsToAssign = Mr::where(function ($query) use ($parItemIds, $poItemIds) {
-                $query->whereIn('par_item_id_fk', $parItemIds)
-                    ->orWhere(function ($q) use ($poItemIds) {
-                        $q->whereIn('po_item_id_fk', $poItemIds)
-                            ->whereNull('par_item_id_fk');
-                    });
-            })->get();
         }
 
         if ($itemsToAssign->isEmpty()) {
@@ -212,6 +267,7 @@ class MrApiController extends Controller
 
         $items = Mr::where('assigned_to', $user->user_id)
             ->where('is_assigned', 1)
+            ->orderBy('date_scanned', 'desc')
             ->with(['poItem', 'images'])
             ->get()
             ->map(function ($item) {

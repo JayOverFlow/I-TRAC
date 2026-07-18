@@ -38,21 +38,44 @@ class InventoryController extends Controller
             'supplies'        => $mrItems->where('category', 'Supply and Materials')->count(),
         ];
 
-        // Fetch all users with custom full name logic
-        $allUsers = User::orderBy('user_lastname')
+        // Fetch only users involved in mr/inventory table
+        $allUsers = User::whereHas('mrs')
+            ->orderBy('user_lastname')
             ->orderBy('user_firstname')
             ->get();
 
-        // Fetch all offices
-        $allOffices = Department::orderBy('dep_name')->get();
+        // Fetch only offices that have items in mr/inventory table
+        $allOffices = Department::whereHas('users.mrs')
+            ->orderBy('dep_name')
+            ->get();
 
-        // Extract distinct years from date_scanned
-        $availableYears = Mr::whereNotNull('date_scanned')
-            ->selectRaw('YEAR(date_scanned) as year')
+        // Extract distinct years from resolved delivery date of items
+        $availableYears = Mr::selectRaw('YEAR(COALESCE(
+                t_ics.ics_received_by_date,
+                t_ics.created_at,
+                t_par.par_received_by_date,
+                t_par.created_at,
+                orig_par.par_received_by_date,
+                orig_par.created_at,
+                orig_ris.ris_received_date,
+                orig_ris.created_at,
+                mr_tbl.created_at
+            )) as year')
+            ->leftJoin('par_items_tbl as orig_par_item', 'mr_tbl.par_item_id_fk', '=', 'orig_par_item.par_items_id')
+            ->leftJoin('par_tbl as orig_par', 'orig_par_item.par_id_fk', '=', 'orig_par.par_id')
+            ->leftJoin('ris_items_tbl as orig_ris_item', 'mr_tbl.ris_item_id_fk', '=', 'orig_ris_item.ris_items_id')
+            ->leftJoin('ris_tbl as orig_ris', 'orig_ris_item.ris_id_fk', '=', 'orig_ris.ris_id')
+            ->leftJoin('ics_tbl as t_ics', 't_ics.mr_id_fk', '=', 'mr_tbl.mr_id')
+            ->leftJoin('par_tbl as t_par', function($join) {
+                $join->on('t_par.mr_id_fk', '=', 'mr_tbl.mr_id')
+                     ->where('t_par.is_transfer', '=', 1);
+            })
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year')
             ->toArray();
+
+        $availableYears = array_filter($availableYears);
 
         // Fallback to current year if none scanned yet
         if (empty($availableYears)) {
@@ -1076,5 +1099,27 @@ class InventoryController extends Controller
         ]);
 
         return $exportService->export($filters);
+    }
+
+    public function validateInventoryReport(Request $request, InventoryReportExportService $exportService)
+    {
+        $filters = $request->only([
+            'reporting_period',
+            'filter_year',
+            'filter_month',
+            'filter_quarter',
+            'filter_group_by',
+            'filter_user',
+            'filter_office',
+            'filter_category'
+        ]);
+
+        $count = $exportService->getFilteredItemsCount($filters);
+
+        return response()->json([
+            'success' => $count > 0,
+            'count' => $count,
+            'message' => $count > 0 ? '' : 'No items found matching the selected filters.'
+        ]);
     }
 }

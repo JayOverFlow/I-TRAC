@@ -1232,6 +1232,10 @@ $(document).ready(function () {
             $('.filter-quarter-group').addClass('d-none');
             $('.filter-user-group').removeClass('d-none');
             $('.filter-office-group').addClass('d-none');
+
+            // Reset export button in case it was left disabled/loading
+            var $exportBtn = $('#wizardBtnExport');
+            $exportBtn.prop('disabled', false).removeClass('disabled').html('Export Report').blur();
         }
     };
 
@@ -1282,7 +1286,48 @@ $(document).ready(function () {
 
     // Next button click
     $(document).on('click', '#wizardBtnNext', function () {
-        if (ReportWizard.currentStep < ReportWizard.totalSteps) {
+        if (ReportWizard.currentStep === 2) {
+            var $btn = $(this);
+            var originalText = $btn.text();
+            $btn.prop('disabled', true).html(`
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Validating...
+            `);
+
+            var formData = $('#exportReportForm').serialize();
+            $.ajax({
+                url: '/inventory/export-report/validate',
+                type: 'GET',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        ReportWizard.goToStep(3);
+                    } else {
+                        var period = $('#reporting_period').val();
+                        var errorMsg = 'No items found matching the selected filters.';
+                        if (period === 'Monthly') {
+                            errorMsg = 'No items found matching the selected month.';
+                        } else if (period === 'Quarterly') {
+                            errorMsg = 'No items found matching the selected quarter.';
+                        } else if (period === 'Annual') {
+                            errorMsg = 'No items found matching the selected year.';
+                        }
+                        showToast(errorMsg, 'danger');
+                    }
+                },
+                error: function () {
+                    showToast('Failed to validate report filters. Please try again.', 'danger');
+                },
+                complete: function () {
+                    // Only re-enable the button if we are still on Step 2 (validation failed)
+                    if (ReportWizard.currentStep === 2) {
+                        $btn.prop('disabled', false).text(originalText);
+                    } else {
+                        $btn.text(originalText); // Restore text but keep it disabled (since we transitioned to Step 3)
+                    }
+                }
+            });
+        } else if (ReportWizard.currentStep < ReportWizard.totalSteps) {
             ReportWizard.goToStep(ReportWizard.currentStep + 1);
         }
     });
@@ -1311,7 +1356,7 @@ $(document).ready(function () {
 
         // Reset button and close modal after a short delay
         setTimeout(function () {
-            $btn.prop('disabled', false).html(originalHtml);
+            $btn.prop('disabled', false).removeClass('disabled').html(originalHtml).blur();
             $('#exportReportModal').modal('hide');
             showToast('Your inventory report has been generated successfully.', 'success');
         }, 2500);
