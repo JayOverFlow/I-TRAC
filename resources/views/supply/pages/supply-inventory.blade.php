@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{{ asset('css/supply/inventory/page-specific/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/supply/inventory/page-specific/dt-global_style.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/src/splide/splide.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/src/flatpickr/flatpickr.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/css/light/flatpickr/custom-flatpickr.css') }}">
 
     <!-- CUSTOM css -->
     <link rel="stylesheet" href="{{ asset('css/supply/inventory/custom-inventory.css') }}">
@@ -27,7 +29,7 @@
                 <div class="card">
                     <div class="card-body row p-4">
                         <div class="col-4">
-                        <img src="{{ asset('img/All.svg') }}" alt="ALL" width="70" height="70">
+                            <img src="{{ asset('img/All.svg') }}" alt="ALL" width="70" height="70">
                         </div>
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">All</h6>
@@ -99,12 +101,14 @@
                 @foreach ($mrItems as $item)
                     @if ($item->category === 'Semi-Expendable' || $item->category === 'Equipment')
                         @php
-                            $images = $item->images->map(function ($img) {
-                                return [
-                                    'url' => asset($img->image_path),
-                                    'path' => $img->image_path
-                                ];
-                            })->toArray();
+                            $images = $item->images
+                                ->map(function ($img) {
+                                    return [
+                                        'url' => asset($img->image_path),
+                                        'path' => $img->image_path,
+                                    ];
+                                })
+                                ->toArray();
                         @endphp
                         <tr class="inventory-row" style="cursor: pointer;" data-item-name="{{ $item->item_name }}"
                             data-mr-id="{{ $item->mr_id }}"
@@ -114,14 +118,15 @@
                             data-stock="{{ $item->stock ?? '—' }}" data-unit="{{ $item->unit ?? '—' }}"
                             data-specification="{{ $item->specification ?? '—' }}"
                             data-quantity="{{ $item->quantity ?? '—' }}" data-building="{{ $item->building ?? '—' }}"
-                            data-room-no="{{ $item->room_no ?? '—' }}"
-                            data-item-images="{{ json_encode($images) }}"
+                            data-room-no="{{ $item->room_no ?? '—' }}" data-item-images="{{ json_encode($images) }}"
                             data-mr-qr-code="{{ $item->mr_qr_code }}" data-category="{{ $item->category }}"
                             data-status="{{ $item->status }}">
                             <td class="text-center">{{ $item->mr_qr_code }}</td>
                             <td>
                                 @if (in_array($item->status, ['Serviceable', 'Unserviceable', 'Missing']))
-                                    <span class="d-inline-block rounded-circle me-2" style="width: 8px; height: 8px; vertical-align: middle; background-color: {{ ['Serviceable' => '#00ab55', 'Unserviceable' => '#e7515a', 'Missing' => '#888ea8'][$item->status] }};" title="{{ $item->status }}"></span>
+                                    <span class="d-inline-block rounded-circle me-2"
+                                        style="width: 8px; height: 8px; vertical-align: middle; background-color: {{ ['Serviceable' => '#00ab55', 'Unserviceable' => '#e7515a', 'Missing' => '#888ea8'][$item->status] }};"
+                                        title="{{ $item->status }}"></span>
                                 @endif{{ $item->item_name }}
                             </td>
                             <td>{{ $item->assignedUser?->user_fullname ?? '—' }}</td>
@@ -142,17 +147,30 @@
                             </td>
                             <td class="text-center action-dropdown-menu">
                                 <div class="dropdown">
-                                    <button class="btn btn-link text-secondary p-0 border-0 dropdown-toggle no-caret shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                                    <button
+                                        class="btn btn-link text-secondary p-0 border-0 dropdown-toggle no-caret shadow-none"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-more-vertical">
+                                            <circle cx="12" cy="12" r="1"></circle>
+                                            <circle cx="12" cy="5" r="1"></circle>
+                                            <circle cx="12" cy="19" r="1"></circle>
+                                        </svg>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                         <li>
-                                            <button class="dropdown-item btn-transfer-action" type="button" data-mr-id="{{ $item->mr_id }}" data-item-name="{{ $item->item_name }}">
+                                            <button class="dropdown-item btn-transfer-action" type="button"
+                                                data-mr-id="{{ $item->mr_id }}"
+                                                data-item-name="{{ $item->item_name }}">
                                                 Transfer
                                             </button>
                                         </li>
                                         <li>
-                                            <button class="dropdown-item btn-condemn-action text-danger" type="button" data-mr-id="{{ $item->mr_id }}" data-item-name="{{ $item->item_name }}">
+                                            <button class="dropdown-item btn-condemn-action text-danger" type="button"
+                                                data-mr-id="{{ $item->mr_id }}"
+                                                data-item-name="{{ $item->item_name }}">
                                                 Condemn
                                             </button>
                                         </li>
@@ -167,13 +185,14 @@
     </div>
 
     <!-- Item Details Modal -->
-    <div class="modal fade" id="itemDetailsModal" tabindex="-1" aria-labelledby="itemDetailsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="itemDetailsModal" tabindex="-1" aria-labelledby="itemDetailsModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-3">
                 <div class="modal-header border-bottom-0 pb-0 px-3 pt-3 d-flex justify-content-between align-items-center">
                     <h4 class="modal-title fw-bold red-text-2" id="itemDetailsModalLabel">Item Details</h4>
-                    <button type="button" class="btn-close shadow-none border-0 btn-close-custom" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close shadow-none border-0 btn-close-custom"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-3 pt-0">
                     <div class="row">
@@ -189,12 +208,12 @@
 
                                     <!-- Delete Button Overlay (Commented out - managed on other page) -->
                                     <!--
-                                    <button type="button" class="btn btn-danger btn-delete-image position-absolute top-0 end-0 m-2 shadow-sm rounded-circle d-flex align-items-center justify-content-center" id="btnDeleteActiveImage" style="display: none; width: 32px; height: 32px; z-index: 10;" title="Delete this image">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Zm3 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Zm3 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Z"/>
-                                        </svg>
-                                    </button>
-                                    -->
+                                        <button type="button" class="btn btn-danger btn-delete-image position-absolute top-0 end-0 m-2 shadow-sm rounded-circle d-flex align-items-center justify-content-center" id="btnDeleteActiveImage" style="display: none; width: 32px; height: 32px; z-index: 10;" title="Delete this image">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Zm3 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Zm3 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5Z"/>
+                                            </svg>
+                                        </button>
+                                        -->
 
                                     <!-- No image placeholder text -->
                                     <div id="modalNoImagePlaceholder" class="text-center py-5 gray-text"
@@ -204,22 +223,22 @@
                                     </div>
                                 </div>
                             </div>
-                                       <!-- Image Grid Slots -->
+                            <!-- Image Grid Slots -->
                             <div id="modalImageGrid" class="image-grid-slots mt-2 w-100" style="display: none;">
                                 <!-- Dynamic slots (max 4) -->
                             </div>
 
                             <!-- Bottom Action & Counter Bar -->
                             <!--
-                            <div class="w-100 mt-2 px-3 d-flex justify-content-center align-items-center" id="modalImageActionsContainer">
-                                <span class="small text-muted fw-bold" id="modalImageCountText">0/5 Images</span>
-                            </div>
-                            -->
+                                <div class="w-100 mt-2 px-3 d-flex justify-content-center align-items-center" id="modalImageActionsContainer">
+                                    <span class="small text-muted fw-bold" id="modalImageCountText">0/5 Images</span>
+                                </div>
+                                -->
 
                             <!-- Hidden Upload Input -->
                             <!--
-                            <input type="file" id="modalImageFileInput" accept="image/*" style="display: none;">
-                            -->
+                                <input type="file" id="modalImageFileInput" accept="image/*" style="display: none;">
+                                -->
                         </div>
 
                         <!-- Right Column: Navigation Tabs System -->
@@ -250,15 +269,20 @@
                                             aria-labelledby="details-tab" tabindex="0">
                                             <!-- Property Details Section -->
                                             <div class="mb-3">
-                                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
                                                     <h6 class="fw-bold d-flex align-items-center red-text-2 mb-0">
                                                         <img src="{{ asset('img/property-details-icon.svg') }}">
                                                         <span class="ms-2">Property Details</span>
                                                     </h6>
                                                     <div>
-                                                        <select class="form-select form-select-sm fw-bold border-1 ps-2" id="detailItemStatus" style="font-size: 0.8rem; border-radius: 6px; border-color: #dee2e6;">
-                                                            <option class="text-success" value="Serviceable">● Serviceable</option>
-                                                            <option class="text-danger" value="Unserviceable">● Unserviceable</option>
+                                                        <select class="form-select form-select-sm fw-bold border-1 ps-2"
+                                                            id="detailItemStatus"
+                                                            style="font-size: 0.8rem; border-radius: 6px; border-color: #dee2e6;">
+                                                            <option class="text-success" value="Serviceable">● Serviceable
+                                                            </option>
+                                                            <option class="text-danger" value="Unserviceable">●
+                                                                Unserviceable</option>
                                                             <option class="text-dark" value="Missing">● Missing</option>
                                                         </select>
                                                     </div>
@@ -266,31 +290,38 @@
                                                 <div class="detail-rows">
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Item Name:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailItemName"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailItemName"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Assignee:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailAssignee"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailAssignee"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Date Scanned:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailDateScanned"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailDateScanned"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Stock:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailStock"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailStock"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Unit:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailUnit"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailUnit"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-start">
                                                         <div class="col-4 p-0 black-text text-nowrap">Specifications:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text text-break" id="detailSpecifications"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text text-break"
+                                                            id="detailSpecifications"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Quantity:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailQuantity"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailQuantity"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -304,11 +335,13 @@
                                                 <div class="detail-rows">
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Building:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailBuilding"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailBuilding"></div>
                                                     </div>
                                                     <div class="row m-0 py-2 border-bottom align-items-center">
                                                         <div class="col-4 p-0 black-text">Room:</div>
-                                                        <div class="col-8 p-0 fw-bold text-start black-text" id="detailRoom"></div>
+                                                        <div class="col-8 p-0 fw-bold text-start black-text"
+                                                            id="detailRoom"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -317,7 +350,8 @@
                                         <!-- Tab 2: Item Label (Interactive Form State) -->
                                         <div class="tab-pane fade px-2" id="item-label-tab-pane" role="tabpanel"
                                             aria-labelledby="item-label-tab" tabindex="0">
-                                            <form id="createItemLabelForm" action="{{ route('inventory.generate-label') }}" method="GET">
+                                            <form id="createItemLabelForm"
+                                                action="{{ route('inventory.generate-label') }}" method="GET">
                                                 <input type="hidden" name="mr_id" id="mr_id" value="">
                                                 <input type="hidden" name="mr_qr_code" id="mr_qr_code" value="">
                                                 <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
@@ -326,15 +360,24 @@
                                                         <span class="ms-2">Create Item Label</span>
                                                     </h6>
                                                     <!-- Toggle: Individual vs Batch Export -->
-                                                    <div id="exportModeToggleContainer" class="d-flex toggle-export-mode-container align-items-center" style="padding: 2px; border-radius: 6px; gap: 1px;">
-                                                        <button type="button" class="btn btn-xs py-1 px-2 fw-bold toggle-export-mode active" data-mode="individual" style="font-size: 0.7rem; border: none; border-radius: 4px; padding: 2px 8px !important;">
+                                                    <div id="exportModeToggleContainer"
+                                                        class="d-flex toggle-export-mode-container align-items-center"
+                                                        style="padding: 2px; border-radius: 6px; gap: 1px;">
+                                                        <button type="button"
+                                                            class="btn btn-xs py-1 px-2 fw-bold toggle-export-mode active"
+                                                            data-mode="individual"
+                                                            style="font-size: 0.7rem; border: none; border-radius: 4px; padding: 2px 8px !important;">
                                                             Individual
                                                         </button>
-                                                        <button type="button" class="btn btn-xs py-1 px-2 fw-bold toggle-export-mode" data-mode="batch" style="font-size: 0.7rem; border: none; border-radius: 4px; padding: 2px 8px !important;">
+                                                        <button type="button"
+                                                            class="btn btn-xs py-1 px-2 fw-bold toggle-export-mode"
+                                                            data-mode="batch"
+                                                            style="font-size: 0.7rem; border: none; border-radius: 4px; padding: 2px 8px !important;">
                                                             Batch
                                                         </button>
                                                     </div>
-                                                    <input type="hidden" name="export_mode" id="export_mode" value="individual">
+                                                    <input type="hidden" name="export_mode" id="export_mode"
+                                                        value="individual">
                                                 </div>
 
                                                 <!-- 1. Size Selection -->
@@ -429,7 +472,8 @@
                                                             <div class="paper-size-card p-2 text-center rounded border"
                                                                 data-paper-size="A6">
                                                                 <div class="paper-title small">A6</div>
-                                                                <div class="paper-dim text-muted small">(105 x 148 mm)</div>
+                                                                <div class="paper-dim text-muted small">(105 x 148 mm)
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -447,8 +491,11 @@
                                                     <button type="button" id="btnAddToQueue"
                                                         class="btn btn-custom-outline-red btn-md py-2 px-4 d-flex align-items-center justify-content-center fw-bold d-none"
                                                         style="width: 220px; max-width: 100%;">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" class="me-1 flex-shrink-0">
-                                                            <path d="M8 1a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 1"/>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15"
+                                                            height="15" fill="currentColor" viewBox="0 0 16 16"
+                                                            class="me-1 flex-shrink-0">
+                                                            <path
+                                                                d="M8 1a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 1" />
                                                         </svg>
                                                         <span>Add to Queue</span>
                                                     </button>
@@ -471,9 +518,192 @@
         <img class="lightbox-content" id="lightboxImage" src="" alt="Fullscreen View">
     </div>
 
+    <!-- Add Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="modal-title fw-bold red-text-2 mb-0" id="addItemModalLabel">Add Item</h4>
+                        <p class="text-muted small mb-2 mt-n2">Enter the details and upload an image for the new property
+                            assignment</p>
+                    </div>
+                    <button type="button" class="btn-close shadow-none border-0" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <hr class="mt-0 mb-2">
+                <div class="modal-body px-4 pb-4 pt-0">
+                    <form id="addItemForm" method="POST" enctype="multipart/form-data"
+                        onsubmit="event.preventDefault();">
+                        @csrf
+                        <!-- Upload Image Area -->
+                        <div class="mb-2">
+                            <label class="form-label fw-bold text-muted small mb-1">Add your image down below</label>
+                            <div class="add-image-dropzone text-center p-2 rounded-3 d-flex flex-column align-items-center justify-content-center"
+                                id="addItemDropzone">
+                                <input type="file" id="addItemImageFile" name="item_image"
+                                    accept="image/jpeg,image/png,image/webp" class="d-none">
+                                <div id="dropzonePrompt" class="d-flex flex-column align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                        viewBox="0 0 24 24" fill="none" stroke="#C62742" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round" class="mb-2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <polyline points="9 15 12 12 15 15"></polyline>
+                                    </svg>
+                                    <span class="fw-bold text-dark small">Drag and drop your image here</span>
+                                    <span class="text-muted small">or <a href="javascript:void(0);"
+                                            class="text-danger fw-bold text-decoration-none" id="btnBrowseImage">click to
+                                            browse</a></span>
+                                </div>
+                                <div id="dropzonePreview" class="d-none position-relative w-100 text-center">
+                                    <img id="previewImage" src="" alt="Selected Preview"
+                                        class="img-fluid rounded-2">
+                                    <button type="button"
+                                        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 rounded-circle"
+                                        id="btnRemovePreview">&times;</button>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 text-muted" style="font-size: 0.75rem;">
+                                <span>Supported files: .jpg, .jpeg, .png, .webp</span>
+                                <span>Maximum size: 10MB</span>
+                            </div>
+                        </div>
+
+                        <!-- Main Grid: Left Column (Property Details) & Right Column (Location and Metadata) -->
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6 border-end-md">
+                                <h6 class="fw-bold red-text-2 mb-2 d-flex align-items-center">
+                                    <img src="{{ asset('img/property-details-icon.svg') }}" class="me-2"
+                                        style="width: 18px;">
+                                    Property Details
+                                </h6>
+                                <!-- Item Name -->
+                                <div class="mb-2">
+                                    <label for="addItemName" class="form-label fw-bold small text-dark mb-1">Item Name
+                                        <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" id="addItemName"
+                                        name="item_name">
+                                </div>
+                                <!-- Specifications -->
+                                <div class="mb-2">
+                                    <label for="addSpecifications"
+                                        class="form-label fw-bold small text-dark mb-1">Specifications <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control form-control-sm" id="addSpecifications" name="specification" rows="2" 
+                                        style="resize: none;"></textarea>
+                                </div>
+                                <!-- Category -->
+                                <div class="mb-2">
+                                    <label for="addCategory" class="form-label fw-bold small text-dark mb-1">Category
+                                        <span class="text-danger">*</span></label>
+                                    <select class="form-select form-select-sm" id="addCategory" name="category" >
+                                        <option value="" selected disabled>Select</option>
+                                        <option value="Supply and Materials">Supply and Materials</option>
+                                        <option value="Semi-Expendable">Semi-Expendable</option>
+                                        <option value="Equipment">Equipment</option>
+                                    </select>
+                                </div>
+                                <!-- Assignee -->
+                                <div class="mb-2">
+                                    <label for="addAssignee" class="form-label fw-bold small text-dark mb-1">Assignee
+                                        <span class="text-danger">*</span></label>
+                                    <select class="form-select form-select-sm" id="addAssignee" name="assigned_to"
+                                        >
+                                        <option value="" selected disabled>Select</option>
+                                        @foreach ($allUsers->sortBy('user_fullname') as $userItem)
+                                            <option value="{{ $userItem->user_id }}">
+                                                {{ $userItem->user_fullname }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-md-6 ps-md-4 mt-1">
+                                <div class="row">
+                                    <!-- Date Received -->
+                                    <div class="col-6 mb-2">
+                                        <label for="addDateReceived" class="form-label fw-bold small text-dark mb-1">Date
+                                            Received <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control form-control-sm flatpickr-date"
+                                            id="addDateReceived" name="date_received" placeholder="Select Date">
+                                    </div>
+                                    <!-- Quantity -->
+                                    <div class="col-6 mb-2">
+                                        <label for="addQuantity" class="form-label fw-bold small text-dark mb-1">Quantity
+                                            <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control form-control-sm" id="addQuantity"
+                                            name="quantity" >
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <!-- Unit -->
+                                    <div class="col-6 mb-2">
+                                        <label for="addUnit" class="form-label fw-bold small text-dark mb-1">Unit <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control form-control-sm" id="addUnit"
+                                            name="unit">
+                                    </div>
+                                    <!-- Stock -->
+                                    <div class="col-6 mb-2">
+                                        <label for="addStock"
+                                            class="form-label fw-bold small text-dark mb-1">Stock</label>
+                                        <input type="number" class="form-control form-control-sm" id="addStock"
+                                            name="stock">
+                                    </div>
+                                </div>
+
+                                <h6 class="fw-bold red-text-2 mt-3 mb-2 d-flex align-items-center">
+                                    <img src="{{ asset('img/location-icon.svg') }}" class="me-2" style="width: 18px;">
+                                    Location Information
+                                </h6>
+                                <!-- Building -->
+                                <div class="mb-2">
+                                    <label for="addBuilding"
+                                        class="form-label fw-bold small text-dark mb-1">Building</label>
+                                    <input type="text" class="form-control form-control-sm" id="addBuilding"
+                                        name="building">
+                                </div>
+                                <!-- Room No. -->
+                                <div class="mb-2">
+                                    <label for="addRoomNo" class="form-label fw-bold small text-dark mb-1">Room
+                                        No.</label>
+                                    <input type="text" class="form-control form-control-sm" id="addRoomNo"
+                                        name="room_no">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div
+                            class="d-flex justify-content-between align-items-center pt-3 flex-wrap gap-2">
+                            <div class="form-check form-check-danger">
+                                <input class="form-check-input" type="checkbox" id="addConfirmCheckbox">
+                                <label class="form-check-label small fw-bold text-muted" for="addConfirmCheckbox">
+                                    I hereby confirm that all information is complete and accurate.
+                                </label>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button"
+                                    class="btn btn-md btn-outline-dark px-4 py-2 fw-bold rounded-3"
+                                    data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-md btn-dark-red px-4 py-2 fw-bold rounded-3"
+                                    id="btnSubmitAddItem" disabled>Add Item</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Print Queue Modal -->
-    <div class="modal fade" id="exportQueueModal" tabindex="-1"
-         aria-labelledby="exportQueueModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exportQueueModal" tabindex="-1" aria-labelledby="exportQueueModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg rounded-3">
                 <div class="modal-header border-bottom-0 pb-0">
@@ -484,7 +714,8 @@
                 </div>
                 <div class="modal-body p-0 mt-3">
                     <div id="exportQueueEmpty" class="text-center py-5 text-muted" style="display:none;">
-                        <p class="mb-0">No items in queue. Select an item, choose A4, and click <em>Add to Export Queue</em>.</p>
+                        <p class="mb-0">No items in queue. Select an item, choose A4, and click <em>Add to Export
+                                Queue</em>.</p>
                     </div>
                     <div id="exportQueueTableWrap">
                         <table class="table align-middle mb-0" style="border-collapse: collapse; width: 100%;">
@@ -513,9 +744,12 @@
                         </button>
                         <button type="button" id="btnExportQueuePdf"
                             class="btn text-white fw-bold d-flex align-items-center justify-content-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">
-                                <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
-                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z" />
+                                <path
+                                    d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
                             </svg>
                             Export
                         </button>
@@ -526,26 +760,30 @@
     </div>
 
     <!-- Paper Size Selection Modal (Export Time) -->
-    <div class="modal fade" id="exportPaperSizeModal" tabindex="-1" aria-labelledby="exportPaperSizeModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exportPaperSizeModal" tabindex="-1" aria-labelledby="exportPaperSizeModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-3">
                 <div class="modal-header border-bottom-0 pb-0">
                     <h4 class="modal-title fw-bold red-text-2" id="exportPaperSizeModalLabel">Select Paper Size</h4>
-                    <button type="button" class="btn-close shadow-none btn-close-custom-paper" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close shadow-none btn-close-custom-paper" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4 py-1">
                     <p class="text-muted mb-3">Choose the paper size for exporting your batched QR stickers:</p>
                     <div class="row g-3">
                         <!-- A4 Card -->
                         <div class="col-6">
-                            <div class="export-paper-card p-3 text-center rounded border selected" data-paper-size="A4" style="cursor: pointer;">
+                            <div class="export-paper-card p-3 text-center rounded border selected" data-paper-size="A4"
+                                style="cursor: pointer;">
                                 <div class="fw-bold mb-1 fs-5 paper-title">A4</div>
                                 <div class="text-muted small paper-dim mb-2">(210 x 297 mm)</div>
                             </div>
                         </div>
                         <!-- A6 Card -->
                         <div class="col-6">
-                            <div class="export-paper-card p-3 text-center rounded border" data-paper-size="A6" style="cursor: pointer;">
+                            <div class="export-paper-card p-3 text-center rounded border" data-paper-size="A6"
+                                style="cursor: pointer;">
                                 <div class="fw-bold mb-1 fs-5 paper-title">A6</div>
                                 <div class="text-muted small paper-dim mb-2">(105 x 148 mm)</div>
                             </div>
@@ -554,8 +792,10 @@
                     <input type="hidden" id="export_paper_size_choice" value="A4">
                 </div>
                 <div class="modal-footer border-top-0 d-flex gap-2 justify-content-center px-4 py-2">
-                    <button type="button" class="btn btn-dark-red text-white fw-bold px-4 d-flex align-items-center" id="btnConfirmExport">
-                        <span class="spinner-border spinner-border-sm me-2 d-none" id="exportSpinner" role="status" aria-hidden="true"></span>
+                    <button type="button" class="btn btn-dark-red text-white fw-bold px-4 d-flex align-items-center"
+                        id="btnConfirmExport">
+                        <span class="spinner-border spinner-border-sm me-2 d-none" id="exportSpinner" role="status"
+                            aria-hidden="true"></span>
                         Export PDF
                     </button>
                 </div>
@@ -563,15 +803,18 @@
         </div>
     </div>
     <!-- Export Report Wizard Modal -->
-    <div class="modal fade" id="exportReportModal" tabindex="-1" aria-labelledby="exportReportModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exportReportModal" tabindex="-1" aria-labelledby="exportReportModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
             <div class="modal-content border-0 shadow-lg rounded-3">
                 <div class="modal-header border-bottom-0 pb-0 px-4 pt-4 d-flex justify-content-between align-items-start">
                     <div>
                         <h4 class="modal-title fw-bold red-text-2 mb-1" id="exportReportModalLabel">Export Report</h4>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Specify the details of your report down below.</p>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Specify the details of your report down
+                            below.</p>
                     </div>
-                    <button type="button" class="btn-close shadow-none border-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close shadow-none border-0" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4 pt-3 pb-2">
                     <!-- Wizard Stepper Bar -->
@@ -606,7 +849,8 @@
                         <div class="wizard-step-content" id="wizardStep1">
                             <div class="period-options d-flex flex-column gap-3">
                                 <!-- Option Annual -->
-                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center selected" data-period="Annual">
+                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center selected"
+                                    data-period="Annual">
                                     <div class="d-flex align-items-center gap-3 w-100">
                                         <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(140, 4, 4, 0.08); flex-shrink: 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3 red-text-2" viewBox="0 0 16 16">
@@ -626,7 +870,8 @@
                                     </div>
                                 </div>
                                 <!-- Option Monthly -->
-                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center" data-period="Monthly">
+                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center"
+                                    data-period="Monthly">
                                     <div class="d-flex align-items-center gap-3 w-100">
                                         <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(140, 4, 4, 0.08); flex-shrink: 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-month red-text-2" viewBox="0 0 16 16">
@@ -647,7 +892,8 @@
                                     </div>
                                 </div>
                                 <!-- Option Quarterly -->
-                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center" data-period="Quarterly">
+                                <div class="period-option border rounded-3 p-3 position-relative cursor-pointer d-flex align-items-center"
+                                    data-period="Quarterly">
                                     <div class="d-flex align-items-center gap-3 w-100">
                                         <div class="period-icon-wrapper rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(140, 4, 4, 0.08); flex-shrink: 0;">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar3-range red-text-2" viewBox="0 0 16 16">
@@ -676,7 +922,7 @@
                                 <div class="form-group">
                                     <label for="filter_year" class="fw-bold mb-1 small text-muted">Select Year</label>
                                     <select class="form-select" id="filter_year" name="filter_year">
-                                        @foreach($availableYears as $year)
+                                        @foreach ($availableYears as $year)
                                             <option value="{{ $year }}">{{ $year }}</option>
                                         @endforeach
                                     </select>
@@ -686,16 +932,18 @@
                                 <div class="form-group filter-month-group d-none">
                                     <label for="filter_month" class="fw-bold mb-1 small text-muted">Select Month</label>
                                     <select class="form-select" id="filter_month" name="filter_month">
-                                        @foreach(range(1, 12) as $m)
+                                        @foreach (range(1, 12) as $m)
                                             @php $dateObj = DateTime::createFromFormat('!m', $m); @endphp
-                                            <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>{{ $dateObj->format('F') }}</option>
+                                            <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>
+                                                {{ $dateObj->format('F') }}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
                                 <!-- Quarter Selection (Conditional) -->
                                 <div class="form-group filter-quarter-group d-none">
-                                    <label for="filter_quarter" class="fw-bold mb-1 small text-muted">Select Quarter</label>
+                                    <label for="filter_quarter" class="fw-bold mb-1 small text-muted">Select
+                                        Quarter</label>
                                     <select class="form-select" id="filter_quarter" name="filter_quarter">
                                         <option value="1">Q1 (January - March)</option>
                                         <option value="2">Q2 (April - June)</option>
@@ -718,8 +966,9 @@
                                     <label for="filter_user" class="fw-bold mb-1 small text-muted">Select User</label>
                                     <select class="form-select" id="filter_user" name="filter_user">
                                         <option value="">All Users</option>
-                                        @foreach($allUsers as $userItem)
-                                            <option value="{{ $userItem->user_id }}">{{ $userItem->user_fullname }}</option>
+                                        @foreach ($allUsers as $userItem)
+                                            <option value="{{ $userItem->user_id }}">{{ $userItem->user_fullname }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -737,7 +986,8 @@
 
                                 <!-- Item Category Selection -->
                                 <div class="form-group">
-                                    <label for="filter_category" class="fw-bold mb-1 small text-muted">Item Category</label>
+                                    <label for="filter_category" class="fw-bold mb-1 small text-muted">Item
+                                        Category</label>
                                     <select class="form-select" id="filter_category" name="filter_category">
                                         <option value="All">All Categories</option>
                                         <option value="Equipment">Equipment</option>
@@ -767,7 +1017,8 @@
                     </form>
                 </div>
                 <div class="modal-footer border-top-0 d-flex justify-content-center gap-3 px-4 pb-4 pt-0">
-                    <button type="button" class="btn btn-wizard-prev fw-bold px-4 py-2" id="wizardBtnPrev" disabled>Prev</button>
+                    <button type="button" class="btn btn-wizard-prev fw-bold px-4 py-2" id="wizardBtnPrev"
+                        disabled>Prev</button>
                     <button type="button" class="btn btn-wizard-next fw-bold px-4 py-2" id="wizardBtnNext">Next</button>
                 </div>
             </div>
@@ -784,13 +1035,16 @@
     <!-- Splide.js js -->
     <script src="{{ asset('plugins/src/splide/splide.min.js') }}"></script>
 
+    <!-- Flatpickr JS -->
+    <script src="{{ asset('plugins/src/flatpickr/flatpickr.js') }}"></script>
+
     <!-- CUSTOM js —- inject queue route URLs as global vars before the script -->
     <script>
-        window.queueAddUrl    = '{{ route("inventory.queue.add") }}';
-        window.queueGetUrl    = '{{ route("inventory.queue.get") }}';
-        window.queueClearUrl  = '{{ route("inventory.queue.clear") }}';
-        window.queueExportUrl = '{{ route("inventory.queue.export") }}';
-        window.exportReportUrl = '{{ route("inventory.export-report") }}';
+        window.queueAddUrl = '{{ route('inventory.queue.add') }}';
+        window.queueGetUrl = '{{ route('inventory.queue.get') }}';
+        window.queueClearUrl = '{{ route('inventory.queue.clear') }}';
+        window.queueExportUrl = '{{ route('inventory.queue.export') }}';
+        window.exportReportUrl = '{{ route('inventory.export-report') }}';
     </script>
     <script src="{{ asset('js/supply/inventory/custom-inventory.js') }}"></script>
 @endpush

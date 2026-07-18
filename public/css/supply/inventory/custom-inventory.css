@@ -132,6 +132,36 @@ body.dark .detail-rows .border-bottom {
     transform: translateY(0) !important;
 }
 
+.btn-outline-dark-red {
+    background-color: transparent !important;
+    border: 1.5px solid var(--red-text-2) !important;
+    color: var(--red-text-2) !important;
+    transition: transform 0.18s ease, background-color 0.15s ease, color 0.15s ease !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+}
+
+.btn-outline-dark-red svg {
+    position: static !important;
+    stroke: var(--red-text-2) !important;
+    transition: stroke 0.15s ease !important;
+}
+
+.btn-outline-dark-red:hover {
+    background-color: var(--red-text-2) !important;
+    color: var(--white-text) !important;
+    transform: translateY(-2px) !important;
+}
+
+.btn-outline-dark-red:hover svg {
+    stroke: var(--white-text) !important;
+}
+
+.btn-outline-dark-red:active {
+    transform: translateY(0) !important;
+}
+
 /* Image Grid Layout Styles */
 .image-grid-slots {
     display: flex;
@@ -689,6 +719,26 @@ body.dark #btnAddToQueue:disabled {
     background-color: transparent !important;
 }
 
+body.dark .btn-outline-dark-red {
+    color: #EF4444 !important;
+    border-color: #EF4444 !important;
+    background-color: transparent !important;
+}
+
+body.dark .btn-outline-dark-red svg {
+    stroke: #EF4444 !important;
+}
+
+body.dark .btn-outline-dark-red:hover {
+    color: #ffffff !important;
+    background-color: #8C0404 !important;
+    border-color: #8C0404 !important;
+}
+
+body.dark .btn-outline-dark-red:hover svg {
+    stroke: #ffffff !important;
+}
+
 /* Export Queue Modal Title */
 #exportQueueModalLabel {
     color: #8C0404 !important;
@@ -935,27 +985,34 @@ body.dark .export-paper-card.selected .paper-title {
     border-color: #00ab55 !important;
     color: #00ab55 !important;
 }
+
 #detailItemStatus.status-unserviceable {
     border-color: #e7515a !important;
     color: #e7515a !important;
 }
+
 #detailItemStatus.status-missing {
     border-color: #888ea8 !important;
     color: #888ea8 !important;
 }
+
 #detailItemStatus:focus {
     box-shadow: none;
 }
+
 body.dark #detailItemStatus {
     background-color: #0e1726;
     color: #888ea8;
 }
+
 body.dark #detailItemStatus.status-serviceable {
     color: #00ab55 !important;
 }
+
 body.dark #detailItemStatus.status-unserviceable {
     color: #e7515a !important;
 }
+
 body.dark #detailItemStatus.status-missing {
     color: #888ea8 !important;
 }
@@ -1168,6 +1225,7 @@ body.dark .export-report-link:hover {
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1396,4 +1454,94 @@ body.dark .wizard-step-content .card {
 body.dark .wizard-step-content h6.text-dark {
     color: #F3F4F6 !important;
     border-color: #2A2F38 !important;
+}
+
+/* ---------------------------------------------------------------
+   Add Item Modal Custom Styles
+   --------------------------------------------------------------- */
+
+.add-image-dropzone {
+    border: 1.5px dashed #EF4444 !important;
+    background-color: #fffcfc;
+    min-height: 150px;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+}
+
+.add-image-dropzone:hover {
+    background-color: #fdf2f2;
+    border-color: #8C0404 !important;
+}
+
+.add-image-dropzone.dragover {
+    background-color: #fcebeb;
+    border-color: #630418 !important;
+    border-style: solid !important;
+}
+
+#dropzonePreview img {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+#previewImage {
+    max-height: 150px;
+    object-fit: contain;
+}
+
+#btnRemovePreview {
+    width: 24px;
+    height: 24px;
+    padding: 0.15rem 0.4rem;
+    line-height: 1;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+    .border-end-md {
+        border-right: 1px solid #e2e8f0 !important;
+    }
+}
+
+/* Modal dark-mode custom styles override */
+body.dark .add-image-dropzone {
+    background-color: #1a1516;
+    border-color: #EF4444 !important;
+}
+
+body.dark .add-image-dropzone:hover {
+    background-color: #241618;
+}
+
+body.dark .add-image-dropzone.dragover {
+    background-color: #2d181b;
+}
+
+body.dark .border-end-md {
+    border-color: #2a2f38 !important;
+}
+
+body.dark #dropzonePrompt .text-dark {
+    color: #f3f4f6 !important;
+}
+
+/* Date input default style tweak */
+#addItemModal input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(13%) sepia(87%) saturate(6921%) hue-rotate(352deg) brightness(85%) contrast(109%);
+}
+
+body.dark #addItemModal input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(34%) sepia(81%) saturate(3015%) hue-rotate(345deg) brightness(97%) contrast(104%);
+}
+
+/* Ensure Flatpickr calendar appears above Bootstrap Modals */
+.flatpickr-calendar {
+    z-index: 1060 !important;
 }
