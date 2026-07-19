@@ -31,7 +31,7 @@ class AuthController extends Controller
             // If email validation fails (required, format, or exists)
             if ($errors->has('email')) {
                 return back()
-                    ->withErrors(['all_fields' => 'Email must be a valid TUP email.'])
+                    ->withErrors(['all_fields' => 'Email or password is invalid.'])
                     ->withInput($request->only('email'));
             }
 
