@@ -16,7 +16,7 @@
                 @foreach ($pos as $po)
                     <tr class="clickable-row" data-id="{{ $po->po_id }}">
                         <td class="text-center">
-                            {{ $po->po_id }}</td>
+                            {{ $po->po_unique_code }}</td>
                         <td class="text-center">
                             {{ $po->purchaseRequest?->pr_unique_code ?? 'N/A' }}</td>
                         <td>
