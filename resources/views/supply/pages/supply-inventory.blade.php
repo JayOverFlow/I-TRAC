@@ -27,14 +27,14 @@
         <div class="row row-cols-4">
             <div class="col">
                 <div class="card">
-                    <div class="card-body row p-4">
+                    <div class="card-body row px-4 ps-4 pb-3">
                         <div class="col-4">
                             <img src="{{ asset('img/All.svg') }}" alt="ALL" width="70" height="70">
                         </div>
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">All</h6>
-                            <h4 class="mb-0 fw-bold"><span>{{ $counts['all'] }}</span></h4>
-                            <a href="javascript:void(0);" class="export-report-link" data-bs-toggle="modal" data-bs-target="#exportReportModal">Generate Report</a>
+                            <h5 class="mb-0 fw-bold"><span>{{ $counts['all'] }}</span></h5>
+                            <a href="javascript:void(0);" class="mt-0 export-report-link" data-bs-toggle="modal" data-bs-target="#exportReportModal">Generate Report</a>
                         </div>
                     </div>
                 </div>
