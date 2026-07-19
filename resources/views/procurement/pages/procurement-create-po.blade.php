@@ -181,7 +181,7 @@
                                 <input type="text" name="po_tuptin" data-field="po_tuptin"
                                     class="form-control form-control-sm w-100"
                                     placeholder="XXX-XXX-XXX-XXX"
-                                    value="{{ $po->po_tuptin }}" {{ $isDone ? 'disabled' : '' }}>
+                                    value="{{ $po->po_tuptin ? $po->po_tuptin : "000-824-548-001"}}" {{ $isDone ? 'disabled' : '' }}>
                                 <span class="field-error d-none"></span>
                             </div>
                         </div>
