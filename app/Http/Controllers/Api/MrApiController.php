@@ -182,7 +182,8 @@ class MrApiController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'You have already claimed all items in this form.',
-                'items' => $itemsToAssign
+                'items' => $itemsToAssign,
+                'is_transfer' => isset($form->is_transfer) && $form->is_transfer == 1
             ], 200);
         }
 
@@ -257,7 +258,8 @@ class MrApiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Items successfully claimed and recorded to your account.',
-            'items' => $finalItems
+            'items' => $finalItems,
+            'is_transfer' => isset($form->is_transfer) && $form->is_transfer == 1
         ], 200);
     }
 
