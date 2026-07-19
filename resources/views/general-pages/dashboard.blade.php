@@ -14,6 +14,10 @@
 @endpush
 
 @section('content')
+    @php
+        $presentYear = date('Y');
+        $canGenerateReport = $activeApp && ($activeApp->app_year == $presentYear);
+    @endphp
     @if(isset($isHead) && $isHead)
         <div class="row layout-top-spacing gx-3">
             <!-- Left side: Subordinates table -->
@@ -129,9 +133,15 @@
 
                     <!-- Generate Report Button -->
                     <div class="mt-auto pt-3">
-                        <a href="javascript:void(0)" id="generate-report-link" class="btn btn-danger w-100 py-2 fw-bold text-white d-flex align-items-center justify-content-center" style="background-color: #a30000; border-color: #a30000;">
-                            Generate Report
-                        </a>
+                        @if($canGenerateReport)
+                            <a href="javascript:void(0)" id="generate-report-link" class="btn btn-danger w-100 py-2 fw-bold text-white d-flex align-items-center justify-content-center" style="background-color: #a30000; border-color: #a30000;">
+                                Generate Report
+                            </a>
+                        @else
+                            <button type="button" class="btn btn-secondary w-100 py-2 fw-bold text-white d-flex align-items-center justify-content-center" style="cursor: not-allowed; opacity: 0.65;" disabled title="Report generation is only available for the present fiscal year.">
+                                Generate Report
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -178,7 +188,11 @@
                             <div class="col-8 text-end">
                                 <h5 class="card-title fw-bold mb-0">Utilized Budget</h5>
                                 <h5 class="mb-0 fw-bold">₱<span>{{ number_format($utilizedBudget, 2) }}</span></h5>
-                                <a href="javascript:void(0)" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold" id="generate-report-link">Generate Report</a>
+                                @if($canGenerateReport)
+                                    <a href="javascript:void(0)" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-bold" id="generate-report-link">Generate Report</a>
+                                @else
+                                    <span class="text-muted fw-bold" style="font-size: 12px; cursor: not-allowed;" title="Report generation is only available for the present fiscal year.">Generate Report (Unavailable)</span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -244,6 +258,73 @@
             </table>
         </div>
     @endif
+
+    <!-- Generate Report Modal -->
+    @if($canGenerateReport)
+    <div class="modal fade" id="generateReportModal" tabindex="-1" aria-labelledby="generateReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content report-modal-content border-0 p-0">
+                <div class="modal-header report-modal-header border-0 px-4 pt-2 pb-0">
+                    <div>
+                        <h4 class="modal-title report-modal-title fw-bold" id="generateReportModalLabel" style="color: #a30000;">Generate Report</h4>
+                        <p class="text-muted report-modal-subtitle mb-0 small">Specify the details of your report down below.</p>
+                    </div>
+                    <button type="button" class="btn-close report-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <hr class="my-1">
+                <div class="modal-body report-modal-body px-4">
+                    <!-- Title Row -->
+                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom report-row">
+                        <span class="black-text report-label">Title</span>
+                        <span class="fw-bold report-value text-end">{{ $activeApp->app_title }}</span>
+                    </div>
+                    <!-- Year Row -->
+                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom report-row">
+                        <span class="black-text report-label">Year</span>
+                        <span class="fw-bold report-value text-end" id="modal-app-year">{{ $activeApp->app_year }}</span>
+                    </div>
+                    <!-- Office Row -->
+                    <div class="d-flex justify-content-between align-items-center py-3 border-bottom report-row">
+                        <span class="black-text report-label">Office</span>
+                        <span class="fw-bold report-value text-end">{{ $depName }}</span>
+                    </div>
+                    <!-- Month Row -->
+                    <div class="d-flex justify-content-between align-items-center py-3 report-row">
+                        <span class="black-text report-label">Month</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="black-text small text-end">as of</span>
+                            <select class="form-select form-select-sm report-select black-text" id="filter-month-select" style="width: auto; min-width: 110px;">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    <div class="d-flex justify-content-end mt-2">
+                        <button type="button" class="btn btn-outline-dark px-4 py-2 fw-bold btn-cancel-report me-2" data-bs-dismiss="modal" style="border-radius: 6px;">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger px-4 py-2 fw-bold text-white btn-export-report" id="btn-export-report" style="background-color: #a30000; border-color: #a30000; border-radius: 6px;">
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @include('partials.action-confirmation-alert')
 @endsection
 
