@@ -231,3 +231,121 @@ body.dark #recently-procured-title {
 .apexcharts-tooltip span {
     color: #ffffff !important;
 }
+
+/* Generate Report Modal Custom Styles */
+.report-modal-content {
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.report-modal-title {
+    font-size: 24px;
+    color: #a30000;
+    margin-bottom: 4px;
+}
+.report-modal-subtitle {
+    color: #7b7b7b;
+    font-size: 14px;
+}
+.report-modal-close {
+    width: 0.65em;
+    height: 0.65em;
+    background-size: 0.65em;
+    cursor: pointer;
+    margin-top: 4px;
+}
+.modal-divider {
+    border: 0;
+    border-top: 1px solid #e5e5e5;
+    margin: 16px 0;
+}
+.report-row {
+    font-size: 15px;
+}
+.report-label {
+    color: #7b7b7b;
+    font-weight: 500;
+}
+.report-value {
+    color: #020202;
+    font-weight: 600;
+}
+.report-select {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #3b3f5c;
+    background-color: #fff;
+    font-weight: 500;
+}
+.report-select:focus {
+    border-color: #a30000;
+    box-shadow: 0 0 0 0.2rem rgba(163, 0, 0, 0.15);
+}
+.btn-export-report {
+    background-color: #c62742;
+    border-color: #c62742;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s ease;
+}
+.btn-export-report:hover {
+    background-color: #a30000;
+    border-color: #a30000;
+}
+
+/* Dark mode overrides */
+body.dark .report-modal-content {
+    background-color: #0e1726;
+    color: #f1f2f3;
+}
+body.dark .report-modal-title {
+    color: #ff5e5e;
+}
+body.dark .report-modal-subtitle {
+    color: #888ea8;
+}
+body.dark .modal-divider {
+    border-top-color: #192739;
+}
+body.dark .report-label {
+    color: #888ea8;
+}
+body.dark .report-value {
+    color: #f1f2f3;
+}
+body.dark .report-select {
+    background-color: #1b2e4b;
+    border-color: #192739;
+    color: #00abff;
+}
+body.dark .report-select:focus {
+    border-color: #ff5e5e;
+}
+
+/* Custom Cancel Button Outline Styling */
+.btn-cancel-report {
+    background-color: transparent !important;
+    border: 1px solid #ced4da !important;
+    color: #3b3f5c !important;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.btn-cancel-report:hover {
+    background-color: #f8f9fa !important;
+    border-color: #a7a4a4 !important;
+    color: #020202 !important;
+}
+body.dark .btn-cancel-report {
+    border-color: #3b3f5c !important;
+    color: #888ea8 !important;
+}
+body.dark .btn-cancel-report:hover {
+    background-color: #1b2e4b !important;
+    border-color: #ff5e5e !important;
+    color: #f1f2f3 !important;
+}

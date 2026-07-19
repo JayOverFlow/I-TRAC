@@ -216,17 +216,36 @@ class DashboardController extends Controller
             return redirect()->back()->with('error', 'No active Annual Procurement Plan found for this office.');
         }
 
-        // Query IAR items linked to PO items for the set active APP inside a DB transaction
-        $iarItems = \Illuminate\Support\Facades\DB::transaction(function () use ($activeAppId) {
-            return \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($activeAppId) {
-                $query->where('app_id_fk', $activeAppId);
-            })
-            ->whereNotNull('iar_po_items_id_fk')
-            ->with(['iar', 'poItem'])
-            ->get();
-        });
+        $activeApp = \App\Models\AppParent::find($activeAppId);
+        $appYear = $activeApp?->app_year ?? date('Y');
 
-        $asOfDate = now()->format('F Y');
+        if ($appYear != date('Y')) {
+            abort(400, 'Report generation is only available for the present fiscal year.');
+        }
+
+        $selectedMonth = $request->query('month');
+
+        // Base Query
+        $iarItemsQuery = \App\Models\IarItem::whereHas('iar.purchaseOrder.purchaseRequest', function ($query) use ($activeAppId) {
+            $query->where('app_id_fk', $activeAppId);
+        })
+        ->whereNotNull('iar_po_items_id_fk');
+
+        // Apply Month Filter if provided on iar_date_accepted
+        if ($selectedMonth) {
+            $iarItemsQuery->whereHas('iar', function ($query) use ($appYear, $selectedMonth) {
+                $lastDayOfMonth = \Carbon\Carbon::createFromDate($appYear, $selectedMonth, 1)->endOfMonth()->format('Y-m-d');
+                $query->where('iar_date_accepted', '<=', $lastDayOfMonth);
+            });
+            $asOfDate = \Carbon\Carbon::createFromDate($appYear, $selectedMonth, 1)->format('F Y');
+        } else {
+            $asOfDate = now()->format('F Y');
+        }
+
+        // Query IAR items linked to PO items for the set active APP inside a DB transaction
+        $iarItems = \Illuminate\Support\Facades\DB::transaction(function () use ($iarItemsQuery) {
+            return $iarItemsQuery->with(['iar', 'poItem'])->get();
+        });
 
         $pdfService = app(\App\Services\UbrPdfExportService::class);
         return $pdfService->export($depName, $asOfDate, $iarItems);
