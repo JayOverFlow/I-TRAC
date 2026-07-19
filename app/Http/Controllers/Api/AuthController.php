@@ -59,10 +59,9 @@ class AuthController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'user_tupid' => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid',
+            'user_tupid' => 'required|string|max:20|unique:users,user_tupid',
         ], [
             'user_tupid.unique' => 'TUPT-ID already exists.',
-            'user_tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -105,14 +104,13 @@ class AuthController extends Controller
             'user_lastname'          => 'required|string|max:50',
             'user_suffix'            => 'nullable|string|max:10',
             'user_contactno'         => 'required|string|size:11|regex:/^09\d{9}$/',
-            'user_tupid'             => 'required|string|max:13|regex:/^[a-zA-Z0-9]{5}-\d{2}-\d{4}$/|unique:users,user_tupid',
+            'user_tupid'             => 'required|string|max:20|unique:users,user_tupid',
             'user_email'             => 'required|email|regex:/^.+@tup\.edu\.ph$/i|unique:users,user_email',
             'user_password'          => 'required|string|min:8',
             'user_type'              => 'required|in:Faculty,Staff',
             'selected_department_id' => 'required|integer|exists:departments_tbl,dep_id',
         ], [
             'user_tupid.unique' => 'TUPT-ID already exists.',
-            'user_tupid.regex' => 'TUPT-ID must follow the format XXXXX-00-0000.',
             'user_contactno.required' => 'Contact number is required.',
             'user_contactno.size' => 'Contact number must be exactly 11 digits.',
             'user_contactno.regex' => 'Contact number must start with 09.',
