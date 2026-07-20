@@ -24,7 +24,7 @@
 
 @section('content')
     <div class="p-0">
-        <div class="row row-cols-4">
+        <div class="row row-cols-3">
             <div class="col">
                 <div class="card">
                     <div class="card-body row px-4 ps-4 pb-3">
@@ -63,20 +63,6 @@
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">Semi-Expendable</h6>
                             <h5 class="mb-0 fw-bold"><span>{{ $counts['semi_expendable'] }}</span></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card">
-                    <div class="card-body row p-4">
-                        <div class="col-4">
-                            <img src="{{ asset('img/mr-supplies.svg') }}" alt="Supplies & Materials">
-                        </div>
-                        <div class="col-8 text-end">
-                            <h6 class="card-title fw-bold">Supplies & Materials</h6>
-                            <h5 class="mb-0 fw-bold"><span>{{ $counts['supplies'] }}</span></h5>
                         </div>
                     </div>
                 </div>
