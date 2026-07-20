@@ -1063,6 +1063,7 @@
                                     <line x1="1" y1="1" x2="23" y2="23"></line>
                                 </svg>
                             </div>
+                            <div class="text-danger small mt-1" id="condemn_password_error" style="display: none;"></div>
                             <div class="form-text small text-muted mt-1" style="font-size: 0.8rem;">Please enter your password to authorize this action.</div>
                         </div>
                     </div>

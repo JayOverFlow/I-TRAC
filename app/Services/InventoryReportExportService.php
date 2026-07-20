@@ -97,6 +97,12 @@ class InventoryReportExportService
                 });
             }
         }
+
+        // Exclude condemned items
+        $query->where(function($q) {
+            $q->whereNull('mr_tbl.status')
+              ->orWhere('mr_tbl.status', '!=', 'Condemned');
+        });
     }
 
     /**

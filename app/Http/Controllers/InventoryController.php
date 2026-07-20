@@ -29,7 +29,13 @@ class InventoryController extends Controller
             return redirect()->route('404');
         }
 
-        $mrItems = Mr::with(['assignedUser.departments', 'images'])->orderBy('date_scanned', 'desc')->get();
+        $mrItems = Mr::with(['assignedUser.departments', 'images'])
+            ->where(function($query) {
+                $query->whereNull('status')
+                      ->orWhere('status', '!=', 'Condemned');
+            })
+            ->orderBy('date_scanned', 'desc')
+            ->get();
 
         $counts = [
             'all'             => $mrItems->count(),
@@ -69,6 +75,10 @@ class InventoryController extends Controller
             ->leftJoin('par_tbl as t_par', function($join) {
                 $join->on('t_par.mr_id_fk', '=', 'mr_tbl.mr_id')
                      ->where('t_par.is_transfer', '=', 1);
+            })
+            ->where(function($query) {
+                $query->whereNull('mr_tbl.status')
+                      ->orWhere('mr_tbl.status', '!=', 'Condemned');
             })
             ->distinct()
             ->orderBy('year', 'desc')
@@ -994,6 +1004,33 @@ class InventoryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function condemnItem(Request $request, $mrId)
+    {
+        $request->validate(['password' => 'required|string']);
+
+        if (!\Illuminate\Support\Facades\Hash::check($request->password, Auth::user()->user_password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid password. Authorization failed.',
+            ], 422);
+        }
+
+        try {
+            $item = Mr::findOrFail($mrId);
+            $item->update(['status' => 'Condemned']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item has been condemned successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server Error: ' . $e->getMessage(),
             ], 500);
         }
     }
