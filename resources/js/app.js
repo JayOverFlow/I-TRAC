@@ -7,8 +7,11 @@ window.bootstrap = bootstrap;
 import Swal from 'sweetalert2';
 window.Swal = Swal;
 
+import PerfectScrollbar from 'perfect-scrollbar';
+window.PerfectScrollbar = PerfectScrollbar;
+
 import './app/loader.js';
-import './app/perfect-scrollbar.min.js';
+// import './app/perfect-scrollbar.min.js';
 import './app/mousetrap.min.js';
 import './app/waves.min.js';
 import './app/theme.js';
