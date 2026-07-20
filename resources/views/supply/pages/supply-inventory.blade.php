@@ -807,7 +807,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
             <div class="modal-content border-0 shadow-lg rounded-3">
-                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4 d-flex justify-content-between align-items-start">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-2 d-flex justify-content-between align-items-start">
                     <div>
                         <h4 class="modal-title fw-bold red-text-2 mb-1" id="exportReportModalLabel">Export Report</h4>
                         <p class="text-muted mb-0" style="font-size: 0.85rem;">Specify the details of your report down
@@ -1021,6 +1021,56 @@
                         disabled>Prev</button>
                     <button type="button" class="btn btn-wizard-next fw-bold px-4 py-2" id="wizardBtnNext">Next</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Condemn Item Modal -->
+    <div class="modal fade" id="condemnItemModal" tabindex="-1" aria-labelledby="condemnItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered condemn-modal-dialog">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-3 d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4 class="modal-title fw-bold red-text-2 mb-1" id="condemnItemModalLabel">Condemn Item</h4>
+                        <p class="text-muted small mb-0">Condemning an item will remove it from the inventory list.</p>
+                    </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <hr class="mt-2 mb-3">
+                <form id="condemnItemForm" method="POST" action="javascript:void(0);">
+                    @csrf
+                    <input type="hidden" name="mr_id" id="condemn_mr_id">
+                    <div class="modal-body px-4 py-0">
+                        <div class="condemn-details d-flex flex-column gap-2 mb-4">
+                            <div>Item Name: <span class="detail-val" id="condemn_item_name"></span></div>
+                            <div>Date Recieved: <span class="detail-val" id="condemn_date_received"></span></div>
+                            <div>Assignee: <span class="detail-val" id="condemn_assignee"></span></div>
+                            <div>Stock: <span class="detail-val" id="condemn_stock"></span></div>
+                            <div>Unit: <span class="detail-val" id="condemn_unit"></span></div>
+                            <div>Specifications: <span class="detail-val text-break" id="condemn_specifications"></span></div>
+                            <div>Quantity: <span class="detail-val" id="condemn_quantity"></span></div>
+                            <div>Location: <span class="detail-val" id="condemn_location"></span></div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="condemn_password" class="form-label mb-2 text-dark" style="font-size: 0.95rem;">Password <span class="text-danger">*</span></label>
+                            <div class="password-field">
+                                <input type="password" id="condemn_password" name="password" class="form-control py-2" style="border-radius: 8px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-eye-off password-toggle-icon" id="toggleCondemnPassword">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </div>
+                            <div class="form-text small text-muted mt-1" style="font-size: 0.8rem;">Please enter your password to authorize this action.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 px-4 pb-3 pt-0 d-flex justify-content-end gap-1">
+                        <button type="button" class="btn btn-cancel-condemn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-confirm-condemn" id="btnConfirmCondemn">Condemn</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

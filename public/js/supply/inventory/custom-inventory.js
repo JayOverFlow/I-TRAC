@@ -1057,12 +1057,30 @@ $(document).ready(function () {
         });
     });
 
+    // Helper function to format date scanned (Y-m-d to Month Day, Year)
+    function formatCondemnDate(dateStr) {
+        if (!dateStr || dateStr === '—') return '—';
+        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var parts = dateStr.split('-');
+        if (parts.length === 3) {
+            var year = parts[0];
+            var monthIdx = parseInt(parts[1], 10) - 1;
+            var day = parseInt(parts[2], 10);
+            if (monthIdx >= 0 && monthIdx < 12) {
+                return months[monthIdx] + " " + day + ", " + year;
+            }
+        }
+        return dateStr;
+    }
+
     // Handle Condemn action from the row menu
     $(document).on('click', '.btn-condemn-action', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        var mrId = $(this).data('mr-id');
-        var itemName = $(this).data('item-name');
+        var $btn = $(this);
+        var mrId = $btn.data('mr-id');
+        var itemName = $btn.data('item-name');
+        var $row = $btn.closest('tr');
 
         window.confirmAction({
             title: 'Condemn Item?',
@@ -1071,9 +1089,79 @@ $(document).ready(function () {
             confirmButtonText: 'Condemn',
             cancelButtonText: 'Cancel',
             onConfirm: function () {
-                // Do not make any function that will trigger when confirmed for now
+                // Get data from table row
+                var itemNameVal = $row.data('item-name') || '—';
+                var assigneeVal = $row.data('assignee') || '—';
+                var dateScannedVal = $row.data('date-scanned') || '—';
+                var stockVal = $row.data('stock') || '—';
+                var unitVal = $row.data('unit') || '—';
+                var specificationVal = $row.data('specification') || '—';
+                var quantityVal = $row.data('quantity') || '—';
+                var buildingVal = $row.data('building') || '—';
+                var roomNoVal = $row.data('room-no') || '—';
+
+                // Format fields
+                var formattedDate = formatCondemnDate(dateScannedVal);
+                var locationText = '—';
+                if (buildingVal && buildingVal !== '—' && buildingVal !== '') {
+                    locationText = buildingVal;
+                    if (roomNoVal && roomNoVal !== '—' && roomNoVal !== '') {
+                        locationText += ', RM ' + roomNoVal;
+                    }
+                } else if (roomNoVal && roomNoVal !== '—' && roomNoVal !== '') {
+                    locationText = 'RM ' + roomNoVal;
+                }
+
+                // Populate modal
+                $('#condemn_item_name').text(itemNameVal);
+                $('#condemn_date_received').text(formattedDate);
+                $('#condemn_assignee').text(assigneeVal);
+                $('#condemn_stock').text(stockVal);
+                $('#condemn_unit').text(unitVal);
+                $('#condemn_specifications').text(specificationVal);
+                $('#condemn_quantity').text(quantityVal);
+                $('#condemn_location').text(locationText);
+
+                // Store mr-id
+                $('#condemn_mr_id').val(mrId);
+
+                // Clear password field
+                $('#condemn_password').val('');
+                $('#condemn_password').attr('type', 'password');
+                $('#toggleCondemnPassword').removeClass('feather-eye').addClass('feather-eye-off');
+                $('#toggleCondemnPassword').html('<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>');
+
+                // Show modal
+                var condemnModal = new bootstrap.Modal(document.getElementById('condemnItemModal'));
+                condemnModal.show();
             }
         });
+    });
+
+    // Handle password field visibility toggle
+    $(document).on('click', '#toggleCondemnPassword', function () {
+        var $input = $('#condemn_password');
+        var isPassword = $input.attr('type') === 'password';
+        $input.attr('type', isPassword ? 'text' : 'password');
+        
+        if (isPassword) {
+            $(this).removeClass('feather-eye-off').addClass('feather-eye');
+            $(this).html('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>');
+        } else {
+            $(this).removeClass('feather-eye').addClass('feather-eye-off');
+            $(this).html('<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>');
+        }
+    });
+
+    // Mocked submit action handler
+    $(document).on('submit', '#condemnItemForm', function (e) {
+        e.preventDefault();
+        showToast('Condemnation request submitted successfully (Prototype)', 'success');
+        var modalEl = document.getElementById('condemnItemModal');
+        var modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) {
+            modal.hide();
+        }
     });
     // ---------------------------------------------------------------
     // EXPORT REPORT WIZARD — 3-step modal stepper navigation & logic

@@ -1545,3 +1545,33 @@ body.dark #addItemModal input[type="date"]::-webkit-calendar-picker-indicator {
 .flatpickr-calendar {
     z-index: 1060 !important;
 }
+
+/* Condemn Modal Specific Styling */
+.condemn-modal-dialog {
+    max-width: 520px;
+}
+.condemn-details {
+    color: var(--black-text);
+    font-size: 0.95rem;
+}
+.condemn-details .detail-val {
+    font-weight: 700;
+}
+.btn-cancel-condemn {
+    border-radius: 8px;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s ease;
+}
+.btn-confirm-condemn {
+    background-color: var(--red-text-2) !important;
+    color: var(--white-text) !important;
+    border-radius: 8px;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    transition: all 0.2s ease;
+}
+.btn-confirm-condemn:hover {
+    opacity: 0.9;
+}
