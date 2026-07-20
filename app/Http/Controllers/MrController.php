@@ -16,10 +16,13 @@ class MrController extends Controller
         $activeRole = $user->roles->where('role_id', $activeRoleId)->first() ?? $user->roles->first();
         $userRole = $activeRole?->gen_role;
 
-        // Get necessary data to render
         $data = \App\Models\Mr::with('images')
             ->where('assigned_to', $user->user_id)
             ->where('is_assigned', 1)
+            ->where(function($query) {
+                $query->whereNull('status')
+                      ->orWhere('status', '!=', 'Condemned');
+            })
             ->orderBy('date_scanned', 'desc')
             ->get();
 
