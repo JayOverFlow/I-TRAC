@@ -935,9 +935,10 @@ body.dark table.dataTable thead .sorting_desc_disabled:after {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
 }
 
-body.dark .table>tbody>tr>td .dropdown:not(.custom-dropdown-icon):not(.custom-dropdown) .dropdown-menu {
+/* Disabled to allow standard Bootstrap action dropdown menus in dark mode tables */
+/* body.dark .table>tbody>tr>td .dropdown:not(.custom-dropdown-icon):not(.custom-dropdown) .dropdown-menu {
     display: none !important;
-}
+} */
 
 body.dark .table>thead>tr>th.dt-no-sorting:before,
 body.dark .table>thead>tr>th.dt-no-sorting:after {
@@ -2103,4 +2104,34 @@ body.dark .password-field .password-toggle-icon:hover {
 .password-field .form-control.is-invalid ~ .password-toggle-icon,
 .password-field .form-control.is-valid ~ .password-toggle-icon {
     right: 35px;
+}
+
+/* ==========================================
+   TABLE ACTION DROPDOWN MENU FIXES
+   ========================================== */
+
+/* Table Action Dropdown Menu styling in dark mode */
+body.dark .action-dropdown-menu .dropdown-menu {
+    background-color: #1D2127 !important;
+    border: 1px solid #2a2f38 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark .action-dropdown-menu .dropdown-item {
+    color: #F3F4F6 !important;
+    background-color: transparent !important;
+}
+
+body.dark .action-dropdown-menu .dropdown-item:hover {
+    color: #FFFFFF !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark .action-dropdown-menu .dropdown-item.text-danger {
+    color: #EF4444 !important;
+}
+
+body.dark .action-dropdown-menu .dropdown-item.text-danger:hover {
+    color: #F87171 !important;
+    background-color: rgba(239, 68, 68, 0.1) !important;
 }
