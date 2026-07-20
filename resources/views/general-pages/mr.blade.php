@@ -24,7 +24,7 @@
 
 @section('content')
     <div class="p-0">
-        <div class="row row-cols-4">
+        <div class="row row-cols-3">
             <div class="col">
                 <div class="card">
                     <div class="card-body row p-4">
@@ -62,20 +62,6 @@
                         <div class="col-8 text-end">
                             <h6 class="card-title fw-bold">Semi-Expandable</h6>
                             <h5 class="mb-0 fw-bold"><span>{{ $data->where('category', 'Semi-Expendable')->count() }}</span></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card">
-                    <div class="card-body row p-4">
-                        <div class="col-4">
-                            <img src="{{ asset('img/mr-supplies.svg') }}" alt="Supplies & Materials">
-                        </div>
-                        <div class="col-8 text-end">
-                            <h6 class="card-title fw-bold">Supplies & Materials</h6>
-                            <h5 class="mb-0 fw-bold"><span>{{ $data->where('category', 'Supply and Materials')->count() }}</span></h5>
                         </div>
                     </div>
                 </div>
